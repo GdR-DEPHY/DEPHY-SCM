@@ -205,7 +205,7 @@ class Variable:
             for ax in axes:
                 if ax.id == 't0' or ax.id[0:4] == 'time':
                     self.time = ax
-                elif ax.id[0:3] == 'lev':
+                elif ax.id[0:3] == 'lev' or ax.id == 'nlev':
                     self.level = ax
                 elif ax.id == 'lat':
                     self.lat = ax
@@ -290,10 +290,17 @@ def read(name,filein):
     axlist = []
     axes = []
     for ax in tmp.dimensions:
-        axes.append(Axis(ax,filein[ax][:],name=filein[ax].long_name,units=filein[ax].units))
+        try:
+            axes.append(Axis(ax,filein[ax][:],name=filein[ax].long_name,units=filein[ax].units))
+        except AttributeError:
+            axes.append(Axis(ax,filein[ax][:],units=filein[ax].units))
+
         axlist.append(ax)
 
-    varout = Variable(name,data=tmp[:],name=tmp.long_name,units=tmp.units,axes=axes,axlist=axlist)
+    try:
+        varout = Variable(name,data=tmp[:],name=tmp.long_name,units=tmp.units,axes=axes,axlist=axlist)
+    except AttributeError:
+        varout = Variable(name,data=tmp[:],units=tmp.units,axes=axes,axlist=axlist)
 
     return varout
 

@@ -1,3 +1,5 @@
+# Temporary files
+*.swp
 # Compiled python files
 *.pyc
 # Mac specific files

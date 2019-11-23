@@ -8,7 +8,7 @@ import SCM_utils as utils
 
 import time
 
-rep_images = './setup_orig/'
+rep_images = './images/setup_orig/'
 
 if not(os.path.exists(rep_images)):
     os.makedirs(rep_images)
