@@ -22,11 +22,11 @@ lat = 36 #35.762
 lon = -97.48
 
 startDate = "19970621113000"
-endDate =   "19970622023000"
+endDate =   "19970622020000"
 
 tunits = 'seconds since 1997-06-21 11:30:0.0'
 t0 = 0 # 11:30 UTC, 21 June 1997
-t1 = 86400 + 2.5*3600 - 41400 # 02:30 UTC, 22 June 1997
+t1 = 86400 + 2*3600 - 41400 # 02:00 UTC, 22 June 1997
 
 ps = 97000. # Surface pressure (Pa)
 zorog = 0 # Altitude above geoide (m)

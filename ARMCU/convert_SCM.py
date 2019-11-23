@@ -15,7 +15,7 @@ tunits = 'seconds since 1997-06-21 11:30:0.0'
 t0 = 0 # 11:30 UTC, 21 June 1997
 t0 = utils.Axis('t0',[t0,],name='Initial time',units=tunits)
 
-timeout = np.array(range(0,int(86400+2.5*3600+1-41400),1800),dtype=np.float64) # up to 02:30 UTC, 22 June 1997, 30-min timestep
+timeout = np.array(range(0,86400+2*3600+1-41400,1800),dtype=np.float64) # up to 02:00 UTC, 22 June 1997, 30-min timestep
 timeout = utils.Axis('time',timeout,name='time',units=tunits)
 
 datain = {}
