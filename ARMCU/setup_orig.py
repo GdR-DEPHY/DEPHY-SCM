@@ -3,7 +3,7 @@
 
 import os
 import sys
-sys.path.append('../utils/')
+sys.path = ['../utils/',] + sys.path
 import time
 
 import netCDF4 as nc
@@ -18,8 +18,8 @@ data = {}
 ###############################
 
 
-lat = 36 #35.762
-lon = -97.48
+lat = 36
+lon = -97.5
 
 startDate = "19970621113000"
 endDate =   "19970622020000"
@@ -29,7 +29,7 @@ t0 = 0 # 11:30 UTC, 21 June 1997
 t1 = 86400 + 2*3600 - 41400 # 02:00 UTC, 22 June 1997
 
 ps = 97000. # Surface pressure (Pa)
-zorog = 0 # Altitude above geoide (m)
+zorog = 314 # Altitude above sea level (m)
 
 z0 = 0.035 # Roughness length (m)
 

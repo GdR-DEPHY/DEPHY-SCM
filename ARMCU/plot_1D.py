@@ -1,6 +1,6 @@
 import os
 import sys
-sys.path.append('../utils/')
+sys.path = ['../utils/',] + sys.path
 
 import numpy as np
 import netCDF4 as nc
