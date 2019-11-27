@@ -1,12 +1,17 @@
+#!/usr/bin/env python2
+# -*- coding: utf-8 -*-
+"""
+Created on 27 November 2019
+
+@author: Romain Roehrig
+"""
+
 import os
 import sys
 sys.path = ['../utils/',] + sys.path
 
-import numpy as np
 import netCDF4 as nc
 import SCM_utils as utils
-
-import time
 
 rep_images = './images/setup_orig/'
 

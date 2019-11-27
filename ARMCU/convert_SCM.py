@@ -1,14 +1,24 @@
+#!/usr/bin/env python2
+# -*- coding: utf-8 -*-
+"""
+Created on 27 November 2019
+
+@author: Romain Roehrig
+"""
+
 import os
 import sys
 sys.path = ['../utils/',] + sys.path
 
-import numpy as np
-import netCDF4 as nc
-import SCM_utils as utils
-
 import time
 
-levout = np.array(range(0,6001,10),dtype=np.float64) # New vertical grid, 10-m resolution
+import numpy as np
+import netCDF4 as nc
+
+import SCM_utils as utils
+import thermo
+
+levout = np.array(range(0,6001,10),dtype=np.float64) # New vertical grid, 10-m resolution from surface to 6000 m (above the surface)
 levout = utils.Axis('lev',levout,name='Altitude',units='m')
 
 tunits = 'seconds since 1997-06-21 11:30:0.0'
@@ -48,17 +58,17 @@ z = dataout['height'].data[0,:,0,0]
 theta = dataout['theta'].data[0,:,0,0]
 
 # Compute pressure as a function of z and theta
-pressure = utils.z2p(theta=theta,z=z,ps=ps)
+pressure = thermo.z2p(theta=theta,z=z,ps=ps)
 pressure = np.reshape(pressure,(1,levout.length,1,1))
 dataout['pressure'] = utils.Variable('pressure',name='Pressure',units='Pa',data=pressure,level=levout,time=t0,lat=lat,lon=lon)
 
 # Compute temperature from theta
-temp = utils.theta2t(p=pressure[0,:,0,0],theta=theta)
+temp = thermo.theta2t(p=pressure[0,:,0,0],theta=theta)
 temp = np.reshape(temp,(1,levout.length,1,1))
 dataout['temp'] = utils.Variable('temp',name='Temperature',units='K',data=temp,level=levout,time=t0,lat=lat,lon=lon)
 
 # Convert mixing ratio to specific humidity
-qt = utils.rt2qt(dataout['rt'].data[0,:,0,0],units='kg kg-1')
+qt = thermo.rt2qt(dataout['rt'].data[0,:,0,0],units='kg kg-1')
 qt = np.reshape(qt,(1,levout.length,1,1))
 dataout['qv'] = utils.Variable('qv',name='Specific Humidity',units='kg kg-1',data=qt,level=levout,time=t0,lat=lat,lon=lon)
 
@@ -91,21 +101,23 @@ dataout['height_forc']   = utils.Variable('height_forc',  name='Forcing height',
 dataout['pressure_forc'] = utils.Variable('pressure_forc',name='Forcing pressure',units='Pa',data=pressure_forc,level=levout,time=timeout,lat=lat,lon=lon)
 
 # Compute temperature advection from theta advection
-tadv = utils.theta2t(p=dataout['pressure_forc'].data,theta=dataout['thadv'].data)
+tadv = thermo.theta2t(p=dataout['pressure_forc'].data,theta=dataout['thadv'].data)
 dataout['tadv'] = utils.Variable('tadv',name='Advection of temperature',units='K s-1',data=tadv,level=levout,time=timeout,lat=lat,lon=lon)
 
 # Suppose that rv advection equals rt advection...
 dataout['rvadv'] = utils.Variable('rvadv',name='Advection of water vapor mixing ratio',units='kg kg s-1',data=dataout['rtadv'].data,level=levout,time=timeout,lat=lat,lon=lon)
 
 
-# Suppose that qv advection equals rt advection...
-dataout['qvadv'] = utils.Variable('qvadv',name='Advection of specific humidity',units='kg kg s-1',data=dataout['rtadv'].data,level=levout,time=timeout,lat=lat,lon=lon)
+# Compute qt advection from rt advection and suppose qv advection equals qt advection.
+qtadv =  thermo.advrt2advqt(rt=dataout['rt'].data,advrt=dataout['rtadv'].data)
+dataout['qtadv'] = utils.Variable('qtadv',name='Advection of total specific humidity',units='kg kg s-1',data=qtadv,level=levout,time=timeout,lat=lat,lon=lon)
+dataout['qvadv'] = utils.Variable('qvadv',name='Advection of specific humidity',units='kg kg s-1',data=qtadv,level=levout,time=timeout,lat=lat,lon=lon)
 
 
 
 g = nc.Dataset('ARMCU_REF_1D.nc','w',format='NETCDF3_CLASSIC')
 
-for var in ['ps','height','pressure','u','v','temp','theta','qv','rt','ql','qi','tke','ps_forc','height_forc','pressure_forc','ug','vg','tadv','qvadv','thadv','rtadv','rvadv','ts','sfc_sens_flx','sfc_lat_flx']:
+for var in ['ps','height','pressure','u','v','temp','theta','qv','rt','ql','qi','tke','ps_forc','height_forc','pressure_forc','ug','vg','tadv','thadv','qvadv','qtadv','rvadv','rtadv','ts','sfc_sens_flx','sfc_lat_flx']:
     print var
     #data[var].info()
     dataout[var].write(g)
@@ -122,6 +134,7 @@ g.startDate = f.startDate ;
 g.endDate = f.endDate ;
 g.tadv = 1
 g.qvadv = 1
+g.qtadv = 1
 g.thadv = 1
 g.rvadv = 1
 g.rtadv = 1
@@ -133,8 +146,9 @@ g.forc_geo = f.forc_geo
 g.nudging_u = f.nudging_u 
 g.nudging_v = f.nudging_v 
 g.nudging_t = f.nudging_th 
-g.nudging_qv = f.nudging_rt
 g.nudging_th = f.nudging_th 
+g.nudging_qv = f.nudging_rt
+g.nudging_qt = f.nudging_rt
 g.nudging_rv = f.nudging_rt 
 g.nudging_rt = f.nudging_rt 
 g.zorog = f.zorog 

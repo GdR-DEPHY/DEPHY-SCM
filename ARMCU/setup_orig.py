@@ -1,14 +1,24 @@
+#!/usr/bin/env python2
+# -*- coding: utf-8 -*-
+"""
+Created on 27 November 2019
+
+@author: Romain Roehrig
+"""
+
 ## ARM-Cumulus original case definition
 ## From http://projects.knmi.nl/eurocs/ARM/case_ARM_html/
 
 import os
 import sys
 sys.path = ['../utils/',] + sys.path
+
 import time
 
 import netCDF4 as nc
 import numpy as np
 
+import thermo
 import SCM_utils as utils
 
 data = {}
@@ -69,15 +79,15 @@ data['u']      = utils.Variable('u',     name='Zonal Wind',                 unit
 data['v']      = utils.Variable('v',     name='Meridional Wind',            units='m s-1',  data=init[4::5],      level=levAxes['v'],     time=t0Axis,lat=latAxis,lon=lonAxis)
 
 # Convert mixing ratio to specific humidity
-#qt = utils.rt2qt(data['rt'].data,units='g kg-1')
+#qt = thermo.rt2qt(data['rt'].data,units='g kg-1')
 #data['qt'] = utils.Variable('qt',name='Total Water Specific Mass',units='g kg-1',data=qt,level=z,levunits='m',time=[t0,],timeunits=tunits,timename='t0')
 
 # Compute pressure as a function of z and theta
-#pa = utils.z2p(theta=data['theta'].data,z=z,ps=ps)
+#pa = thermo.z2p(theta=data['theta'].data,z=z,ps=ps)
 #data['pa'] = utils.Variable('pa',name='Pressure',units='Pa',data=pa,level=z,levunits='m',time=[t0,],timeunits=tunits,timename='t0')
 
 # Compute temperature from theta
-#temp = utils.theta2t(p=data['pa'].data,theta=data['theta'].data)
+#temp = thermo.theta2t(p=data['pa'].data,theta=data['theta'].data)
 #data['temp'] = utils.Variable('temp',name='Temperature',units='K',data=temp,level=z,levunits='m',time=[t0,],timeunits=tunits,timename='t0')
 
 # Turbulent Kinetic Energy
@@ -187,7 +197,7 @@ data['rtadv'] = utils.Variable('rtadv',name='Advection of Total Water Mixing Rat
 
 g = nc.Dataset('ARMCU_REF_orig.nc','w',format='NETCDF3_CLASSIC')
 
-for var in ['ps','height','u','v','theta','rt','tke','ug','vg','thadv','rtadv','sfc_sens_flx','sfc_lat_flx']: #data.keys():
+for var in ['ps','height','u','v','theta','rt','tke','ug','vg','thadv','rtadv','sfc_sens_flx','sfc_lat_flx']:
     print var
     #data[var].info()
     #data[var].plot(rep_images=rep_images)

@@ -1,134 +1,18 @@
-import os, sys
-#import time
+#!/usr/bin/env python2
+# -*- coding: utf-8 -*-
+"""
+Created on 27 November 2019
 
-#import netCDF4 as nc
+@author: Romain Roehrig
+"""
+
+import os
+import sys
+
 import numpy as np
-import math
 from scipy import interpolate
-import matplotlib.pyplot as plt
 
-kappa = 2./7.
-p0 = 100000.
-g = 9.80665 #9.81
-R = 287.0596736665907 #287 
-
-def rt2qt(rt,units='kg kg-1'):
-    if units == 'kg kg-1':
-        return rt/(1+rt)
-    elif units == 'g kg-1':
-        return rt/(1.+rt/1000.)
-    else:
-        print 'units unknown:', units
-        sys.exit()
-
-
-def advrt2advqt(rt=None,advrt=None,rt_units='kg kg-1'):
-
-    if rt is None:
-        print "rt is missing"
-        sys.exit()
-    if advrt is None:
-        print "advrt is missing"
-        sys.exit()
-
-    if rt_units == 'kg kg-1':
-        return advrt/((1+rt)*(1+rt))
-    elif rt_units == 'g kg-1':
-        return advrt/((1.+rt/1000.)*(1.+rt/1000.))
-    else:
-        print 'units unknown for rt:', rt_units
-        sys.exit()
-
-
-def theta2t(p=None,theta=None,p0=p0):
-
-    if theta is None:
-        print "theta is missing"
-        sys.exit()
-    if p is None:
-        print "p is missing"
-        sys.exit()
-
-    tmp = theta*(p/p0)**kappa
-    return tmp
-
-def t2theta(p,t,p0=p0):
-
-    if t is None:
-        print "t is missing"
-        sys.exit()
-    if p is None:
-        print "p is missing"
-        sys.exit()
-
-    tmp = t*(p0/p)**kappa
-    return tmp
-
-
-def z2p(theta=None,z=None,ps=None,g=g,R=R,p0=p0):
-
-    if theta is None:
-        print "theta is missing"
-        sys.exit()
-    if z is None:
-        print "z is missing"
-        sys.exit()
-    if ps is None:
-        print "ps is missing"
-        sys.exit()
-
-    nlev, = theta.shape
-
-    integ = 0.
-
-    p = np.zeros((nlev,),dtype=np.float64)
-    p[0] = ps
-
-    for ilev in range(1,nlev):
-      dz = z[ilev]- z[ilev-1]    
-#      print 'dz =', dz
-      integ = integ + (g/(R*theta[ilev-1])+g/(R*theta[ilev]))/2*dz
-#      print 'integ =', integ
-      tmp = ps**kappa-p0**kappa*kappa*integ
-      p[ilev] = math.exp(math.log(tmp)/kappa)
-
-    return p
-
-def plot(x,y,x2=None,y2=None,xlim=None,ylim=None,xlabel=None,ylabel=None,title=None,rep_images=None,name=None,label="",label2=""):
-    plt.plot(x,y,'k',label=label)
-    if not(xlim is None): plt.xlim(xlim)
-    if not(ylim is None): plt.ylim(ylim)
-    if not(xlabel is None): plt.xlabel(xlabel)
-    if not(ylabel is None): plt.ylabel(ylabel)
-    if not(title is None): plt.title(title)
-
-    if not(x2 is None) and not(y2 is None):
-        plt.plot(x2,y2,'r',label=label2)
-        plt.legend(loc='best')
-
-    if rep_images is None:
-      plt.savefig(name)
-    else:
-      plt.savefig(rep_images + name)
-    plt.close()
-
-def plot2D(x,y,z,xlim=None,ylim=None,xlabel=None,ylabel=None,title=None,rep_images=None,name=None):
-    nt,nz = z.shape
-    X = np.tile(x,(nz,1))
-    Y = np.tile(y,(nt,1))
-    plt.pcolormesh(X,np.transpose(Y),np.transpose(z))
-    if not(xlim is None): plt.xlim(xlim)
-    if not(ylim is None): plt.ylim(ylim)
-    if not(xlabel is None): plt.xlabel(xlabel)
-    if not(ylabel is None): plt.ylabel(ylabel)
-    if not(title is None): plt.title(title)
-    plt.colorbar()
-    if rep_images is None:
-      plt.savefig(name)
-    else:
-      plt.savefig(rep_images + name)
-    plt.close()
-
+import plotbasics
 
 class Axis:
 
@@ -255,28 +139,28 @@ class Variable:
 
             if self.time.length == 1:
                 if var2 is None:
-                    plot(self.data[0,:,0,0],self.level.data,xlabel='{0} ({1})'.format(self.id,self.units),ylabel='Altitude ({0})'.format(self.level.units),title='{0} ({1})'.format(self.name,self.time.name),rep_images=rep_images,name='{0}.png'.format(self.id))
+                    plotbasics.plot(self.data[0,:,0,0],self.level.data,xlabel='{0} ({1})'.format(self.id,self.units),ylabel='Altitude ({0})'.format(self.level.units),title='{0} ({1})'.format(self.name,self.time.name),rep_images=rep_images,name='{0}.png'.format(self.id))
                 else:
-                    plot(self.data[0,:,0,0],self.level.data,x2=var2.data[0,:,0,0],y2=var2.level.data,xlabel='{0} ({1})'.format(self.id,self.units),ylabel='Altitude ({0})'.format(self.level.units),title='{0} ({1})'.format(self.name,self.time.name),rep_images=rep_images,name='{0}.png'.format(self.id),label=label,label2=label2)
+                    plotbasics.plot(self.data[0,:,0,0],self.level.data,x2=var2.data[0,:,0,0],y2=var2.level.data,xlabel='{0} ({1})'.format(self.id,self.units),ylabel='Altitude ({0})'.format(self.level.units),title='{0} ({1})'.format(self.name,self.time.name),rep_images=rep_images,name='{0}.png'.format(self.id),label=label,label2=label2)
             else:
-                plot2D(self.time.data,self.level.data,self.data[:,:,0,0],xlabel=self.time.units,ylabel='Altitude ({0})'.format(self.level.units),title=self.name,rep_images=rep_images,name='{0}.png'.format(self.id))
+                plotbasics.plot2D(self.time.data,self.level.data,self.data[:,:,0,0],xlabel=self.time.units,ylabel='Altitude ({0})'.format(self.level.units),title=self.name,rep_images=rep_images,name='{0}.png'.format(self.id))
 
         elif not(self.time is None):
 
             if self.time.length > 1:
                 if var2 is None:
-                    plot(self.time.data,self.data[:,0,0],ylabel='{0} ({1})'.format(self.id,self.units),xlabel=self.time.units,title=self.name,rep_images=rep_images,name='{0}.png'.format(self.id)) 
+                    plotbasics.plot(self.time.data,self.data[:,0,0],ylabel='{0} ({1})'.format(self.id,self.units),xlabel=self.time.units,title=self.name,rep_images=rep_images,name='{0}.png'.format(self.id)) 
                 else:
-                    plot(self.time.data,self.data[:,0,0],x2=var2.time.data,y2=var2.data[:,0,0],ylabel='{0} ({1})'.format(self.id,self.units),xlabel=self.time.units,title=self.name,rep_images=rep_images,name='{0}.png'.format(self.id),label=label,label2=label2)
+                    plotbasics.plot(self.time.data,self.data[:,0,0],x2=var2.time.data,y2=var2.data[:,0,0],ylabel='{0} ({1})'.format(self.id,self.units),xlabel=self.time.units,title=self.name,rep_images=rep_images,name='{0}.png'.format(self.id),label=label,label2=label2)
             else:
                 print 'no plot for variable', self.id
 
         elif not(self.level is None):
 
             if var2 is None:
-                plot(self.data[:,0,0],self.level.data,xlabel='{0} ({1})'.format(self.id,self.units),ylabel='Altitude ({0})'.format(self.level.units),title=self.name,rep_images=rep_images,name='{0}.png'.format(self.id))
+                plotbasics.plot(self.data[:,0,0],self.level.data,xlabel='{0} ({1})'.format(self.id,self.units),ylabel='Altitude ({0})'.format(self.level.units),title=self.name,rep_images=rep_images,name='{0}.png'.format(self.id))
             else:
-                plot(self.data[:,0,0],self.level.data,x2=var2.data[:,0,0],y2=var2.level.data,xlabel='{0} ({1})'.format(self.id,self.units),ylabel='Altitude ({0})'.format(self.level.units),title='{0} ({1})'.format(self.name,self.time.name),rep_images=rep_images,name='{0}.png'.format(self.id),label=label,label2=label2)
+                plotbasics.plot(self.data[:,0,0],self.level.data,x2=var2.data[:,0,0],y2=var2.level.data,xlabel='{0} ({1})'.format(self.id,self.units),ylabel='Altitude ({0})'.format(self.level.units),title='{0} ({1})'.format(self.name,self.time.name),rep_images=rep_images,name='{0}.png'.format(self.id),label=label,label2=label2)
 
         else:
             print 'no plot for variable', self.id
