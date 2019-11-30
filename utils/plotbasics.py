@@ -32,7 +32,8 @@ def plot2D(x,y,z,xlim=None,ylim=None,xlabel=None,ylabel=None,title=None,rep_imag
     nt,nz = z.shape
     X = np.tile(x,(nz,1))
     Y = np.tile(y,(nt,1))
-    plt.pcolormesh(X,np.transpose(Y),np.transpose(z))
+    #plt.pcolormesh(X,np.transpose(Y),np.transpose(z))
+    plt.contourf(X,np.transpose(Y),np.transpose(z))
     if not(xlim is None): plt.xlim(xlim)
     if not(ylim is None): plt.ylim(ylim)
     if not(xlabel is None): plt.xlabel(xlabel)
