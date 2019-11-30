@@ -61,7 +61,7 @@ u  = [-9.9,   -1.9,   30.,   30.,     0.]
 case.add_variable('u',u,lev=zu,levtype='altitude')
 
 # Meridional wind
-zv = [ 0.,   30000. ]
+zv = [ 0.,   20000. ]
 v  = [-3.8,     -3.8]
 
 case.add_variable('v',v,lev=zv,levtype='altitude')
