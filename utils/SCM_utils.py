@@ -259,6 +259,8 @@ def read(name,filein):
             axes.append(Axis(ax,filein[ax][:],name=filein[ax].long_name,units=filein[ax].units))
         except AttributeError:
             axes.append(Axis(ax,filein[ax][:],units=filein[ax].units))
+        except:
+            raise
 
         axlist.append(ax)
 
@@ -266,11 +268,15 @@ def read(name,filein):
         varout = Variable(name,data=tmp[:],name=tmp.long_name,units=tmp.units,axes=axes,axlist=axlist)
     except AttributeError:
         varout = Variable(name,data=tmp[:],units=tmp.units,axes=axes,axlist=axlist)
+    except: 
+        raise
 
     return varout
 
 
 def interpol(var,levout=None,timeout=None):
+
+    # TODO: Extrapolation to be revisited
 
     if not(var.time is None) and not(var.level is None):
 
@@ -279,7 +285,8 @@ def interpol(var,levout=None,timeout=None):
             nlevout = levout.length
             tmp = np.zeros((ntin,nlevout,1,1),dtype=np.float64)
             for it in range(0,ntin):
-                ff = interpolate.interp1d(var.level.data,var.data[it,:,0,0],bounds_error=False,fill_value="extrapolate")
+                #ff = interpolate.interp1d(var.level.data,var.data[it,:,0,0],bounds_error=False,fill_value="extrapolate")
+                ff = interpolate.interp1d(var.level.data,var.data[it,:,0,0],bounds_error=False,fill_value=var.data[it,-1,0,0])
                 tmp[it,:,0,0] = ff(levout.data)
         else:
             tmp = var.data
@@ -290,7 +297,8 @@ def interpol(var,levout=None,timeout=None):
             ntout = timeout.length
             tmp2 = np.zeros((ntout,nlevout,1,1),dtype=np.float64)
             for ilev in range(0,nlevout):
-                ff = interpolate.interp1d(var.time.data,tmp[:,ilev,0,0],bounds_error=False,fill_value="extrapolate")
+                #ff = interpolate.interp1d(var.time.data,tmp[:,ilev,0,0],bounds_error=False,fill_value="extrapolate")
+                ff = interpolate.interp1d(var.time.data,tmp[:,ilev,0,0],bounds_error=False,fill_value=tmp[-1,ilev,0,0])
                 tmp2[:,ilev,0,0] = ff(timeout.data)
         else:
             tmp2 = tmp
@@ -305,7 +313,8 @@ def interpol(var,levout=None,timeout=None):
         if not(timeout is None) and ntin > 1:
             ntout = timeout.length
             tmp = np.zeros((ntout,1,1),dtype=np.float64)
-            ff = interpolate.interp1d(var.time.data,var.data[:,0,0],bounds_error=False,fill_value="extrapolate")
+            #ff = interpolate.interp1d(var.time.data,var.data[:,0,0],bounds_error=False,fill_value="extrapolate")
+            ff = interpolate.interp1d(var.time.data,var.data[:,0,0],bounds_error=False,fill_value=var.data[-1,0,0])
             tmp[:,0,0] = ff(timeout.data)
         else:
             tmp = var.data
@@ -321,6 +330,7 @@ def interpol(var,levout=None,timeout=None):
             nlevout = levout.length
             tmp = np.zeros((nlevout,1,1),dtype=np.float64)
             ff = interpolate.interp1d(var.level.data,var.data[:,0,0],bounds_error=False,fill_value="extrapolate")
+            ff = interpolate.interp1d(var.level.data,var.data[:,0,0],bounds_error=False,fill_value=var.data[-1,0,0])
             tmp[:,0,0] = ff(levout.data)
         else:
             tmp = var.data
@@ -680,22 +690,28 @@ class Case:
                 caseSCM.add_variable(var,dataout['u'].level.data,lev=lev,levtype=levtype,levid='lev')
             elif var == 'pressure':
                 ps = dataout['ps'].data[0,0,0]
-                z = dataout['theta'].level.data
                 if 'theta' in dataout.keys():
+                    z = dataout['theta'].level.data
                     theta = dataout['theta'].data[0,:,0,0]
                     print 'compute pressure from altitude, potential temperature and surface pressure'
                     pressure = thermo.z2p(theta=theta,z=z,ps=ps)
-                    pressure = np.reshape(pressure,(1,nlev,1,1))
-                    caseSCM.add_variable(var,pressure,lev=lev,levtype=levtype,levid='lev')
+
                 elif 'temp' in dataout.keys():
-                    print 'case not coded yet'
-                    sys.exit()
+                    z = dataout['temp'].level.data
+                    temp = dataout['temp'].data[0,:,0,0]
+                    print 'compute pressure from altitude, temperature and surface pressure'
+                    pressure = thermo.z2p(temp=temp,z=z,ps=ps)                    
                 else:
                     print 'theta or temp should be defined'
                     sys.exit()
+                pressure = np.reshape(pressure,(1,nlev,1,1))
+                caseSCM.add_variable(var,pressure,lev=lev,levtype=levtype,levid='lev')
             elif var == 'theta':
-                print 'Case unexpected yet for variable {0}'.format(var)
-                sys.exit()
+                pressure = caseSCM.variables['pressure'].data[0,:,0,0]
+                temp = dataout['temp'].data[0,:,0,0]
+                print 'compute potential temperature from pressure and temperature'
+                theta = thermo.t2theta(p=pressure,temp=temp)
+                caseSCM.add_variable(var,theta,lev=lev,levtype=levtype,levid='lev')                
             elif var == 'temp':
                 pressure = caseSCM.variables['pressure'].data[0,:,0,0]
                 theta = dataout['theta'].data[0,:,0,0]
@@ -727,7 +743,7 @@ class Case:
                     rv = dataout['rv'].data[0,:,0,0]
                     print 'compute qv from rv and suppose qt=qv'
                     qt = thermo.rt2qt(rv)
-                    caseSCM.add_variable(var,qt.data,lev=lev,levtype=levtype,levid='lev')
+                    caseSCM.add_variable(var,qt,lev=lev,levtype=levtype,levid='lev')
                 elif 'rt' in dataout.keys():
                     rt = dataout['rt'].data[0,:,0,0]
                     print 'compute qt from rt'
@@ -738,11 +754,15 @@ class Case:
                     sys.exit()
             elif var == 'rv':
                 if 'qv' in dataout.keys():
-                    print 'Case unexpected yet for variable {0}'.format(var)
-                    sys.exit()
+                    qv = dataout['qv'].data[0,:,0,0]
+                    print 'compute rv from qv'
+                    rv = thermo.qt2rt(qv)
+                    caseSCM.add_variable(var,rv,lev=lev,levtype=levtype,levid='lev')                    
                 elif 'qt'in dataout.keys():
-                    print 'Case unexpected yet for variable {0}'.format(var)
-                    sys.exit()
+                    qt = dataout['qt'].data[0,:,0,0]
+                    print 'compute rt from qt and suppose rv=rt'
+                    rt = thermo.qt2rt(qt)
+                    caseSCM.add_variable(var,rt,lev=lev,levtype=levtype,levid='lev')                     
                 elif 'rt' in dataout.keys():
                     print 'suppose rv=rt'
                     caseSCM.add_variable(var,dataout['rt'].data,lev=lev,levtype=levtype,levid='lev')
@@ -750,8 +770,22 @@ class Case:
                     print 'Either qv, qt or rt should be defined'
                     sys.exit()
             elif var == 'rt':
-                print 'Case unexpected yet for variable {0}'.format(var)
-                sys.exit()
+                if 'qv' in dataout.keys():
+                    qv = dataout['qv'].data[0,:,0,0]
+                    print 'compute rv from qv and suppose rt=rv'
+                    rv = thermo.qt2rt(qv)
+                    caseSCM.add_variable(var,rv,lev=lev,levtype=levtype,levid='lev')                    
+                elif 'qt'in dataout.keys():
+                    qt = dataout['qt'].data[0,:,0,0]
+                    print 'compute rt from qt'
+                    rt = thermo.qt2rt(qt)
+                    caseSCM.add_variable(var,rt,lev=lev,levtype=levtype,levid='lev')                     
+                elif 'rv' in dataout.keys():
+                    print 'suppose rt=rv'
+                    caseSCM.add_variable(var,dataout['rv'].data,lev=lev,levtype=levtype,levid='lev')
+                else:
+                    print 'either qv, qt or rv should be defined'
+                    sys.exit()                
             elif var in ['ql','qi','tke']:
                 caseSCM.add_variable(var,dataout['u'].data*0,lev=lev,levtype=levtype,levid='lev')
             else:
