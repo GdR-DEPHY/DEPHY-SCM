@@ -51,6 +51,11 @@ timeout = np.array(range(0,86400+2*3600+1-41400,1800),dtype=np.float64)
 # conversion
 newcase = case.convert2SCM(time=timeout,lev=levout,levtype='altitude')
 
+# add a surface temperature. To be improved...
+ts = timeout*0. + 320 # same shape as timeout
+
+newcase.add_variable('ts',ts,time=timeout,timeid='time')
+
 # update some attributes
 newcase.set_comment("Forcing and initial conditions for ARM-Cumulus case - SCM-enabled version")
 newcase.set_script("DEPHY-SCM/ARMCU/convert_SCM.py")
