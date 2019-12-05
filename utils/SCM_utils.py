@@ -588,8 +588,8 @@ class Case:
         self.set_latlon(f['lat'][0],f['lon'][0])
 
         for var in f.variables:
-            if not(var in f.dimensions):
-                print var
+            if not(var in f.dimensions) and not(var[0:6] == 'bounds') :
+                #print var
                 tmp = read(var,f)
                 if tmp.level is None:
                     self.add_variable(var,tmp.data,time=tmp.time.data)
@@ -598,9 +598,9 @@ class Case:
                 if verbose:
                     data[var].info()
 
-        print self.attlist
+        #print self.attlist
         for att in known_attributes:
-            print att
+            #print att
             try:
                 self.set_attribute(att,f.getncattr(att))
             except AttributeError:
