@@ -30,7 +30,7 @@ lcompare = True # plot comparisons between original and new versions
 newcase = utils.Case('RICO/SHORT')
 
 # read case information in file
-newcase.read('../RICO_SHORT_1D.nc')
+newcase.read('../RICO_SHORT_SCM_driver.nc')
 
 # display some information about the case
 newcase.info()
@@ -53,8 +53,8 @@ oldcase.info()
 ################################################
 
 if lplot:
-    newcase.plot(rep_images='./images/new_1D/',timeunits='hours')
-    oldcase.plot(rep_images='./images/old_1D/',timeunits='hours')
+    newcase.plot(rep_images='./images/new_SCM/',timeunits='hours')
+    oldcase.plot(rep_images='./images/old_SCM/',timeunits='hours')
 
 if lcompare:
     newcase.plot_compare(oldcase,rep_images='./images/compare/',label1="New",label2="Old",timeunits='hours')

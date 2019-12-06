@@ -22,7 +22,7 @@ if not(os.path.exists(rep_images)):
 
 data0 = {}
 
-f = nc.Dataset('../ARMCU_REF_1D.nc','r')
+f = nc.Dataset('../ARMCU_REF_SCM_driver.nc','r')
 
 for var in f.variables:
     if not(var in f.dimensions) and (f[var].ndim <= 3 or f[var][:].shape[0] == 1):

@@ -139,7 +139,7 @@ class Variable:
           tmp[:] = self.data
           tmp.long_name = self.name
           tmp.units = self.units
-          tmp.coordinates = self.coord
+          #tmp.coordinates = self.coord
 
     def plot(self,rep_images=None,var2=None,label="",label2="",timeunits=None):
 
@@ -382,18 +382,19 @@ class Case:
         self.variables = {}
 
         # Attributes
-        self.attlist = ['comment','reference','author','modifications','script','history','case',
+        self.attlist = ['case','title','reference','author','version','modifications','script','comment',
                 'startDate','endDate',
                 'zorog'
                 ]
         self.attributes = {
                 'case': self.id,
-                'comment': "",
+                'title': "",
                 'reference': "",
                 'author': "",
+                'version': "Created on " + time.ctime(time.time()),
                 'modifications': "",
                 'script': "",
-                'history': "Created " + time.ctime(time.time()),
+                'comment': "",
                 'startDate': self.startDate,
                 'endDate': self.endDate,
                 'zorog': self.zorog
@@ -435,6 +436,10 @@ class Case:
             self.attlist.append(attid)
 
         self.attributes[attid] = attvalue
+
+    def set_title(self,title):
+
+        self.attributes['title'] = title
 
     def set_comment(self,comment):
 
@@ -501,7 +506,9 @@ class Case:
         else:
             # time is supposed to be given in seconds since beginning
             if timeid is None:
-                timeAxis = Axis('time_{0}'.format(varid),time,name='Forcing time for {0}'.format(varid),units=self.tunits)
+                timeAxis = Axis('time_{0}'.format(varid),time,
+                        name='Forcing time for variable {0}'.format(varid),
+                        units=self.tunits)
             else:
                 timeAxis = Axis(timeid,time,name='Forcing time',units=self.tunits)
             try:
@@ -829,7 +836,12 @@ class Case:
         att = 'tadv'
         if att in self.attlist and self.attributes[att] == 1:
             caseSCM.add_variable(var,dataout[var].data,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            # add thadv
+            print 'compute thadv from tadv'
+            pressure = caseSCM.variables['pressure_forc'].data
+            tadv = caseSCM.variables['tadv'].data
+            thadv = thermo.t2theta(p=pressure,temp=tadv)
+            caseSCM.add_variable('thadv',thadv,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
+            caseSCM.set_attribute('thadv',1)
 
         var = 'thadv'
         att = 'thadv'
@@ -847,8 +859,11 @@ class Case:
         att = 'trad'
         if att in self.attlist and self.attributes[att] == 1:
             caseSCM.add_variable(var,dataout[var].data,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            print 'Should compute thrad from trad - not done yet'
-            sys.exit()
+            print 'compute thrad from trad'
+            pressure = caseSCM.variables['pressure_forc'].data
+            trad = caseSCM.variables['trad'].data
+            thrad = thermo.t2theta(p=pressure,temp=trad)
+            caseSCM.add_variable('thrad',thrad,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
             caseSCM.set_attribute('thrad',1)
 
         if att in self.attlist and self.attributes[att] == "adv":
@@ -858,8 +873,7 @@ class Case:
         att = 'thrad'
         if att in self.attlist and self.attributes[att] == 1:
             caseSCM.add_variable(var,dataout[var].data,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            print 'Should compute trad from thrad - not done yet'
-            sys.exit()
+            print 'compute trad from thrad'
             pressure = caseSCM.variables['pressure_forc'].data
             thrad = caseSCM.variables['thrad'].data
             trad = thermo.theta2t(p=pressure,theta=thrad)

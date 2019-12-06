@@ -1,5 +1,5 @@
 known_attributes = [
-            'case','comment','reference','author','modifications','script','history',
+            'case','title','reference','author','version','modifications','script','comment',
             'startDate','endDate',
             'tadv','thadv','trad','thrad','qvadv','qtadv','rvadv','rtadv',
             'forc_w','forc_omega',
@@ -13,7 +13,7 @@ known_attributes = [
             ]
 
 required_attributes = [
-            'case','comment','reference','author','modifications','script','history',
+            'case','title','reference','author','version','modifications','script','comment',
             'startDate','endDate',
             'tadv','thadv','trad','thrad','qvadv','qtadv','rvadv','rtadv',
             'forc_w','forc_omega',
