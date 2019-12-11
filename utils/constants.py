@@ -36,6 +36,16 @@ Cpd=3.5*Rd
 # Water vapor specific capacity at constant pressure (J kg-1 K-1)
 Cpv=4.*Rv
 
+# Latent heat of liquid water vaporization (J kg-1) at 0°C
+Lv=2.5008e6
+
+# Latent heat of solid water sublimation (J kg-1) at 0°C
+Ls=2.8345e6
+
+# Latent heat of solid water fusion (J kg-1) at 0°C
+Lf=Ls-Lv
+
+
 # Derived constant
 kappa=Rd/Cpd
 eps=Rv/Rd-1.0

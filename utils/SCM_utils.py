@@ -891,10 +891,14 @@ class Case:
             print 'suppose qtadv=qvadv'
             caseSCM.add_variable('qtadv',dataout[var].data,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
             caseSCM.set_attribute('qtadv',1)
-            print 'Warning: Should compute rvadv and rtadv from qvadv - Supposed equal yet'
-            caseSCM.add_variable('rvadv',dataout[var].data,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
+            print 'Compute rvadv from qvadv'
+            qvadv = caseSCM.variables['qvadv'].data
+            qv = caseSCM.variables['qv'].data
+            rvadv =  thermo.advqt2advrt(qt=qv,advqt=qvadv)
+            caseSCM.add_variable('rvadv',rvadv,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
             caseSCM.set_attribute('rvadv',1)
-            caseSCM.add_variable('rtadv',dataout[var].data,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
+            print 'Suppose rtadv=rvadv'
+            caseSCM.add_variable('rtadv',rvadv,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
             caseSCM.set_attribute('rtadv',1)
 
         var = 'qtadv'
@@ -904,11 +908,15 @@ class Case:
             print 'suppose qvadv=qtadv'
             caseSCM.add_variable('qvadv',dataout[var].data,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
             caseSCM.set_attribute('qvadv',1)
-            print 'Warning: Should compute rvadv and rtadv from qtadv - Supposed equal yet'
-            caseSCM.add_variable('rvadv',dataout[var].data,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            caseSCM.set_attribute('rvadv',1)
-            caseSCM.add_variable('rtadv',dataout[var].data,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
+            print 'Compute rvadv from qvadv'
+            qtadv = caseSCM.variables['qtadv'].data
+            qt = caseSCM.variables['qt'].data
+            rtadv =  thermo.advqt2advrt(qt=qt,advqt=qtadv)
+            caseSCM.add_variable('rtadv',rtadv,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
             caseSCM.set_attribute('rtadv',1)
+            print 'Suppose rvadv=rtadv'
+            caseSCM.add_variable('rvadv',rtadv,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
+            caseSCM.set_attribute('rvadv',1)
 
         var = 'rvadv'
         att = 'rvadv'
@@ -920,7 +928,7 @@ class Case:
             print 'Compute qvadv from rvadv'
             rvadv = caseSCM.variables['rvadv'].data
             rv = caseSCM.variables['rv'].data
-            qvadv =  thermo.advrt2advqt(rt=rv,advrt=advrv)
+            qvadv =  thermo.advrt2advqt(rt=rv,advrt=rvadv)
             caseSCM.add_variable('qvadv',qvadv,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
             caseSCM.set_attribute('qvadv',1)
             print 'suppose qtadv=qvadv'

@@ -51,6 +51,22 @@ def advrt2advqt(rt=None,advrt=None,rt_units='kg kg-1'):
         print 'units unknown for rt:', rt_units
         sys.exit()
 
+def advqt2advrt(qt=None,advqt=None,qt_units='kg kg-1'):
+
+    if qt is None:
+        print "qt is missing"
+        sys.exit()
+    if advqt is None:
+        print "advqt is missing"
+        sys.exit()
+
+    if qt_units == 'kg kg-1':
+        return advqt/((1-qt)*(1-qt))
+    elif qt_units == 'g kg-1':
+        return advqt/((1.-qt/1000.)*(1.-qt/1000.))
+    else:
+        print 'units unknown for qt:', qt_units
+        sys.exit()
 
 def theta2t(p=None,theta=None,p0=cc.p0,kappa=cc.kappa):
 
