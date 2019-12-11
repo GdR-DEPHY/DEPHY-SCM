@@ -1,0 +1,12 @@
+Addendum to "description_composite.pdf"
+---------------------------------------
+
+This documentation concerns the setup of the three composite cases as part of the EUCLIPSE/GASS intercomparison study for SCM/LES.
+
+Two changes were introduced by Irina Sandu:
+
+* relaxation of U,V throughout atmosphere
+
+* relaxation of T,Q above 3km
+
+RN, 20110309
