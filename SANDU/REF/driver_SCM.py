@@ -49,7 +49,7 @@ if lverbose:
 # grid onto which interpolate the input data
 
 # New vertical grid, 10-m resolution from surface to 50000 m (above the surface)
-levout = np.array(range(10,47971,10),dtype=np.float64) 
+levout = np.array(range(0,47971,10),dtype=np.float64) 
 
 # New temporal grid, from 18:00 UTC, 15 July 2006 to 18:00 UTC 18 July 2006, 30-minute timestep
 timeout = np.arange(0.,(72+1)*3600.,1800.)
