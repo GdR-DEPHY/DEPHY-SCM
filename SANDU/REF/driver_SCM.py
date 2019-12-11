@@ -6,7 +6,7 @@ Created on 11 December 2019
 @author: Romain Roehrig
 """
 
-## ARM-Cumulus SCM-enabled case definition
+## SANDU/REF composite case SCM-enabled definition
 
 import sys
 sys.path = ['../../utils/',] + sys.path

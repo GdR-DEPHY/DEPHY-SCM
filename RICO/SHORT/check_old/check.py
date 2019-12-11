@@ -13,7 +13,7 @@ sys.path = ['../../../utils/',] + sys.path
 
 import numpy as np
 
-import SCM_utils as utils
+from Case import Case
 
 ################################################
 # 0. General configuration of the present script
@@ -27,7 +27,7 @@ lcompare = True # plot comparisons between original and new versions
 ################################################
 
 # initialize the case structure for the original version
-newcase = utils.Case('RICO/SHORT')
+newcase = Case('RICO/SHORT')
 
 # read case information in file
 newcase.read('../RICO_SHORT_SCM_driver.nc')
@@ -40,7 +40,7 @@ newcase.info()
 ################################################
 
 # initialize the case structure for the old version
-oldcase = utils.Case('RICO/OLD')
+oldcase = Case('RICO/OLD')
 
 # read case information in file
 oldcase.read('rico_driver_RR_new3_converted.nc')

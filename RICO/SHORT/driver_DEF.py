@@ -6,17 +6,14 @@ Created on 30 November 2019
 @author: Romain Roehrig
 """
 
-## ARM-Cumulus original case definition
-## From http://projects.knmi.nl/eurocs/ARM/case_ARM_html/
+## RICO Composite short case original case definition
 
-import os
 import sys
 sys.path = ['../../utils/',] + sys.path
 
-import netCDF4 as nc
 import numpy as np
 
-import SCM_utils as utils
+from Case import Case
 
 ################################################
 # 0. General configuration of the present script
@@ -29,7 +26,7 @@ lverbose = False # print information about variables and case
 # 1. General information about the case
 ################################################
 
-case = utils.Case('RICO/SHORT',
+case = Case('RICO/SHORT',
         lat=18,
         lon=-61.5,
         startDate="20041216000000",

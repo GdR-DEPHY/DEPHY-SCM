@@ -6,10 +6,8 @@ Created on 11 December 2019
 @author: Romain Roehrig
 """
 
-## ARM-Cumulus original case definition
-## From http://projects.knmi.nl/eurocs/ARM/case_ARM_html/
+## SANDU/REF original case definition
 
-import os
 import sys
 sys.path = ['../../utils/',] + sys.path
 

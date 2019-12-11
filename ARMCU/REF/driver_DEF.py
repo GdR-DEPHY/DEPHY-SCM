@@ -16,7 +16,7 @@ sys.path = ['../../utils/',] + sys.path
 import netCDF4 as nc
 import numpy as np
 
-import SCM_utils as utils
+from Case import Case
 
 ################################################
 # 0. General configuration of the present script
@@ -29,7 +29,7 @@ lverbose = False # print information about variables and case
 # 1. General information about the case
 ################################################
 
-case = utils.Case('ARMCU/REF',
+case = Case('ARMCU/REF',
         lat=36,
         lon=-97.5,
         startDate="19970621113000",

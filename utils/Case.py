@@ -407,6 +407,19 @@ class Case:
                     print 'ERROR: At least temp or thetal should be given'
                     sys.exit()                    
                 caseSCM.add_variable(var,theta,lev=lev,levtype=levtype,levid='lev')
+            elif var == 'thetal':
+                pressure = caseSCM.variables['pressure'].data[0,:,0,0]
+                if 'temp' in dataout.keys():
+                    temp = dataout['temp'].data[0,:,0,0]
+                    print 'compute potential temperature from pressure and temperature and assume thetal=theta'
+                    thetal = thermo.t2theta(p=pressure,temp=temp)
+                elif 'theta' in dataout.keys():
+                    print 'assume thetal=theta'
+                    thetal = dataout['theta'].data[0,:,0,0]
+                else:
+                    print 'ERROR: At least temp or thetal should be given'
+                    sys.exit()                    
+                caseSCM.add_variable(var,thetal,lev=lev,levtype=levtype,levid='lev')
             elif var == 'temp':
                 pressure = caseSCM.variables['pressure'].data[0,:,0,0]
                 if 'theta' in dataout.keys():

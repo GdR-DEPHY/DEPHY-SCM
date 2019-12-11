@@ -13,7 +13,7 @@ sys.path = ['../../utils/',] + sys.path
 
 import numpy as np
 
-import SCM_utils as utils
+from Case import Case
 
 ################################################
 # 0. General configuration of the present script
@@ -28,7 +28,7 @@ lverbose = False # print information on variables and case
 ################################################
 
 # initialize the case structure for the original version
-case = utils.Case('ARMCU/REF')
+case = Case('ARMCU/REF')
 
 # read case information in file
 case.read('ARMCU_REF_DEF_driver.nc')

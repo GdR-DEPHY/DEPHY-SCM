@@ -6,14 +6,14 @@ Created on 29 November 2019
 @author: Romain Roehrig
 """
 
-## ARM-Cumulus SCM-enabled case definition
+## RICO composite case SCM-enabled Meso-NH definition
 
 import sys
 sys.path = ['../../utils/',] + sys.path
 
 import numpy as np
 
-import SCM_utils as utils
+from Case import Case
 
 ################################################
 # 0. General configuration of the present script
@@ -28,7 +28,7 @@ lverbose = False # print information on variables and case
 ################################################
 
 # initialize the case structure for the original version
-case = utils.Case('RICO/MESONH')
+case = Case('RICO/MESONH')
 
 # read case information in file
 case.read('RICO_MESONH_DEF_driver.nc')
