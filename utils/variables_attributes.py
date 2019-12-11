@@ -47,13 +47,16 @@ attributes = OrderedDict([
         # Vertical velocity forcing
         ('w',     {'name': 'Vertical velocity',          'units': 'm s-1', 'plotcoef': 100.,  'plotunits': 'cm s-1'}),
         ('omega', {'name': 'Vertical pressure velocity', 'units': 'Pa s-1'}),
-        # Nudging profiles
-        ('temp_nudging', {'name': 'Temperature profile for nudging',            'units': 'K'}),
-        ('theta_nudging', {'name': 'Potential temperature profile for nudging', 'units': 'K'}),
-        ('qv_nudging', {'name': 'Specific humidity profile for nudging',        'units': 'kg kg-1'}),
-        ('qt_nudging', {'name': 'Total water content profile for nudging',      'units': 'kg kg-1'}),
-        ('rv_nudging', {'name': 'Water vapor mixing ratio profile for nudging', 'units': 'kg kg-1'}),
-        ('rt_nudging', {'name': 'Total water mixing ratio profile for nudging', 'units': 'kg kg-1'}),
+        # Nudging profiles  
+        ('u_nudging',      {'name': 'Zonal wind profile for nudging',                   'units': 'm s-1'}),
+        ('v_nudging',      {'name': 'Meridional wind profile for nudging',              'units': 'm s-1'}),
+        ('temp_nudging',   {'name': 'Temperature profile for nudging',                  'units': 'K'}),
+        ('theta_nudging',  {'name': 'Potential temperature profile for nudging',        'units': 'K'}),
+        ('thetal_nudging', {'name': 'Liquid potential temperature profile for nudging', 'units': 'K'}),
+        ('qv_nudging',     {'name': 'Specific humidity profile for nudging',            'units': 'kg kg-1'}),
+        ('qt_nudging',     {'name': 'Total water content profile for nudging',          'units': 'kg kg-1'}),
+        ('rv_nudging',     {'name': 'Water vapor mixing ratio profile for nudging',     'units': 'kg kg-1'}),
+        ('rt_nudging',     {'name': 'Total water mixing ratio profile for nudging',     'units': 'kg kg-1'}),
         # Surface forcing
         ('sfc_sens_flx', {'name': 'Surface sensible heat flux',               'units': 'W m-2'}),
         ('sfc_lat_flx',  {'name': 'Surface latent heat flux',                 'units': 'W m-2'}),
@@ -64,4 +67,6 @@ attributes = OrderedDict([
         ('wprtp',        {'name': 'Surface flux of total water mixing ratio', 'units': 'kg kg-1 m s-1'}),
         ('ts',           {'name': 'Surface temperature',                      'units': 'K'}),
         ('ustar',        {'name': 'Surface friction velocity',                'units': 'm s-1'}),
+        # Atmospheric composition
+        ('o3',           {'name': 'Ozone mixing ratio','units': 'kg kg-1'}),
         ])

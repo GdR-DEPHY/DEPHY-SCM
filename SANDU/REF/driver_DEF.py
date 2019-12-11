@@ -43,7 +43,7 @@ case.set_script("DEPHY-SCM/SANDU/REF/driver_DEF.py")
 case.set_comment("Use of file composite_ref_init.nc downloaded at http://gop.meteo.uni-koeln.de/~neggers/transitions/")
 
 # time units are expected to be seconds since startDate
-t0 = 0 # 00:00 UTC, 16 December 2004
+t0 = 0 # 18:00 UTC, 15 July 2006
 t1 = 72*3600 # 72-hour long simulation
 
 ################################################
@@ -60,46 +60,38 @@ fin = nc.Dataset('composite_ref_init.nc','r')
 ps = fin['Ps'][0]
 case.add_variable('ps',[ps,])
 
-# Pressure profile
-pressure = fin['lev'][:]
-case.add_variable('pressure',pressure,lev=pressure,levtype='pressure')
-
 # Height
 height = fin['height'][:]
-case.add_variable('height',height,lev=pressure,levtype='pressure')
+case.add_variable('height',height,lev=height,levtype='altitude')
 
 # Zonal wind
 u  = fin['u'][:]
-case.add_variable('u',u,lev=pressure,levtype='pressure')
+case.add_variable('u',u,lev=height,levtype='altitude')
 
 # Meridional wind
 v  = fin['v'][:]
-case.add_variable('v',v,lev=pressure,levtype='pressure')
-
-# Temperature
-temp = fin['T'][:]
-case.add_variable('temp',temp,lev=pressure,levtype='pressure')
+case.add_variable('v',v,lev=height,levtype='altitude')
 
 # Liquid potential temperature
 thetal = fin['thetal'][:]
-case.add_variable('thetal',thetal,lev=pressure,levtype='pressure')
+case.add_variable('thetal',thetal,lev=height,levtype='altitude')
 
 # Total water content
 qt = fin['qt'][:]
-case.add_variable('qt',qt,lev=pressure,levtype='pressure')
+case.add_variable('qt',qt,lev=height,levtype='altitude')
 
 ################################################
 # 3. Forcing
 ################################################
 
-# Constant wind nudging
-case.add_variable('u_nudging',[u,u],time=[t0,t1],lev=pressure,levtype='pressure')
-case.add_variable('v_nudging',[v,v],time=[t0,t1],lev=pressure,levtype='pressure')
+# Constant geostrophic wind
+case.add_variable('ug',[u,u],time=[t0,t1],lev=height,levtype='altitude')
+case.add_variable('vg',[v,v],time=[t0,t1],lev=height,levtype='altitude')
 
 # Nudging of temperature and humidity at high levels
-case.add_variable('temp_nudging',   [temp,temp],    time=[t0,t1],lev=pressure,levtype='pressure')
-case.add_variable('thetal_nudging', [thetal,thetal],time=[t0,t1],lev=pressure,levtype='pressure')
-case.add_variable('qt_nudging',     [qt,qt],        time=[t0,t1],lev=pressure,levtype='pressure')
+#case.add_variable('temp_nudging',   [temp,temp],    time=[t0,t1],lev=height,levtype='altitude')
+case.add_variable('thetal_nudging', [thetal,thetal],time=[t0,t1],lev=height,levtype='altitude')
+case.add_variable('qt_nudging',     [qt,qt],        time=[t0,t1],lev=height,levtype='altitude')
 
 # Forcing time axis
 timeForc = fin['time'][:]
@@ -110,11 +102,11 @@ case.add_variable('ts',ts,time=timeForc)
 
 # Constant large-scale velocity
 w = fin['w'][:]
-case.add_variable('w',[w,w],time=[t0,t1],lev=pressure,levtype='pressure')
+case.add_variable('w',[w,w],time=[t0,t1],lev=height,levtype='altitude')
 
 # Ozone
 o3 = fin['o3mmr'][:]
-case.add_variable('o3',[o3,o3],time=[t0,t1],lev=pressure,levtype='pressure')
+case.add_variable('o3',[o3,o3],time=[t0,t1],lev=height,levtype='altitude')
 
 ################################################
 # 4. Attributes
@@ -122,16 +114,11 @@ case.add_variable('o3',[o3,o3],time=[t0,t1],lev=pressure,levtype='pressure')
 
 # Radiation should be activated
 case.set_attribute("trad",0)
-# Wind nudging from the surface, nudging time = 1 hour
-case.set_attribute("nudging_u",3600.)
-case.set_attribute("nudging_v",3600.)
-case.set_attribute("z_nudging_u",0)
-case.set_attribute("z_nudging_v",0)
+# Geostrophic wind 
+case.set_attribute("forc_geo",1)
 # Temperature and humidity nudging above 3 km
-case.set_attribute("nudging_t",3600.)
 case.set_attribute("nudging_thl",3600.)
 case.set_attribute("nudging_qt",3600.)
-case.set_attribute("z_nudging_t",3000)
 case.set_attribute("z_nudging_thl",3000)
 case.set_attribute("z_nudging_qt",3000)
 # Vertical velocity
