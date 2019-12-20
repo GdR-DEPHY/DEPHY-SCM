@@ -60,57 +60,49 @@ case.add_variable('ps',[ps,])
 
 # Height
 height = fin['height'][:]
+# Modify first surface level value - Seem more consistent
+height[0] = 0
+
+case.add_variable('height',height,lev=height,levtype='altitude')
 
 # add surface level value
-nlev, = height.shape
-heightnew = np.zeros(nlev+1)
-heightnew[1:] = height[:]
-
-case.add_variable('height',heightnew,lev=heightnew,levtype='altitude')
+pressure  = fin['lev'][:]
+case.add_variable('pressure',pressure,lev=height,levtype='altitude')
 
 # Zonal wind
 u  = fin['u'][:]
-unew = np.zeros(nlev+1)
-unew[0] = -2.25
-unew[1:] = u[:]
-
-case.add_variable('u',unew,lev=heightnew,levtype='altitude')
+case.add_variable('u',u,lev=height,levtype='altitude')
 
 # Meridional wind
 v  = fin['v'][:]
-vnew = np.zeros(nlev+1)
-vnew[0] = -5.69
-vnew[1:] = v[:]
-
-case.add_variable('v',vnew,lev=heightnew,levtype='altitude')
+case.add_variable('v',v,lev=height,levtype='altitude')
 
 # Liquid potential temperature
 thetal = fin['thetal'][:]
-thetalnew = np.zeros(nlev+1)
-thetalnew[0] = 290.97
-thetalnew[1:] = thetal[:]
+case.add_variable('thetal',thetal,lev=height,levtype='altitude')
 
-case.add_variable('thetal',thetalnew,lev=heightnew,levtype='altitude')
+# Temperature
+temp = fin['T'][:]
+case.add_variable('temp',temp,lev=height,levtype='altitude')
 
 # Total water content
 qt = fin['qt'][:]
-qtnew = np.zeros(nlev+1)
-qtnew[0] = 10.46e-3
-qtnew[1:] = qt[:]
-
-case.add_variable('qt',qtnew,lev=heightnew,levtype='altitude')
+case.add_variable('qt',qt,lev=height,levtype='altitude')
 
 ################################################
 # 3. Forcing
 ################################################
 
 # Constant geostrophic wind
-case.add_variable('ug',[unew,unew],time=[t0,t1],lev=heightnew,levtype='altitude')
-case.add_variable('vg',[vnew,vnew],time=[t0,t1],lev=heightnew,levtype='altitude')
+case.add_variable('ug',[u,u],time=[t0,t1],lev=height,levtype='altitude')
+case.add_variable('vg',[v,v],time=[t0,t1],lev=height,levtype='altitude')
+
+#case.add_variable('u_nudging',[unew,unew],time=[t0,t1],lev=heightnew,levtype='altitude')
+#case.add_variable('v_nudging',[vnew,vnew],time=[t0,t1],lev=heightnew,levtype='altitude')
 
 # Nudging of temperature and humidity at high levels
-case.add_variable('thetal_nudging', [thetalnew,thetalnew],time=[t0,t1],lev=heightnew,levtype='altitude')
-case.add_variable('qt_nudging',     [qtnew,qtnew],        time=[t0,t1],lev=heightnew,levtype='altitude')
+case.add_variable('thetal_nudging', [thetal,thetal],time=[t0,t1],lev=height,levtype='altitude')
+case.add_variable('qt_nudging',     [qt,qt],        time=[t0,t1],lev=height,levtype='altitude')
 
 # Forcing time axis
 timeForc = fin['time'][:]
@@ -121,19 +113,11 @@ case.add_variable('ts',ts,time=timeForc)
 
 # Constant large-scale velocity
 w = fin['w'][:]
-wnew = np.zeros(nlev+1)
-wnew[0] = 0.
-wnew[1:] = v[:]
-
-case.add_variable('w',[wnew,wnew],time=[t0,t1],lev=heightnew,levtype='altitude')
+case.add_variable('w',[w,w],time=[t0,t1],lev=height,levtype='altitude')
 
 # Ozone
 o3 = fin['o3mmr'][:]
-o3new = np.zeros(nlev+1)
-o3new[0] = o3[0]
-o3new[1:] = v[:]
-
-case.add_variable('o3',[o3new,o3new],time=[t0,t1],lev=heightnew,levtype='altitude')
+case.add_variable('o3',[o3,o3],time=[t0,t1],lev=height,levtype='altitude')
 
 ################################################
 # 4. Attributes
@@ -143,13 +127,20 @@ case.add_variable('o3',[o3new,o3new],time=[t0,t1],lev=heightnew,levtype='altitud
 case.set_attribute("trad",0)
 # Geostrophic wind 
 case.set_attribute("forc_geo",1)
+#case.set_attribute("nudging_u",3600.)
+#case.set_attribute("nudging_v",3600.)
+#case.set_attribute("z_nudging_u",0)
+#case.set_attribute("z_nudging_v",0)
+
 # Temperature and humidity nudging above 3 km
 case.set_attribute("nudging_thl",3600.)
 case.set_attribute("nudging_qt",3600.)
 case.set_attribute("z_nudging_thl",3000)
 case.set_attribute("z_nudging_qt",3000)
+
 # Vertical velocity
 case.set_attribute("forc_w",1)
+
 # Surface flux forcing, wind stress is computed using z0
 case.set_attribute("surfaceType","ocean")
 case.set_attribute("surfaceForcing","ts")

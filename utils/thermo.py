@@ -93,7 +93,7 @@ def t2theta(p=None,temp=None,p0=cc.p0,kappa=cc.kappa):
     return theta
 
 
-def z2p(theta=None,temp=None,z=None,ps=None,g=cc.g,Rd=cc.Rd,p0=cc.p0,kappa=cc.kappa):
+def z2p(theta=None,temp=None,z=None,ps=None,qv=None,g=cc.g,Rd=cc.Rd,Rv=cc.Rv,p0=cc.p0,kappa=cc.kappa):
 
     if (theta is None) and (temp is None):
         print "theta and temp are missing. At least one of them should be given"
@@ -108,6 +108,11 @@ def z2p(theta=None,temp=None,z=None,ps=None,g=cc.g,Rd=cc.Rd,p0=cc.p0,kappa=cc.ka
     if not(theta is None):
         nlev, = theta.shape
 
+        if qv is None:
+            R = theta*0.+Rd
+        else:
+            R = Rd+qv*(Rv-Rd)
+
         integ = 0.
 
         p = np.zeros((nlev,),dtype=np.float64)
@@ -116,13 +121,18 @@ def z2p(theta=None,temp=None,z=None,ps=None,g=cc.g,Rd=cc.Rd,p0=cc.p0,kappa=cc.ka
         for ilev in range(1,nlev):
             dz = z[ilev]- z[ilev-1]    
 #            print 'dz =', dz
-            integ = integ + (g/(Rd*theta[ilev-1])+g/(Rd*theta[ilev]))/2*dz
+            integ = integ + (g/(R[ilev-1]*theta[ilev-1])+g/(R[ilev]*theta[ilev]))/2*dz
 #            print 'integ =', integ
             tmp = ps**kappa-p0**kappa*kappa*integ
             p[ilev] = math.exp(math.log(tmp)/kappa)
     else: # Use temp instead
         nlev, = temp.shape
 
+        if qv is None:
+            R = temp*0.+Rd
+        else:
+            R = Rd+qv*(Rv-Rd)
+
         integ = 0.
 
         p = np.zeros((nlev,),dtype=np.float64)
@@ -131,7 +141,7 @@ def z2p(theta=None,temp=None,z=None,ps=None,g=cc.g,Rd=cc.Rd,p0=cc.p0,kappa=cc.ka
         for ilev in range(1,nlev):
             dz = z[ilev]- z[ilev-1]    
 #            print 'dz =', dz
-            integ = integ + (g/(Rd*temp[ilev-1])+g/(Rd*temp[ilev]))/2*dz
+            integ = integ + (g/(R[ilev-1]*temp[ilev-1])+g/(R[ilev]*temp[ilev]))/2*dz
 #            print 'integ =', integ
             tmp = math.log(ps)-integ
             p[ilev] = math.exp(tmp)
@@ -139,3 +149,30 @@ def z2p(theta=None,temp=None,z=None,ps=None,g=cc.g,Rd=cc.Rd,p0=cc.p0,kappa=cc.ka
 
     return p
 
+def zlev2plev(zlev,z,p):
+    nlev, = z.shape
+    plev = 110000
+    if z[0] < z[1]:
+        for ilev in range(0,nlev-1):
+            if z[ilev] <= zlev and z[ilev+1] > zlev:
+                plev = p[ilev] + (p[ilev+1]-p[ilev])/(z[ilev+1]-z[ilev])*(zlev-z[ilev])
+    else:
+        for ilev in range(0,nlev-1):
+            if z[ilev+1] <= zlev and z[ilev] > zlev:
+                plev = p[ilev] + (p[ilev+1]-p[ilev])/(z[ilev+1]-z[ilev])*(zlev-z[ilev])
+
+    return plev
+
+
+
+def plev2zlev(plev,z,p):
+    nlev, = z.shape
+    zlev = 0
+    if p[0] > p[1]:
+        for ilev in range(0,nlev-1):
+            if p[ilev] >= plev and p[ilev+1] < plev:
+                zlev = z[ilev] + (z[ilev+1]-z[ilev])/(p[ilev+1]-p[ilev])*(plev-p[ilev])
+    else:
+        for ilev in range(0,nlev-1):
+            if p[ilev+1] >= plev and p[ilev] < plev:
+                zlev = z[ilev] + (z[ilev+1]-z[ilev])/(p[ilev+1]-p[ilev])*(plev-p[ilev])

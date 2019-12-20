@@ -373,27 +373,60 @@ class Case:
             elif var == 'height':
                 caseSCM.add_variable(var,dataout['u'].level.data,lev=lev,levtype=levtype,levid='lev')
             elif var == 'pressure':
-                ps = dataout['ps'].data[0,0,0]
-                if 'theta' in dataout.keys():
-                    z = dataout['theta'].level.data
-                    theta = dataout['theta'].data[0,:,0,0]
-                    print 'compute pressure from altitude, potential temperature and surface pressure'
-                    pressure = thermo.z2p(theta=theta,z=z,ps=ps)
-                elif 'thetal' in dataout.keys():
-                    z = dataout['thetal'].level.data
-                    thetal = dataout['thetal'].data[0,:,0,0]
-                    print 'compute pressure from altitude, liquid potential temperature and surface pressure, assuming theta=thetal'
-                    pressure = thermo.z2p(theta=thetal,z=z,ps=ps)
-                elif 'temp' in dataout.keys():
-                    z = dataout['temp'].level.data
-                    temp = dataout['temp'].data[0,:,0,0]
-                    print 'compute pressure from altitude, temperature and surface pressure'
-                    pressure = thermo.z2p(temp=temp,z=z,ps=ps)                    
+                if var in dataout.keys():
+                    caseSCM.add_variable(var,dataout[var].data,lev=lev,levtype=levtype,levid='lev')
                 else:
-                    print 'ERROR: theta, thetal or temp should be defined'
-                    sys.exit()
-                pressure = np.reshape(pressure,(1,nlev,1,1))
-                caseSCM.add_variable(var,pressure,lev=lev,levtype=levtype,levid='lev')
+                    ps = dataout['ps'].data[0,0,0]
+                    if 'theta' in dataout.keys():
+                        z = dataout['theta'].level.data
+                        theta = dataout['theta'].data[0,:,0,0]
+                        if 'qv' in dataout.keys():
+                            qv = dataout['qv'].data[0,:,0,0]
+                            print 'compute pressure from altitude, potential temperature, qv and surface pressure'
+                            pressure = thermo.z2p(theta=theta,z=z,ps=ps,qv=qv)
+                        elif 'qt' in dataout.keys():
+                            qt = dataout['qt'].data[0,:,0,0]
+                            print 'compute pressure from altitude, potential temperature, qt and surface pressure'
+                            pressure = thermo.z2p(theta=theta,z=z,ps=ps,qv=qt)
+                        else:
+                            print 'compute pressure from altitude, potential temperature and surface pressure'
+                            pressure = thermo.z2p(theta=theta,z=z,ps=ps)
+
+                    elif 'thetal' in dataout.keys():
+                        z = dataout['thetal'].level.data
+                        thetal = dataout['thetal'].data[0,:,0,0]
+                        if 'qv' in dataout.keys():
+                            qv = dataout['qv'].data[0,:,0,0]
+                            print 'compute pressure from altitude, liquid potential temperature, qv and surface pressure'
+                            pressure = thermo.z2p(theta=thetal,z=z,ps=ps,qv=qv)
+                        elif 'qt' in dataout.keys():
+                            qt = dataout['qt'].data[0,:,0,0]
+                            print 'compute pressure from altitude, liquid potential temperature, qt and surface pressure'
+                            pressure = thermo.z2p(theta=thetal,z=z,ps=ps,qv=qt)
+                        else:
+                            print 'compute pressure from altitude, potential temperature and surface pressure'
+                            pressure = thermo.z2p(theta=thetal,z=z,ps=ps)
+
+                    elif 'temp' in dataout.keys():
+                        z = dataout['temp'].level.data
+                        temp = dataout['temp'].data[0,:,0,0]
+                        if 'qv' in dataout.keys():
+                            qv = dataout['qv'].data[0,:,0,0]
+                            print 'compute pressure from altitude, temperature, qv and surface pressure'
+                            pressure = thermo.z2p(temp=temp,z=z,ps=ps,qv=qv)
+                        elif 'qt' in dataout.keys():
+                            qt = dataout['qt'].data[0,:,0,0]
+                            print 'compute pressure from altitude, temperature, qt and surface pressure'
+                            pressure = thermo.z2p(temp=temp,z=z,ps=ps,qv=qt)
+                        else:
+                            print 'compute pressure from altitude, temperature and surface pressure'
+                            pressure = thermo.z2p(temp=temp,z=z,ps=ps)
+
+                    else:
+                        print 'ERROR: theta, thetal or temp should be defined'
+                        sys.exit()
+                    pressure = np.reshape(pressure,(1,nlev,1,1))
+                    caseSCM.add_variable(var,pressure,lev=lev,levtype=levtype,levid='lev')
             elif var == 'theta':
                 pressure = caseSCM.variables['pressure'].data[0,:,0,0]
                 if 'temp' in dataout.keys():
@@ -684,11 +717,31 @@ class Case:
         att = 'nudging_u'
         if att in self.attlist and self.attributes[att] > 0:
             caseSCM.add_variable(var,dataout[var].data,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
+            if not('z_nudging_u' in self.attributes.keys()):
+                height = np.squeeze(caseSCM.variables['height'].data)
+                pressure = np.squeeze(caseSCM.variables['pressure'].data)
+                zlev = thermo.plev2zlev(self.attributes['p_nudging_u'],height,pressure)
+                caseSCM.set_attribute('z_nudging_u',zlev)
+            if not('p_nudging_u' in self.attributes.keys()):
+                height = np.squeeze(caseSCM.variables['height'].data)
+                pressure = np.squeeze(caseSCM.variables['pressure'].data)
+                plev = thermo.zlev2plev(self.attributes['z_nudging_u'],height,pressure)
+                caseSCM.set_attribute('p_nudging_u',plev)
 
         var = 'v_nudging'
         att = 'nudging_v'
         if att in self.attlist and self.attributes[att] > 0:
             caseSCM.add_variable(var,dataout[var].data,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
+            if not('z_nudging_v' in self.attributes.keys()):
+                height = np.squeeze(caseSCM.variables['height'].data)
+                pressure = np.squeeze(caseSCM.variables['pressure'].data)
+                zlev = thermo.plev2zlev(self.attributes['p_nudging_v'],height,pressure)
+                caseSCM.set_attribute('z_nudging_v',zlev)
+            if not('p_nudging_v' in self.attributes.keys()):
+                height = np.squeeze(caseSCM.variables['height'].data)
+                pressure = np.squeeze(caseSCM.variables['pressure'].data)
+                plev = thermo.zlev2plev(self.attributes['z_nudging_v'],height,pressure)
+                caseSCM.set_attribute('p_nudging_v',plev)
 
         #---- Temperature nudging
 
@@ -709,8 +762,22 @@ class Case:
             caseSCM.set_attribute('nudging_th',self.attributes[att])
             if 'p_nudging_t' in self.attributes.keys():
                 caseSCM.set_attribute('p_nudging_th',self.attributes['p_nudging_t'])
+                if not('z_nudging_t' in self.attributes.keys()):
+                    height = np.squeeze(caseSCM.variables['height'].data)
+                    pressure = np.squeeze(caseSCM.variables['pressure'].data)
+                    zlev = int(thermo.plev2zlev(self.attributes['p_nudging_t'],height,pressure))
+                    caseSCM.set_attribute('z_nudging_thl',zlev)
+                    caseSCM.set_attribute('z_nudging_th',zlev)
+                    caseSCM.set_attribute('z_nudging_t',zlev)                  
             if 'z_nudging_t' in self.attributes.keys():
                 caseSCM.set_attribute('z_nudging_th',self.attributes['z_nudging_t'])
+                if not('p_nudging_t' in self.attributes.keys()):
+                    height = np.squeeze(caseSCM.variables['height'].data)
+                    pressure = np.squeeze(caseSCM.variables['pressure'].data)
+                    plev = int(thermo.zlev2plev(self.attributes['z_nudging_t'],height,pressure))
+                    caseSCM.set_attribute('p_nudging_thl',plev)
+                    caseSCM.set_attribute('p_nudging_th',plev)
+                    caseSCM.set_attribute('p_nudging_t',plev) 
 
         var = 'theta_nudging'
         att = 'nudging_th'
@@ -731,8 +798,22 @@ class Case:
             caseSCM.set_attribute('nudging_t',self.attributes[att])
             if 'p_nudging_th' in self.attributes.keys():
                 caseSCM.set_attribute('p_nudging_t',self.attributes['p_nudging_th'])
+                if not('z_nudging_th' in self.attributes.keys()):
+                    height = np.squeeze(caseSCM.variables['height'].data)
+                    pressure = np.squeeze(caseSCM.variables['pressure'].data)
+                    zlev = int(thermo.plev2zlev(self.attributes['p_nudging_th'],height,pressure))
+                    caseSCM.set_attribute('z_nudging_thl',zlev)
+                    caseSCM.set_attribute('z_nudging_th',zlev)
+                    caseSCM.set_attribute('z_nudging_t',zlev)  
             if 'z_nudging_th' in self.attributes.keys():
                 caseSCM.set_attribute('z_nudging_t',self.attributes['z_nudging_th'])
+                if not('p_nudging_th' in self.attributes.keys()):
+                    height = np.squeeze(caseSCM.variables['height'].data)
+                    pressure = np.squeeze(caseSCM.variables['pressure'].data)
+                    plev = int(thermo.zlev2plev(self.attributes['z_nudging_th'],height,pressure))
+                    caseSCM.set_attribute('p_nudging_thl',plev)
+                    caseSCM.set_attribute('p_nudging_th',plev)
+                    caseSCM.set_attribute('p_nudging_t',plev) 
 
         var = 'thetal_nudging'
         att = 'nudging_thl'
@@ -754,12 +835,26 @@ class Case:
             tnudg = thermo.theta2t(p=pressure,theta=thlnudg)
             caseSCM.add_variable('temp_nudging',tnudg,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
             caseSCM.set_attribute('nudging_t',self.attributes[att])
-            if 'p_nudging_th' in self.attributes.keys():
+            if 'p_nudging_thl' in self.attributes.keys():
                 caseSCM.set_attribute('p_nudging_th',self.attributes['p_nudging_thl'])
                 caseSCM.set_attribute('p_nudging_t',self.attributes['p_nudging_thl'])
-            if 'z_nudging_th' in self.attributes.keys():
+                if not('z_nudging_thl' in self.attributes.keys()):
+                    height = np.squeeze(caseSCM.variables['height'].data)
+                    pressure = np.squeeze(caseSCM.variables['pressure'].data)
+                    zlev = int(thermo.plev2zlev(self.attributes['p_nudging_thl'],height,pressure))
+                    caseSCM.set_attribute('z_nudging_thl',zlev)
+                    caseSCM.set_attribute('z_nudging_th',zlev)
+                    caseSCM.set_attribute('z_nudging_t',zlev)                
+            if 'z_nudging_thl' in self.attributes.keys():
                 caseSCM.set_attribute('z_nudging_th',self.attributes['z_nudging_thl'])
                 caseSCM.set_attribute('z_nudging_t',self.attributes['z_nudging_thl'])
+                if not('p_nudging_thl' in self.attributes.keys()):
+                    height = np.squeeze(caseSCM.variables['height'].data)
+                    pressure = np.squeeze(caseSCM.variables['pressure'].data)
+                    plev = int(thermo.zlev2plev(self.attributes['z_nudging_thl'],height,pressure))
+                    caseSCM.set_attribute('p_nudging_thl',plev)
+                    caseSCM.set_attribute('p_nudging_th',plev)
+                    caseSCM.set_attribute('p_nudging_t',plev) 
 
         #---- Humidity nudging
 
@@ -786,10 +881,26 @@ class Case:
                 caseSCM.set_attribute('p_nudging_qt',self.attributes['p_nudging_qv'])
                 caseSCM.set_attribute('p_nudging_rv',self.attributes['p_nudging_qv'])
                 caseSCM.set_attribute('p_nudging_rt',self.attributes['p_nudging_qv'])
+                if not('z_nudging_qv' in self.attributes.keys()):
+                    height = np.squeeze(caseSCM.variables['height'].data)
+                    pressure = np.squeeze(caseSCM.variables['pressure'].data)
+                    zlev = int(thermo.plev2zlev(self.attributes['p_nudging_qv'],height,pressure))
+                    caseSCM.set_attribute('z_nudging_qv',zlev)
+                    caseSCM.set_attribute('z_nudging_qt',zlev)
+                    caseSCM.set_attribute('z_nudging_rv',zlev)
+                    caseSCM.set_attribute('z_nudging_rt',zlev)                  
             if 'z_nudging_qv' in self.attributes.keys():
                 caseSCM.set_attribute('z_nudging_qt',self.attributes['z_nudging_qv'])
                 caseSCM.set_attribute('z_nudging_rv',self.attributes['z_nudging_qv'])
                 caseSCM.set_attribute('z_nudging_rt',self.attributes['z_nudging_qv'])
+                if not('p_nudging_qv' in self.attributes.keys()):
+                    height = np.squeeze(caseSCM.variables['height'].data)
+                    pressure = np.squeeze(caseSCM.variables['pressure'].data)
+                    plev = int(thermo.zlev2plev(self.attributes['z_nudging_qv'],height,pressure))
+                    caseSCM.set_attribute('p_nudging_qv',plev)
+                    caseSCM.set_attribute('p_nudging_qt',plev)
+                    caseSCM.set_attribute('p_nudging_rv',plev)
+                    caseSCM.set_attribute('p_nudging_rt',plev)
 
         var = 'qt_nudging'
         att = 'nudging_qt'
@@ -816,10 +927,26 @@ class Case:
                 caseSCM.set_attribute('p_nudging_qv',self.attributes['p_nudging_qt'])
                 caseSCM.set_attribute('p_nudging_rv',self.attributes['p_nudging_qt'])
                 caseSCM.set_attribute('p_nudging_rt',self.attributes['p_nudging_qt'])
+                if not('z_nudging_qt' in self.attributes.keys()):
+                    height = np.squeeze(caseSCM.variables['height'].data)
+                    pressure = np.squeeze(caseSCM.variables['pressure'].data)
+                    zlev = int(thermo.plev2zlev(self.attributes['p_nudging_qt'],height,pressure))
+                    caseSCM.set_attribute('z_nudging_qv',zlev)
+                    caseSCM.set_attribute('z_nudging_qt',zlev)
+                    caseSCM.set_attribute('z_nudging_rv',zlev)
+                    caseSCM.set_attribute('z_nudging_rt',zlev)                  
             if 'z_nudging_qt' in self.attributes.keys():
                 caseSCM.set_attribute('z_nudging_qv',self.attributes['z_nudging_qt'])
                 caseSCM.set_attribute('z_nudging_rv',self.attributes['z_nudging_qt'])
                 caseSCM.set_attribute('z_nudging_rt',self.attributes['z_nudging_qt'])
+                if not('p_nudging_qt' in self.attributes.keys()):
+                    height = np.squeeze(caseSCM.variables['height'].data)
+                    pressure = np.squeeze(caseSCM.variables['pressure'].data)
+                    plev = int(thermo.zlev2plev(self.attributes['z_nudging_qt'],height,pressure))
+                    caseSCM.set_attribute('p_nudging_qv',plev)
+                    caseSCM.set_attribute('p_nudging_qt',plev)
+                    caseSCM.set_attribute('p_nudging_rv',plev)
+                    caseSCM.set_attribute('p_nudging_rt',plev)
 
         var = 'rv_nudging'
         att = 'nudging_rv'
@@ -846,10 +973,26 @@ class Case:
                 caseSCM.set_attribute('p_nudging_qv',self.attributes['p_nudging_rv'])
                 caseSCM.set_attribute('p_nudging_qt',self.attributes['p_nudging_rv'])
                 caseSCM.set_attribute('p_nudging_rt',self.attributes['p_nudging_rv'])
+                if not('z_nudging_rv' in self.attributes.keys()):
+                    height = np.squeeze(caseSCM.variables['height'].data)
+                    pressure = np.squeeze(caseSCM.variables['pressure'].data)
+                    zlev = int(thermo.plev2zlev(self.attributes['p_nudging_rv'],height,pressure))
+                    caseSCM.set_attribute('z_nudging_qv',zlev)
+                    caseSCM.set_attribute('z_nudging_qt',zlev)
+                    caseSCM.set_attribute('z_nudging_rv',zlev)
+                    caseSCM.set_attribute('z_nudging_rt',zlev)                  
             if 'z_nudging_rv' in self.attributes.keys():
                 caseSCM.set_attribute('z_nudging_qv',self.attributes['z_nudging_rv'])
                 caseSCM.set_attribute('z_nudging_qt',self.attributes['z_nudging_rv'])
                 caseSCM.set_attribute('z_nudging_rt',self.attributes['z_nudging_rv'])
+                if not('p_nudging_rv' in self.attributes.keys()):
+                    height = np.squeeze(caseSCM.variables['height'].data)
+                    pressure = np.squeeze(caseSCM.variables['pressure'].data)
+                    plev = int(thermo.zlev2plev(self.attributes['z_nudging_rv'],height,pressure))
+                    caseSCM.set_attribute('p_nudging_qv',plev)
+                    caseSCM.set_attribute('p_nudging_qt',plev)
+                    caseSCM.set_attribute('p_nudging_rv',plev)
+                    caseSCM.set_attribute('p_nudging_rt',plev)
 
         var = 'rt_nudging'
         att = 'nudging_rt'
@@ -876,10 +1019,26 @@ class Case:
                 caseSCM.set_attribute('p_nudging_qv',self.attributes['p_nudging_rt'])
                 caseSCM.set_attribute('p_nudging_qt',self.attributes['p_nudging_rt'])
                 caseSCM.set_attribute('p_nudging_rv',self.attributes['p_nudging_rt'])
+                if not('z_nudging_rt' in self.attributes.keys()):
+                    height = np.squeeze(caseSCM.variables['height'].data)
+                    pressure = np.squeeze(caseSCM.variables['pressure'].data)
+                    zlev = int(thermo.plev2zlev(self.attributes['p_nudging_rt'],height,pressure))
+                    caseSCM.set_attribute('z_nudging_qv',zlev)
+                    caseSCM.set_attribute('z_nudging_qt',zlev)
+                    caseSCM.set_attribute('z_nudging_rv',zlev)
+                    caseSCM.set_attribute('z_nudging_rt',zlev)                  
             if 'z_nudging_rt' in self.attributes.keys():
                 caseSCM.set_attribute('z_nudging_qv',self.attributes['z_nudging_rt'])
                 caseSCM.set_attribute('z_nudging_qt',self.attributes['z_nudging_rt'])
                 caseSCM.set_attribute('z_nudging_rv',self.attributes['z_nudging_rt'])
+                if not('p_nudging_rt' in self.attributes.keys()):
+                    height = np.squeeze(caseSCM.variables['height'].data)
+                    pressure = np.squeeze(caseSCM.variables['pressure'].data)
+                    plev = int(thermo.zlev2plev(self.attributes['z_nudging_rt'],height,pressure))
+                    caseSCM.set_attribute('p_nudging_qv',plev)
+                    caseSCM.set_attribute('p_nudging_qt',plev)
+                    caseSCM.set_attribute('p_nudging_rv',plev)
+                    caseSCM.set_attribute('p_nudging_rt',plev)
 
         #---- Surface forcing
         att = 'surfaceForcing'
