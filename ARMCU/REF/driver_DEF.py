@@ -158,8 +158,8 @@ for it in range(0,ntf):
           forc_theta[it,iz] = 0.
           forc_rt[it,iz] = 0.
 
-case.add_variable('thadv',forc_theta/3600.,   time=timeF,lev=zforc,levtype='altitude') # converted in K s-1
-case.add_variable('rtadv',forc_rt/3600./1000.,time=timeF,lev=zforc,levtype='altitude') # converted in kg kg-1 s-1
+case.add_variable('theta_adv',forc_theta/3600.,   time=timeF,lev=zforc,levtype='altitude') # converted in K s-1
+case.add_variable('rt_adv',   forc_rt/3600./1000.,time=timeF,lev=zforc,levtype='altitude') # converted in kg kg-1 s-1
 
 
 ################################################
@@ -167,10 +167,10 @@ case.add_variable('rtadv',forc_rt/3600./1000.,time=timeF,lev=zforc,levtype='alti
 ################################################
 
 # advection of theta and rt
-case.set_attribute("thadv",1)
-case.set_attribute("rtadv",1)
+case.set_attribute("adv_theta",1)
+case.set_attribute("adv_rt",1)
 # potential temperature radiative tendency is included in advection
-case.set_attribute("thrad","adv")
+case.set_attribute("rad_theta","adv")
 # Geostrophic wind forcing
 case.set_attribute("forc_geo",1)
 # Surface flux forcing, wind stress is computed using z0

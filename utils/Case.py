@@ -50,7 +50,7 @@ class Case:
         # Initial time axis
         self.t0 = 0
         if not(startDate is None):
-            self.tunits = 'seconds since {0}-{1:0>2}-{2:0>2} {3:0>2}:{4:0>2}:{5:3.1f}'.format(startDate[0:4],startDate[4:6],startDate[6:8],startDate[8:10],startDate[10:12],float(startDate[12:14]))
+            self.tunits = 'seconds since {0}-{1:0>2}-{2:0>2} {3:0>2}:{4:0>2}:{5:0>2}'.format(startDate[0:4],startDate[4:6],startDate[6:8],startDate[8:10],startDate[10:12],startDate[12:14])
 
             self.t0Axis = Axis('t0',[self.t0,],name='Initial time',units=self.tunits,calendar='gregorian')
 
@@ -59,7 +59,7 @@ class Case:
         self.variables = {}
 
         # Attributes
-        self.attlist = ['case','title','reference','author','version','modifications','script','comment',
+        self.attlist = ['case','title','reference','author','version','format_version','modifications','script','comment',
                 'startDate','endDate',
                 'zorog'
                 ]
@@ -69,6 +69,7 @@ class Case:
                 'reference': "",
                 'author': "",
                 'version': "Created on " + time.ctime(time.time()),
+                'format_version': "DEPHY SCM format version 0",
                 'modifications': "",
                 'script': "",
                 'comment': "",
@@ -93,7 +94,7 @@ class Case:
         self.endDate = endDate
 
         self.t0 = 0
-        self.tunits = 'seconds since {0}-{1:0>2}-{2:0>2} {3:0>2}:{4:0>2}:{5:3.1f}'.format(startDate[0:4],startDate[4:6],startDate[6:8],startDate[8:10],startDate[10:12],float(startDate[12:14]))
+        self.tunits = 'seconds since {0}-{1:0>2}-{2:0>2} {3:0>2}:{4:0>2}:{5:0>2}'.format(startDate[0:4],startDate[4:6],startDate[6:8],startDate[8:10],startDate[10:12],startDate[12:14])
         self.t0Axis = Axis('t0',[self.t0,],name='Initial time',units=self.tunits,calendar='gregorian')
 
     def set_latlon(self,lat,lon):
@@ -101,7 +102,7 @@ class Case:
         self.lat = lat
         self.lon = lon
 
-        self.latAxis = Axis('lat',[lat,],name='Latitude',units='degrees_north')
+        self.latAxis = Axis('lat',[lat,],name='Latitude', units='degrees_north')
         self.lonAxis = Axis('lon',[lon,],name='Longitude',units='degrees_east')
 
     def set_attribute(self,attid,attvalue):
@@ -196,7 +197,7 @@ class Case:
                 raise
 
         # if variable is an initial variable, impose t0Axis as time axis
-        if varid in ['ps','height','pressure','u','v','temp','theta','thetal','qv','qt','rv','rt','ql','qi','tke']:
+        if varid in ['ps','height','pressure','u','v','temp','theta','thetal','qv','qt','rv','rt','rl','ri','ql','qi','tke']:
             timeAxis = self.t0Axis
             nt = 1
 
@@ -367,7 +368,7 @@ class Case:
 
         nt0,nlev,nlat,nlon = dataout['u'].data.shape
 
-        for var in ['height','pressure','u','v','temp','theta','thetal','qv','qt','rv','rt','ql','qi','tke']:
+        for var in ['height','pressure','u','v','temp','theta','thetal','qv','qt','rv','rt','rl','ri','ql','qi','tke']:
             if var in dataout.keys():
                 caseSCM.add_variable(var,dataout[var].data,lev=lev,levtype=levtype,levid='lev')
             elif var == 'height':
@@ -469,7 +470,7 @@ class Case:
                 caseSCM.add_variable(var,temp,lev=lev,levtype=levtype,levid='lev')
             elif var == 'qv':
                 if 'qt' in dataout.keys():
-                    print 'Suppose qv=qt'
+                    print 'assume qv=qt'
                     caseSCM.add_variable(var,dataout['qt'].data,lev=lev,levtype=levtype,levid='lev')
                 elif 'rv'in dataout.keys():
                     rv = dataout['rv'].data[0,:,0,0]
@@ -478,7 +479,7 @@ class Case:
                     caseSCM.add_variable(var,qv,lev=lev,levtype=levtype,levid='lev')
                 elif 'rt' in dataout.keys():
                     rt = dataout['rt'].data[0,:,0,0]
-                    print 'compute qt from rt and suppose qv=qt'
+                    print 'compute qt from rt and assume qv=qt'
                     qv = thermo.rt2qt(rt)
                     caseSCM.add_variable(var,qv,lev=lev,levtype=levtype,levid='lev')
                 else:
@@ -486,11 +487,11 @@ class Case:
                     sys.exit()
             elif var == 'qt':
                 if 'qv' in dataout.keys():
-                    print 'suppose qt=qv'
+                    print 'assume qt=qv'
                     caseSCM.add_variable(var,dataout['qv'].data,lev=lev,levtype=levtype,levid='lev')
                 elif 'rv'in dataout.keys():
                     rv = dataout['rv'].data[0,:,0,0]
-                    print 'compute qv from rv and suppose qt=qv'
+                    print 'compute qv from rv and assume qt=qv'
                     qt = thermo.rt2qt(rv)
                     caseSCM.add_variable(var,qt,lev=lev,levtype=levtype,levid='lev')
                 elif 'rt' in dataout.keys():
@@ -509,11 +510,11 @@ class Case:
                     caseSCM.add_variable(var,rv,lev=lev,levtype=levtype,levid='lev')                    
                 elif 'qt'in dataout.keys():
                     qt = dataout['qt'].data[0,:,0,0]
-                    print 'compute rt from qt and suppose rv=rt'
+                    print 'compute rt from qt and assume rv=rt'
                     rt = thermo.qt2rt(qt)
                     caseSCM.add_variable(var,rt,lev=lev,levtype=levtype,levid='lev')                     
                 elif 'rt' in dataout.keys():
-                    print 'suppose rv=rt'
+                    print 'assume rv=rt'
                     caseSCM.add_variable(var,dataout['rt'].data,lev=lev,levtype=levtype,levid='lev')
                 else:
                     print 'ERROR: Either qv, qt or rt should be defined'
@@ -521,7 +522,7 @@ class Case:
             elif var == 'rt':
                 if 'qv' in dataout.keys():
                     qv = dataout['qv'].data[0,:,0,0]
-                    print 'compute rv from qv and suppose rt=rv'
+                    print 'compute rv from qv and assume rt=rv'
                     rv = thermo.qt2rt(qv)
                     caseSCM.add_variable(var,rv,lev=lev,levtype=levtype,levid='lev')                    
                 elif 'qt'in dataout.keys():
@@ -530,12 +531,12 @@ class Case:
                     rt = thermo.qt2rt(qt)
                     caseSCM.add_variable(var,rt,lev=lev,levtype=levtype,levid='lev')                     
                 elif 'rv' in dataout.keys():
-                    print 'suppose rt=rv'
+                    print 'assume rt=rv'
                     caseSCM.add_variable(var,dataout['rv'].data,lev=lev,levtype=levtype,levid='lev')
                 else:
                     print 'ERROR: Either qv, qt or rv should be defined'
                     sys.exit()                
-            elif var in ['ql','qi','tke']:
+            elif var in ['rl','ri','ql','qi','tke']:
                 caseSCM.add_variable(var,dataout['u'].data*0,lev=lev,levtype=levtype,levid='lev')
             else:
                 print 'ERROR: Case unexpected: variable {0} have to be defined'.format(var)
@@ -574,125 +575,139 @@ class Case:
             caseSCM.add_variable(var,tmp,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
 
         #---- Large-scale temperature advection
-        var = 'tadv'
-        att = 'tadv'
+        var = 'temp_adv'
+        att = 'adv_temp'
         if att in self.attlist and self.attributes[att] == 1:
             caseSCM.add_variable(var,dataout[var].data,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            print 'compute thadv from tadv'
+            print 'compute theta_adv from temp_adv'
             pressure = caseSCM.variables['pressure_forc'].data
-            tadv = caseSCM.variables['tadv'].data
+            tadv = caseSCM.variables['temp_adv'].data
             thadv = thermo.t2theta(p=pressure,temp=tadv)
-            caseSCM.add_variable('thadv',thadv,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            caseSCM.set_attribute('thadv',1)
+            caseSCM.add_variable('theta_adv',thadv,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
+            caseSCM.set_attribute('adv_theta',1)
+            print 'assume thetal_adv=theta_adv'
+            caseSCM.add_variable('thetal_adv',thadv,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
+            caseSCM.set_attribute('adv_thetal',1)
 
-        var = 'thadv'
-        att = 'thadv'
+        var = 'theta_adv'
+        att = 'adv_theta'
         if att in self.attlist and self.attributes[att] == 1:
             caseSCM.add_variable(var,dataout[var].data,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            print 'compute tadv from thadv'
+            print 'compute temp_adv from theta_adv'
             pressure = caseSCM.variables['pressure_forc'].data
-            thadv = caseSCM.variables['thadv'].data
+            thadv = caseSCM.variables['theta_adv'].data
             tadv = thermo.theta2t(p=pressure,theta=thadv)
-            caseSCM.add_variable('tadv',tadv,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            caseSCM.set_attribute('tadv',1)
+            caseSCM.add_variable('temp_adv',tadv,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
+            caseSCM.set_attribute('adv_temp',1)
+            print 'assumee thetal_adv=theta_adv'
+            caseSCM.add_variable('thetal_adv',thadv,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
+            caseSCM.set_attribute('adv_thetal',1)
 
         #---- Temperature radiative tendency
-        var = 'trad'
-        att = 'trad'
+        var = 'temp_rad'
+        att = 'rad_temp'
         if att in self.attlist and self.attributes[att] == 1:
             caseSCM.add_variable(var,dataout[var].data,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            print 'compute thrad from trad'
+            print 'compute theta_rad from temp_rad'
             pressure = caseSCM.variables['pressure_forc'].data
-            trad = caseSCM.variables['trad'].data
+            trad = caseSCM.variables['temp_rad'].data
             thrad = thermo.t2theta(p=pressure,temp=trad)
-            caseSCM.add_variable('thrad',thrad,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            caseSCM.set_attribute('thrad',1)
+            caseSCM.add_variable('theta_rad',thrad,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
+            caseSCM.set_attribute('rad_theta',1)
+            print 'assume thetal_rad=theta_rad'
+            caseSCM.add_variable('thetal_rad',thrad,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
+            caseSCM.set_attribute('rad_thetal',1)
 
         if att in self.attlist and self.attributes[att] == "adv":
-            caseSCM.set_attribute('thrad',"adv")
+            caseSCM.set_attribute('rad_theta',"adv")
+            caseSCM.set_attribute('rad_thetal',"adv")
 
-        var = 'thrad'
-        att = 'thrad'
+        var = 'theta_rad'
+        att = 'rad_theta'
         if att in self.attlist and self.attributes[att] == 1:
             caseSCM.add_variable(var,dataout[var].data,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            print 'compute trad from thrad'
+            print 'compute temp_rad from theta_rad'
             pressure = caseSCM.variables['pressure_forc'].data
-            thrad = caseSCM.variables['thrad'].data
+            thrad = caseSCM.variables['theta_rad'].data
             trad = thermo.theta2t(p=pressure,theta=thrad)
-            caseSCM.add_variable('trad',trad,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            caseSCM.set_attribute('trad',1)
+            caseSCM.add_variable('temp_rad',trad,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
+            caseSCM.set_attribute('rad_temp',1)
+            print 'assume thetal_rad=theta_rad'
+            caseSCM.add_variable('thetal_rad',thrad,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
+            caseSCM.set_attribute('rad_thetal',1)
 
         if att in self.attlist and self.attributes[att] == "adv":
-            caseSCM.set_attribute('trad',"adv")
+            caseSCM.set_attribute('rad_temp',"adv")
+            caseSCM.set_attribute('rad_thetal',"adv")
 
         #---- Large-scale humidity advection
-        var = 'qvadv'
-        att = 'qvadv'
+        var = 'qv_adv'
+        att = 'adv_qv'
         if att in self.attlist and self.attributes[att] == 1:
             caseSCM.add_variable(var,dataout[var].data,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            print 'suppose qtadv=qvadv'
-            caseSCM.add_variable('qtadv',dataout[var].data,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            caseSCM.set_attribute('qtadv',1)
-            print 'Compute rvadv from qvadv'
-            qvadv = caseSCM.variables['qvadv'].data
+            print 'assume qt_adv=qv_adv'
+            caseSCM.add_variable('qt_adv',dataout[var].data,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
+            caseSCM.set_attribute('adv_qt',1)
+            print 'Compute rv_adv from qv_adv'
+            qvadv = caseSCM.variables['qv_adv'].data
             qv = caseSCM.variables['qv'].data
             rvadv =  thermo.advqt2advrt(qt=qv,advqt=qvadv)
-            caseSCM.add_variable('rvadv',rvadv,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            caseSCM.set_attribute('rvadv',1)
-            print 'Suppose rtadv=rvadv'
-            caseSCM.add_variable('rtadv',rvadv,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            caseSCM.set_attribute('rtadv',1)
+            caseSCM.add_variable('rv_adv',rvadv,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
+            caseSCM.set_attribute('adv_rv',1)
+            print 'assume rt_adv=rv_adv'
+            caseSCM.add_variable('rt_adv',rvadv,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
+            caseSCM.set_attribute('adv_rt',1)
 
-        var = 'qtadv'
-        att = 'qtadv'
+        var = 'qt_adv'
+        att = 'adv_qt'
         if att in self.attlist and self.attributes[att] == 1:
             caseSCM.add_variable(var,dataout[var].data,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            print 'suppose qvadv=qtadv'
-            caseSCM.add_variable('qvadv',dataout[var].data,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            caseSCM.set_attribute('qvadv',1)
-            print 'Compute rvadv from qvadv'
-            qtadv = caseSCM.variables['qtadv'].data
+            print 'assume qv_adv=qt_adv'
+            caseSCM.add_variable('qv_adv',dataout[var].data,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
+            caseSCM.set_attribute('adv_qv',1)
+            print 'Compute rv_adv from qv_adv'
+            qtadv = caseSCM.variables['qt_adv'].data
             qt = caseSCM.variables['qt'].data
             rtadv =  thermo.advqt2advrt(qt=qt,advqt=qtadv)
-            caseSCM.add_variable('rtadv',rtadv,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            caseSCM.set_attribute('rtadv',1)
-            print 'Suppose rvadv=rtadv'
-            caseSCM.add_variable('rvadv',rtadv,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            caseSCM.set_attribute('rvadv',1)
+            caseSCM.add_variable('rt_adv',rtadv,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
+            caseSCM.set_attribute('adv_rt',1)
+            print 'assume rv_adv=rt_adv'
+            caseSCM.add_variable('rv_adv',rtadv,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
+            caseSCM.set_attribute('adv_rv',1)
 
-        var = 'rvadv'
-        att = 'rvadv'
+        var = 'rv_adv'
+        att = 'adv_rv'
         if att in self.attlist and self.attributes[att] == 1:
             caseSCM.add_variable(var,dataout[var].data,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            print 'suppose rtadv=rvadv'
-            caseSCM.add_variable('rtadv',dataout[var].data,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            caseSCM.set_attribute('rtadv',1)
-            print 'Compute qvadv from rvadv'
-            rvadv = caseSCM.variables['rvadv'].data
+            print 'assume rt_adv=rv_adv'
+            caseSCM.add_variable('rt_adv',dataout[var].data,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
+            caseSCM.set_attribute('adv_rt',1)
+            print 'Compute qv_adv from rv_adv'
+            rvadv = caseSCM.variables['rv_adv'].data
             rv = caseSCM.variables['rv'].data
             qvadv =  thermo.advrt2advqt(rt=rv,advrt=rvadv)
-            caseSCM.add_variable('qvadv',qvadv,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            caseSCM.set_attribute('qvadv',1)
-            print 'suppose qtadv=qvadv'
-            caseSCM.add_variable('qtadv',qvadv,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            caseSCM.set_attribute('qtadv',1)
+            caseSCM.add_variable('qv_adv',qvadv,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
+            caseSCM.set_attribute('adv_qv',1)
+            print 'assume qt_adv=qv_adv'
+            caseSCM.add_variable('qt_adv',qvadv,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
+            caseSCM.set_attribute('adv_qt',1)
 
-        var = 'rtadv'
-        att = 'rtadv'
+        var = 'rt_adv'
+        att = 'adv_rt'
         if att in self.attlist and self.attributes[att] == 1:
             caseSCM.add_variable(var,dataout[var].data,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            print 'suppose rvadv=rtadv'
-            caseSCM.add_variable('rvadv',dataout[var].data,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            caseSCM.set_attribute('rvadv',1)
-            print 'Compute qtadv from rtadv'
-            rtadv = caseSCM.variables['rtadv'].data
+            print 'assume rv_adv=rt_adv'
+            caseSCM.add_variable('rv_adv',dataout[var].data,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
+            caseSCM.set_attribute('adv_rv',1)
+            print 'Compute qt_adv from rt_adv'
+            rtadv = caseSCM.variables['rt_adv'].data
             rt = caseSCM.variables['rt'].data
             qtadv =  thermo.advrt2advqt(rt=rt,advrt=rtadv)
-            caseSCM.add_variable('qtadv',qtadv,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            caseSCM.set_attribute('qtadv',1)
-            print 'suppose qvadv=qtadv'
-            caseSCM.add_variable('qvadv',qtadv,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            caseSCM.set_attribute('qvadv',1)
+            caseSCM.add_variable('qt_adv',qtadv,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
+            caseSCM.set_attribute('adv_qt',1)
+            print 'assume qv_adv=qt_adv'
+            caseSCM.add_variable('qv_adv',qtadv,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
+            caseSCM.set_attribute('adv_qv',1)
 
         #---- Vertical velocity forcing
         var = 'w'
@@ -748,7 +763,7 @@ class Case:
         lflag = False
 
         var = 'temp_nudging'
-        att = 'nudging_t'
+        att = 'nudging_temp'
         if att in self.attlist and self.attributes[att] > 0:
             lflag=True      
             print '-'*10
@@ -759,28 +774,28 @@ class Case:
             tnudg = caseSCM.variables['temp_nudging'].data
             thnudg = thermo.t2theta(p=pressure,temp=tnudg)
             caseSCM.add_variable('theta_nudging',thnudg,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            caseSCM.set_attribute('nudging_th',self.attributes[att])
-            if 'p_nudging_t' in self.attributes.keys():
-                caseSCM.set_attribute('p_nudging_th',self.attributes['p_nudging_t'])
-                if not('z_nudging_t' in self.attributes.keys()):
+            caseSCM.set_attribute('nudging_theta',self.attributes[att])
+            if 'p_nudging_temp' in self.attributes.keys():
+                caseSCM.set_attribute('p_nudging_theta',self.attributes['p_nudging_temp'])
+                if not('z_nudging_temp' in self.attributes.keys()):
                     height = np.squeeze(caseSCM.variables['height'].data)
                     pressure = np.squeeze(caseSCM.variables['pressure'].data)
-                    zlev = int(thermo.plev2zlev(self.attributes['p_nudging_t'],height,pressure))
-                    caseSCM.set_attribute('z_nudging_thl',zlev)
-                    caseSCM.set_attribute('z_nudging_th',zlev)
-                    caseSCM.set_attribute('z_nudging_t',zlev)                  
-            if 'z_nudging_t' in self.attributes.keys():
-                caseSCM.set_attribute('z_nudging_th',self.attributes['z_nudging_t'])
-                if not('p_nudging_t' in self.attributes.keys()):
+                    zlev = int(thermo.plev2zlev(self.attributes['p_nudging_temp'],height,pressure))
+                    caseSCM.set_attribute('z_nudging_thetal',zlev)
+                    caseSCM.set_attribute('z_nudging_theta',zlev)
+                    caseSCM.set_attribute('z_nudging_temp',zlev)                  
+            if 'z_nudging_temp' in self.attributes.keys():
+                caseSCM.set_attribute('z_nudging_theta',self.attributes['z_nudging_temp'])
+                if not('p_nudging_temp' in self.attributes.keys()):
                     height = np.squeeze(caseSCM.variables['height'].data)
                     pressure = np.squeeze(caseSCM.variables['pressure'].data)
-                    plev = int(thermo.zlev2plev(self.attributes['z_nudging_t'],height,pressure))
-                    caseSCM.set_attribute('p_nudging_thl',plev)
-                    caseSCM.set_attribute('p_nudging_th',plev)
-                    caseSCM.set_attribute('p_nudging_t',plev) 
+                    plev = int(thermo.zlev2plev(self.attributes['z_nudging_temp'],height,pressure))
+                    caseSCM.set_attribute('p_nudging_thetal',plev)
+                    caseSCM.set_attribute('p_nudging_theta',plev)
+                    caseSCM.set_attribute('p_nudging_temp',plev) 
 
         var = 'theta_nudging'
-        att = 'nudging_th'
+        att = 'nudging_theta'
         if att in self.attlist and self.attributes[att] > 0:
             if lflag:
                 print 'Error: Several nudging variable for temperature are given, which might yield to inconsistencies'
@@ -795,25 +810,25 @@ class Case:
             thnudg = caseSCM.variables['theta_nudging'].data
             tnudg = thermo.theta2t(p=pressure,theta=thnudg)
             caseSCM.add_variable('temp_nudging',tnudg,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            caseSCM.set_attribute('nudging_t',self.attributes[att])
-            if 'p_nudging_th' in self.attributes.keys():
-                caseSCM.set_attribute('p_nudging_t',self.attributes['p_nudging_th'])
-                if not('z_nudging_th' in self.attributes.keys()):
+            caseSCM.set_attribute('nudging_temp',self.attributes[att])
+            if 'p_nudging_theta' in self.attributes.keys():
+                caseSCM.set_attribute('p_nudging_temp',self.attributes['p_nudging_theta'])
+                if not('z_nudging_theta' in self.attributes.keys()):
                     height = np.squeeze(caseSCM.variables['height'].data)
                     pressure = np.squeeze(caseSCM.variables['pressure'].data)
-                    zlev = int(thermo.plev2zlev(self.attributes['p_nudging_th'],height,pressure))
-                    caseSCM.set_attribute('z_nudging_thl',zlev)
-                    caseSCM.set_attribute('z_nudging_th',zlev)
-                    caseSCM.set_attribute('z_nudging_t',zlev)  
-            if 'z_nudging_th' in self.attributes.keys():
-                caseSCM.set_attribute('z_nudging_t',self.attributes['z_nudging_th'])
-                if not('p_nudging_th' in self.attributes.keys()):
+                    zlev = int(thermo.plev2zlev(self.attributes['p_nudging_theta'],height,pressure))
+                    caseSCM.set_attribute('z_nudging_thetal',zlev)
+                    caseSCM.set_attribute('z_nudging_theta',zlev)
+                    caseSCM.set_attribute('z_nudging_temp',zlev)  
+            if 'z_nudging_theta' in self.attributes.keys():
+                caseSCM.set_attribute('z_nudging_temp',self.attributes['z_nudging_theta'])
+                if not('p_nudging_theta' in self.attributes.keys()):
                     height = np.squeeze(caseSCM.variables['height'].data)
                     pressure = np.squeeze(caseSCM.variables['pressure'].data)
-                    plev = int(thermo.zlev2plev(self.attributes['z_nudging_th'],height,pressure))
-                    caseSCM.set_attribute('p_nudging_thl',plev)
-                    caseSCM.set_attribute('p_nudging_th',plev)
-                    caseSCM.set_attribute('p_nudging_t',plev) 
+                    plev = int(thermo.zlev2plev(self.attributes['z_nudging_theta'],height,pressure))
+                    caseSCM.set_attribute('p_nudging_thetal',plev)
+                    caseSCM.set_attribute('p_nudging_theta',plev)
+                    caseSCM.set_attribute('p_nudging_temp',plev) 
 
         var = 'thetal_nudging'
         att = 'nudging_thl'
@@ -826,7 +841,7 @@ class Case:
             print '-'*10
             print 'thetal_nudging is given'
             caseSCM.add_variable(var,dataout[var].data,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            print 'suppose theta_nudging=thetal_nudging'
+            print 'assume theta_nudging=thetal_nudging'
             caseSCM.add_variable('theta_nudging',dataout[var].data,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
             caseSCM.set_attribute('nudging_th',self.attributes[att])
             print 'compute temp_nudging from thetal_nudging assuming no liquid water'
@@ -835,26 +850,26 @@ class Case:
             tnudg = thermo.theta2t(p=pressure,theta=thlnudg)
             caseSCM.add_variable('temp_nudging',tnudg,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
             caseSCM.set_attribute('nudging_t',self.attributes[att])
-            if 'p_nudging_thl' in self.attributes.keys():
-                caseSCM.set_attribute('p_nudging_th',self.attributes['p_nudging_thl'])
-                caseSCM.set_attribute('p_nudging_t',self.attributes['p_nudging_thl'])
-                if not('z_nudging_thl' in self.attributes.keys()):
+            if 'p_nudging_thetal' in self.attributes.keys():
+                caseSCM.set_attribute('p_nudging_theta',self.attributes['p_nudging_thetal'])
+                caseSCM.set_attribute('p_nudging_temp',self.attributes['p_nudging_thetal'])
+                if not('z_nudging_thetal' in self.attributes.keys()):
                     height = np.squeeze(caseSCM.variables['height'].data)
                     pressure = np.squeeze(caseSCM.variables['pressure'].data)
-                    zlev = int(thermo.plev2zlev(self.attributes['p_nudging_thl'],height,pressure))
-                    caseSCM.set_attribute('z_nudging_thl',zlev)
-                    caseSCM.set_attribute('z_nudging_th',zlev)
-                    caseSCM.set_attribute('z_nudging_t',zlev)                
-            if 'z_nudging_thl' in self.attributes.keys():
-                caseSCM.set_attribute('z_nudging_th',self.attributes['z_nudging_thl'])
-                caseSCM.set_attribute('z_nudging_t',self.attributes['z_nudging_thl'])
-                if not('p_nudging_thl' in self.attributes.keys()):
+                    zlev = int(thermo.plev2zlev(self.attributes['p_nudging_thetal'],height,pressure))
+                    caseSCM.set_attribute('z_nudging_thetal',zlev)
+                    caseSCM.set_attribute('z_nudging_theta',zlev)
+                    caseSCM.set_attribute('z_nudging_temp',zlev)                
+            if 'z_nudging_thetal' in self.attributes.keys():
+                caseSCM.set_attribute('z_nudging_theta',self.attributes['z_nudging_thetal'])
+                caseSCM.set_attribute('z_nudging_temp',self.attributes['z_nudging_thetal'])
+                if not('p_nudging_thetal' in self.attributes.keys()):
                     height = np.squeeze(caseSCM.variables['height'].data)
                     pressure = np.squeeze(caseSCM.variables['pressure'].data)
-                    plev = int(thermo.zlev2plev(self.attributes['z_nudging_thl'],height,pressure))
-                    caseSCM.set_attribute('p_nudging_thl',plev)
-                    caseSCM.set_attribute('p_nudging_th',plev)
-                    caseSCM.set_attribute('p_nudging_t',plev) 
+                    plev = int(thermo.zlev2plev(self.attributes['z_nudging_thetal'],height,pressure))
+                    caseSCM.set_attribute('p_nudging_thetal',plev)
+                    caseSCM.set_attribute('p_nudging_theta',plev)
+                    caseSCM.set_attribute('p_nudging_temp',plev) 
 
         #---- Humidity nudging
 
@@ -867,11 +882,11 @@ class Case:
             print '-'*10
             print 'qv_nudging is given'            
             caseSCM.add_variable(var,dataout[var].data,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            print 'Suppose qt_nudging=qv_nudging'
+            print 'assume qt_nudging=qv_nudging'
             caseSCM.add_variable('qt_nudging',dataout[var].data,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
             caseSCM.set_attribute('nudging_qt',self.attributes[att])
             qvnudg = caseSCM.variables['qv_nudging'].data
-            print 'compute rv_nudging from qv_nudging and suppose rt_nudging=rv_nudging'
+            print 'compute rv_nudging from qv_nudging and assume rt_nudging=rv_nudging'
             rvnudg = thermo.qt2rt(qvnudg)
             caseSCM.add_variable('rv_nudging',rvnudg,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
             caseSCM.set_attribute('nudging_rv',self.attributes[att])
@@ -913,11 +928,11 @@ class Case:
             print '-'*10
             print 'qt_nudging is given'            
             caseSCM.add_variable(var,dataout[var].data,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            print 'Suppose qv_nudging=qt_nudging'
+            print 'assume qv_nudging=qt_nudging'
             caseSCM.add_variable('qv_nudging',dataout[var].data,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
             caseSCM.set_attribute('nudging_qv',self.attributes[att])
             qtnudg = caseSCM.variables['qt_nudging'].data
-            print 'compute rt_nudging from qt_nudging and suppose rv_nudging=rt_nudging'
+            print 'compute rt_nudging from qt_nudging and assume rv_nudging=rt_nudging'
             rtnudg = thermo.qt2rt(qtnudg)
             caseSCM.add_variable('rt_nudging',rtnudg,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
             caseSCM.set_attribute('nudging_rt',self.attributes[att])
@@ -959,11 +974,11 @@ class Case:
             print '-'*10
             print 'rv_nudging is given'
             caseSCM.add_variable(var,dataout[var].data,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            print 'Suppose rt_nudging=rv_nudging'
+            print 'assume rt_nudging=rv_nudging'
             caseSCM.add_variable('rt_nudging',dataout[var].data,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
             caseSCM.set_attribute('nudging_rt',self.attributes[att])
             rvnudg = caseSCM.variables['rv_nudging'].data
-            print 'compute qv_nudging from rv_nudging and suppose qt_nudging=qv_nudging'
+            print 'compute qv_nudging from rv_nudging and assume qt_nudging=qv_nudging'
             qvnudg = thermo.rt2qt(rvnudg)
             caseSCM.add_variable('qv_nudging',qvnudg,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
             caseSCM.set_attribute('nudging_qv',self.attributes[att])
@@ -1005,11 +1020,11 @@ class Case:
             print '-'*10
             print 'rt_nudging is given'
             caseSCM.add_variable(var,dataout[var].data,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            print 'Suppose rv_nudging=rt_nudging'
+            print 'assume rv_nudging=rt_nudging'
             caseSCM.add_variable('rv_nudging',dataout[var].data,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
             caseSCM.set_attribute('nudging_rv',self.attributes[att])
             rtnudg = caseSCM.variables['rt_nudging'].data
-            print 'compute qt_nudging from rt_nudging and suppose qv_nudging=qt_nudging'
+            print 'compute qt_nudging from rt_nudging and assume qv_nudging=qt_nudging'
             qtnudg = thermo.rt2qt(rtnudg)
             caseSCM.add_variable('qt_nudging',qtnudg,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
             caseSCM.set_attribute('nudging_qt',self.attributes[att])
