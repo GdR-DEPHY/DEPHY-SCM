@@ -251,7 +251,7 @@ thadv = np.zeros((ntf,nzf),dtype=np.float64)
 for it in range(0,ntf):
     thadv[it,:] = tmp[5*it+1:5*it+5]
 
-case.add_variable('thadv',thadv,time=timeF,lev=zadv,levtype='altitude')
+case.add_variable('theta_adv',thadv,time=timeF,lev=zadv,levtype='altitude')
 
 # Total water mixing ratio advection
 zadv = [                  0.,        1000.,       3000., 5000.]
@@ -271,7 +271,7 @@ rvadv = np.zeros((ntf,nzf),dtype=np.float64)
 for it in range(0,ntf):
     rvadv[it,:] = tmp[5*it+1:5*it+5]
 
-case.add_variable('rvadv',rvadv,time=timeF,lev=zadv,levtype='altitude')
+case.add_variable('rv_adv',rvadv,time=timeF,lev=zadv,levtype='altitude')
 
 
 ################################################
@@ -279,10 +279,10 @@ case.add_variable('rvadv',rvadv,time=timeF,lev=zadv,levtype='altitude')
 ################################################
 
 # advection of theta and rv
-case.set_attribute("thadv",1)
-case.set_attribute("rvadv",1)
+case.set_attribute("adv_theta",1)
+case.set_attribute("adv_rv",1)
 # potential temperature radiative tendency is included in advection
-case.set_attribute("thrad","adv")
+case.set_attribute("rad_theta","adv")
 # Geostrophic wind forcing
 case.set_attribute("forc_geo",1)
 # Surface flux forcing, wind stress is computed using z0

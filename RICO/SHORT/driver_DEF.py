@@ -109,13 +109,13 @@ case.add_variable('w',[w,w],time=[t0,t1],lev=zw,levtype='altitude')
 ztadv = [ 0.,  4000.,  5000.]
 tadv  = [-2.51,  -2.18,   0.] # in K day-1
 
-case.add_variable('tadv',np.array([tadv,tadv])/86400.,time=[t0,t1],lev=ztadv,levtype='altitude') # converted in K s-1 (array type required)
+case.add_variable('temp_adv',np.array([tadv,tadv])/86400.,time=[t0,t1],lev=ztadv,levtype='altitude') # converted in K s-1 (array type required)
 
 # Large-scale advection of specific humidity - constant
 zqvadv = [ 0.,  3000.,   4000.,   5000.]
 qvadv  = [-1.0,    0.345,   0.345,   0.] # in g kg-1 day-1
 
-case.add_variable('qvadv',np.array([qvadv,qvadv])/86400./1000.,time=[t0,t1],lev=zqvadv,levtype='altitude') # converted in kg kg-1 s-1 (array type required)
+case.add_variable('qv_adv',np.array([qvadv,qvadv])/86400./1000.,time=[t0,t1],lev=zqvadv,levtype='altitude') # converted in kg kg-1 s-1 (array type required)
 
 
 ################################################
@@ -123,10 +123,10 @@ case.add_variable('qvadv',np.array([qvadv,qvadv])/86400./1000.,time=[t0,t1],lev=
 ################################################
 
 # advection of theta and rt
-case.set_attribute("tadv",1)
-case.set_attribute("qvadv",1)
+case.set_attribute("adv_temp",1)
+case.set_attribute("adv_qv",1)
 # potential temperature radiative tendency is included in advection
-case.set_attribute("trad","adv")
+case.set_attribute("rad_temp","adv")
 # Geostrophic wind forcing
 case.set_attribute("forc_geo",1)
 # Vertical velocity

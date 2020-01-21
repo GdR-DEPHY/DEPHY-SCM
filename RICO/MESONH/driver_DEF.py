@@ -100,13 +100,13 @@ w  = [0.,   -0.005,    -0.005,   -0.005]
 case.add_variable('w',[w,w],time=[t0,t1],lev=zforc,levtype='altitude')
 
 # Large-scale advection of temperature + radiative tendency - constant 
-thadv  = [-2.89e-5, -2.89e-5, -2.89e-5, -2.89e5]
+thadv  = [-2.89e-5, -2.89e-5, -2.89e-5, -2.89e-5]
 
-case.add_variable('thadv',np.array([thadv,thadv]),time=[t0,t1],lev=zforc,levtype='altitude')
+case.add_variable('theta_adv',np.array([thadv,thadv]),time=[t0,t1],lev=zforc,levtype='altitude')
 
 # Large-scale advection of specific humidity - constant
 rvadv  = [-1.16e-8, 0.02e-8, 0.40e-8, 0.40e-8]
-case.add_variable('rvadv',np.array([rvadv,rvadv]),time=[t0,t1],lev=zforc,levtype='altitude')
+case.add_variable('rv_adv',np.array([rvadv,rvadv]),time=[t0,t1],lev=zforc,levtype='altitude')
 
 
 ################################################
@@ -114,10 +114,10 @@ case.add_variable('rvadv',np.array([rvadv,rvadv]),time=[t0,t1],lev=zforc,levtype
 ################################################
 
 # advection of theta and rt
-case.set_attribute("thadv",1)
-case.set_attribute("rvadv",1)
+case.set_attribute("adv_theta",1)
+case.set_attribute("adv_rv",1)
 # potential temperature radiative tendency is included in advection
-case.set_attribute("trad","adv")
+case.set_attribute("rad_temp","adv")
 # Geostrophic wind forcing
 case.set_attribute("forc_geo",1)
 # Vertical velocity
