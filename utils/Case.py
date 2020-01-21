@@ -640,6 +640,24 @@ class Case:
             caseSCM.set_attribute('rad_temp',"adv")
             caseSCM.set_attribute('rad_thetal',"adv")
 
+        var = 'thetal_rad'
+        att = 'rad_thetal'
+        if att in self.attlist and self.attributes[att] == 1:
+            caseSCM.add_variable(var,dataout[var].data,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
+            print 'compute temp_rad from thetal_rad assuming thetal_rad=theta_rad'
+            pressure = caseSCM.variables['pressure_forc'].data
+            thlrad = caseSCM.variables['thetal_rad'].data
+            trad = thermo.theta2t(p=pressure,theta=thlrad)
+            caseSCM.add_variable('temp_rad',trad,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
+            caseSCM.set_attribute('rad_temp',1)
+            print 'assume theta_rad=thetal_rad'
+            caseSCM.add_variable('theta_rad',thlrad,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
+            caseSCM.set_attribute('rad_theta',1)
+
+        if att in self.attlist and self.attributes[att] == "adv":
+            caseSCM.set_attribute('rad_temp',"adv")
+            caseSCM.set_attribute('rad_theta',"adv")
+
         #---- Large-scale humidity advection
         var = 'qv_adv'
         att = 'adv_qv'

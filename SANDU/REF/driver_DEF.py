@@ -124,7 +124,7 @@ case.add_variable('o3',[o3,o3],time=[t0,t1],lev=height,levtype='altitude')
 ################################################
 
 # Radiation should be activated
-case.set_attribute("trad",0)
+case.set_attribute("rad_thetal",0)
 # Geostrophic wind 
 case.set_attribute("forc_geo",1)
 #case.set_attribute("nudging_u",3600.)
@@ -133,9 +133,9 @@ case.set_attribute("forc_geo",1)
 #case.set_attribute("z_nudging_v",0)
 
 # Temperature and humidity nudging above 3 km
-case.set_attribute("nudging_thl",3600.)
+case.set_attribute("nudging_thetal",3600.)
 case.set_attribute("nudging_qt",3600.)
-case.set_attribute("z_nudging_thl",3000)
+case.set_attribute("z_nudging_thetal",3000)
 case.set_attribute("z_nudging_qt",3000)
 
 # Vertical velocity
