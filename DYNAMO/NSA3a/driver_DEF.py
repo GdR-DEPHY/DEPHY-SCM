@@ -198,8 +198,8 @@ case.set_attribute("p_nudging_v",110000.)
 # Temperature and humidity nudging above 100 hPa (3-hour nudging timescale)
 case.set_attribute("nudging_temp",3600.*3.)
 case.set_attribute("nudging_qv",3600.*3.)
-case.set_attribute("p_nudging_temp",10000)
-case.set_attribute("p_nudging_qv",10000)
+case.set_attribute("p_nudging_temp",5000)
+case.set_attribute("p_nudging_qv",5000)
 
 # Prescribed sea surface temperature
 case.set_attribute("surfaceType","ocean")
