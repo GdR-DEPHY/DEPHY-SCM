@@ -102,27 +102,64 @@ class Variable:
           tmp.units = self.units
           #tmp.coordinates = self.coord
 
-    def plot(self,rep_images=None,var2=None,label="",label2="",timeunits=None):
+    def plot(self,rep_images=None,var2=None,label="",label2="",timeunits=None,levunits=None):
 
         coef = self.plotcoef
+
+        if not(self.level is None):
+            if levunits is None:
+                levs = self.level.data
+                levunits = self.level.units
+                zlabel = 'Altitude [{0}]'.format(levunits)
+            elif levunits == 'hPa' and self.level.units == 'Pa':
+                levs = self.level.data/100.
+                zlabel = 'Pressure [{0}]'.format(levunits)
+            elif (levunits == 'hPa' and self.level.units == 'hPa') or (levunits == 'Pa' and self.level.units == 'Pa'):
+                levs = self.level.data
+                zlabel = 'Pressure [{0}]'.format(levunits)
+            elif levunits == 'km' and self.level.units == 'm':
+                levs = self.level.data/1000.
+                zlabel = 'Altitude [{0}]'.format(levunits)
+            elif (levunits == 'km' and self.level.units == 'km') or (levunits == 'm' and self.level.units == 'm'):
+                levs = self.level.data
+                zlabel = 'Altitude [{0}]'.format(levunits)
+            else:
+                print "ERROR: unexpected case for levunits:", levunits, self.level.units
+            if not(var2 is None):
+                if levunits is None:
+                    levs2 = var2.level.data
+                elif levunits == 'hPa' and var2.level.units == 'Pa':
+                    levs2 = self.level.data/100.
+                elif (levunits == 'hPa' and var2.level.units == 'hPa') or (levunits == 'Pa' and var2.level.units == 'Pa'):
+                    levs2 = self.level.data
+                elif levunits == 'km' and var2.level.units == 'm':
+                    levs2 = self.level.data/1000.
+                elif (levunits == 'km' and var2.level.units == 'km') or (levunits == 'm' and var2.level.units == 'm'):
+                    levs2 = self.level.data
+                else:
+                    print "ERROR: unexpected case for levunits (var2):", levunits, var2.level.units
+            
+
 
         if not(self.time is None) and not(self.level is None):
 
             if self.time.length == 1:
                 if var2 is None:
-                    plotbasics.plot(self.data[0,:,0,0]*coef,self.level.data,
-                            xlabel='{0} [{1}]'.format(self.id,self.plotunits),
-                            ylabel='Altitude [{0}]'.format(self.level.units),
-                            title='{0} ({1})'.format(self.name,self.time.name),
-                            rep_images=rep_images,name='{0}.png'.format(self.id))
+                    plotbasics.plot(self.data[0,:,0,0]*coef,levs,
+                           xlabel='{0} [{1}]'.format(self.id,self.plotunits),
+                           ylabel=zlabel,
+                           title='{0} ({1})'.format(self.name,self.time.name),
+                           rep_images=rep_images,name='{0}.png'.format(self.id),
+                           yunits=levunits)
                 else:
-                    plotbasics.plot(self.data[0,:,0,0]*coef,self.level.data,
+                    plotbasics.plot(self.data[0,:,0,0]*coef,levs,
                             x2=var2.data[0,:,0,0]*coef,
-                            y2=var2.level.data,xlabel='{0} [{1}]'.format(self.id,self.plotunits),
-                            ylabel='Altitude ({0})'.format(self.level.units),
+                            y2=levs2,xlabel='{0} [{1}]'.format(self.id,self.plotunits),
+                            ylabel=zlabel,
                             title='{0} ({1})'.format(self.name,self.time.name),
                             rep_images=rep_images,name='{0}.png'.format(self.id),
-                            label=label,label2=label2)
+                            label=label,label2=label2,
+                            yunits=levunits)
             else:
                 if timeunits is None:
                     time = self.time.data
@@ -138,11 +175,12 @@ class Variable:
                         print "ERROR: timeunits unexpected for plotting:", timeunits
                         sys.exit()
 
-                plotbasics.plot2D(time,self.level.data,self.data[:,:,0,0]*coef,
+                plotbasics.plot2D(time,levs,self.data[:,:,0,0]*coef,
                         xlabel=tunits,
-                        ylabel='Altitude [{0}]'.format(self.level.units),
+                        ylabel=zlabel,
                         title='{0} [{1}]'.format(self.id,self.plotunits),
-                        rep_images=rep_images,name='{0}.png'.format(self.id))
+                        rep_images=rep_images,name='{0}.png'.format(self.id),
+                        yunits=levunits)
 
         elif not(self.time is None):
 
@@ -189,20 +227,22 @@ class Variable:
         elif not(self.level is None):
 
             if var2 is None:
-                plotbasics.plot(self.data[:,0,0]*coef,self.level.data,
+                plotbasics.plot(self.data[:,0,0]*coef,levs,
                         xlabel='{0} [{1}]'.format(self.id,self.plotunits),
-                        ylabel='Altitude ({0})'.format(self.level.units),
+                        ylabel=zlabel,
                         title=self.name,
-                        rep_images=rep_images,name='{0}.png'.format(self.id))
+                        rep_images=rep_images,name='{0}.png'.format(self.id),
+                        yunits=levunits)
             else:
-                plotbasics.plot(self.data[:,0,0]*coef,self.level.data,
+                plotbasics.plot(self.data[:,0,0]*coef,levs,
                         x2=var2.data[:,0,0]*coef,
-                        y2=var2.level.data,
+                        y2=levs2,
                         xlabel='{0} [{1}]'.format(self.id,self.plotunits),
-                        ylabel='Altitude [{0}]'.format(self.level.units),
+                        ylabel=zlabel,
                         title='{0} ({1})'.format(self.name,self.time.name),
                         rep_images=rep_images,name='{0}.png'.format(self.id),
-                        label=label,label2=label2)
+                        label=label,label2=label2,
+                        yunits=levunits)
 
         else:
             print 'no plot for variable', self.id

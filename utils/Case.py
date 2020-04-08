@@ -278,8 +278,10 @@ class Case:
                 tmp = readvar(var,f)
                 if tmp.level is None:
                     self.add_variable(var,tmp.data,time=tmp.time.data)
-                else:
+                elif tmp.level.units == 'm':
                     self.add_variable(var,tmp.data,time=tmp.time.data,lev=tmp.level.data,levtype='altitude')
+                elif tmp.level.units == 'Pa':
+                    self.add_variable(var,tmp.data,time=tmp.time.data,lev=tmp.level.data,levtype='pressure')                    
                 if verbose:
                     data[var].info()
 
@@ -295,15 +297,15 @@ class Case:
 
         f.close()
 
-    def plot(self,rep_images='./images/',timeunits=None):
+    def plot(self,rep_images='./images/',timeunits=None,levunits=None):
 
         if not(os.path.exists(rep_images)):
             os.makedirs(rep_images)
 
         for var in self.varlist:
-            self.variables[var].plot(rep_images=rep_images,timeunits=timeunits)
+            self.variables[var].plot(rep_images=rep_images,timeunits=timeunits,levunits=levunits)
 
-    def plot_compare(self,cc,rep_images='./images/',label1=None,label2=None,timeunits=None):
+    def plot_compare(self,cc,rep_images='./images/',label1=None,label2=None,timeunits=None,levunits=None):
 
         if not(os.path.exists(rep_images)):
             os.makedirs(rep_images)
@@ -314,28 +316,50 @@ class Case:
                     self.variables[var].plot(rep_images=rep_images,
                             var2=cc.variables[var],
                             label=label1,label2=label2,
-                            timeunits=timeunits)
+                            timeunits=timeunits,levunits=levunits)
 
 
     def convert2SCM(self,time=None,lev=None,levtype=None):
 
-        if lev is None:
-            print 'ERROR: Output level should be given'
-            sys.exit()
+        lvert = True
+        ltime = True
 
-        if levtype == 'altitude':
-            levout = Axis('lev',lev,name='Altitude',units='m')
-        elif levtype == 'pressure':
-            levout = Axis('lev',lev,name='pressure',units='Pa')
-            print 'ERROR: Pressure level type is not coded yet'
-            sys.exit()
+        if lev is None:
+            print 'No vertical interpolation'
+            lvert = False
+            lev = self.variables['temp'].level.data
+            if self.variables['temp'].level.units == 'm':
+                levtype = 'altitude'
+                levout = Axis('lev',self.variables['temp'].level.data,name='Altitude',units='m')
+            elif self.variables['temp'].level.units == 'Pa':
+                levtype = 'pressure'
+                levout = Axis('lev',self.variables['temp'].level.data,name='pressure',units='Pa')
+            else:
+                print 'ERROR: Level type undefined for level units:', self.variables['temp'].level.units
+                sys.exit()
+
         else:
-            print 'ERROR: levtype unexpected:', levtype
-            sys.exit()
+            if levtype == 'altitude':
+                levout = Axis('lev',lev,name='Altitude',units='m')
+            elif levtype == 'pressure':
+                levout = Axis('lev',lev,name='pressure',units='Pa')
+                print 'ERROR: Pressure level type is not coded yet for interpolation'
+                sys.exit()
+            else:
+                print 'ERROR: levtype unexpected:', levtype
+                sys.exit()
 
         if time is None:
-            print 'ERROR: Output time should be given'
-            sys.exit()
+            print 'No time interpolation'
+            ltime = False
+            try:
+                time = self.variables['pressure_forc'].time.data
+            except:
+                try:
+                    time = self.variables['height_forc'].time.data
+                except:
+                    print 'ERROR: cannot define time axis'
+                    raise
 
         # time should be given in same units as original
         timeout = Axis('time',time,name='time',units=self.tunits)
@@ -356,7 +380,15 @@ class Case:
         dataout = {}
         for var in self.varlist:
             if not(var in ['ps',]):
-                dataout[var] = interpol(self.variables[var],levout=levout,timeout=timeout)
+                if lvert and ltime:
+                    dataout[var] = interpol(self.variables[var],levout=levout,timeout=timeout)
+                elif lvert or ltime:
+                    print 'ERROR: case unexpected for interpolation'
+                    print 'ERROR: lvert:', lvert
+                    print 'ERROR: ltime:', ltime
+                    sys.exit()
+                else:
+                    dataout[var] = self.variables[var]
             else:
                 dataout[var] = self.variables[var]
 
@@ -792,7 +824,10 @@ class Case:
             tnudg = caseSCM.variables['temp_nudging'].data
             thnudg = thermo.t2theta(p=pressure,temp=tnudg)
             caseSCM.add_variable('theta_nudging',thnudg,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
+            print 'assume thetal_nudging=theta_nudging'
+            caseSCM.add_variable('thetal_nudging',thnudg,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
             caseSCM.set_attribute('nudging_theta',self.attributes[att])
+            caseSCM.set_attribute('nudging_thetal',self.attributes[att])
             if 'p_nudging_temp' in self.attributes.keys():
                 caseSCM.set_attribute('p_nudging_theta',self.attributes['p_nudging_temp'])
                 if not('z_nudging_temp' in self.attributes.keys()):

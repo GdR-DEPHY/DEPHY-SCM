@@ -176,3 +176,32 @@ def plev2zlev(plev,z,p):
         for ilev in range(0,nlev-1):
             if p[ilev+1] >= plev and p[ilev] < plev:
                 zlev = z[ilev] + (z[ilev+1]-z[ilev])/(p[ilev+1]-p[ilev])*(plev-p[ilev])
+
+    return zlev
+
+def rh2qv(rh,temp,pres):
+    """
+    Compute qv from relative humidity (rh in %) and temperature (in K) and pressure (in Pa)
+    Based on Goff-Gratch equation
+    From http://climatologie.u-bourgogne.fr/data/matlab/goff_gratch.m
+    """
+
+    # Saturation water vapor pressure against ice
+    eilog = -9.09718 * ((273.16/temp) -1.)
+    eilog2 = -3.5654 * np.log10(273.16/temp)
+    eilog3 = 0.876793 * (1. - (temp/273.16))
+    es1=6.1071*np.exp((eilog+eilog2+eilog3)*math.log(10.))
+
+    # against liquid water
+    eilog=-7.90298*((373.16/temp) - 1.)
+    eilog2=5.02808*np.log10((373.16/temp))
+    eilog3=-1.3816e-7*(np.exp((11.344*(1.-(temp/373.16)))*math.log(10.)) -1.)
+    eilog4=8.1328e-3*(np.exp((-3.49149*((373.16/temp) - 1.) )*math.log(10)) -1.)
+    es2=1013.246*np.exp((eilog+eilog2+eilog3+eilog4)*math.log(10.))
+
+    es = np.where(temp < 273.15, es1,es2)
+
+    ws = 0.62197* es/(pres/100. - 0.378*es) # qsat
+
+    # specific humidity in kg kg-1
+    return (rh/100.0)*ws

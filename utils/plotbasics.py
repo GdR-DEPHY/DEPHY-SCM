@@ -10,10 +10,11 @@ import numpy as np
 
 import matplotlib.pyplot as plt
 
-def plot(x,y,x2=None,y2=None,xlim=None,ylim=None,xlabel=None,ylabel=None,title=None,rep_images=None,name=None,label="",label2=""):
+def plot(x,y,x2=None,y2=None,xlim=None,ylim=None,xlabel=None,ylabel=None,title=None,rep_images=None,name=None,label="",label2="",yunits=None):
     plt.plot(x,y,'k',label=label)
     if not(xlim is None): plt.xlim(xlim)
     if not(ylim is None): plt.ylim(ylim)
+    if yunits in ['hPa','Pa']: plt.gca().invert_yaxis()
     if not(xlabel is None): plt.xlabel(xlabel)
     if not(ylabel is None): plt.ylabel(ylabel)
     if not(title is None): plt.title(title)
@@ -28,7 +29,7 @@ def plot(x,y,x2=None,y2=None,xlim=None,ylim=None,xlabel=None,ylabel=None,title=N
       plt.savefig(rep_images + name)
     plt.close()
 
-def plot2D(x,y,z,xlim=None,ylim=None,xlabel=None,ylabel=None,title=None,rep_images=None,name=None):
+def plot2D(x,y,z,xlim=None,ylim=None,xlabel=None,ylabel=None,title=None,rep_images=None,name=None,yunits=None):
     nt,nz = z.shape
     X = np.tile(x,(nz,1))
     Y = np.tile(y,(nt,1))
@@ -36,6 +37,7 @@ def plot2D(x,y,z,xlim=None,ylim=None,xlabel=None,ylabel=None,title=None,rep_imag
     plt.contourf(X,np.transpose(Y),np.transpose(z))
     if not(xlim is None): plt.xlim(xlim)
     if not(ylim is None): plt.ylim(ylim)
+    if yunits in ['hPa','Pa']: plt.gca().invert_yaxis()
     if not(xlabel is None): plt.xlabel(xlabel)
     if not(ylabel is None): plt.ylabel(ylabel)
     if not(title is None): plt.title(title)
