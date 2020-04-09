@@ -6,7 +6,7 @@ Created on 7 April 2020
 @author: Romain Roehrig
 """
 
-## DYNAMO/NSA3a case definition
+## DYNAMO/NSA3A case definition
 
 import sys
 sys.path = ['../','../../utils/',] + sys.path
@@ -30,17 +30,17 @@ lverbose = False # print information about variables and case
 # 1. General information about the case
 ################################################
 
-case = Case('DYNAMO/NSA3a',
+case = Case('DYNAMO/NSA3A',
         lat=2.5,
         lon=77.5,
         startDate="20111001000000",
         endDate=  "20111231210000",
         zorog=0.)
 
-case.set_title("Forcing and initial conditions for DYNAMO/NSA3a case")
+case.set_title("Forcing and initial conditions for DYNAMO/NSA3A case")
 case.set_reference("Abdel-Lathif et al. (2018, JAMES); Johnson et al. (2015, JAS); Input file dynamo_nsa_v3a.nc downloaded at http://johnson.atmos.colostate.edu/dynamo/products/array_averages/")
 case.set_author("R. Roehrig")
-case.set_script("DEPHY-SCM/DYNAMO/NSA3a/driver_DEF.py")
+case.set_script("DEPHY-SCM/DYNAMO/NSA3A/driver_DEF.py")
 case.set_comment("Data from CSU (http://johnson.atmos.colostate.edu/dynamo/products/array_averages/) complemented with ERA-Interim above 50 hPa and the standard atmosphere above 1 hPa")
 
 # time units are expected to be seconds since startDate
@@ -209,7 +209,7 @@ case.set_attribute("surfaceForcing","ts")
 # 5. Writing file
 ################################################
 
-case.write('DYNAMO_NSA3a_DEF_driver.nc',verbose=False)
+case.write('DYNAMO_NSA3A_DEF_driver.nc',verbose=False)
 
 if lverbose:
     case.info()

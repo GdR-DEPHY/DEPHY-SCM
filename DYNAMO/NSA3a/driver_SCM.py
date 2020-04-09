@@ -6,7 +6,7 @@ Created on 7 April 2020
 @author: Romain Roehrig
 """
 
-## DYNAMO/NSA3a case SCM-enabled definition
+## DYNAMO/NSA3A case SCM-enabled definition
 
 import sys
 sys.path = ['../../utils/',] + sys.path
@@ -20,8 +20,8 @@ from Case import Case
 ################################################
 
 case_name = 'DYNAMO'
-subcase_name = 'NSA3a'
-title = "Forcing and initial conditions for DYNAMO/NSA3a - SCM-enabled version"
+subcase_name = 'NSA3A'
+title = "Forcing and initial conditions for DYNAMO/NSA3A - SCM-enabled version"
 
 lplot = True     # plot the new version of the case
 lcompare = True  # plot comparisons between original and new versions
