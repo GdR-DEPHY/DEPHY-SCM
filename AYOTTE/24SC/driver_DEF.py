@@ -9,8 +9,7 @@ Modifications:
   07-04-2020, R. Roehrig: correction to deactivate radiation and for surface flux time axis
 """
 
-## ARM-Cumulus original case definition
-## From http://projects.knmi.nl/eurocs/ARM/case_ARM_html/
+## AYOTTE/24SC
 
 import os
 import sys
@@ -109,7 +108,6 @@ vg = np.zeros((2,17),dtype=np.float64)
 vg[0,:] = 0.
 vg[1,:] = 0.
 
-
 case.add_variable('ug',ug,time=[t0,t1],lev=z,levtype='altitude')
 case.add_variable('vg',vg,time=[t0,t1],lev=z,levtype='altitude')
 
@@ -132,7 +130,7 @@ case.add_variable('sfc_lat_flx', sfcForc[2::3],time=timeSfc)
 # advection of theta and rt
 case.set_attribute("adv_theta",0)
 case.set_attribute("adv_rt",0)
-# potential temperature radiative tendency is included in advection
+# no radiation (for now, equivalent to potential temperature radiative tendency included in advection)
 case.set_attribute("rad_theta",'adv')
 # Geostrophic wind forcing
 case.set_attribute("forc_geo",1)

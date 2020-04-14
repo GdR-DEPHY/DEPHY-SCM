@@ -6,7 +6,7 @@ Created on 01 Avril 2020
 @author: Fleur Couvreux
 """
 
-## ARM-Cumulus SCM-enabled case definition
+## AYOTTE/24SC
 
 import sys
 sys.path = ['../../utils/',] + sys.path

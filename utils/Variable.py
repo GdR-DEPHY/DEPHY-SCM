@@ -129,13 +129,13 @@ class Variable:
                 if levunits is None:
                     levs2 = var2.level.data
                 elif levunits == 'hPa' and var2.level.units == 'Pa':
-                    levs2 = self.level.data/100.
+                    levs2 = var2.level.data/100.
                 elif (levunits == 'hPa' and var2.level.units == 'hPa') or (levunits == 'Pa' and var2.level.units == 'Pa'):
-                    levs2 = self.level.data
+                    levs2 = var2.level.data
                 elif levunits == 'km' and var2.level.units == 'm':
-                    levs2 = self.level.data/1000.
+                    levs2 = var2.level.data/1000.
                 elif (levunits == 'km' and var2.level.units == 'km') or (levunits == 'm' and var2.level.units == 'm'):
-                    levs2 = self.level.data
+                    levs2 = var2.level.data
                 else:
                     print "ERROR: unexpected case for levunits (var2):", levunits, var2.level.units
             
