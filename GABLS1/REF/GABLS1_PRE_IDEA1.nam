@@ -1,0 +1,170 @@
+&NAM_LUNITn CINIFILE='GABLS1INI' ,
+            CINIFILEPGD='GABLS1PGD'/
+
+&NAM_DIMn_PRE NIMAX=200, 
+	      NJMAX=200 /
+
+&NAM_CONF_PRE NHALO=1,
+              JPHEXT=1,
+              LCARTESIAN=.TRUE.,
+              LPACK = .TRUE.,           
+              CEQNSYS='DUR',            
+              NVERB=10,			
+              CIDEAL='RSOU',            
+              CZS='FLAT',               
+              LBOUSS = .FALSE.,
+              LSHIFT = .FALSE.,		
+              LPERTURB = .TRUE.,	
+              LFORCING = .TRUE. /      
+
+&NAM_PERT_PRE CPERT_KIND='WH',
+              XAMPLIWH=0.1,
+              LSET_RHU=.TRUE.,
+              NKWH =155/
+
+&NAM_CONFn    LUSERV=.F.,			
+              LUSERC=.F.,	                
+              LUSERI=.F.,                  
+              NSV_USER=0/                 
+
+&NAM_GRIDH_PRE  XDELTAX = 2.0,         
+                XDELTAY = 2.0,         
+                XHMAX = 0.0/		
+
+&NAM_VER_GRID  NKMAX=155,
+               LTHINSHELL=.FALSE.,
+               YZGRID_TYPE='FUNCTN',
+               ZDZGRD = 2.0,           
+               ZDZTOP = 6.0,		
+               ZZMAX_STRGRD = 250.0,	
+               ZSTRGRD = 0.0,		
+               ZSTRTOP = 20.0 /	
+
+&NAM_DYNn_PRE  CPRESOPT='ZRESI'/         
+
+&NAM_LBCn_PRE  CLBCX= 2*"CYCL",          
+               CLBCY= 2*"CYCL" /
+         
+&NAM_VPROF_PRE LGEOSBAL=.FALSE.,	
+               CFUNU='ZZZ',             
+               CFUNV='ZZZ',             
+               CTYPELOC='IJGRID',       
+               NILOC=2,			
+               NJLOC=2 /
+&NAM_GRID_PRE            XLON0=123.33,
+                         XLAT0=73.0,
+                         XLATORI=73.00,
+                         XLONORI=123.33 ,
+                         XRPK=-1 /
+
+&NAM_GRn_PRE CSURF='EXTE' /
+&NAM_PGD_SCHEMES         CNATURE = 'TSZ0'    , 
+                         CSEA    = 'NONE'    , 
+                         CTOWN   = 'NONE'    , 
+                         CWATER  = 'NONE' /
+&NAM_FRAC              LECOCLIMAP = T,
+                       XUNIF_SEA    = 0.,
+                       XUNIF_WATER  = 0.,
+                       XUNIF_TOWN   = 0.,
+                       XUNIF_NATURE = 1. /
+&NAM_COVER          XUNIF_COVER(6)=1./
+
+&NAM_DATA_TSZ0      NTIME=25,
+                    XUNIF_DTS(1)=-0.25,
+                    XUNIF_DTS(2)=-0.25,
+                    XUNIF_DTS(3)=-0.25,
+                    XUNIF_DTS(4)=-0.25,
+                    XUNIF_DTS(5)=-0.25,
+                    XUNIF_DTS(6)=-0.25,
+                    XUNIF_DTS(7)=-0.25,
+                    XUNIF_DTS(8)=-0.25,
+                    XUNIF_DTS(9)=-0.25,
+                    XUNIF_DTS(10)=0.,
+                    XUNIF_DTS(11)=0.,
+                    XUNIF_DTS(12)=0.,
+                    XUNIF_DTS(13)=0.,
+                    XUNIF_DTS(14)=0.,
+                    XUNIF_DTS(15)=0.,
+                    XUNIF_DTS(16)=0.,
+                    XUNIF_DTS(17)=0.,
+                    XUNIF_DTS(18)=0.,
+                    XUNIF_DTS(19)=0.,
+                    XUNIF_DTS(20)=0.,
+                    XUNIF_DTS(21)=0.,
+                    XUNIF_DTS(22)=0.,
+                    XUNIF_DTS(23)=0.,
+                    XUNIF_DTS(24)=0.,
+                    XUNIF_DTS(25)=0./
+
+&NAM_DATA_ISBA         NTIME = 1 ,
+                       XUNIF_Z0(1,1)        = 0.1,
+                       XUNIF_Z0(1,2)        = 0.1,
+                       XUNIF_Z0(1,3)        = 0.1,
+                       XUNIF_Z0(1,4)        = 0.1,
+                       XUNIF_Z0(1,5)        = 0.1,
+                       XUNIF_Z0(1,6)        = 0.1,
+                       XUNIF_Z0(1,7)        = 0.1,
+                       XUNIF_Z0(1,8)        = 0.1,
+                       XUNIF_Z0(1,9)        = 0.1,
+                       XUNIF_Z0(1,10)       = 0.1,
+                       XUNIF_Z0(1,11)       = 0.1,
+                       XUNIF_Z0(1,12)       = 0.1/
+
+&NAM_ISBA              XUNIF_CLAY    = 1.          ,
+                       XUNIF_SAND    = 0.         ,
+                       XUNIF_RUNOFFB = 0.5           ,
+                       CISBA         = '2-L'         ,
+                       CPHOTO        = 'NON'         ,
+                       NPATCH        = 1             ,
+                       NGROUND_LAYER = 2
+/
+
+&NAM_PREP_SURF_ATM NYEAR  = 2000,
+                   NMONTH = 01,
+                   NDAY   = 01,
+                   XTIME  = 0. /
+&NAM_PREP_ISBA           XHUG_SURF = 0.,
+                         XHUG_ROOT = 0.,
+                         XHUG_DEEP = 0.,
+                         XHUGI_SURF = 1.,
+                         XHUGI_ROOT = 1.,
+                         XHUGI_DEEP = 1.,
+                   XTG_SURF  = 266.0,
+                   XTG_ROOT  = 266.0,
+                   XTG_DEEP  = 266.0,
+                   LISBA_CANOPY=.FALSE.,
+                   NYEAR  = 2000,
+                   NMONTH = 01,
+                   NDAY   = 01,
+                   XTIME  = 0.  /
+
+&NAM_DEEPSOIL
+      LPHYSDOMC = F ,
+      LDEEPSOIL = F /
+
+RSOU
+2000 01 01 0.
+'ZUVTHVMR'
+0.
+101320.
+265.0
+0.
+4
+0. 0. 0.
+2.0 8.0 0.
+100. 8. 0.
+400. 8.0 0.
+4
+1.0 265.0 0.
+100. 265.0 0.
+400. 268.0 0.
+ZFRC
+1
+2000 01 01 10.
+0
+101320.
+265.0
+0.
+2
+0. 8.0 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
+400. 8.0 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.

@@ -1,0 +1,63 @@
+&NAM_LUNITn CINIFILE='GABLS1INI' ,
+            CINIFILEPGD='GABLS1PGD'/
+&NAM_CONFn   LUSERV = .FALSE. / 
+
+&NAM_DYNn    XTSTEP         = 0.2,
+	     CPRESOPT       ='ZRESI',	
+             LITRADJ        =.FALSE.,	
+             XT4DIFU        = 2000.,
+             LVE_RELAX = .TRUE./	
+
+&NAM_ADVn    CUVW_ADV_SCHEME = "CEN4TH",
+             CMET_ADV_SCHEME= 'PPM_01',	
+             CSV_ADV_SCHEME= 'PPM_01' /
+
+&NAM_PARAMn  CTURB   = "TKEL",		
+             CRAD    = "NONE",		
+             CCLOUD  = "NONE",		
+             CDCONV  = "NONE" /
+
+&NAM_FRC     LGEOST_UV_FRC = .TRUE./
+
+&NAM_LBCn    CLBCX = 2*"CYCL",		
+             CLBCY = 2*"CYCL",		
+	     XCPHASE = 10.0 /		
+
+&NAM_TURBn   XIMPL = 1.,
+	     CTURBLEN = "DEAR",  		
+	     CTURBDIM = "3DIM",		
+	     LTURB_DIAG = .TRUE.,	
+	     LTURB_FLX = .TRUE., 	
+             XKEMIN=1E-10,
+             LRMC01 = .TRUE./
+
+&NAM_BLANK   XDUMMY1 = 1.6,
+             LDUMMY1 = .TRUE. /
+
+&NAM_CONF    LFLAT    = .TRUE.,	
+             CCONF    = "START" ,
+	     CEQNSYS  = 'DUR',		
+             LFORCING = .TRUE.,	
+             NMODEL   = 1,		
+             NVERB    = 1,		
+	     NHALO    = 1,
+             JPHEXT   = 1,		
+	     CSPLIT   = 'BSPLITTING',	
+             CEXP     = "GABL1",
+             CSEG     = "ECH01"/
+
+&NAM_CONFZ   MPI_BUFFER_SIZE = 800/
+
+&NAM_DYN     XSEGLEN   = 32400.0, 	
+             LCORIO    = .T.,	 	
+             LNUMDIFU  = .F.,   	
+             LNUMDIFTH = .F.,
+             XALZBOT = 300.0,
+   	     XALKTOP = 0.1/
+
+&NAM_LES     LLES_MEAN = T,
+             LLES_SUBGRID = T,
+             LLES_RESOLVED = T,
+             XLES_TEMP_SAMPLING = 100.0/
+
+&NAM_BACKUP  XBAK_TIME_FREQ(1) = 3600.0, XBAK_TIME_FREQ_FIRST(1) = 3600.0/
