@@ -134,12 +134,12 @@ height_forc = extend('zg',height_forc,init=False,time=timeForc)
 case.add_variable('height_forc',height_forc,time=timeForc,timeid='time',lev=levForc,levtype='pressure',levid='lev')
 
 # Temperature horizontal advection
-hT = fin['hT'][:nt,:]
+hT = fin['hT'][:nt,:]*-1 # from advective tendency to advective forcing
 hT = extend('advT',hT,init=False,time=timeForc)
 case.add_variable('temp_adv',hT,time=timeForc,timeid='time',lev=levForc,levtype='pressure',levid='lev')
 
 # Specific humidity horizontal advection
-hq = fin['hq'][:nt,:]/1000. # from g kg-1 s-1 to kg kg-1 s-1
+hq = fin['hq'][:nt,:]/1000.*-1 # from advective tendency to advective forcing and from g kg-1 s-1 to kg kg-1 s-1
 hq = extend('advq',hq,init=False,time=timeForc)
 case.add_variable('qv_adv',hq,time=timeForc,timeid='time',lev=levForc,levtype='pressure',levid='lev')
 
