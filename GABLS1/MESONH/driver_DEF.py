@@ -8,7 +8,7 @@ Created on 01 May 2020
 Modifications:
     2020-06-04, R. Roehrig: Add z0 value + some cleaning/formatting
 
-GABLS1 original case definition
+GABLS1 MESO-NH case definition (compared to REF, the TKE profile is set to 0 m2 s-2)
 From Kosovic and Curry 2000; Cuxart et al 2006; Beare et al 2006
 From Kosovic and Curry 2000: The initial conditions,surface cooling rate, and the inversion strength for these simulations were based on the measurements made during BASE on 1 October 1994 from flight number 7
 In  the  baseline  simulation,  the  latitude  was 73.8N, the geostrophic wind was set to 8 m s-1, thesurface cooling rate was 0.25 K h-1, the overlying inversion strength was 0.01 K m-1, and the surface roughness was 0.1 m. The baseline case roughness length is higher than the typical roughness length over sea ice in the Arctic ocean. However, due to the limitations of LES resolution, using a significantly lower roughness length would  result  in an underresolved surface layer.
@@ -37,7 +37,7 @@ lverbose = False # print information about variables and case
 # lat/lon are fixed to a lat representative of Arctic conditions
 # 8h duration with a constant surface cooling
 
-case = Case('GABLS1/REF',
+case = Case('GABLS1/MESONH',
         lat=73,
         lon=123.33,
         startDate="20000101100000",
@@ -46,7 +46,7 @@ case = Case('GABLS1/REF',
         z0=0.1)
 
 case.set_title("Forcing and initial conditions for GABLS1 case - Original definition")
-case.set_reference("Beare et al. (2006, BLM), Cuxart et al (2006, BLM), Kosovic and Curry (2000)")
+case.set_reference("Beare et al. (2006, BLM), Cuxart et al (2006, BLM), Kosovic and Curry (2000) reproduced in Meso-NH by Q Rodier")
 case.set_author("F. Couvreux")
 case.set_script("driver_DEF.py")
 
@@ -84,12 +84,13 @@ case.add_variable('height',z,lev=z,levtype='altitude')
 ztke = range(0,400+1,10)
 nztke = len(ztke)
 tke = np.zeros(nztke,dtype=np.float64)
+# tke initialized to 0 in the Meso-NH LES instead of 0.4(1-z/250)**3 m 2 s-2 ,for z<250m as proposed by Beare et al (2006)
 
-for iz in range(0,nztke):
-    if ztke[iz] < 250:
-      tke[iz] = 0.4*(1.-ztke[iz]/250.)**3
-    else:
-      tke[iz] = 0.
+#for iz in range(0,nztke):
+#    if ztke[iz] < 250:
+#      tke[iz] = 0.4*(1.-ztke[iz]/250.)**3
+#    else:
+#      tke[iz] = 0.
 
 case.add_variable('tke',tke,lev=ztke,levtype='altitude')
 
@@ -144,7 +145,7 @@ case.set_attribute("z0",0.1)
 # 5. Writing file
 ################################################
 
-case.write('GABLS1_REF_DEF_driver.nc',verbose=False)
+case.write('GABLS1_MESONH_DEF_driver.nc',verbose=False)
 
 if lverbose:
     case.info()
