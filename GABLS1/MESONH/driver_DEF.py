@@ -52,8 +52,8 @@ case.set_script("driver_DEF.py")
 
 
 # time units are expected to be seconds since startDate
-t0 = 0     # 10:00 UTC, 11 December 2009
-t1 = 32400 # 17:00 UTC, 11 December 2009
+t0 = 0     # 10:00 UTC, 1 January 2000
+t1 = 32400 # 17:00 UTC, 1 January 2000
 
 
 ################################################
@@ -118,7 +118,7 @@ ts=[265., 264.75, 264.5, 264.25, 264., 263.75, 263.5, 263.25, 263.0, 262.75]
 timets=[0., 3600., 7200., 10800., 14400., 18000., 21600., 25200., 28800., 32400.]
 case.add_variable('ts',ts,time=timets)
 
-# The following flux-gradient relations is recommended
+# The following flux-gradient relations are recommended
 # du/dz= ∂v=dz u*/(Kz)*(1.+Bm(z/L))
 # dtheta/dz= θ*/(Kz)*(1+Bh(z/L))
 # K=0.4
@@ -132,7 +132,7 @@ case.add_variable('ts',ts,time=timets)
 ################################################
 
 # Radiation schemes are switched off 
-case.set_attribute("rad_theta",0)
+case.set_attribute("rad_theta","adv")
 # Geostrophic wind forcing
 case.set_attribute("forc_geo",1)
 # Surface flux forcing, wind stress is computed using z0

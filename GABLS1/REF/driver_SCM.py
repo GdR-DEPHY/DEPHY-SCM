@@ -6,7 +6,7 @@ Created on 01 May 2020
 @author: Fleur Couvreux
 """
 
-## ARM-Cumulus SCM-enabled case definition
+## GABLS1 SCM-enabled case definition
 
 import sys
 sys.path = ['../../utils/',] + sys.path
@@ -47,15 +47,15 @@ if lverbose:
 # New vertical grid, 10-m resolution from surface to 6000 m (above the surface)
 levout = np.array(range(0,6001,10),dtype=np.float64) 
 
-# New temporal grid, from 10:00 UTC to 17:00 UTC, 11 December 2009, 30-min timestep
-timeout = np.array(range(0,32401,1800),dtype=np.float64) 
+# New temporal grid, from 10:00 UTC to 17:00 UTC, 1 January 2000, 1-hour timestep
+timeout = np.array(range(0,32401,3600),dtype=np.float64) 
 
 # conversion
 newcase = case.convert2SCM(time=timeout,lev=levout,levtype='altitude')
 
 
 # update some attributes
-newcase.set_title("Forcing and initial conditions for GABLS1-REF case - SCM-enabled version")
+newcase.set_title("Forcing and initial conditions for GABLS1/REF case - SCM-enabled version")
 newcase.set_script("driver_SCM.py")
 
 # display some information about the new version of the case
