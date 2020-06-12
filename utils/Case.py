@@ -884,7 +884,7 @@ class Case:
                     caseSCM.set_attribute('p_nudging_temp',plev) 
 
         var = 'thetal_nudging'
-        att = 'nudging_thl'
+        att = 'nudging_thetal'
         if att in self.attlist and self.attributes[att] > 0:
             if lflag:
                 print 'Error: Several nudging variable for temperature are given, which might yield to inconsistencies'
@@ -896,13 +896,13 @@ class Case:
             caseSCM.add_variable(var,dataout[var].data,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
             print 'assume theta_nudging=thetal_nudging'
             caseSCM.add_variable('theta_nudging',dataout[var].data,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            caseSCM.set_attribute('nudging_th',self.attributes[att])
+            caseSCM.set_attribute('nudging_theta',self.attributes[att])
             print 'compute temp_nudging from thetal_nudging assuming no liquid water'
             pressure = caseSCM.variables['pressure_forc'].data
             thlnudg = caseSCM.variables['thetal_nudging'].data
             tnudg = thermo.theta2t(p=pressure,theta=thlnudg)
             caseSCM.add_variable('temp_nudging',tnudg,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            caseSCM.set_attribute('nudging_t',self.attributes[att])
+            caseSCM.set_attribute('nudging_temp',self.attributes[att])
             if 'p_nudging_thetal' in self.attributes.keys():
                 caseSCM.set_attribute('p_nudging_theta',self.attributes['p_nudging_thetal'])
                 caseSCM.set_attribute('p_nudging_temp',self.attributes['p_nudging_thetal'])
