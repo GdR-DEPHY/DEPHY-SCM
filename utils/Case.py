@@ -274,7 +274,7 @@ class Case:
 
         for var in f.variables:
             if not(var in f.dimensions) and not(var[0:6] == 'bounds') :
-                #print var
+                print var
                 tmp = readvar(var,f)
                 if tmp.level is None:
                     self.add_variable(var,tmp.data,time=tmp.time.data)
@@ -283,7 +283,7 @@ class Case:
                 elif tmp.level.units == 'Pa':
                     self.add_variable(var,tmp.data,time=tmp.time.data,lev=tmp.level.data,levtype='pressure')                    
                 if verbose:
-                    data[var].info()
+                    tmp.info()
 
         #print self.attlist
         for att in known_attributes:

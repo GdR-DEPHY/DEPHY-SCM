@@ -138,7 +138,6 @@ class Variable:
                     levs2 = var2.level.data
                 else:
                     print "ERROR: unexpected case for levunits (var2):", levunits, var2.level.units
-            
 
 
         if not(self.time is None) and not(self.level is None):
