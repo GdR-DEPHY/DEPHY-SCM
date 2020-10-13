@@ -48,7 +48,7 @@ if lverbose:
 levout = np.array(range(0,6001,10),dtype=np.float64) 
 
 # New temporal grid, from 11:30 UTC, 21 June 1997 to 02:00 UTC, 22 June 1997, 30-min timestep
-timeout = np.array(range(0,86400,1800),dtype=np.float64) 
+timeout = np.array(range(0,86400+1800,1800),dtype=np.float64) 
 
 # conversion
 newcase = case.convert2SCM(time=timeout,lev=levout,levtype='altitude')
