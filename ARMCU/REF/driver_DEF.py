@@ -6,7 +6,7 @@ Created on 27 November 2019
 @author: Romain Roehrig
 
 Modification
-  2020/11/11, R. Roehrig: update for improve case definition interface.
+  2020/11/11, R. Roehrig: update for improved case definition interface.
 """
 
 ## ARM-Cumulus original case definition
