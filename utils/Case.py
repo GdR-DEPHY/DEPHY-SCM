@@ -10,6 +10,8 @@ import os
 import sys
 import time
 
+from datetime import datetime 
+
 import netCDF4 as nc
 
 import numpy as np
@@ -24,7 +26,7 @@ import thermo
 
 class Case:
 
-    def __init__(self,caseid,lat=None,lon=None,startDate=None,endDate=None,zorog=0.,z0=None):
+    def __init__(self,caseid,lat=None,lon=None,startDate=None,endDate=None,surfaceType='ocean',zorog=0.,z0=None):
 
         self.id = caseid
 
@@ -41,6 +43,9 @@ class Case:
         self.startDate = startDate
         self.endDate = endDate
 
+        # Surface type
+        self.surfaceType = surfaceType
+
         # Altitude above sea level (m)
         self.zorog = zorog
 
@@ -54,6 +59,13 @@ class Case:
 
             self.t0Axis = Axis('t0',[self.t0,],name='Initial time',units=self.tunits,calendar='gregorian')
 
+        # Convert startDate and endDate 
+
+        d = datetime(int(startDate[0:4]),int(startDate[4:6]),int(startDate[6:8]),int(startDate[8:10]),int(startDate[10:12]),int(startDate[12:14]))
+        self.tstart = nc.date2num(d,self.tunits,calendar='gregorian') # should be 0
+        d = datetime(int(endDate[0:4]),int(endDate[4:6]),int(endDate[6:8]),int(endDate[8:10]),int(endDate[10:12]),int(endDate[12:14]))
+        self.tend = nc.date2num(d,self.tunits,calendar='gregorian')
+
         # Variables
         self.varlist = []
         self.variables = {}
@@ -61,6 +73,7 @@ class Case:
         # Attributes
         self.attlist = ['case','title','reference','author','version','format_version','modifications','script','comment',
                 'startDate','endDate',
+                'surfaceType',
                 'zorog'
                 ]
         self.attributes = {
@@ -75,6 +88,7 @@ class Case:
                 'comment': "",
                 'startDate': self.startDate,
                 'endDate': self.endDate,
+                'surfaceType': self.surfaceType,
                 'zorog': self.zorog
                 }
         for att in set(required_attributes).difference(set(self.attlist)):
@@ -96,6 +110,11 @@ class Case:
         self.t0 = 0
         self.tunits = 'seconds since {0}-{1:0>2}-{2:0>2} {3:0>2}:{4:0>2}:{5:0>2}'.format(startDate[0:4],startDate[4:6],startDate[6:8],startDate[8:10],startDate[10:12],startDate[12:14])
         self.t0Axis = Axis('t0',[self.t0,],name='Initial time',units=self.tunits,calendar='gregorian')
+
+        d = datetime(int(startDate[0:4]),int(startDate[4:6]),int(startDate[6:8]),int(startDate[8:10]),int(startDate[10:12]),int(startDate[12:14]))
+        self.tstart = nc.date2num(d,self.tunits,calendar='gregorian') # should be 0
+        d = datetime(int(endDate[0:4]),int(endDate[4:6]),int(endDate[6:8]),int(endDate[8:10]),int(endDate[10:12]),int(endDate[12:14]))
+        self.tend = nc.date2num(d,self.tunits,calendar='gregorian')
 
     def set_latlon(self,lat,lon):
 
@@ -139,7 +158,30 @@ class Case:
 
         self.attributes['script'] = script
 
+    def set_z0(self,z0):
+
+        self.attlist.append('z0')
+        self.attributes['z0'] = z0
+
     def add_variable(self,varid,vardata,lev=None,levtype=None,levid=None,time=None,timeid=None,name=None,units=None):
+        """ Add a variable to a Case object.
+            
+            Required arguments:
+            varid   -- string for the variable id. Should be in ...
+            vardata -- input data as a list or a numpy array
+
+            Optional (keyword) arguments:
+            lev     -- input data for the level axis as a list, a numpy array or an Axis object (default None)
+            levtype -- string describing the type of the level axis: None (default), 'altitude' or 'pressure'
+            levid   -- string for the level axis id. The default is None, which implies a generic id (default None)
+            time    -- input data for the time axis, as a list, a numpy array or an Axis object (default None)
+            timeid  -- string for the time axis id. The default is None, which implies a generic id (default None)
+            name    -- string of the name attribute of the variable (to be use as long_name in a netCDF file) (default None)
+            units   -- string of the units attribute of the variable (default None)
+        """
+
+        # if variable is already defined, stop
+        # if not, add it to case variables dictionnary
 
         if varid in self.varlist:
             print 'ERROR: Variable {0} is already defined'.format(varid)
@@ -148,61 +190,49 @@ class Case:
         self.varlist.append(varid)
 
         ######################
-        # Level axis, if needed
+        # Prepare level axis, if needed
         if lev is None:
             levAxis=None
             nlev = None
+        elif isinstance(lev,Axis):
+            levAxis = lev
+            nlev, = lev.data.shape
         else:
-            try:
-                nlev, = lev.shape
-            except AttributeError:
-                nlev = len(lev)
-            except:
-                raise
+            nlev, = np.array(lev).shape # In case lev is given as a list
             if levtype == 'altitude':
-                if levid is None:
-                    levAxis = Axis('lev_{0}'.format(varid),lev,name='{0} for variable {1}'.format(levtype,varid),units='m')
-                else:
-                    levAxis = Axis(levid,lev,name='{0}'.format(levtype),units='m')
+                levunits = 'm'
             elif levtype == 'pressure':
-                #print 'Pressure level type is not coded yet'
-                #sys.exit()
-                if levid is None:
-                    levAxis = Axis('lev_{0}'.format(varid),lev,name='{0} for variable {1}'.format(levtype,varid),units='Pa')
-                else:
-                    levAxis = Axis(levid,lev,name='{0}'.format(levtype),units='Pa')
+                levunits = 'Pa'
             else:
                 print 'ERROR: levtype unexpected:', levtype
                 print 'ERROR: levtype should be defined and in altitude, pressure:'
                 sys.exit()
 
+            if levid is None:
+                levAxis = Axis('lev_{0}'.format(varid),lev,name='{0} for variable {1}'.format(levtype,varid),units=levunits)
+            else:
+                levAxis = Axis(levid,lev,name='{0}'.format(levtype),units=levunits)
+
         ######################
-        # Time axis
+        # Prepare time axis
         if time is None:
             timeAxis = None
             nt = None
+        elif isinstance(time,Axis):
+            timeAxis = time
+            nt, = time.data.shape
         else:
+            nt, = np.array(time).shape # In case time is given as a list
             # time is supposed to be given in seconds since beginning
             if timeid is None:
                 timeAxis = Axis('time_{0}'.format(varid),time,
-                        name='Forcing time for variable {0}'.format(varid),
-                        units=self.tunits)
+                                name='Forcing time for variable {0}'.format(varid),
+                                units=self.tunits)
             else:
                 timeAxis = Axis(timeid,time,name='Forcing time',units=self.tunits)
-            try:
-                nt, = time.shape
-            except AttributeError:
-                nt = len(time)
-            except:
-                raise
-
-        # if variable is an initial variable, impose t0Axis as time axis
-        if varid in ['ps','height','pressure','u','v','temp','theta','thetal','qv','qt','rv','rt','rl','ri','ql','qi','tke']:
-            timeAxis = self.t0Axis
-            nt = 1
 
         ######################
-        # Variable attributes
+        # Get variable attributes
         if name is None:
             varname = var_attributes[varid]['name']
         else:
@@ -222,21 +252,356 @@ class Case:
             plotunits = None
 
         ######################
-        # Create variable and add to case variables dictionnary
-        if nlev is None:
-            if nt is None:
-                print 'ERROR: nt=None and nlev=None unexpected'
-                sys.exit()
-            else:
-                tmp = np.reshape(vardata,(nt,1,1))
+        # Create variable
+        if levAxis is None and timeAxis is None:
+            print 'ERROR: level and time axes are None. Unexpected'
+            sys.exit()
         else:
-            if nt is None:
+            if timeAxis is None:
                 tmp = np.reshape(vardata,(nlev,1,1))
+            elif levAxis is None:
+                tmp = np.reshape(vardata,(nt,1,1))
             else:
                 tmp = np.reshape(vardata,(nt,nlev,1,1))
 
         self.variables[varid] = Variable(varid,name=varname,units=varunits,data=tmp,level=levAxis,time=timeAxis,lat=self.latAxis,lon=self.lonAxis,plotcoef=plotcoef,plotunits=plotunits)
 
+
+    def add_init_variable(self,varid,vardata,**kwargs): 
+        """ Add an initial state variable to a case object.
+            Prepare time axis for such initial state variable and possibly reshape input data to conform with DEPHY format.
+            
+            Required argument:
+            varid   -- id of the initial variable. Should be in ...
+            vardata -- input data as a numeric value (int or float), a list or a numpy array
+
+            See add_variable function for optional arguments.
+            Note that, for all variable except ps:
+            - a level axis is required (lev optional argument).
+            - a levtype is required (levtype optional argument).
+        """
+
+        # Get time axis for initial state variables
+        kwargs['time'] = self.t0Axis
+
+        if varid in ['ps']:
+            # Put the expected shape of the input data
+            tmp = np.reshape(vardata,(1,1,1))
+        else:
+            # Check if lev optional argument is given
+            if not(kwargs.has_key('lev')):
+                print 'ERROR: level axis should be given for variable', varid
+                sys.exit()
+
+            nlev, = np.array(kwargs['lev']).shape # In case lev is given as a list
+
+            # Put the expected shape of the input data
+            tmp = np.reshape(vardata,(1,nlev,1,1))
+
+        # add initial variable to the Case object
+        self.add_variable(varid,tmp,**kwargs)
+
+    def add_init_ps(self,vardata,**kwargs):
+        """Add initial state variable for surface pressure to a Case object.
+           
+           Required argument:
+           vardata -- input data as an integer or a float.
+
+           See add_variable function for optional arguments.
+        """
+
+        self.add_init_variable('ps',vardata,**kwargs)
+
+    def add_init_temp(self,vardata,**kwargs):
+        """Add initial state variable for temperature to a Case object.
+           Required argument:
+           vardata -- input data as a list or a numpy array.
+
+           See add_variable function for optional arguments.
+           Note that:
+           - a level axis is required (lev optional argument).
+           - a levtype is required (levtype optional argument).
+        """
+
+        self.add_init_variable('temp',vardata,**kwargs)
+
+    def add_init_theta(self,vardata,**kwargs):
+        """Add initial state variable for potential temperature to a Case object.
+           Required argument:
+           vardata -- input data as a list or a numpy array.
+
+           See add_variable function for optional arguments.
+           Note that:
+           - a level axis is required (lev optional argument).
+           - a levtype is required (levtype optional argument).
+        """
+
+        self.add_init_variable('theta',vardata,**kwargs)
+
+    def add_init_thetal(self,vardata,**kwargs):
+        """Add initial state variable for liquid water potential temperature to a Case object.
+           Required argument:
+           vardata -- input data as a list or a numpy array.
+
+           See add_variable function for optional arguments.
+           Note that:
+           - a level axis is required (lev optional argument).
+           - a levtype is required (levtype optional argument).
+        """
+
+        self.add_init_variable('thetal',vardata,**kwargs)
+
+    def add_init_qv(self,vardata,**kwargs):
+        """Add initial state variable for specific humidity to a Case object.
+           Required argument:
+           vardata -- input data as a list or a numpy array.
+
+           See add_variable function for optional arguments.
+           Note that:
+           - a level axis is required (lev optional argument).
+           - a levtype is required (levtype optional argument).
+        """
+
+        self.add_init_variable('qv',vardata,**kwargs)
+
+    def add_init_qt(self,vardata,**kwargs):
+        """Add initial state variable for total water to a Case object.
+           Required argument:
+           vardata -- input data as a list or a numpy array.
+
+           See add_variable function for optional arguments.
+           Note that:
+           - a level axis is required (lev optional argument).
+           - a levtype is required (levtype optional argument).
+        """
+
+        self.add_init_variable('qt',vardata,**kwargs)
+
+    def add_init_rv(self,vardata,**kwargs):
+        """Add initial state variable for water vapor mixing ratio to a Case object.
+           Required argument:
+           vardata -- input data as a list or a numpy array.
+
+           See add_variable function for optional arguments.
+           Note that:
+           - a level axis is required (lev optional argument).
+           - a levtype is required (levtype optional argument).
+        """
+
+        self.add_init_variable('rv',vardata,**kwargs)
+
+    def add_init_rt(self,vardata,**kwargs):
+        """Add initial state variable for total water mixing ratio to a Case object.
+           Required argument:
+           vardata -- input data as a list or a numpy array.
+
+           See add_variable function for optional arguments.
+           Note that:
+           - a level axis is required (lev optional argument).
+           - a levtype is required (levtype optional argument).
+        """
+
+        self.add_init_variable('rt',vardata,**kwargs)
+
+    def add_init_wind(self,udata,vdata,**kwargs):
+        """Add initial state variable for total water to a Case object.
+           Required argument:
+           udata -- input data for zonal wind as a list or a numpy array.
+           vdata -- input data for meridional wind as a list or a numpy array.
+
+           See add_variable function for optional arguments.
+           Note that:
+           - a level axis is required (lev optional argument).
+           - a levtype is required (levtype optional argument).
+        """
+
+        self.add_init_variable('u',udata,**kwargs)
+        self.add_init_variable('v',vdata,**kwargs)
+
+    def add_init_tke(self,vardata,**kwargs):
+        """Add initial state variable for turbulent kinetic energy to a Case object.
+           Required argument:
+           vardata -- input data as a list or a numpy array.
+
+           See add_variable function for optional arguments.
+           Note that:
+           - a level axis is required (lev optional argument).
+           - a levtype is required (levtype optional argument).
+        """
+
+        self.add_init_variable('tke',vardata,**kwargs)
+
+    def add_forcing_variable(self,varid,vardata,**kwargs): 
+        """ Add a forcing variable to a case object.
+            
+            Required argument:
+            varid   -- id of the forcing variable. Should be in ...
+            vardata -- input data as a numeric value (int or float), a list or a numpy array
+
+            See add_variable function for optional arguments.
+            Note that, for all variable except ps_forc:
+            - a level axis is required (lev optional argument).
+            - a levtype is required (levtype optional argument).
+
+            If time is not provided, forcing is assumed constant in time
+        """
+
+        # Prepare time axis
+        if kwargs.has_key('time'):
+            lconstant = False
+            nt, = np.array(kwargs['time']).shape
+        else: # forcing is constant in time
+            lconstant = True
+            kwargs['time'] = [self.tstart,self.tend]
+            nt = 2
+
+        if varid in ['ps_forc','sfc_sens_flx','sfc_lat_flx','ustar']:
+            # Put the expected shape of the input data
+            if lconstant: 
+                tmp = np.zeros((nt,1,1),dtype=np.float32)
+                tmp[0,0,0] = vardata
+                tmp[1,0,0] = vardata
+            else:
+                tmp = np.reshape(vardata,(nt,1,1))
+        else:
+            # Check if lev optional argument is given
+            if not(kwargs.has_key('lev')):
+                print 'ERROR: level axis should be given for variable', varid
+                sys.exit()
+
+            nlev, = np.array(kwargs['lev']).shape # In case lev is given as a list
+
+            # Put the expected shape of the input data
+            if lconstant:
+                tmp = np.zeros((nt,nlev,1,1),dtype=np.float32)
+                tmp[0,:,0,0] = vardata[:]
+                tmp[1,:,0,0] = vardata[:]
+            else:
+                tmp = np.reshape(vardata,(nt,nlev,1,1))
+
+        # add initial variable to the Case object
+        self.add_variable(varid,tmp,**kwargs)
+
+    def add_geostrophic_wind(self,ug=None,vg=None,**kwargs):
+        """Add a geostrophic wind forcing to a Case object.
+           Required argument:
+           ug -- input data for geostrophic zonal wind as a list or a numpy array.
+           vg -- input data for geostrophic meridional wind as a list or a numpy array.
+
+           See add_variable function for optional arguments.
+           Note that:
+           - a level axis is required (lev optional argument).
+           - a levtype is required (levtype optional argument).
+
+           If time is not provided, forcing is assumed constant in time
+        """
+
+        if ug is None or vg is None:
+            print 'ERROR: you must provide both zonal and meridional geostrophic wind'
+            sys.exit()
+
+        self.set_attribute('forc_geo',1)
+
+        self.add_forcing_variable('ug',ug,**kwargs)
+        self.add_forcing_variable('vg',vg,**kwargs)
+
+    def add_theta_advection(self,data,include_rad=False,**kwargs):
+        """Add a potential temperature advection to a Case object.
+           Required argument:
+           data -- input data as a list or a numpy array.
+
+           Optional (keyword) argument:
+           include_rad -- boolean indicated whether the radiative tendency 
+                          is included in the advection (default False)
+
+           See add_variable function for optional arguments.
+           Note that:
+           - a level axis is required (lev optional argument).
+           - a levtype is required (levtype optional argument).
+
+           If time is not provided, forcing is assumed constant in time.
+        """
+
+        self.set_attribute('adv_theta',1)
+        if include_rad:
+            self.set_attribute('rad_theta','adv')
+
+        self.add_forcing_variable('theta_adv',data,**kwargs)
+
+    def add_rt_advection(self,data,**kwargs):
+        """Add a total water mixing ratio advection to a Case object.
+           Required argument:
+           data -- input data as a list or a numpy array.
+
+           See add_variable function for optional arguments.
+           Note that:
+           - a level axis is required (lev optional argument).
+           - a levtype is required (levtype optional argument).
+
+           If time is not provided, forcing is assumed constant in time.
+        """
+
+        self.set_attribute('adv_rt',1)
+
+        self.add_forcing_variable('rt_adv',data,**kwargs)
+
+    def add_surface_fluxes(self,sens=None,lat=None,time_sens=None,time_lat=None,forc_wind=None,z0=None,ustar=None,time_ustar=None,**kwargs):
+        """Add a surface flux forcing to a Case object.
+           Required argument:
+           sens -- input data for surface sensible heat flux as a numeric, a list or a numpy array.
+           lat -- input data for surface latent heat flux as a numeric, a list or a numpy array.
+
+           Optional (keyword) argument:
+           time       -- time axis for both sensible and latent heat fluxes
+           time_sens  -- time axis for sensibile heat flux
+           time_lat   -- time axis for latent heat flux
+           forc_wind  -- type of surface wind forcing as a string: 'z0' or 'ustar' (default 'z0')
+           z0         -- numeric value for surface roughness (default None)
+           ustar      -- input data for surface friction velocity as a numeric, a list or a numpy array (default None)
+           time_ustar -- time axis for ustar (default None)
+
+           See add_variable function for other optional arguments.
+
+           If time is not provided, surface fluxes are assumed constant in time.
+           If time_ustar is not provided, friction velocity is assumed constant in time.
+        """
+
+        if sens is None or lat is None:
+            print 'ERROR: you must provide both sensible and latent heat fluxes'
+            sys.exit()
+
+        self.set_attribute('surfaceForcing','surfaceFlux')
+
+        if forc_wind == 'z0':
+            self.set_attribute("surfaceForcingWind","z0")
+            if z0 is None:
+                print 'ERROR: z0 must be provided'
+                sys.exit()
+            self.set_z0(z0)
+        elif forc_wind == 'ustar':
+            self.set_attribute("surfaceForcingWind","ustar")
+            if ustar is None:
+                print 'ERROR: ustar must be provided'
+                sys.exit()
+            self.add_forcing_variable('ustar',ustar,time=time_ustar)
+        elif forc_wind is None:
+            print 'ERROR: you must specify the surface wind forcing (z0 or ustar)'
+        else:
+            print 'ERROR: surface wind forcing unexpected:', forc_wind
+            print 'ERROR: it should be either z0 or ustar'
+            sys.exit()
+
+        if time_sens is not None:
+            kwargs['time'] = time_sens
+            self.add_forcing_variable('sfc_sens_flx',sens,**kwargs)
+        else:
+            self.add_forcing_variable('sfc_sens_flx',sens,**kwargs)
+
+        if time_lat is not None:
+            kwargs['time'] = time_lat
+            self.add_forcing_variable('sfc_lat_flx',lat,**kwargs)
+        else:
+            self.add_forcing_variable('sfc_lat_flx',lat,**kwargs)
 
     def info(self):
 

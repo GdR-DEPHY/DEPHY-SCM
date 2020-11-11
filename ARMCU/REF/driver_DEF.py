@@ -4,6 +4,9 @@
 Created on 27 November 2019
 
 @author: Romain Roehrig
+
+Modification
+  2020/11/11, R. Roehrig: update for improve case definition interface.
 """
 
 ## ARM-Cumulus original case definition
@@ -34,19 +37,13 @@ case = Case('ARMCU/REF',
         lon=-97.5,
         startDate="19970621113000",
         endDate="19970622020000",
-        zorog=314.,
-        z0=0.035)
+        surfaceType='land',
+        zorog=314.)
 
 case.set_title("Forcing and initial conditions for ARM-Cumulus case - Original definition")
 case.set_reference("http://projects.knmi.nl/eurocs/ARM/case_ARM_html ; Brown et al. (2002, QJRMS)")
 case.set_author("R. Roehrig")
 case.set_script("DEPHY-SCM/ARMCU/REF/driver_DEF.py")
-
-
-# time units are expected to be seconds since startDate
-t0 = 0 # 11:30 UTC, 21 June 1997
-t1 = 86400 + 2*3600 - 41400 # 02:00 UTC, 22 June 1997
-
 
 ################################################
 # 2. Initial state
@@ -54,7 +51,7 @@ t1 = 86400 + 2*3600 - 41400 # 02:00 UTC, 22 June 1997
 
 # Surface pressure
 ps = 97000.
-case.add_variable('ps',[ps,])
+case.add_init_ps(ps)
 
 #         z (m) theta (K) rt (g kg-1) u (m s-1) v (m s-1)
 init = [   0.0,   299.00,   15.20,      10.0,     0.0,\
@@ -70,10 +67,9 @@ init = np.array(init,dtype=np.float64)
 
 z = init[0::5]
 
-case.add_variable('theta',init[1::5],      lev=z,levtype='altitude')
-case.add_variable('rt',   init[2::5]/1000.,lev=z,levtype='altitude') # converted in kg kg-1
-case.add_variable('u',    init[3::5],      lev=z,levtype='altitude')
-case.add_variable('v',    init[4::5],      lev=z,levtype='altitude')
+case.add_init_theta(init[1::5], lev=z, levtype='altitude')
+case.add_init_rt(init[2::5]/1000., lev=z, levtype='altitude')
+case.add_init_wind(init[3::5],init[4::5], lev=z, levtype='altitude')
 
 # Turbulent Kinetic Energy
 ztke = range(0,6000+1,10)
@@ -86,40 +82,14 @@ for iz in range(0,nztke):
     else:
       tke[iz] = 0.
 
-case.add_variable('tke',tke,lev=ztke,levtype='altitude')
+case.add_init_tke(tke, lev=ztke, levtype='altitude')
 
 ################################################
 # 3. Forcing
 ################################################
 
 # Constant Geostrophic wind across the simulation
-ug = np.zeros((2,8),dtype=np.float64)
-ug[0,:] = init[3::5]
-ug[1,:] = init[3::5]
-
-vg = np.zeros((2,8),dtype=np.float64)
-vg[0] = init[4::5]
-vg[1] = init[4::5]
-
-case.add_variable('ug',ug,time=[t0,t1],lev=z,levtype='altitude')
-case.add_variable('vg',vg,time=[t0,t1],lev=z,levtype='altitude')
-
-# Surface Forcing
-#            t (s) H (W m-2) LE (W m-2)
-sfcForc= [  41400,  -30,       5,\
-            55800,   90,     250,\
-            64800,  140,     450,\
-            68400,  140,     500,\
-            77400,  100,     420,\
-            86400,  -10,     180,\
-            93600,  -10,       0]
-
-sfcForc = np.array(sfcForc,dtype=np.float64)
-
-timeSfc = sfcForc[0::3] - 41400
-
-case.add_variable('sfc_sens_flx',sfcForc[1::3],time=timeSfc)
-case.add_variable('sfc_lat_flx', sfcForc[2::3],time=timeSfc)
+case.add_geostrophic_wind(ug=init[3::5],vg=init[4::5],lev=z,levtype='altitude')
 
 # Advection forcing (+ radiative tendency)
 #       t (s), A_theta (K hour-1) R_theta (K hour-1) A_rt (g kg-1 hour-1)
@@ -158,28 +128,27 @@ for it in range(0,ntf):
           forc_theta[it,iz] = 0.
           forc_rt[it,iz] = 0.
 
-case.add_variable('theta_adv',forc_theta/3600.,   time=timeF,lev=zforc,levtype='altitude') # converted in K s-1
-case.add_variable('rt_adv',   forc_rt/3600./1000.,time=timeF,lev=zforc,levtype='altitude') # converted in kg kg-1 s-1
+case.add_theta_advection(forc_theta/3600.,time=timeF,lev=zforc,levtype='altitude',include_rad=True) # converted in K s-1
+case.add_rt_advection(forc_rt/3600./1000.,time=timeF,lev=zforc,levtype='altitude') # converted in kg kg-1 s-1
 
+# Surface Forcing
+#            t (s) H (W m-2) LE (W m-2)
+sfcForc= [  41400,  -30,       5,\
+            55800,   90,     250,\
+            64800,  140,     450,\
+            68400,  140,     500,\
+            77400,  100,     420,\
+            86400,  -10,     180,\
+            93600,  -10,       0]
+
+sfcForc = np.array(sfcForc,dtype=np.float64)
+
+timeSfc = sfcForc[0::3] - 41400 # Forcing time axis should be counted from starting date
+
+case.add_surface_fluxes(sens=sfcForc[1::3],lat=sfcForc[2::3],time=timeSfc,forc_wind='z0',z0=0.035)
 
 ################################################
-# 4. Attributes
-################################################
-
-# advection of theta and rt
-case.set_attribute("adv_theta",1)
-case.set_attribute("adv_rt",1)
-# potential temperature radiative tendency is included in advection
-case.set_attribute("rad_theta","adv")
-# Geostrophic wind forcing
-case.set_attribute("forc_geo",1)
-# Surface flux forcing, wind stress is computed using z0
-case.set_attribute("surfaceType","land")
-case.set_attribute("surfaceForcing","surfaceFlux")
-case.set_attribute("surfaceForcingWind","z0")
-
-################################################
-# 5. Writing file
+# 4. Writing file
 ################################################
 
 case.write('ARMCU_REF_DEF_driver.nc',verbose=False)
