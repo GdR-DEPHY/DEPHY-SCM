@@ -61,10 +61,14 @@ class Case:
 
         # Convert startDate and endDate 
 
-        d = datetime(int(startDate[0:4]),int(startDate[4:6]),int(startDate[6:8]),int(startDate[8:10]),int(startDate[10:12]),int(startDate[12:14]))
-        self.tstart = nc.date2num(d,self.tunits,calendar='gregorian') # should be 0
-        d = datetime(int(endDate[0:4]),int(endDate[4:6]),int(endDate[6:8]),int(endDate[8:10]),int(endDate[10:12]),int(endDate[12:14]))
-        self.tend = nc.date2num(d,self.tunits,calendar='gregorian')
+        self.tstart = None
+        if startDate is not None:
+            d = datetime(int(startDate[0:4]),int(startDate[4:6]),int(startDate[6:8]),int(startDate[8:10]),int(startDate[10:12]),int(startDate[12:14]))
+            self.tstart = nc.date2num(d,self.tunits,calendar='gregorian') # should be 0
+        self.tend = None
+        if endDate is not None:
+            d = datetime(int(endDate[0:4]),int(endDate[4:6]),int(endDate[6:8]),int(endDate[8:10]),int(endDate[10:12]),int(endDate[12:14]))
+            self.tend = nc.date2num(d,self.tunits,calendar='gregorian')
 
         # Variables
         self.varlist = []
@@ -188,6 +192,7 @@ class Case:
             sys.exit()
 
         self.varlist.append(varid)
+        #print varid, lev, time
 
         ######################
         # Prepare level axis, if needed
@@ -403,20 +408,38 @@ class Case:
 
         self.add_init_variable('rt',vardata,**kwargs)
 
-    def add_init_wind(self,udata,vdata,**kwargs):
+    def add_init_wind(self,u=None,v=None,ulev=None,vlev=None,**kwargs):
         """Add initial state variable for total water to a Case object.
-           Required argument:
-           udata -- input data for zonal wind as a list or a numpy array.
-           vdata -- input data for meridional wind as a list or a numpy array.
+           Required arguments:
+           u -- input data for zonal wind as a list or a numpy array.
+           v -- input data for meridional wind as a list or a numpy array.
+
+           Optional arguments:
+           lev -- level axis for both u and v as a list or a numpy array (default None)
+           ulev -- level axis for u as a list or a numpy array (default None)
+           vlev -- level axis for v as a list or a numpy array (default None)
+           levtype -- type of vertical axis (pressure or altitude)
+
+           Either lev or ulev/vlev should be provided
 
            See add_variable function for optional arguments.
-           Note that:
-           - a level axis is required (lev optional argument).
-           - a levtype is required (levtype optional argument).
         """
 
-        self.add_init_variable('u',udata,**kwargs)
-        self.add_init_variable('v',vdata,**kwargs)
+        if u is None or v is None:
+            print 'ERROR: you must provide both zonal and meridional wind'
+            sys.exit()
+
+        if not(kwargs.has_key('lev')) and ulev is None and vlev is None:
+            print 'ERROR: you must provide a vertical axis either with lev or with both ulev/vlev'
+            sys.exit()
+
+        if ulev is not None:
+            kwargs['lev'] = ulev
+        self.add_init_variable('u',u,**kwargs)
+
+        if vlev is not None:
+            kwargs['lev'] = vlev
+        self.add_init_variable('v',v,**kwargs)
 
     def add_init_tke(self,vardata,**kwargs):
         """Add initial state variable for turbulent kinetic energy to a Case object.
@@ -455,7 +478,7 @@ class Case:
             kwargs['time'] = [self.tstart,self.tend]
             nt = 2
 
-        if varid in ['ps_forc','sfc_sens_flx','sfc_lat_flx','ustar']:
+        if varid in ['ps_forc','sfc_sens_flx','sfc_lat_flx','ustar','ts']:
             # Put the expected shape of the input data
             if lconstant: 
                 tmp = np.zeros((nt,1,1),dtype=np.float32)
@@ -482,16 +505,21 @@ class Case:
         # add initial variable to the Case object
         self.add_variable(varid,tmp,**kwargs)
 
-    def add_geostrophic_wind(self,ug=None,vg=None,**kwargs):
+    def add_geostrophic_wind(self,ug=None,vg=None,uglev=None,vglev=None,**kwargs):
         """Add a geostrophic wind forcing to a Case object.
            Required argument:
            ug -- input data for geostrophic zonal wind as a list or a numpy array.
            vg -- input data for geostrophic meridional wind as a list or a numpy array.
 
+           Optional arguments:
+           lev     -- level axis for both u and v as a list or a numpy array (default None)
+           uglev   -- level axis for u as a list or a numpy array (default None)
+           vglev   -- level axis for v as a list or a numpy array (default None)
+           levtype -- type of vertical axis (pressure or altitude)
+
+           Either lev or ulev/vlev should be provided
+
            See add_variable function for optional arguments.
-           Note that:
-           - a level axis is required (lev optional argument).
-           - a levtype is required (levtype optional argument).
 
            If time is not provided, forcing is assumed constant in time
         """
@@ -500,10 +528,74 @@ class Case:
             print 'ERROR: you must provide both zonal and meridional geostrophic wind'
             sys.exit()
 
+        if not(kwargs.has_key('lev')) and uglev is None and vglev is None:
+            print 'ERROR: you must provide a vertical axis either with lev or with both uglev/vglev'
+            sys.exit()
+
         self.set_attribute('forc_geo',1)
 
+        if uglev is not None:
+            kwargs['lev'] = uglev
         self.add_forcing_variable('ug',ug,**kwargs)
+
+        if vglev is not None:
+            kwargs['lev'] = vglev        
         self.add_forcing_variable('vg',vg,**kwargs)
+
+    def add_vertical_velocity(self,w=None,omega=None,**kwargs):
+        """Add a potential temperature advection to a Case object.
+           Argument:
+           w     -- input vertical velocity in m s-1 as a list or a numpy array (default None).
+           omega -- input pressure vertical velocity in Pa s-1 as a list or a numpy array (default None).
+
+           Either w or omega should be given
+
+           See add_variable function for optional arguments.
+           Note that:
+           - a level axis is required (lev optional argument).
+           - a levtype is required (levtype optional argument).
+
+           If time is not provided, forcing is assumed constant in time.
+        """
+
+        if w is None and omega is None:
+            print 'ERROR: you must provide either w or omega'
+            sys.exit()
+
+        if w is not None and omega is not None:
+            print 'ERROR: you cannot provide both w and omega at the same time'
+            sys.exit()
+
+        if w is not None:
+            self.set_attribute('forc_w',1)
+            self.add_forcing_variable('w',w,**kwargs)
+
+        if omega is not None:
+            self.set_attribute('forc_omega',1)
+            self.add_forcing_variable('omega',omega,**kwargs)
+
+    def add_temp_advection(self,data,include_rad=False,**kwargs):
+        """Add a temperature advection to a Case object.
+           Required argument:
+           data -- input data as a list or a numpy array.
+
+           Optional (keyword) argument:
+           include_rad -- boolean indicated whether the radiative tendency 
+                          is included in the advection (default False)
+
+           See add_variable function for optional arguments.
+           Note that:
+           - a level axis is required (lev optional argument).
+           - a levtype is required (levtype optional argument).
+
+           If time is not provided, forcing is assumed constant in time.
+        """
+
+        self.set_attribute('adv_temp',1)
+        if include_rad:
+            self.set_attribute('rad_temp','adv')
+
+        self.add_forcing_variable('temp_adv',data,**kwargs)
 
     def add_theta_advection(self,data,include_rad=False,**kwargs):
         """Add a potential temperature advection to a Case object.
@@ -528,6 +620,23 @@ class Case:
 
         self.add_forcing_variable('theta_adv',data,**kwargs)
 
+    def add_qv_advection(self,data,**kwargs):
+        """Add a specific humidity advection to a Case object.
+           Required argument:
+           data -- input data as a list or a numpy array.
+
+           See add_variable function for optional arguments.
+           Note that:
+           - a level axis is required (lev optional argument).
+           - a levtype is required (levtype optional argument).
+
+           If time is not provided, forcing is assumed constant in time.
+        """
+
+        self.set_attribute('adv_qv',1)
+
+        self.add_forcing_variable('qv_adv',data,**kwargs)
+
     def add_rt_advection(self,data,**kwargs):
         """Add a total water mixing ratio advection to a Case object.
            Required argument:
@@ -545,8 +654,36 @@ class Case:
 
         self.add_forcing_variable('rt_adv',data,**kwargs)
 
+    def add_surface_temp(self,data,**kwargs):
+        """Add a surface temperature forcing to a Case object.
+           This function does not imply that the surface forcing type is ts.
+           This function can be used to add a useful surface temperature in case surface fluxes are prescribed.
+
+           Required argument:
+           data -- input data as a list or a numpy array.
+
+           If time is not provided, forcing is assumed constant in time.
+        """
+
+        self.add_forcing_variable('ts',data,**kwargs)
+
+    def add_forcing_ts(self,data,**kwargs):
+        """Add a surface temperature forcing to a Case object.
+           This function sets a surface temperature forcing as the case surface forcing.
+
+           Required argument:
+           data -- input data as a list or a numpy array.
+
+           If time is not provided, forcing is assumed constant in time.
+        """
+
+        self.set_attribute('surfaceForcing','ts')
+
+        self.add_forcing_variable('ts',data,**kwargs)
+
     def add_surface_fluxes(self,sens=None,lat=None,time_sens=None,time_lat=None,forc_wind=None,z0=None,ustar=None,time_ustar=None,**kwargs):
         """Add a surface flux forcing to a Case object.
+
            Required argument:
            sens -- input data for surface sensible heat flux as a numeric, a list or a numpy array.
            lat -- input data for surface latent heat flux as a numeric, a list or a numpy array.
@@ -639,7 +776,7 @@ class Case:
 
         for var in f.variables:
             if not(var in f.dimensions) and not(var[0:6] == 'bounds') :
-                print var
+                print 'Reading', var
                 tmp = readvar(var,f)
                 if tmp.level is None:
                     self.add_variable(var,tmp.data,time=tmp.time.data)
@@ -761,18 +898,18 @@ class Case:
         # Initial state
         ###########################
  
-        caseSCM.add_variable('ps',dataout['ps'].data)
+        caseSCM.add_init_ps(dataout['ps'].data)
 
         nt0,nlev,nlat,nlon = dataout['u'].data.shape
 
         for var in ['height','pressure','u','v','temp','theta','thetal','qv','qt','rv','rt','rl','ri','ql','qi','tke']:
             if var in dataout.keys():
-                caseSCM.add_variable(var,dataout[var].data,lev=lev,levtype=levtype,levid='lev')
+                caseSCM.add_init_variable(var,dataout[var].data,lev=lev,levtype=levtype,levid='lev')
             elif var == 'height':
-                caseSCM.add_variable(var,dataout['u'].level.data,lev=lev,levtype=levtype,levid='lev')
+                caseSCM.add_init_variable(var,dataout['u'].level.data,lev=lev,levtype=levtype,levid='lev')
             elif var == 'pressure':
                 if var in dataout.keys():
-                    caseSCM.add_variable(var,dataout[var].data,lev=lev,levtype=levtype,levid='lev')
+                    caseSCM.add_init_variable(var,dataout[var].data,lev=lev,levtype=levtype,levid='lev')
                 else:
                     ps = dataout['ps'].data[0,0,0]
                     if 'theta' in dataout.keys():
@@ -824,7 +961,7 @@ class Case:
                         print 'ERROR: theta, thetal or temp should be defined'
                         sys.exit()
                     pressure = np.reshape(pressure,(1,nlev,1,1))
-                    caseSCM.add_variable(var,pressure,lev=lev,levtype=levtype,levid='lev')
+                    caseSCM.add_init_variable(var,pressure,lev=lev,levtype=levtype,levid='lev')
             elif var == 'theta':
                 pressure = caseSCM.variables['pressure'].data[0,:,0,0]
                 if 'temp' in dataout.keys():
@@ -837,7 +974,7 @@ class Case:
                 else:
                     print 'ERROR: At least temp or thetal should be given'
                     sys.exit()                    
-                caseSCM.add_variable(var,theta,lev=lev,levtype=levtype,levid='lev')
+                caseSCM.add_init_variable(var,theta,lev=lev,levtype=levtype,levid='lev')
             elif var == 'thetal':
                 pressure = caseSCM.variables['pressure'].data[0,:,0,0]
                 if 'temp' in dataout.keys():
@@ -850,7 +987,7 @@ class Case:
                 else:
                     print 'ERROR: At least temp or thetal should be given'
                     sys.exit()                    
-                caseSCM.add_variable(var,thetal,lev=lev,levtype=levtype,levid='lev')
+                caseSCM.add_init_variable(var,thetal,lev=lev,levtype=levtype,levid='lev')
             elif var == 'temp':
                 pressure = caseSCM.variables['pressure'].data[0,:,0,0]
                 if 'theta' in dataout.keys():
@@ -864,7 +1001,7 @@ class Case:
                 else:
                     print 'ERROR: At least theta or thetal should be given'
                     sys.exit()
-                caseSCM.add_variable(var,temp,lev=lev,levtype=levtype,levid='lev')
+                caseSCM.add_init_variable(var,temp,lev=lev,levtype=levtype,levid='lev')
             elif var == 'qv':
                 if 'qt' in dataout.keys():
                     print 'assume qv=qt'
@@ -878,24 +1015,24 @@ class Case:
                     rt = dataout['rt'].data[0,:,0,0]
                     print 'compute qt from rt and assume qv=qt'
                     qv = thermo.rt2qt(rt)
-                    caseSCM.add_variable(var,qv,lev=lev,levtype=levtype,levid='lev')
+                    caseSCM.add_init_variable(var,qv,lev=lev,levtype=levtype,levid='lev')
                 else:
                     print 'ERROR: Either qt, rv or rt should be defined'
                     sys.exit()
             elif var == 'qt':
                 if 'qv' in dataout.keys():
                     print 'assume qt=qv'
-                    caseSCM.add_variable(var,dataout['qv'].data,lev=lev,levtype=levtype,levid='lev')
+                    caseSCM.add_init_variable(var,dataout['qv'].data,lev=lev,levtype=levtype,levid='lev')
                 elif 'rv'in dataout.keys():
                     rv = dataout['rv'].data[0,:,0,0]
                     print 'compute qv from rv and assume qt=qv'
                     qt = thermo.rt2qt(rv)
-                    caseSCM.add_variable(var,qt,lev=lev,levtype=levtype,levid='lev')
+                    caseSCM.add_init_variable(var,qt,lev=lev,levtype=levtype,levid='lev')
                 elif 'rt' in dataout.keys():
                     rt = dataout['rt'].data[0,:,0,0]
                     print 'compute qt from rt'
                     qt = thermo.rt2qt(rt)
-                    caseSCM.add_variable(var,qt,lev=lev,levtype=levtype,levid='lev')
+                    caseSCM.add_init_variable(var,qt,lev=lev,levtype=levtype,levid='lev')
                 else:
                     print 'ERROR: Either qv, rv or rt should be defined'
                     sys.exit()
@@ -904,15 +1041,15 @@ class Case:
                     qv = dataout['qv'].data[0,:,0,0]
                     print 'compute rv from qv'
                     rv = thermo.qt2rt(qv)
-                    caseSCM.add_variable(var,rv,lev=lev,levtype=levtype,levid='lev')                    
+                    caseSCM.add_init_variable(var,rv,lev=lev,levtype=levtype,levid='lev')                    
                 elif 'qt'in dataout.keys():
                     qt = dataout['qt'].data[0,:,0,0]
                     print 'compute rt from qt and assume rv=rt'
                     rt = thermo.qt2rt(qt)
-                    caseSCM.add_variable(var,rt,lev=lev,levtype=levtype,levid='lev')                     
+                    caseSCM.add_init_variable(var,rt,lev=lev,levtype=levtype,levid='lev')                     
                 elif 'rt' in dataout.keys():
                     print 'assume rv=rt'
-                    caseSCM.add_variable(var,dataout['rt'].data,lev=lev,levtype=levtype,levid='lev')
+                    caseSCM.add_init_variable(var,dataout['rt'].data,lev=lev,levtype=levtype,levid='lev')
                 else:
                     print 'ERROR: Either qv, qt or rt should be defined'
                     sys.exit()
@@ -921,20 +1058,20 @@ class Case:
                     qv = dataout['qv'].data[0,:,0,0]
                     print 'compute rv from qv and assume rt=rv'
                     rv = thermo.qt2rt(qv)
-                    caseSCM.add_variable(var,rv,lev=lev,levtype=levtype,levid='lev')                    
+                    caseSCM.add_init_variable(var,rv,lev=lev,levtype=levtype,levid='lev')                    
                 elif 'qt'in dataout.keys():
                     qt = dataout['qt'].data[0,:,0,0]
                     print 'compute rt from qt'
                     rt = thermo.qt2rt(qt)
-                    caseSCM.add_variable(var,rt,lev=lev,levtype=levtype,levid='lev')                     
+                    caseSCM.add_init_variable(var,rt,lev=lev,levtype=levtype,levid='lev')                     
                 elif 'rv' in dataout.keys():
                     print 'assume rt=rv'
-                    caseSCM.add_variable(var,dataout['rv'].data,lev=lev,levtype=levtype,levid='lev')
+                    caseSCM.add_init_variable(var,dataout['rv'].data,lev=lev,levtype=levtype,levid='lev')
                 else:
                     print 'ERROR: Either qv, qt or rv should be defined'
                     sys.exit()                
             elif var in ['rl','ri','ql','qi','tke']:
-                caseSCM.add_variable(var,dataout['u'].data*0,lev=lev,levtype=levtype,levid='lev')
+                caseSCM.add_init_variable(var,dataout['u'].data*0,lev=lev,levtype=levtype,levid='lev')
             else:
                 print 'ERROR: Case unexpected: variable {0} have to be defined'.format(var)
                 sys.exit()

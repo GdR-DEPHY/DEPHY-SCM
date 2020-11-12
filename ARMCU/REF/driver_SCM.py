@@ -4,6 +4,9 @@
 Created on 29 November 2019
 
 @author: Romain Roehrig
+
+Modification
+  2020/11/11, R. Roehrig: update for improved case definition interface.
 """
 
 ## ARM-Cumulus SCM-enabled case definition
@@ -56,7 +59,7 @@ newcase = case.convert2SCM(time=timeout,lev=levout,levtype='altitude')
 # add a surface temperature. To be improved...
 ts = timeout*0. + 310 # same shape as timeout
 
-newcase.add_variable('ts',ts,time=timeout,timeid='time')
+newcase.add_surface_temp(ts,time=timeout,timeid='time')
 
 # update some attributes
 newcase.set_title("Forcing and initial conditions for ARM-Cumulus case - SCM-enabled version")
