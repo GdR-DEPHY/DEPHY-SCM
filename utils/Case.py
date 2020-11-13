@@ -317,6 +317,32 @@ class Case:
 
         self.add_init_variable('ps',vardata,**kwargs)
 
+    def add_init_height(self,vardata,**kwargs):
+        """Add initial state variable for height to a Case object.
+           Required argument:
+           vardata -- input data as a list or a numpy array.
+
+           See add_variable function for optional arguments.
+           Note that:
+           - a level axis is required (lev optional argument).
+           - a levtype is required (levtype optional argument).
+        """
+
+        self.add_init_variable('height',vardata,**kwargs)
+
+    def add_init_pressure(self,vardata,**kwargs):
+        """Add initial state variable for pressure to a Case object.
+           Required argument:
+           vardata -- input data as a list or a numpy array.
+
+           See add_variable function for optional arguments.
+           Note that:
+           - a level axis is required (lev optional argument).
+           - a levtype is required (levtype optional argument).
+        """
+
+        self.add_init_variable('pressure',vardata,**kwargs)
+
     def add_init_temp(self,vardata,**kwargs):
         """Add initial state variable for temperature to a Case object.
            Required argument:
@@ -653,6 +679,174 @@ class Case:
         self.set_attribute('adv_rt',1)
 
         self.add_forcing_variable('rt_adv',data,**kwargs)
+
+    def add_nudging(self,varid,data,timescale=None,z_nudging=None,p_nudging=None,**kwargs):
+        """Add a nudging forcing to a Case object.
+           Required argument:
+           varid     -- id of the variable to be nudged as a string
+           data      -- input data as a list or a numpy array.
+           timescale -- nudging timescale in seconds (integer or float)
+           z_nudging -- altitude above which nudging is applied (integer or float)
+           p_nudging -- pressure altitude under which nudging is applied (integer or float)
+
+           Either z_nudging or p_nudging must be defined.
+
+           See add_variable function for optional arguments.
+           Note that:
+           - a level axis is required (lev optional argument).
+           - a levtype is required (levtype optional argument).
+
+           If time is not provided, forcing is assumed constant in time.
+        """
+
+        if timescale is None:
+            print 'ERROR: you must provide a nudging timescale for variable {0}'.format(varid)
+            sys.exit()
+
+        self.set_attribute('nudging_{0}'.format(varid),timescale)
+
+        if z_nudging is None and p_nudging is None:
+            print 'WARNING: {0} will be nudged over the whole atmosphere'
+            self.set_attribute('z_nudging_{0}'.format(varid),0)
+
+        if z_nudging is not None:
+            self.set_attribute('z_nudging_{0}'.format(varid),z_nudging)
+        else:
+            self.set_attribute('p_nudging_{0}'.format(varid),p_nudging)
+
+        var = '{0}_nudging'.format(varid)
+        self.add_forcing_variable(var,data,**kwargs)
+
+
+    def add_temp_nudging(self,data,**kwargs):
+        """Add a temperature nudging forcing to a Case object.
+           Required argument:
+           data -- input data as a list or a numpy array.
+
+           See add_nudging for other required arguments
+
+           See add_variable function for optional arguments.
+           Note that:
+           - a level axis is required (lev optional argument).
+           - a levtype is required (levtype optional argument).
+
+           If time is not provided, forcing is assumed constant in time.
+        """
+
+        self.add_nudging('temp',data,**kwargs)
+
+    def add_theta_nudging(self,data,**kwargs):
+        """Add a potential temperature nudging forcing to a Case object.
+           Required argument:
+           data -- input data as a list or a numpy array.
+
+           See add_nudging for other required arguments
+
+           See add_variable function for optional arguments.
+           Note that:
+           - a level axis is required (lev optional argument).
+           - a levtype is required (levtype optional argument).
+
+           If time is not provided, forcing is assumed constant in time.
+        """
+
+        self.add_nudging('theta',data,**kwargs)
+
+    def add_thetal_nudging(self,data,**kwargs):
+        """Add a liquid water potential temperature nudging forcing to a Case object.
+           Required argument:
+           data -- input data as a list or a numpy array.
+
+           See add_nudging for other required arguments
+
+           See add_variable function for optional arguments.
+           Note that:
+           - a level axis is required (lev optional argument).
+           - a levtype is required (levtype optional argument).
+
+           If time is not provided, forcing is assumed constant in time.
+        """
+
+        self.add_nudging('thetal',data,**kwargs)
+
+    def add_qv_nudging(self,data,**kwargs):
+        """Add a specific humidity nudging forcing to a Case object.
+           Required argument:
+           data -- input data as a list or a numpy array.
+
+           See add_nudging for other required arguments
+
+           See add_variable function for optional arguments.
+           Note that:
+           - a level axis is required (lev optional argument).
+           - a levtype is required (levtype optional argument).
+
+           If time is not provided, forcing is assumed constant in time.
+        """
+
+        self.add_nudging('qv',data,**kwargs)
+
+    def add_qt_nudging(self,data,**kwargs):
+        """Add a total water nudging forcing to a Case object.
+           Required argument:
+           data -- input data as a list or a numpy array.
+
+           See add_nudging for other required arguments
+
+           See add_variable function for optional arguments.
+           Note that:
+           - a level axis is required (lev optional argument).
+           - a levtype is required (levtype optional argument).
+
+           If time is not provided, forcing is assumed constant in time.
+        """
+
+        self.add_nudging('qt',data,**kwargs)
+
+    def add_rv_nudging(self,data,**kwargs):
+        """Add a water vapor mixing ratio nudging forcing to a Case object.
+           Required argument:
+           data -- input data as a list or a numpy array.
+
+           See add_nudging for other required arguments
+
+           See add_variable function for optional arguments.
+           Note that:
+           - a level axis is required (lev optional argument).
+           - a levtype is required (levtype optional argument).
+
+           If time is not provided, forcing is assumed constant in time.
+        """
+
+        self.add_nudging('rv',data,**kwargs)
+
+    def add_rt_nudging(self,data,**kwargs):
+        """Add a total water mixing ratio nudging forcing to a Case object.
+           Required argument:
+           data -- input data as a list or a numpy array.
+
+           See add_nudging for other required arguments
+
+           See add_variable function for optional arguments.
+           Note that:
+           - a level axis is required (lev optional argument).
+           - a levtype is required (levtype optional argument).
+
+           If time is not provided, forcing is assumed constant in time.
+        """
+
+        self.add_nudging('rt',data,**kwargs)
+
+    def add_ozone(self,data,**kwargs):
+        """Add an ozone forcing to a Case object.
+
+           Required argument:
+           data -- input data as a list or a numpy array.
+
+           If time is not provided, forcing is assumed constant in time.
+        """
+
+        self.add_forcing_variable('o3',data,**kwargs)
 
     def add_surface_temp(self,data,**kwargs):
         """Add a surface temperature forcing to a Case object.
@@ -1005,12 +1199,12 @@ class Case:
             elif var == 'qv':
                 if 'qt' in dataout.keys():
                     print 'assume qv=qt'
-                    caseSCM.add_variable(var,dataout['qt'].data,lev=lev,levtype=levtype,levid='lev')
+                    caseSCM.add_init_variable(var,dataout['qt'].data,lev=lev,levtype=levtype,levid='lev')
                 elif 'rv'in dataout.keys():
                     rv = dataout['rv'].data[0,:,0,0]
                     print 'compute qv from rv'
                     qv = thermo.rt2qt(rv)
-                    caseSCM.add_variable(var,qv,lev=lev,levtype=levtype,levid='lev')
+                    caseSCM.add_init_variable(var,qv,lev=lev,levtype=levtype,levid='lev')
                 elif 'rt' in dataout.keys():
                     rt = dataout['rt'].data[0,:,0,0]
                     print 'compute qt from rt and assume qv=qt'

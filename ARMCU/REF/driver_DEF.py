@@ -69,7 +69,7 @@ z = init[0::5]
 
 case.add_init_theta(init[1::5], lev=z, levtype='altitude')
 case.add_init_rt(init[2::5]/1000., lev=z, levtype='altitude')
-case.add_init_wind(init[3::5],init[4::5], lev=z, levtype='altitude')
+case.add_init_wind(u=init[3::5],v=init[4::5], lev=z, levtype='altitude')
 
 # Turbulent Kinetic Energy
 ztke = range(0,6000+1,10)
