@@ -35,8 +35,8 @@ lverbose = False # print information about variables and case
 case = Case('IHOP/REF',
         lat=36.56,
         lon=-100.61,
-        startDate="200206140700",
-        endDate="200206141400",
+        startDate="20020614070000",
+        endDate="20020614140000",
         zorog=0.,
         z0=0.1)
 
