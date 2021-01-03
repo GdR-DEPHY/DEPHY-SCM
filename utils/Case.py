@@ -882,6 +882,16 @@ class Case:
 
         self.add_forcing_variable('o3',data,**kwargs)
 
+    def deactivate_radiation(self):
+        """Deactivate radiation in a Case object
+           
+           No argument required.
+        """
+
+        for var in ['temp','theta','thetal']:
+            if var in self.varlist:
+                self.set_attribute('rad_{0}'.format(var),"adv")
+
     def add_surface_temp(self,data,**kwargs):
         """Add a surface temperature forcing to a Case object.
            This function does not imply that the surface forcing type is ts.
