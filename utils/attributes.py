@@ -16,7 +16,8 @@ known_attributes = [
             'z_nudging_temp','z_nudging_theta','z_nudging_thetal',
             'z_nudging_qv','z_nudging_qt','z_nudging_rv','z_nudging_rt',
             'zorog','z0',
-            'surfaceType','surfaceForcing','surfaceForcingWind'
+            'surfaceType','surfaceForcing','surfaceForcingWind',
+            'surfaceForcingMoisture','betaevap'
             ]
 
 required_attributes = [

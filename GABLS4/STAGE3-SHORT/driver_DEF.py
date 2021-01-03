@@ -6,7 +6,8 @@ Created on 09 June 2020
 @author: Romain Roehrig
 
 Modification
-  2020/11/11, R. Roehrig: update for improved case definition interface.
+  2020/11/12, E. Vignon:  bugfix for ps + land->landice + no evaporation option
+  2021/01/03, R. Roehrig: update for improved case definition interface.
 """
 
 ## GABLS4/STAGE3-SHORT original case definition
@@ -128,6 +129,9 @@ case.add_geostrophic_wind(ug=ug,vg=vg,time=timeForc,lev=height,levtype='altitude
 ts = fin['Tg'][0:12]
 
 case.add_forcing_ts(ts,time=timeForc,z0=0.001) # The last version in Couvreux et al. (2020) recommend 0.001
+
+# No surface evaporation (in fact no moisture at all)
+case.deactivate_surface_evaporation()
 
 # No radiation
 case.deactivate_radiation()

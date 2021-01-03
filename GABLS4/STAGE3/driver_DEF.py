@@ -6,7 +6,8 @@ Created on 09 June 2020
 @author: Romain Roehrig
 
 Modification
-  2020/11/11, R. Roehrig: update for improved case definition interface.
+  2020/11/12, E. Vignon:  bugfix for ps + land->landice + no evaporation option
+  2021/01/03, R. Roehrig: update for improved case definition interface.
 """
 
 ## GABLS4/STAGE3 original case definition
@@ -40,7 +41,7 @@ case = Case('{0}/{1}'.format(case_name,subcase_name),
         lon=-123.3,
         startDate="20091211000000",
         endDate="20091212120000",
-        surfaceType="land",
+        surfaceType="landice",
         zorog=3233.)
 
 case.set_title("Forcing and initial conditions for the {0}/{1} case - Original definition".format(case_name,subcase_name))
@@ -128,6 +129,9 @@ case.add_geostrophic_wind(ug=ug,vg=vg,time=timeForc,lev=height,levtype='altitude
 ts = fin['Tg'][:]
 
 case.add_forcing_ts(ts,time=timeForc,z0=0.001) # The last version in Couvreux et al. (2020) recommend 0.001
+
+# No surface evaporation (in fact no moisture at all)
+case.deactivate_surface_evaporation()
 
 # No radiation
 case.deactivate_radiation()

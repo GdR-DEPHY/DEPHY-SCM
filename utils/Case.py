@@ -1082,6 +1082,25 @@ class Case:
         else:
             self.add_forcing_variable('sfc_lat_flx',lat,**kwargs)
 
+    def set_betaevap(self,beta=1.):
+        """Activate a beta model for surface evaporation in a Case object
+           
+           Optional (keyword) argument:
+           beta -- beta value of the beta model (default: 1.)
+        """
+
+        self.set_attribute("surfaceForcingMoisture","betaevap")
+        self.set_attribute("betaevap",float(beta))
+
+    def deactivate_surface_evaporation(self):
+        """Deactivate surface evoporation in a Case object
+           
+           No argument required.
+        """
+
+        self.set_attribute("surfaceForcingMoisture","betaevap")
+        self.set_attribute("betaevap",0.)
+
     def info(self):
 
         for att in known_attributes:

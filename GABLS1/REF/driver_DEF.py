@@ -7,6 +7,7 @@ Created on 01 May 2020
 
 Modifications:
     2020/06/04, R. Roehrig: Add z0 value + some cleaning/formatting
+    2020/11/12, E. Vignon:  Add no evaporation option
     2021/01/03, R. Roehrig: update for improved case definition interface.
 
 GABLS1 original case definition
@@ -120,6 +121,9 @@ case.add_forcing_ts(ts,time=timets,z0=0.1)
 # K=0.4
 # Bm=4.8
 # Bh=7.8
+
+# No surface evaporation (in fact no moisture at all)
+case.deactivate_surface_evaporation()
 
 # Radiation scheme is switched off 
 case.deactivate_radiation()
