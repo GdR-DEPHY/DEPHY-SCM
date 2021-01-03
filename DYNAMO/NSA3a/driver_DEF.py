@@ -45,7 +45,7 @@ case.set_title("Forcing and initial conditions for DYNAMO/NSA3A case")
 case.set_reference("Abdel-Lathif et al. (2018, JAMES); Johnson et al. (2015, JAS); Input file dynamo_nsa_v3a.nc downloaded at http://johnson.atmos.colostate.edu/dynamo/products/array_averages/")
 case.set_author("R. Roehrig")
 case.set_script("DEPHY-SCM/DYNAMO/NSA3A/driver_DEF.py")
-case.set_comment("Data from CSU (http://johnson.atmos.colostate.edu/dynamo/products/array_averages/) complemented with ERA-Interim above 50 hPa and the standard atmosphere above 1 hPa")
+case.set_comment("Data from CSU (http://johnson.atmos.colostate.edu/dynamo/products/array_averages/) complemented with ERA-Interim above 50 hPa and the standard atmosphere above 1 hPa. Specific humidity is computed from CSU relative humidity below 50 hPa.")
 
 ################################################
 # 2. Input netCDF file
@@ -138,12 +138,12 @@ height_forc = extend('zg',height_forc,init=False,time=timeForc)
 case.add_height_forcing(height_forc,time=timeForc,timeid='time',lev=levForc,levtype='pressure',levid='lev')
 
 # Temperature horizontal advection
-hT = fin['hT'][:nt,:]*-1 # from advective tendency to advective forcing
+hT = fin['hT'][:nt,:]*-1. # from advective tendency to advective forcing
 hT = extend('advT',hT,init=False,time=timeForc)
 case.add_temp_advection(hT,time=timeForc,timeid='time',lev=levForc,levtype='pressure',levid='lev')
 
 # Specific humidity horizontal advection
-hq = fin['hq'][:nt,:]/1000.*-1 # from advective tendency to advective forcing and from g kg-1 s-1 to kg kg-1 s-1
+hq = fin['hq'][:nt,:]/1000.*-1. # from advective tendency to advective forcing and from g kg-1 s-1 to kg kg-1 s-1
 hq = extend('advq',hq,init=False,time=timeForc)
 case.add_qv_advection(hq,time=timeForc,timeid='time',lev=levForc,levtype='pressure',levid='lev')
 
