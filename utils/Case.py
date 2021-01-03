@@ -1005,7 +1005,7 @@ class Case:
 
         self.add_forcing_variable('ts',data,**kwargs)
 
-    def add_forcing_ts(self,data,**kwargs):
+    def add_forcing_ts(self,data,z0=None,**kwargs):
         """Add a surface temperature forcing to a Case object.
            This function sets a surface temperature forcing as the case surface forcing.
 
@@ -1016,6 +1016,10 @@ class Case:
         """
 
         self.set_attribute('surfaceForcing','ts')
+
+        if z0 is not None:
+            self.set_attribute('surfaceForcingWind','z0')
+            self.set_attribute('z0',z0)
 
         self.add_forcing_variable('ts',data,**kwargs)
 
