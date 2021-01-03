@@ -837,7 +837,7 @@ class Case:
         """
 
         if unudg is None or vnudg is None:
-            print 'ERROR: you must provide both zonal and meridional geostrophic wind'
+            print 'ERROR: you must provide both zonal and meridional nudging wind'
             sys.exit()
 
         if not(kwargs.has_key('lev')) and ulev is None and vlev is None:
