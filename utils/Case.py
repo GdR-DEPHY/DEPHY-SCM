@@ -663,6 +663,40 @@ class Case:
 
         self.add_forcing_variable('qv_adv',data,**kwargs)
 
+    def add_qt_advection(self,data,**kwargs):
+        """Add a total water advection to a Case object.
+           Required argument:
+           data -- input data as a list or a numpy array.
+
+           See add_variable function for optional arguments.
+           Note that:
+           - a level axis is required (lev optional argument).
+           - a levtype is required (levtype optional argument).
+
+           If time is not provided, forcing is assumed constant in time.
+        """
+
+        self.set_attribute('adv_qt',1)
+
+        self.add_forcing_variable('qt_adv',data,**kwargs)
+
+    def add_rv_advection(self,data,**kwargs):
+        """Add a water vapor mixing ratio advection to a Case object.
+           Required argument:
+           data -- input data as a list or a numpy array.
+
+           See add_variable function for optional arguments.
+           Note that:
+           - a level axis is required (lev optional argument).
+           - a levtype is required (levtype optional argument).
+
+           If time is not provided, forcing is assumed constant in time.
+        """
+
+        self.set_attribute('adv_rv',1)
+
+        self.add_forcing_variable('rv_adv',data,**kwargs)
+
     def add_rt_advection(self,data,**kwargs):
         """Add a total water mixing ratio advection to a Case object.
            Required argument:

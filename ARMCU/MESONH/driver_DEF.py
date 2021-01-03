@@ -4,6 +4,11 @@
 Created on 10 December 2019
 
 @author: Romain Roehrig
+
+Comment: based on Meso-NH namelists ARMCU_EXSEG1.nam and ARMCU_PRE_IDEA1.nam
+
+Modification
+  2021/01/03, R. Roehrig: update for improved case definition interface.
 """
 
 ## ARM-Cumulus original case definition
@@ -35,19 +40,13 @@ case = Case('ARMCU/MESONH',
         lon=-97.5,
         startDate="19970621113000",
         endDate="19970622023000",
-        zorog=314.,
-        z0=0.035)
+        surfaceType="land",
+        zorog=314.)
 
 case.set_title("Forcing and initial conditions for ARM-Cumulus case - Meso-NH definition")
 case.set_reference("http://projects.knmi.nl/eurocs/ARM/case_ARM_html ; Brown et al. (2002, QJRMS)")
 case.set_author("R. Roehrig, F. Couvreux")
 case.set_script("DEPHY-SCM/ARMCU/MESONH/driver_MESONH.py")
-
-
-# time units are expected to be seconds since startDate
-t0 = 0 # 11:30 UTC, 21 June 1997
-t1 = 86400 + 2*3600 - 41400 # 02:00 UTC, 22 June 1997
-
 
 ################################################
 # 2. Initial state
@@ -55,7 +54,7 @@ t1 = 86400 + 2*3600 - 41400 # 02:00 UTC, 22 June 1997
 
 # Surface pressure
 ps = 97000.
-case.add_variable('ps',[ps,])
+case.add_init_ps(ps)
 
 #         z (m) theta (K) rv (kg kg-1)
 init = [  0.0,   299.00,   15.20e-3,\
@@ -71,8 +70,8 @@ init = np.array(init,dtype=np.float64)
 
 z = init[0::3]
 
-case.add_variable('theta',init[1::3],lev=z,levtype='altitude')
-case.add_variable('rv',   init[2::3],lev=z,levtype='altitude')
+case.add_init_theta(init[1::3], lev=z, levtype='altitude')
+case.add_init_rv(init[2::3], lev=z, levtype='altitude')
 
 #         z (m) u (m s-1) v (m s-1)
 init = [  0.0,      10.0,     0.0,\
@@ -82,51 +81,64 @@ init = np.array(init,dtype=np.float64)
 
 z = init[0::3]
 
-case.add_variable('u',    init[1::3],      lev=z,levtype='altitude')
-case.add_variable('v',    init[2::3],      lev=z,levtype='altitude')
+case.add_init_wind(u=init[1::3],v=init[2::3], lev=z, levtype='altitude')
 
 ################################################
 # 3. Forcing
 ################################################
 
 # Constant Geostrophic wind across the simulation
-zforc = [               0., 1000., 3000., 5000.]
-tmp =   [41400.,       10.,   10.,   10.,   10.,\
-         52200.,       10.,   10.,   10.,   10.,\
-         63000.,       10.,   10.,   10.,   10.,\
-         73800.,       10.,   10.,   10.,   10.,\
-         84600.,       10.,   10.,   10.,   10.,\
-         86400.+9000., 10.,   10.,   10.,   10.]
+zforc = [0., 1000., 3000., 5000.]
+timeF = [41400., 52200., 63000., 73800., 84600., 86400+9000.]
+
+timeF = np.array(timeF) - 41400
+ntf, = timeF.shape
+nzf = len(zforc)
+
+ug = np.zeros((ntf,nzf),dtype=np.float64) + 10.
+vg = np.zeros((ntf,nzf),dtype=np.float64) + 0.
+
+case.add_geostrophic_wind(ug=ug,vg=vg,lev=zforc,levtype='altitude',time=timeF)
+
+# Potential temperature advection
+zadv = [                  0.,        1000.,       3000., 5000.]
+tmp =  [41400.,       -3.47222E-05, -3.47222E-05, 0.,    0.,\
+        52200.,        0.,           0.,          0.,    0.,\
+        63000.,        0.,           0.,          0.,    0.,\
+        73800.,       -2.22222E-05, -2.22222E-05, 0.,    0.,\
+        84600.,       -4.44444E-05, -4.44444E-05, 0.,    0.,\
+        86400.+9000., -7.77777E-05, -7.77777E-05, 0.,    0.]
 
 
 timeF = np.array(tmp[0::5]) - 41400
 ntf, = timeF.shape
-nzf = len(zforc)
+nzf = len(zadv)
 
-ug = np.zeros((ntf,nzf),dtype=np.float64)
+thadv = np.zeros((ntf,nzf),dtype=np.float64)
 for it in range(0,ntf):
-    ug[it,:] = tmp[5*it+1:5*it+5]
+    thadv[it,:] = tmp[5*it+1:5*it+5]
 
-case.add_variable('ug',ug,time=timeF,lev=zforc,levtype='altitude')
+case.add_theta_advection(thadv,time=timeF,lev=zadv,levtype='altitude',include_rad=True)
 
-zforc = [               0., 1000., 3000., 5000.]
-tmp =   [41400.,        0.,    0.,    0.,    0.,\
-         52200.,        0.,    0.,    0.,    0.,\
-         63000.,        0.,    0.,    0.,    0.,\
-         73800.,        0.,    0.,    0.,    0.,\
-         84600.,        0.,    0.,    0.,    0.,\
-         86400.+9000.,  0.,    0.,    0.,    0.]
+# Water vapor mixing ratio advection
+zadv = [                  0.,        1000.,       3000., 5000.]
+tmp =  [41400.,        2.22222E-08,  2.22222E-08, 0.,    0.,\
+        52200.,        5.55555E-09,  5.55555E-09, 0.,    0.,\
+        63000.,       -1.11111E-08, -1.11111E-08, 0.,    0.,\
+        73800.,       -2.77778E-08, -2.77778E-08, 0.,    0.,\
+        84600.,       -4.44444E-08, -4.44444E-08, 0.,    0.,\
+        86400.+9000., -9.11111E-08, -9.11111E-08, 0.,    0.]
 
 
 timeF = np.array(tmp[0::5]) - 41400
 ntf, = timeF.shape
-nzf = len(zforc)
+nzf = len(zadv)
 
-vg = np.zeros((ntf,nzf),dtype=np.float64)
+rvadv = np.zeros((ntf,nzf),dtype=np.float64)
 for it in range(0,ntf):
-    vg[it,:] = tmp[5*it+1:5*it+5]
+    rvadv[it,:] = tmp[5*it+1:5*it+5]
 
-case.add_variable('vg',vg,time=timeF,lev=zforc,levtype='altitude')
+case.add_rv_advection(rvadv,time=timeF,lev=zadv,levtype='altitude')
 
 # Surface Forcing
 
@@ -230,68 +242,11 @@ XSFTQ[29] = 1.79942418426103647E-005
 XSFTQ[30] = 0.0000000000000000      
 XSFTQ[31] = -1.79942418426103647E-005
 
-case.add_variable('sfc_sens_flx',XSFTH[1:],time=XTIMEF[1:])
-case.add_variable('sfc_lat_flx', XSFTQ[1:]*constants.Lv,time=XTIMEF[1:])
-
-# Potential temperature advection
-zadv = [                  0.,        1000.,       3000., 5000.]
-tmp =  [41400.,       -3.47222E-05, -3.47222E-05, 0.,    0.,\
-        52200.,        0.,           0.,          0.,    0.,\
-        63000.,        0.,           0.,          0.,    0.,\
-        73800.,       -2.22222E-05, -2.22222E-05, 0.,    0.,\
-        84600.,       -4.44444E-05, -4.44444E-05, 0.,    0.,\
-        86400.+9000., -7.77777E-05, -7.77777E-05, 0.,    0.]
-
-
-timeF = np.array(tmp[0::5]) - 41400
-ntf, = timeF.shape
-nzf = len(zadv)
-
-thadv = np.zeros((ntf,nzf),dtype=np.float64)
-for it in range(0,ntf):
-    thadv[it,:] = tmp[5*it+1:5*it+5]
-
-case.add_variable('theta_adv',thadv,time=timeF,lev=zadv,levtype='altitude')
-
-# Total water mixing ratio advection
-zadv = [                  0.,        1000.,       3000., 5000.]
-tmp =  [41400.,        2.22222E-08,  2.22222E-08, 0.,    0.,\
-        52200.,        5.55555E-09,  5.55555E-09, 0.,    0.,\
-        63000.,       -1.11111E-08, -1.11111E-08, 0.,    0.,\
-        73800.,       -2.77778E-08, -2.77778E-08, 0.,    0.,\
-        84600.,       -4.44444E-08, -4.44444E-08, 0.,    0.,\
-        86400.+9000., -9.11111E-08, -9.11111E-08, 0.,    0.]
-
-
-timeF = np.array(tmp[0::5]) - 41400
-ntf, = timeF.shape
-nzf = len(zadv)
-
-rvadv = np.zeros((ntf,nzf),dtype=np.float64)
-for it in range(0,ntf):
-    rvadv[it,:] = tmp[5*it+1:5*it+5]
-
-case.add_variable('rv_adv',rvadv,time=timeF,lev=zadv,levtype='altitude')
+case.add_surface_fluxes(sens=XSFTH[1:],lat=XSFTQ[1:]*constants.Lv,time=XTIMEF[1:],forc_wind='z0',z0=0.035)
 
 
 ################################################
-# 4. Attributes
-################################################
-
-# advection of theta and rv
-case.set_attribute("adv_theta",1)
-case.set_attribute("adv_rv",1)
-# potential temperature radiative tendency is included in advection
-case.set_attribute("rad_theta","adv")
-# Geostrophic wind forcing
-case.set_attribute("forc_geo",1)
-# Surface flux forcing, wind stress is computed using z0
-case.set_attribute("surfaceType","land")
-case.set_attribute("surfaceForcing","surfaceFlux")
-case.set_attribute("surfaceForcingWind","z0")
-
-################################################
-# 5. Writing file
+# 4. Writing file
 ################################################
 
 case.write('ARMCU_MESONH_DEF_driver.nc',verbose=False)
@@ -300,7 +255,7 @@ if lverbose:
     case.info()
 
 ################################################
-# 6. Ploting, if asked
+# 5. Ploting, if asked
 ################################################
 
 if lplot:
