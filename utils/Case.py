@@ -646,6 +646,29 @@ class Case:
 
         self.add_forcing_variable('theta_adv',data,**kwargs)
 
+    def add_thetal_advection(self,data,include_rad=False,**kwargs):
+        """Add a liquid potential temperature advection to a Case object.
+           Required argument:
+           data -- input data as a list or a numpy array.
+
+           Optional (keyword) argument:
+           include_rad -- boolean indicated whether the radiative tendency 
+                          is included in the advection (default False)
+
+           See add_variable function for optional arguments.
+           Note that:
+           - a level axis is required (lev optional argument).
+           - a levtype is required (levtype optional argument).
+
+           If time is not provided, forcing is assumed constant in time.
+        """
+
+        self.set_attribute('adv_thetal',1)
+        if include_rad:
+            self.set_attribute('rad_thetal','adv')
+
+        self.add_forcing_variable('thetal_adv',data,**kwargs)
+
     def add_qv_advection(self,data,**kwargs):
         """Add a specific humidity advection to a Case object.
            Required argument:
