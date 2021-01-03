@@ -531,6 +531,48 @@ class Case:
         # add initial variable to the Case object
         self.add_variable(varid,tmp,**kwargs)
 
+    def add_surface_pressure_forcing(self,data,**kwargs):
+        """Add a surface pressure forcing to a Case object
+           Required argument:
+           data -- input data as a list or a numpy array.
+
+           See add_variable function for optional arguments.
+
+           If time is not provided, forcing is assumed constant in time.           
+        """
+
+        self.add_forcing_variable('ps_forc',data,**kwargs)
+
+    def add_pressure_forcing(self,data,**kwargs):
+        """Add forcing pressure levels to a Case object
+           Required argument:
+           data -- input data as a list or a numpy array.
+
+           See add_variable function for optional arguments.
+           Note that:
+           - a level axis is required (lev optional argument).
+           - a levtype is required (levtype optional argument).           
+
+           If time is not provided, forcing is assumed constant in time.           
+        """
+
+        self.add_forcing_variable('pressure_forc',data,**kwargs)
+
+    def add_height_forcing(self,data,**kwargs):
+        """Add forcing height levels to a Case object
+           Required argument:
+           data -- input data as a list or a numpy array.
+
+           See add_variable function for optional arguments.
+           Note that:
+           - a level axis is required (lev optional argument).
+           - a levtype is required (levtype optional argument).           
+
+           If time is not provided, forcing is assumed constant in time.           
+        """
+
+        self.add_forcing_variable('height_forc',data,**kwargs)
+
     def add_geostrophic_wind(self,ug=None,vg=None,uglev=None,vglev=None,**kwargs):
         """Add a geostrophic wind forcing to a Case object.
            Required argument:
@@ -760,20 +802,55 @@ class Case:
             print 'ERROR: you must provide a nudging timescale for variable {0}'.format(varid)
             sys.exit()
 
-        self.set_attribute('nudging_{0}'.format(varid),timescale)
+        self.set_attribute('nudging_{0}'.format(varid),float(timescale))
 
         if z_nudging is None and p_nudging is None:
             print 'WARNING: {0} will be nudged over the whole atmosphere'
             self.set_attribute('z_nudging_{0}'.format(varid),0)
 
         if z_nudging is not None:
-            self.set_attribute('z_nudging_{0}'.format(varid),z_nudging)
+            self.set_attribute('z_nudging_{0}'.format(varid),float(z_nudging))
         else:
-            self.set_attribute('p_nudging_{0}'.format(varid),p_nudging)
+            self.set_attribute('p_nudging_{0}'.format(varid),float(p_nudging))
 
         var = '{0}_nudging'.format(varid)
         self.add_forcing_variable(var,data,**kwargs)
 
+
+    def add_wind_nudging(self,unudg=None,vnudg=None,ulev=None,vlev=None,**kwargs):
+        """Add a wind nudging forcing to a Case object.
+           Required argument:
+           unudg -- input data for zonal wind as a list or a numpy array.
+           vnudg -- input data for meridional wind as a list or a numpy array.
+
+           Optional arguments:
+           lev     -- level axis for both unudg and vnudg as a list or a numpy array (default None)
+           ulev    -- level axis for unudg as a list or a numpy array (default None)
+           vlev    -- level axis for vnudg as a list or a numpy array (default None)
+           levtype -- type of vertical axis (pressure or altitude)
+
+           Either lev or ulev/vlev should be provided
+
+           See add_variable function for optional arguments.
+
+           If time is not provided, forcing is assumed constant in time
+        """
+
+        if unudg is None or vnudg is None:
+            print 'ERROR: you must provide both zonal and meridional geostrophic wind'
+            sys.exit()
+
+        if not(kwargs.has_key('lev')) and ulev is None and vlev is None:
+            print 'ERROR: you must provide a vertical axis either with lev or with both ulev/vglev'
+            sys.exit()
+
+        if ulev is not None:
+            kwargs['lev'] = ulev
+        self.add_nudging('u',unudg,**kwargs)
+
+        if vlev is not None:
+            kwargs['lev'] = vlev        
+        self.add_nudging('v',vnudg,**kwargs)
 
     def add_temp_nudging(self,data,**kwargs):
         """Add a temperature nudging forcing to a Case object.
