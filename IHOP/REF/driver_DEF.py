@@ -117,7 +117,6 @@ rv_adv = np.reshape(rv_adv,(ntf,nzf))
 case.add_rv_advection(rv_adv,time=timeF,lev=zforc,levtype='altitude')
 
 # Surface Forcing
-
 timeSfc = np.genfromtxt('surface_forcing.txt',dtype=None,skip_header=1,usecols=0)
 shf = np.genfromtxt('surface_forcing.txt',dtype=None,skip_header=1,usecols=1)
 lhf = np.genfromtxt('surface_forcing.txt',dtype=None,skip_header=1,usecols=2)

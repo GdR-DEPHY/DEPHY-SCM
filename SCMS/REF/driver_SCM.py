@@ -3,7 +3,7 @@
 """
 Created on 6 November 2020
 
-@author: fleur Couvreux
+@author: Fleur Couvreux
 """
 
 ## ARM-Cumulus SCM-enabled case definition
@@ -59,7 +59,7 @@ ts = timeout*0. + 310 # same shape as timeout
 newcase.add_variable('ts',ts,time=timeout,timeid='time')
 
 # update some attributes
-newcase.set_title("Forcing and initial conditions for SCMS-Cumulus case - SCM-enabled Meso-NH version")
+newcase.set_title("Forcing and initial conditions for SCMS-Cumulus case - SCM-enabled version")
 newcase.set_script("DEPHY-SCM/SCMS/REF/driver_SCM.py")
 
 # display some information about the new version of the case
