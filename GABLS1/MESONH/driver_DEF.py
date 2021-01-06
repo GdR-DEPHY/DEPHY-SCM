@@ -6,7 +6,9 @@ Created on 01 May 2020
 @author: Fleur Couvreux
 
 Modifications:
-    2020-06-04, R. Roehrig: Add z0 value + some cleaning/formatting
+    2020/06/04, R. Roehrig: Add z0 value + some cleaning/formatting
+    2020/11/12, E. Vignon:  Add no evaporation option
+    2021/01/03, R. Roehrig: update for improved case definition interface.
 
 GABLS1 MESO-NH case definition (compared to REF, the TKE profile is set to 0 m2 s-2)
 From Kosovic and Curry 2000; Cuxart et al 2006; Beare et al 2006
@@ -42,8 +44,8 @@ case = Case('GABLS1/MESONH',
         lon=123.33,
         startDate="20000101100000",
         endDate="20000101190000",
-        zorog=0.,
-        z0=0.1)
+        surfaceType='land',
+        zorog=0.)
 
 case.set_title("Forcing and initial conditions for GABLS1 case - Original definition")
 case.set_reference("Beare et al. (2006, BLM), Cuxart et al (2006, BLM), Kosovic and Curry (2000) reproduced in Meso-NH by Q Rodier")
@@ -62,7 +64,7 @@ t1 = 32400 # 17:00 UTC, 1 January 2000
 
 # Surface pressure
 ps = 101320.
-case.add_variable('ps',[ps,])
+case.add_init_ps(ps)
 
 #         z (m) theta (K) rt (g kg-1) u (m s-1) v (m s-1)
 init = [   0.0,   265.0,   0.0,       0.0,     0.0,\
@@ -74,11 +76,12 @@ init = [   0.0,   265.0,   0.0,       0.0,     0.0,\
 init = np.array(init,dtype=np.float64)
 
 z = init[0::5]
-case.add_variable('theta',init[1::5],      lev=z,levtype='altitude')
-case.add_variable('rt',   init[2::5]/1000.,lev=z,levtype='altitude') # converted in kg kg-1
-case.add_variable('u',    init[3::5],      lev=z,levtype='altitude')
-case.add_variable('v',    init[4::5],      lev=z,levtype='altitude')
-case.add_variable('height',z,lev=z,levtype='altitude')
+
+case.add_init_theta(init[1::5], lev=z, levtype='altitude')
+case.add_init_rt(init[2::5]/1000., lev=z, levtype='altitude') # converted in kg kg-1
+case.add_init_wind(u=init[3::5],v=init[4::5], lev=z, levtype='altitude')
+
+case.add_init_height(z,lev=z,levtype='altitude')
 
 # Turbulent Kinetic Energy
 ztke = range(0,400+1,10)
@@ -92,31 +95,26 @@ tke = np.zeros(nztke,dtype=np.float64)
 #    else:
 #      tke[iz] = 0.
 
-case.add_variable('tke',tke,lev=ztke,levtype='altitude')
+case.add_init_tke(tke, lev=ztke, levtype='altitude')
 
 ################################################
 # 3. Forcing
 ################################################
 
 # Constant Geostrophic wind across the simulation
-ug = np.zeros((2,5),dtype=np.float64)
-ug[0,:] = 8.
-ug[1,:] = 8.
+nz = len(z)
+ug = np.zeros(nz,dtype=np.float64) + 8.
+vg = np.zeros(nz,dtype=np.float64) + 0.
 
-vg = np.zeros((2,5),dtype=np.float64)
-vg[0,:] = 0.
-vg[1,:] = 0.
-
-
-case.add_variable('ug',ug,time=[t0,t1],lev=z,levtype='altitude')
-case.add_variable('vg',vg,time=[t0,t1],lev=z,levtype='altitude')
+case.add_geostrophic_wind(ug=ug,vg=vg,lev=z,levtype='altitude')
 
 # Surface Forcing
 # constant cooling rate 0.25K/hr from 265 K
 
 ts=[265., 264.75, 264.5, 264.25, 264., 263.75, 263.5, 263.25, 263.0, 262.75]
 timets=[0., 3600., 7200., 10800., 14400., 18000., 21600., 25200., 28800., 32400.]
-case.add_variable('ts',ts,time=timets)
+
+case.add_forcing_ts(ts,time=timets,z0=0.1)
 
 # The following flux-gradient relations are recommended
 # du/dz= ∂v=dz u*/(Kz)*(1.+Bm(z/L))
@@ -124,25 +122,15 @@ case.add_variable('ts',ts,time=timets)
 # K=0.4
 # Bm=4.8
 # Bh=7.8
-# No advection forcing just a geostrophic wind
 
+# No surface evaporation (in fact no moisture at all)
+case.deactivate_surface_evaporation()
 
-################################################
-# 4. Attributes
-################################################
-
-# Radiation schemes are switched off 
-case.set_attribute("rad_theta","adv")
-# Geostrophic wind forcing
-case.set_attribute("forc_geo",1)
-# Surface flux forcing, wind stress is computed using z0
-case.set_attribute("surfaceType","land")
-case.set_attribute("surfaceForcing","ts")
-case.set_attribute("surfaceForcingWind","z0")
-case.set_attribute("z0",0.1)
+# Radiation scheme is switched off 
+case.deactivate_radiation()
 
 ################################################
-# 5. Writing file
+# 4. Writing file
 ################################################
 
 case.write('GABLS1_MESONH_DEF_driver.nc',verbose=False)
@@ -151,7 +139,7 @@ if lverbose:
     case.info()
 
 ################################################
-# 6. Ploting, if asked
+# 5. Ploting, if asked
 ################################################
 
 if lplot:

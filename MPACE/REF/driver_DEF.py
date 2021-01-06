@@ -6,7 +6,7 @@ Created on 01 October 2020
 @author: Etienne Vignon
 
 Modifications:
-
+  2021/01/03, R. Roehrig: update for improved case definition interface.
 
 MPACE original case definition
 From Klein et al. 2009; QJRMS, DOI: 10.1002/qj.416
@@ -27,7 +27,7 @@ from Case import Case
 ################################################
 
 lplot = True # plot all the variables
-lverbose = True # print information about variables and case
+lverbose = False # print information about variables and case
 
 ################################################
 # 1. General information about the case
@@ -41,8 +41,8 @@ case = Case('MPACE/REF',
         lon=209.00,
         startDate="20041009170000",
         endDate="20041010050000",
-        zorog=0.,
-        z0= 0.01)
+        surfaceType="ocean",
+        zorog=0.)
 
 case.set_title("Forcing and initial conditions for MPACE case - Original definition")
 case.set_reference("Klein et al. (2009, QJRMS)")
@@ -50,16 +50,11 @@ case.set_author("E. Vignon")
 case.set_script("driver_DEF.py")
 case.set_comment("Use of forcing file from E3SM, https://github.com/E3SM-Project/scmlib/wiki/E3SM-Single-Column-Model-Case-Library")
 
-# time units are expected to be seconds since startDate
-t0 = 0     # 17:00 UTC, 09 October 2004
-t1 = 43200 # 05:00 UTC, 10 October 2004
-
 ################################################
 # 2. Input netCDF file
 ################################################
 
 fin = nc.Dataset('MPACE_forcing_dephy.nc','r')
-
 
 ################################################
 # 3. Initial state
@@ -67,30 +62,27 @@ fin = nc.Dataset('MPACE_forcing_dephy.nc','r')
 
 # Surface pressure
 ps  =  fin['Ps'][0,0,0]
-case.add_variable('ps',ps,timeid='time')
-
+case.add_init_ps(ps)
 
 # Pressure
 pressure  = fin['lev'][-1:0:-1]
 pressure[0] = ps
-#pressure = extend('p',pressure,init=True)
 
-case.add_variable('pressure',pressure,lev=pressure,levtype='pressure',levid='lev',timeid='time')
-#case.add_variable('pressure_forc',pressure,lev=pressure,levtype='pressure',levid='lev',timeid='time')
+case.add_init_pressure(pressure,lev=pressure,levtype='pressure',levid='lev')
 
 # Temperature in K and moisture (vapor and total mixing ratio)
 # Note that in the ref paper, the ice-liquid potential temperature is initially set 
 # but the initial state corresponds to a purely-liquid cloud
 
 temp  = fin['T'][0,-1:0:-1,0,0]
-case.add_variable('temp',temp,lev=pressure,levtype='pressure',levid='lev',timeid='time')
 
+case.add_init_temp(temp,lev=pressure,levtype='pressure',levid='lev')
 
 #  water vapor mixing ratio in kg/kg
 rv =  fin['q'][0,-1:0:-1,0,0]
 qv=rv/(1.+rv)
-case.add_variable('qv',qv,lev=pressure,levtype='pressure',levid='lev',timeid='time')
 
+case.add_init_qv(qv,lev=pressure,levtype='pressure',levid='lev')
 
 
 #  total water mixing ratio in kg/kg
@@ -98,17 +90,14 @@ rl =  fin['CLDLIQ'][0,-1:0:-1,0,0]
 ri =  fin['CLDICE'][0,-1:0:-1,0,0]
 rt=rl+ri+rv
 qt=rt/(1.+rt)
-case.add_variable('qt',qt,lev=pressure,levtype='pressure',levid='lev',timeid='time')
 
+case.add_init_qt(qt,lev=pressure,levtype='pressure',levid='lev')
 
-# Zonal wind
+# Zonal and meridional wind
 u  = fin['u'][0,-1:0:-1,0,0]
-case.add_variable('u',u,lev=pressure,levtype='pressure',levid='lev',timeid='time')
-
-# Meridional wind
 v  = fin['v'][0,-1:0:-1,0,0]
-case.add_variable('v',v,lev=pressure,levtype='pressure',levid='lev',timeid='time')
 
+case.add_init_wind(u=u,v=v,lev=pressure,levtype='pressure',levid='lev')
 
 ################################################
 # 3. Forcing
@@ -116,88 +105,41 @@ case.add_variable('v',v,lev=pressure,levtype='pressure',levid='lev',timeid='time
 
 # pressure levels
 
-ps_forc = np.zeros((2,1),dtype=np.float)
-ps_forc[:]=ps
-case.add_variable('ps_forc',ps_forc,time=[t0,t1],timeid='time')
-pressure_forc = np.zeros((2,len(pressure)),dtype=np.float)
-pressure_forc[0,:]=pressure
-pressure_forc[1,:]=pressure
-case.add_variable('pressure_forc',pressure_forc,time=[t0,t1],lev=pressure,levtype='pressure',levid='lev',timeid='time')
+case.add_surface_pressure_forcing(ps,timeid='time')
+
+case.add_pressure_forcing(pressure,timeid='time',lev=pressure,levtype='pressure',levid='lev')
 
 # nudging of wind towards constant values
-u_nudg=np.zeros((2,len(u)),dtype=np.float)
-v_nudg=np.zeros((2,len(v)),dtype=np.float)
-u_nudg[0,:]=u
-u_nudg[1,:]=u
-v_nudg[0,:]=v
-v_nudg[1,:]=v
-case.add_variable('u_nudging',u_nudg,time=[t0,t1],lev=pressure,levtype='pressure',levid='lev',timeid='time')
-case.add_variable('v_nudging',v_nudg,time=[t0,t1],lev=pressure,levtype='pressure',levid='lev',timeid='time')
-
-
+case.add_wind_nudging(unudg=u,vnudg=v,timescale=3600.,p_nudging=110000.,timeid='time',lev=pressure,levtype='pressure',levid='lev')
 
 # Large scale vertical pressure velocity
+omega  = fin['omega'][0,-1:0:-1,0,0]
 
-omegar  = fin['omega'][0,-1:0:-1,0,0]
-omega=np.zeros((2,len(omegar)),dtype=np.float)
-omega[0,:]=omegar
-omega[1,:]=omegar
-case.add_variable('omega',omega,time=[t0,t1],lev=pressure,levtype='pressure',levid='lev',timeid='time')
+case.add_vertical_velocity(omega=omega,timeid='time',lev=pressure,levtype='pressure',levid='lev')
 
 # Large-scale advection of temperature in K s-1
+tadv  = fin['divT'][0,-1:0:-1,0,0]
 
-tadvr  = fin['divT'][0,-1:0:-1,0,0]
-tadv=np.zeros((2,len(tadvr)),dtype=np.float)
-tadv[0,:]=tadvr
-tadv[1,:]=tadvr
-case.add_variable('temp_adv',tadv,time=[t0,t1],lev=pressure,levtype='pressure',levid='lev',timeid='time') # converted in K s-1 (array type required)
+case.add_temp_advection(tadv,timeid='time',lev=pressure,levtype='pressure',levid='lev')
 
 # Large-scale advection of specific humidity in kg kg-1 s-1
+qvadv=fin['divq'][0,-1:0:-1,0,0]
 
-qvadvr=fin['divq'][0,-1:0:-1,0,0]
-qvadv=np.zeros((2,len(qvadvr)),dtype=np.float)
-qvadv[0,:]=qvadvr
-qvadv[1,:]=qvadvr
-case.add_variable('qv_adv',qvadv,time=[t0,t1],lev=pressure,levtype='pressure',levid='lev',timeid='time') # converted in kg kg-1 s-1 (array type required)
-
+case.add_qv_advection(qvadv,timeid='time',lev=pressure,levtype='pressure',levid='lev')
 
 # Surface Forcing
 # constant surface latent and sensible fluxes [W m-2] (be careful sign convention)
-
 hs=fin['shflx'][0,0,0]
 hl=fin['lhflx'][0,0,0]
 
-case.add_variable('sfc_sens_flx',[hs,hs],time=[t0,t1],timeid='time')
-case.add_variable('sfc_lat_flx', [hl,hl],time=[t0,t1],timeid='time')
+case.add_surface_fluxes(sens=hs,lat=hl,timeid='time',forc_wind='z0',z0=0.01)
 
 # Constant SST [K]
 ts=274.01
-case.add_variable('ts',[ts,ts],time=[t0,t1],timeid='time')
+case.add_surface_temp(ts,timeid='time')
 
 ################################################
-# 4. Attributes
-################################################
-
-# advection of theta and rt
-case.set_attribute("adv_temp",1)
-case.set_attribute("adv_qv",1)
-# No Geostrophic wind forcing
-case.set_attribute("forc_geo",0)
-# Vertical pressure velocity
-case.set_attribute("forc_omega",1)
-# Nudged wind
-case.set_attribute("nudging_u",3600.)
-case.set_attribute("nudging_v",3600.)
-case.set_attribute("p_nudging_u",110000.)
-case.set_attribute("p_nudging_v",110000.)
-# Surface type is ocean
-case.set_attribute("surfaceType","ocean")
-# Surface flux forcing, wind stress is computed using z0
-case.set_attribute("surfaceForcingWind","z0")
-#case.set_attribute("surfaceForcing","ts")
-case.set_attribute("surfaceForcing","surfaceFlux")
-################################################
-# 5. Writing file
+# 4. Writing file
 ################################################
 
 case.write('MPACE_REF_DEF_driver.nc',verbose=False)
@@ -206,7 +148,7 @@ if lverbose:
     case.info()
 
 ################################################
-# 6. Ploting, if asked
+# 5. Ploting, if asked
 ################################################
 
 if lplot:
