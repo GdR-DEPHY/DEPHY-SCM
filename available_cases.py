@@ -40,6 +40,11 @@ case = 'AYOTTE'
 cases.append(case)
 subcases[case] = ['00SC','00WC','03SC','05SC','05WC','24SC']
 
+# IHOP Case
+case = 'IHOP'
+cases.append(case)
+subcases[case] = ['REF']
+
 ####################################
 #### Shallow convection cases
 
