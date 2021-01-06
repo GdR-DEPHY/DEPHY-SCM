@@ -63,11 +63,15 @@ case = 'BOMEX'
 cases.append(case)
 subcases[case] = ['REF']
 
+# SCMS Case
+case = 'SCMS'
+cases.append(case)
+subcases[case] = ['REF']
+
 # MPACE Case
 case = 'MPACE'
 cases.append(case)
 subcases[case] = ['REF']
-
 
 ####################################
 #### Stratocumulus cases
