@@ -98,6 +98,7 @@ case.add_init_qt(qt,lev=height,levtype='altitude')
 case.add_geostrophic_wind(ug=u,vg=v,lev=height,levtype='altitude')
 
 # Nudging of temperature and humidity at high levels
+case.add_temp_nudging(temp,timescale=3600.,z_nudging=3000,lev=height,levtype='altitude')
 case.add_thetal_nudging(thetal,timescale=3600.,z_nudging=3000,lev=height,levtype='altitude')
 case.add_qt_nudging(qt,timescale=3600.,z_nudging=3000,lev=height,levtype='altitude')
 

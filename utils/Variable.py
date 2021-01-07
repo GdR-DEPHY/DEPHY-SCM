@@ -274,7 +274,7 @@ def read(name,filein):
     return varout
 
 
-def interpol(var,levout=None,timeout=None):
+def interpol(var,levout=None,timeout=None,log=False):
 
     # TODO: Extrapolation to be revisited
 
@@ -286,8 +286,12 @@ def interpol(var,levout=None,timeout=None):
             tmp = np.zeros((ntin,nlevout,1,1),dtype=np.float64)
             for it in range(0,ntin):
                 #ff = interpolate.interp1d(var.level.data,var.data[it,:,0,0],bounds_error=False,fill_value="extrapolate")
-                ff = interpolate.interp1d(var.level.data,var.data[it,:,0,0],bounds_error=False,fill_value=var.data[it,-1,0,0])
-                tmp[it,:,0,0] = ff(levout.data)
+                if log:
+                    ff = interpolate.interp1d(var.level.data,np.log(var.data[it,:,0,0]),bounds_error=False,fill_value=np.log(var.data[it,-1,0,0]))
+                    tmp[it,:,0,0] = np.exp(ff(levout.data))
+                else:
+                    ff = interpolate.interp1d(var.level.data,var.data[it,:,0,0],bounds_error=False,fill_value=var.data[it,-1,0,0])
+                    tmp[it,:,0,0] = ff(levout.data)
         else:
             tmp = var.data
             nlevout = nlevin
@@ -317,6 +321,7 @@ def interpol(var,levout=None,timeout=None):
             ff = interpolate.interp1d(var.time.data,var.data[:,0,0],bounds_error=False,fill_value=var.data[-1,0,0])
             tmp[:,0,0] = ff(timeout.data)
         else:
+            tmp = np.log(var.data)
             tmp = var.data
             ntout = ntin
             timeout = var.time
@@ -329,9 +334,13 @@ def interpol(var,levout=None,timeout=None):
         if not(levout is None):
             nlevout = levout.length
             tmp = np.zeros((nlevout,1,1),dtype=np.float64)
-            ff = interpolate.interp1d(var.level.data,var.data[:,0,0],bounds_error=False,fill_value="extrapolate")
-            ff = interpolate.interp1d(var.level.data,var.data[:,0,0],bounds_error=False,fill_value=var.data[-1,0,0])
-            tmp[:,0,0] = ff(levout.data)
+            #ff = interpolate.interp1d(var.level.data,var.data[:,0,0],bounds_error=False,fill_value="extrapolate")
+            if log:
+                ff = interpolate.interp1d(var.level.data,np.log(var.data[:,0,0]),bounds_error=False,fill_value=var.data[-1,0,0])
+                tmp[:,0,0] = np.exp(ff(levout.data))
+            else:
+                ff = interpolate.interp1d(var.level.data,var.data[:,0,0],bounds_error=False,fill_value=var.data[-1,0,0])
+                tmp[:,0,0] = ff(levout.data)                
         else:
             tmp = var.data
             nlevout = nlevin

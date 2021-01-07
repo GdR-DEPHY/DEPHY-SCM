@@ -54,8 +54,9 @@ levout = np.array(range(0,47971,10),dtype=np.float64)
 # New temporal grid, from 18:00 UTC, 15 July 2006 to 18:00 UTC 18 July 2006, 30-minute timestep
 timeout = np.arange(0.,(72+1)*3600.,1800.)
 
-# conversion
-newcase = case.convert2SCM(time=timeout,lev=levout,levtype='altitude')
+# conversion 
+# Both temp and thetal are provided for nudging. Use only temp (better for vertical interpolation)
+newcase = case.convert2SCM(time=timeout,lev=levout,levtype='altitude',usetemp=True,usetheta=False,usethetal=False)
 
 # update some attributes
 newcase.set_title(title)
