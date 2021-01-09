@@ -1686,7 +1686,7 @@ class Case:
         att = 'nudging_temp'
         if att in self.attlist and self.attributes[att] > 0:
             if not(usetemp) and (ltheta or lthetal):
-                print 'Error: Several nudging variable for temperature are given, which might yield to inconsistencies'
+                print 'Warning: Several nudging variable for temperature are given, which might yield to inconsistencies'
                 #sys.exit()
             else:
                 ltemp=True
@@ -1725,7 +1725,7 @@ class Case:
         att = 'nudging_theta'
         if att in self.attlist and self.attributes[att] > 0:
             if not(usetheta) and (ltemp or lthetal):
-                print 'Error: Several nudging variable for temperature are given, which might yield to inconsistencies'
+                print 'Warning: Several nudging variable for temperature are given, which might yield to inconsistencies'
                 #sys.exit()
             else:
                 ltheta=True   
@@ -1761,7 +1761,7 @@ class Case:
         att = 'nudging_thetal'
         if att in self.attlist and self.attributes[att] > 0:
             if not(usethetal) and (ltemp or ltheta):
-                print 'Error: Several nudging variable for temperature are given, which might yield to inconsistencies'
+                print 'Warning: Several nudging variable for temperature are given, which might yield to inconsistencies'
                 #sys.exit()
             else:
                 lthetal=True   
