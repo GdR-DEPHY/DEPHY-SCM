@@ -1,7 +1,7 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 """
-Created on 17 June 2020
+Created on 09 January 2021
 
 @author: Romain Roehrig
 """
@@ -40,21 +40,52 @@ fin = nc.Dataset('ARM_shallow_iopfile.nc')
 # 1. General information about the case
 ################################################
 
+orog = float(fin['phis'][0,0])/CC.g
+
 lat = float(fin['lat'][0])
 lon = float(fin['lon'][0])
-orog = float(fin['phis'][0,0])/CC.g
 
 bdate = str(fin['bdate'][0])
 tsec = fin['tsec'][:]
+seconds0 = tsec[0]
+seconds1 = tsec[-1]
 
-h0 = int(tsec[0]/3600)
-m0 = int((tsec[0]-h0*3600)/60)
-s0 = int(tsec[0]-h0*3600-m0*60)
+swoff = False
+lwoff = False
+
+# Update from running script
+with open('run_e3sm_scm_ARM_shallow.csh', 'r') as f:
+    for line in f.readlines():
+        if 'set lat' in line:
+            lat = float(line.split()[3])
+        if 'set lon' in line:
+            lon = float(line.split()[3])
+        if 'set startdate' in line:
+            date = line.split()[3]
+            bdate = ''.join(date.split('-'))
+        if 'set start_in_sec' in line:
+            seconds0 = float(line.split()[3])
+        if 'set stop_option' in line:
+            stop_option = line.split()[3]
+        if 'set stop_n' in line:
+            ntime = float(line.split()[3])
+            if stop_option == 'nhours':
+                seconds1 = ntime*3600
+            else:
+                raise ValueError
+        if 'set do_turnoff_swrad' in line:
+            swoff = line.split()[3] == '.false'
+        if 'set do_turnoff_lwrad' in line:
+            lwoff = line.split()[3] == '.false'
+           
+h0 = int(seconds0/3600)
+m0 = int((seconds0-h0*3600)/60)
+s0 = int(seconds0-h0*3600-m0*60)
 
 d0 = datetime.datetime(int(bdate[0:4]),int(bdate[4:6]),int(bdate[6:8]))
-t0 = datetime.timedelta(seconds=int(tsec[0]))
+t0 = datetime.timedelta(seconds=seconds0)
 
-t1 = datetime.timedelta(seconds=int(tsec[-1]/3600)*3600)
+t1 = datetime.timedelta(seconds=int(seconds1/3600)*3600)
 
 d1 = d0+t1
 
@@ -66,8 +97,8 @@ case = Case('{0}/{1}'.format(case_name,subcase_name),
         lon=lon,
         startDate=startDate,
         endDate=endDate,
-        zorog=orog,
-        z0=0.035)
+        surfaceType='land',
+        zorog=orog)
 
 case.set_title(title)
 case.set_reference(reference)
@@ -80,15 +111,24 @@ case.set_script("DEPHY-SCM/{0}/{1}/driver_DEF.py".format(case_name,subcase_name)
 
 # Surface pressure
 ps = fin['Ps'][0,0,0]
-case.add_variable('ps',[ps,])
+case.add_init_ps(ps)
 
+# Pressure
 plev = fin['lev'][:]
-case.add_variable('pressure',plev,      lev=plev,levtype='pressure')
+case.add_init_pressure(plev,lev=plev,levtype='pressure')
 
-case.add_variable('temp',fin['T'][0,:,0,0],      lev=plev,levtype='pressure')
-case.add_variable('qv',  fin['q'][0,:,0,0],      lev=plev,levtype='pressure')
-case.add_variable('u',   fin['u'][0,:,0,0],      lev=plev,levtype='pressure')
-case.add_variable('v',   fin['v'][0,:,0,0],      lev=plev,levtype='pressure')
+# Zonal and meridional wind
+u = fin['u'][0,:,0,0]
+v = fin['v'][0,:,0,0]
+case.add_init_wind(u=u,v=v,lev=plev,levtype='pressure')
+
+# Temperature
+temp = fin['T'][0,:,0,0]
+case.add_init_temp(temp,lev=plev,levtype='pressure')
+
+# Specific humidity
+qv = fin['q'][0,:,0,0]
+case.add_init_qv(qv,lev=plev,levtype='pressure')
 
 ################################################
 # 3. Forcing
@@ -97,39 +137,39 @@ case.add_variable('v',   fin['v'][0,:,0,0],      lev=plev,levtype='pressure')
 # number of forcing time step
 nforc, = tsec.shape
 
+# surface pressure forcing
+ps_forc = fin['Ps'][:,0,0] 
+case.add_surface_pressure_forcing(ps_forc,time=tsec)
+
+# Pressure forcing
 pressure_forc = np.tile(plev,(nforc,1))
-case.add_variable('pressure_forc',pressure_forc,time=tsec,lev=plev,levtype='pressure')
+case.add_pressure_forcing(pressure_forc,time=tsec,lev=plev,levtype='pressure')
 
-# Constant Geostrophic wind across the simulation
-case.add_variable('ug',fin['u'][:,:,0,0],time=tsec,lev=plev,levtype='pressure')
-case.add_variable('vg',fin['v'][:,:,0,0],time=tsec,lev=plev,levtype='pressure')
+# Geostrophic wind
+ug = fin['u'][:,:,0,0]
+vg = fin['v'][:,:,0,0]
+case.add_geostrophic_wind(ug=ug,vg=vg,time=tsec,lev=plev,levtype='pressure')
 
-case.add_variable('ts',fin['Tg'][:,0,0]*0+310,time=tsec)
-case.add_variable('sfc_sens_flx',fin['lhflx'][:,0,0],time=tsec)
-case.add_variable('sfc_lat_flx', fin['shflx'][:,0,0],time=tsec)
+# Advections
+temp_adv = fin['divT'][:,:,0,0]
+qv_adv = fin['divq'][:,:,0,0]
+case.add_temp_advection(temp_adv,time=tsec,lev=plev,levtype='pressure',include_rad=not(swoff or lwoff))
+case.add_qv_advection(qv_adv,time=tsec,lev=plev,levtype='pressure')
 
-case.add_variable('temp_adv',fin['divT'][:,:,0,0],time=tsec,lev=plev,levtype='pressure') 
-case.add_variable('qv_adv',  fin['divq'][:,:,0,0],time=tsec,lev=plev,levtype='pressure') 
+# Vertical velocity
+omega = fin['omega'][:,:,0,0]
+case.add_vertical_velocity(omega=omega,time=tsec,lev=plev,levtype='pressure')
 
+# Surface forcing
+ts = fin['Tg'][:,0,0]*0 + 310
+shf = fin['shflx'][:,0,0]
+lhf = fin['lhflx'][:,0,0]
+case.add_surface_fluxes(sens=shf,lat=lhf,time=tsec,forc_wind='z0',z0=0.035)
 
-################################################
-# 4. Attributes
-################################################
-
-# advection of theta and rt
-case.set_attribute("adv_temp",1)
-case.set_attribute("adv_qv",1)
-# potential temperature radiative tendency is included in advection
-case.set_attribute("rad_temp","adv")
-# Geostrophic wind forcing
-case.set_attribute("forc_geo",1)
-# Surface flux forcing, wind stress is computed using z0
-case.set_attribute("surfaceType","land")
-case.set_attribute("surfaceForcing","surfaceFlux")
-case.set_attribute("surfaceForcingWind","z0")
+case.add_surface_temp(ts,time=tsec)
 
 ################################################
-# 5. Writing file
+# 4. Writing file
 ################################################
 
 case.write('{0}_{1}_DEF_driver.nc'.format(case_name,subcase_name),verbose=False)
@@ -138,7 +178,7 @@ if lverbose:
     case.info()
 
 ################################################
-# 6. Ploting, if asked
+# 5. Ploting, if asked
 ################################################
 
 if lplot:
