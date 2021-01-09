@@ -79,7 +79,7 @@ subcases[case] = ['REF']
 # SANDU composite cases
 case = 'SANDU'
 cases.append(case)
-subcases[case] = ['REF'] #['REF','FAST','SLOW']
+subcases[case] = ['REF','FAST','SLOW']
 
 ####################################
 #### Deep convection cases
