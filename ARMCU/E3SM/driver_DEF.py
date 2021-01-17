@@ -167,7 +167,7 @@ omega = fin['omega'][:,:,0,0]
 case.add_vertical_velocity(omega=omega,time=tsec,lev=plev,levtype='pressure')
 
 # Surface forcing
-ts = fin['Tg'][:,0,0]*0 + 310
+ts = fin['Tg'][:,0,0]
 shf = fin['shflx'][:,0,0]
 lhf = fin['lhflx'][:,0,0]
 case.add_surface_fluxes(sens=shf,lat=lhf,time=tsec,forc_wind='z0',z0=0.035)

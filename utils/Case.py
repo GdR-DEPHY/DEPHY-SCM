@@ -1987,6 +1987,8 @@ class Case:
         if att in self.attlist and self.attributes[att] == 'surfaceFlux':
             caseSCM.add_variable('sfc_sens_flx',dataout['sfc_sens_flx'].data,time=time,timeid='time')
             caseSCM.add_variable('sfc_lat_flx', dataout['sfc_lat_flx'].data, time=time,timeid='time')
+            if 'ts' in dataout.keys():
+                caseSCM.add_variable('ts', dataout['ts'].data, time=time,timeid='time')
 
         if att in self.attlist and self.attributes[att] == 'ts':
             caseSCM.add_variable('ts',dataout['ts'].data,time=time,timeid='time')
