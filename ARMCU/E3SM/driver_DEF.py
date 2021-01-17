@@ -92,6 +92,10 @@ d1 = d0+t1
 startDate = d0.strftime('%Y%m%d%H%M%S')
 endDate = d1.strftime('%Y%m%d%H%M%S')
 
+# to be consistent with other flavors of ARMCU
+startDate="19970621113000"
+endDate="19970622020000"
+
 case = Case('{0}/{1}'.format(case_name,subcase_name),
         lat=lat,
         lon=lon,
