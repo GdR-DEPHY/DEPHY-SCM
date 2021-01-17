@@ -41,6 +41,8 @@ fin = nc.Dataset('ARM_shallow_iopfile.nc')
 ################################################
 
 orog = float(fin['phis'][0,0])/CC.g
+# to be consistent with other flavors of ARMCU
+orog = 314.
 
 lat = float(fin['lat'][0])
 lon = float(fin['lon'][0])
