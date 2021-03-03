@@ -69,7 +69,7 @@ class Variable:
                     ax.info()
                     sys.exit()
 
-        self.coord = " ".join(self.axlist)
+        self.coord = " ".join(self.axlist + ['lat','lon'])
 
         self.plotcoef = plotcoef
         if plotunits is None:
@@ -96,11 +96,11 @@ class Variable:
             ax.write(filein)
 
         if not(self.data is None):
-          tmp = filein.createVariable(self.id,"f4",self.axlist)
+          tmp = filein.createVariable(self.id,"f8",self.axlist)
           tmp[:] = self.data
-          tmp.long_name = self.name
+          tmp.standard_name = self.name
           tmp.units = self.units
-          #tmp.coordinates = self.coord
+          tmp.coordinates = self.coord
 
     def plot(self,rep_images=None,var2=None,label="",label2="",timeunits=None,levunits=None):
 
@@ -144,15 +144,15 @@ class Variable:
 
             if self.time.length == 1:
                 if var2 is None:
-                    plotbasics.plot(self.data[0,:,0,0]*coef,levs,
+                    plotbasics.plot(self.data[0,:]*coef,levs,
                            xlabel='{0} [{1}]'.format(self.id,self.plotunits),
                            ylabel=zlabel,
                            title='{0} ({1})'.format(self.name,self.time.name),
                            rep_images=rep_images,name='{0}.png'.format(self.id),
                            yunits=levunits)
                 else:
-                    plotbasics.plot(self.data[0,:,0,0]*coef,levs,
-                            x2=var2.data[0,:,0,0]*coef,
+                    plotbasics.plot(self.data[0,:]*coef,levs,
+                            x2=var2.data[0,:]*coef,
                             y2=levs2,xlabel='{0} [{1}]'.format(self.id,self.plotunits),
                             ylabel=zlabel,
                             title='{0} ({1})'.format(self.name,self.time.name),
@@ -174,7 +174,7 @@ class Variable:
                         print "ERROR: timeunits unexpected for plotting:", timeunits
                         sys.exit()
 
-                plotbasics.plot2D(time,levs,self.data[:,:,0,0]*coef,
+                plotbasics.plot2D(time,levs,self.data[:,:]*coef,
                         xlabel=tunits,
                         ylabel=zlabel,
                         title='{0} [{1}]'.format(self.id,self.plotunits),
@@ -206,15 +206,15 @@ class Variable:
                         sys.exit()
 
                 if var2 is None:
-                    plotbasics.plot(time,self.data[:,0,0]*coef,
+                    plotbasics.plot(time,self.data[:]*coef,
                             ylabel='{0} [{1}]'.format(self.id,self.plotunits),
                             xlabel=tunits,
                             title=self.name,
                             rep_images=rep_images,name='{0}.png'.format(self.id)) 
                 else:
-                    plotbasics.plot(time,self.data[:,0,0]*coef,
+                    plotbasics.plot(time,self.data[:]*coef,
                             x2=time2,
-                            y2=var2.data[:,0,0]*coef,
+                            y2=var2.data[:]*coef,
                             ylabel='{0} [{1}]'.format(self.id,self.plotunits),
                             xlabel=tunits,
                             title=self.name,
@@ -226,15 +226,15 @@ class Variable:
         elif not(self.level is None):
 
             if var2 is None:
-                plotbasics.plot(self.data[:,0,0]*coef,levs,
+                plotbasics.plot(self.data[:]*coef,levs,
                         xlabel='{0} [{1}]'.format(self.id,self.plotunits),
                         ylabel=zlabel,
                         title=self.name,
                         rep_images=rep_images,name='{0}.png'.format(self.id),
                         yunits=levunits)
             else:
-                plotbasics.plot(self.data[:,0,0]*coef,levs,
-                        x2=var2.data[:,0,0]*coef,
+                plotbasics.plot(self.data[:]*coef,levs,
+                        x2=var2.data[:]*coef,
                         y2=levs2,
                         xlabel='{0} [{1}]'.format(self.id,self.plotunits),
                         ylabel=zlabel,

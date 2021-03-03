@@ -38,7 +38,7 @@ class Axis:
             dim = filein.createDimension(self.id, self.length)
             ax = filein.createVariable(self.id,"f8",(self.id,))
             ax[:] = self.data
-            ax.long_name = self.name
+            ax.standard_name = self.name
             ax.units = self.units
             for x in self.__dict__.keys():
                 if not(x in ['id','units','name','data','length']):

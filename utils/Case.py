@@ -26,49 +26,18 @@ import thermo
 
 class Case:
 
-    def __init__(self,caseid,lat=None,lon=None,startDate=None,endDate=None,surfaceType='ocean',zorog=0.,z0=None):
+    def __init__(self,caseid,lat=None,lon=None,startDate=None,endDate=None,surfaceType='ocean',zorog=0.):
 
         self.id = caseid
+
+        self.set_dates(startDate,endDate)
 
         # Latitude (degrees_noth) and Longitude (degrees_east)
         self.lat = lat
         self.lon = lon
 
-        if not(lat is None):
-            self.latAxis = Axis('lat',[lat,],name='Latitude',units='degrees_north')
-        if not(lon is None):
-            self.lonAxis = Axis('lon',[lon,],name='Longitude',units='degrees_east')
-
-        # Start en end dates of the simulation
-        self.startDate = startDate
-        self.endDate = endDate
-
         # Surface type
-        self.surfaceType = surfaceType
-
-        # Altitude above sea level (m)
-        self.zorog = zorog
-
-        # Roughness length
-        self.z0 = z0
-
-        # Initial time axis
-        self.t0 = 0
-        if not(startDate is None):
-            self.tunits = 'seconds since {0}-{1:0>2}-{2:0>2} {3:0>2}:{4:0>2}:{5:0>2}'.format(startDate[0:4],startDate[4:6],startDate[6:8],startDate[8:10],startDate[10:12],startDate[12:14])
-
-            self.t0Axis = Axis('t0',[self.t0,],name='Initial time',units=self.tunits,calendar='gregorian')
-
-        # Convert startDate and endDate 
-
-        self.tstart = None
-        if startDate is not None:
-            d = datetime(int(startDate[0:4]),int(startDate[4:6]),int(startDate[6:8]),int(startDate[8:10]),int(startDate[10:12]),int(startDate[12:14]))
-            self.tstart = nc.date2num(d,self.tunits,calendar='gregorian') # should be 0
-        self.tend = None
-        if endDate is not None:
-            d = datetime(int(endDate[0:4]),int(endDate[4:6]),int(endDate[6:8]),int(endDate[8:10]),int(endDate[10:12]),int(endDate[12:14]))
-            self.tend = nc.date2num(d,self.tunits,calendar='gregorian')
+        self.surface_type = surfaceType
 
         # Variables
         self.varlist = []
@@ -76,9 +45,8 @@ class Case:
 
         # Attributes
         self.attlist = ['case','title','reference','author','version','format_version','modifications','script','comment',
-                'startDate','endDate',
-                'surfaceType',
-                'zorog'
+                'start_date','end_date',
+                'surface_type',
                 ]
         self.attributes = {
                 'case': self.id,
@@ -90,43 +58,66 @@ class Case:
                 'modifications': "",
                 'script': "",
                 'comment': "",
-                'startDate': self.startDate,
-                'endDate': self.endDate,
-                'surfaceType': self.surfaceType,
-                'zorog': self.zorog
+                'start_date': self.start_date.strftime('%Y-%m-%d %H:%M:%S'),
+                'end_date': self.end_date.strftime('%Y-%m-%d %H:%M:%S'),
+                'surface_type': self.surface_type,
                 }
+
         for att in set(required_attributes).difference(set(self.attlist)):
             self.attlist.append(att)
-            if att in ['surfaceType','surfaceForcing','surfaceForcingWind']:
+            if att in ['surface_type','surface_forcing_temp','surface_forcing_moisture','surface_forcing_wind','radiation']:
                 self.attributes[att] = ""
             else:
                 self.attributes[att] = 0
 
-        if not(self.z0 is None):
-            self.attlist.append('z0')
-            self.attributes['z0'] = self.z0
+        # Add latitude and longitude variables
+        if not(lat is None):
+            self.add_latitude(lat)
+        if not(lon is None):
+            self.add_longitude(lon)
+
+        # Altitude above sea level (m)
+        self.add_orography(zorog)
+
 
     def set_dates(self,startDate,endDate):
 
-        self.startDate = startDate
-        self.endDate = endDate
+        # Start en end dates of the simulation
+        if isinstance(startDate,datetime):
+            self.start_date = startDate
+        elif len(startDate) == 14:
+            self.start_date = datetime.strptime(startDate,'%Y%m%d%H%M%S')
+        else:
+            self.start_date = datetime.strptime(startDate,'%Y-%m-%d %H:%M:%S')
 
+        if isinstance(endDate,datetime):
+            self.end_date = endDate
+        elif len(endDate) == 14:
+            self.end_date = datetime.strptime(endDate,'%Y%m%d%H%M%S')
+        else:
+            self.end_date = datetime.strptime(endDate,'%Y-%m-%d %H:%M:%S')
+        
+        # Initial time axis
         self.t0 = 0
-        self.tunits = 'seconds since {0}-{1:0>2}-{2:0>2} {3:0>2}:{4:0>2}:{5:0>2}'.format(startDate[0:4],startDate[4:6],startDate[6:8],startDate[8:10],startDate[10:12],startDate[12:14])
-        self.t0Axis = Axis('t0',[self.t0,],name='Initial time',units=self.tunits,calendar='gregorian')
+        if not(startDate is None):
+            self.tunits = self.start_date.strftime('seconds since %Y-%m-%d %H:%M:%S')
+            self.t0Axis = Axis('t0',[self.t0,],name='initial_time',units=self.tunits,calendar='gregorian')
 
-        d = datetime(int(startDate[0:4]),int(startDate[4:6]),int(startDate[6:8]),int(startDate[8:10]),int(startDate[10:12]),int(startDate[12:14]))
-        self.tstart = nc.date2num(d,self.tunits,calendar='gregorian') # should be 0
-        d = datetime(int(endDate[0:4]),int(endDate[4:6]),int(endDate[6:8]),int(endDate[8:10]),int(endDate[10:12]),int(endDate[12:14]))
-        self.tend = nc.date2num(d,self.tunits,calendar='gregorian')
+        # Convert startDate and endDate for time axes 
+        self.tstart = None
+        if startDate is not None:
+            self.tstart = nc.date2num(self.start_date,self.tunits,calendar='gregorian') # should be 0
+        self.tend = None
+        if endDate is not None:
+            self.tend = nc.date2num(self.end_date,self.tunits,calendar='gregorian')
 
     def set_latlon(self,lat,lon):
 
         self.lat = lat
         self.lon = lon
 
-        self.latAxis = Axis('lat',[lat,],name='Latitude', units='degrees_north')
-        self.lonAxis = Axis('lon',[lon,],name='Longitude',units='degrees_east')
+        self.add_latitude(lat)
+        self.add_latitude(lon)
 
     def set_attribute(self,attid,attvalue):
 
@@ -206,15 +197,17 @@ class Case:
             nlev, = np.array(lev).shape # In case lev is given as a list
             if levtype == 'altitude':
                 levunits = 'm'
+                lev_name = 'height_for_{0}'.format(varid)
             elif levtype == 'pressure':
                 levunits = 'Pa'
+                lev_name = 'air_pressure_for_{0}'.format(varid)
             else:
                 print 'ERROR: levtype unexpected:', levtype
                 print 'ERROR: levtype should be defined and in altitude, pressure:'
                 sys.exit()
 
             if levid is None:
-                levAxis = Axis('lev_{0}'.format(varid),lev,name='{0} for variable {1}'.format(levtype,varid),units=levunits)
+                levAxis = Axis('lev_{0}'.format(varid),lev,name=lev_name,units=levunits)
             else:
                 levAxis = Axis(levid,lev,name='{0}'.format(levtype),units=levunits)
 
@@ -231,10 +224,10 @@ class Case:
             # time is supposed to be given in seconds since beginning
             if timeid is None:
                 timeAxis = Axis('time_{0}'.format(varid),time,
-                                name='Forcing time for variable {0}'.format(varid),
+                                name='forcing_time_for_{0}'.format(varid),
                                 units=self.tunits)
             else:
-                timeAxis = Axis(timeid,time,name='Forcing time',units=self.tunits)
+                timeAxis = Axis(timeid,time,name='forcing_time',units=self.tunits)
 
         ######################
         # Get variable attributes
@@ -263,13 +256,13 @@ class Case:
             sys.exit()
         else:
             if timeAxis is None:
-                tmp = np.reshape(vardata,(nlev,1,1))
+                tmp = np.reshape(vardata,(nlev,))
             elif levAxis is None:
-                tmp = np.reshape(vardata,(nt,1,1))
+                tmp = np.reshape(vardata,(nt,))
             else:
-                tmp = np.reshape(vardata,(nt,nlev,1,1))
+                tmp = np.reshape(vardata,(nt,nlev,))
 
-        self.variables[varid] = Variable(varid,name=varname,units=varunits,data=tmp,level=levAxis,time=timeAxis,lat=self.latAxis,lon=self.lonAxis,plotcoef=plotcoef,plotunits=plotunits)
+        self.variables[varid] = Variable(varid,name=varname,units=varunits,data=tmp,level=levAxis,time=timeAxis,plotcoef=plotcoef,plotunits=plotunits)
 
 
     def add_init_variable(self,varid,vardata,**kwargs): 
@@ -291,7 +284,7 @@ class Case:
 
         if varid in ['ps']:
             # Put the expected shape of the input data
-            tmp = np.reshape(vardata,(1,1,1))
+            tmp = np.reshape(vardata,(1,))
         else:
             # Check if lev optional argument is given
             if not(kwargs.has_key('lev')):
@@ -301,7 +294,7 @@ class Case:
             nlev, = np.array(kwargs['lev']).shape # In case lev is given as a list
 
             # Put the expected shape of the input data
-            tmp = np.reshape(vardata,(1,nlev,1,1))
+            tmp = np.reshape(vardata,(1,nlev,))
 
         # add initial variable to the Case object
         self.add_variable(varid,tmp,**kwargs)
@@ -328,7 +321,7 @@ class Case:
            - a levtype is required (levtype optional argument).
         """
 
-        self.add_init_variable('height',vardata,**kwargs)
+        self.add_init_variable('zh',vardata,**kwargs)
 
     def add_init_pressure(self,vardata,**kwargs):
         """Add initial state variable for pressure to a Case object.
@@ -341,7 +334,7 @@ class Case:
            - a levtype is required (levtype optional argument).
         """
 
-        self.add_init_variable('pressure',vardata,**kwargs)
+        self.add_init_variable('pa',vardata,**kwargs)
 
     def add_init_temp(self,vardata,**kwargs):
         """Add initial state variable for temperature to a Case object.
@@ -354,7 +347,7 @@ class Case:
            - a levtype is required (levtype optional argument).
         """
 
-        self.add_init_variable('temp',vardata,**kwargs)
+        self.add_init_variable('ta',vardata,**kwargs)
 
     def add_init_theta(self,vardata,**kwargs):
         """Add initial state variable for potential temperature to a Case object.
@@ -461,11 +454,11 @@ class Case:
 
         if ulev is not None:
             kwargs['lev'] = ulev
-        self.add_init_variable('u',u,**kwargs)
+        self.add_init_variable('ua',u,**kwargs)
 
         if vlev is not None:
             kwargs['lev'] = vlev
-        self.add_init_variable('v',v,**kwargs)
+        self.add_init_variable('va',v,**kwargs)
 
     def add_init_tke(self,vardata,**kwargs):
         """Add initial state variable for turbulent kinetic energy to a Case object.
@@ -504,14 +497,14 @@ class Case:
             kwargs['time'] = [self.tstart,self.tend]
             nt = 2
 
-        if varid in ['ps_forc','sfc_sens_flx','sfc_lat_flx','ustar','ts']:
+        if varid in ['ps_forc','hfss','hfls','ustar','ts','tskin','orog','lat','lon','z0','z0h','z0q','beta']:
             # Put the expected shape of the input data
             if lconstant: 
-                tmp = np.zeros((nt,1,1),dtype=np.float32)
-                tmp[0,0,0] = vardata
-                tmp[1,0,0] = vardata
+                tmp = np.zeros((nt),dtype=np.float32)
+                tmp[0] = vardata
+                tmp[1] = vardata
             else:
-                tmp = np.reshape(vardata,(nt,1,1))
+                tmp = np.reshape(vardata,(nt,))
         else:
             # Check if lev optional argument is given
             if not(kwargs.has_key('lev')):
@@ -522,14 +515,62 @@ class Case:
 
             # Put the expected shape of the input data
             if lconstant:
-                tmp = np.zeros((nt,nlev,1,1),dtype=np.float32)
-                tmp[0,:,0,0] = vardata[:]
-                tmp[1,:,0,0] = vardata[:]
+                tmp = np.zeros((nt,nlev),dtype=np.float32)
+                tmp[0,:] = vardata[:]
+                tmp[1,:] = vardata[:]
             else:
-                tmp = np.reshape(vardata,(nt,nlev,1,1))
+                tmp = np.reshape(vardata,(nt,nlev))
 
         # add initial variable to the Case object
         self.add_variable(varid,tmp,**kwargs)
+
+    def add_latitude(self,data,**kwargs):
+        """Add latitude to a Case object
+           Required argument:
+           data -- input data as a list or a numpy array.
+
+           See add_variable function for optional arguments.
+
+           If time is not provided, forcing is assumed constant in time.           
+        """
+
+        self.add_forcing_variable('lat',data,**kwargs)
+
+    def add_longitude(self,data,**kwargs):
+        """Add longitude to a Case object
+           Required argument:
+           data -- input data as a list or a numpy array.
+
+           See add_variable function for optional arguments.
+
+           If time is not provided, forcing is assumed constant in time.           
+        """
+
+        self.add_forcing_variable('lon',data,**kwargs)
+
+    def add_orography(self,data,**kwargs):
+        """Add orography to a Case object
+           Required argument:
+           data -- input data as a list or a numpy array.
+
+           See add_variable function for optional arguments.
+
+           If time is not provided, forcing is assumed constant in time.           
+        """
+
+        self.add_forcing_variable('orog',data,**kwargs)
+
+    def add_z0(self,data,**kwargs):
+        """Add roughness length for wind to a Case object
+           Required argument:
+           data -- input data as a list or a numpy array.
+
+           See add_variable function for optional arguments.
+
+           If time is not provided, forcing is assumed constant in time.           
+        """
+
+        self.add_forcing_variable('z0',data,**kwargs)
 
     def add_surface_pressure_forcing(self,data,**kwargs):
         """Add a surface pressure forcing to a Case object
@@ -556,7 +597,7 @@ class Case:
            If time is not provided, forcing is assumed constant in time.           
         """
 
-        self.add_forcing_variable('pressure_forc',data,**kwargs)
+        self.add_forcing_variable('pa_forc',data,**kwargs)
 
     def add_height_forcing(self,data,**kwargs):
         """Add forcing height levels to a Case object
@@ -571,7 +612,7 @@ class Case:
            If time is not provided, forcing is assumed constant in time.           
         """
 
-        self.add_forcing_variable('height_forc',data,**kwargs)
+        self.add_forcing_variable('zh_forc',data,**kwargs)
 
     def add_geostrophic_wind(self,ug=None,vg=None,uglev=None,vglev=None,**kwargs):
         """Add a geostrophic wind forcing to a Case object.
@@ -635,12 +676,12 @@ class Case:
             sys.exit()
 
         if w is not None:
-            self.set_attribute('forc_w',1)
-            self.add_forcing_variable('w',w,**kwargs)
+            self.set_attribute('forc_wa',1)
+            self.add_forcing_variable('wa',w,**kwargs)
 
         if omega is not None:
-            self.set_attribute('forc_omega',1)
-            self.add_forcing_variable('omega',omega,**kwargs)
+            self.set_attribute('forc_wap',1)
+            self.add_forcing_variable('wap',omega,**kwargs)
 
     def add_temp_advection(self,data,include_rad=False,**kwargs):
         """Add a temperature advection to a Case object.
@@ -659,11 +700,11 @@ class Case:
            If time is not provided, forcing is assumed constant in time.
         """
 
-        self.set_attribute('adv_temp',1)
+        self.set_attribute('adv_ta',1)
         if include_rad:
-            self.set_attribute('rad_temp','adv')
+            self.set_attribute('radiation','off')
 
-        self.add_forcing_variable('temp_adv',data,**kwargs)
+        self.add_forcing_variable('tnta_adv',data,**kwargs)
 
     def add_theta_advection(self,data,include_rad=False,**kwargs):
         """Add a potential temperature advection to a Case object.
@@ -684,9 +725,9 @@ class Case:
 
         self.set_attribute('adv_theta',1)
         if include_rad:
-            self.set_attribute('rad_theta','adv')
+            self.set_attribute('radiation','off')
 
-        self.add_forcing_variable('theta_adv',data,**kwargs)
+        self.add_forcing_variable('tntheta_adv',data,**kwargs)
 
     def add_thetal_advection(self,data,include_rad=False,**kwargs):
         """Add a liquid potential temperature advection to a Case object.
@@ -707,9 +748,9 @@ class Case:
 
         self.set_attribute('adv_thetal',1)
         if include_rad:
-            self.set_attribute('rad_thetal','adv')
+            self.set_attribute('radiation','off')
 
-        self.add_forcing_variable('thetal_adv',data,**kwargs)
+        self.add_forcing_variable('tnthetal_adv',data,**kwargs)
 
     def add_qv_advection(self,data,**kwargs):
         """Add a specific humidity advection to a Case object.
@@ -726,7 +767,7 @@ class Case:
 
         self.set_attribute('adv_qv',1)
 
-        self.add_forcing_variable('qv_adv',data,**kwargs)
+        self.add_forcing_variable('tnqv_adv',data,**kwargs)
 
     def add_qt_advection(self,data,**kwargs):
         """Add a total water advection to a Case object.
@@ -743,7 +784,7 @@ class Case:
 
         self.set_attribute('adv_qt',1)
 
-        self.add_forcing_variable('qt_adv',data,**kwargs)
+        self.add_forcing_variable('tnqt_adv',data,**kwargs)
 
     def add_rv_advection(self,data,**kwargs):
         """Add a water vapor mixing ratio advection to a Case object.
@@ -760,7 +801,7 @@ class Case:
 
         self.set_attribute('adv_rv',1)
 
-        self.add_forcing_variable('rv_adv',data,**kwargs)
+        self.add_forcing_variable('tnrv_adv',data,**kwargs)
 
     def add_rt_advection(self,data,**kwargs):
         """Add a total water mixing ratio advection to a Case object.
@@ -777,7 +818,7 @@ class Case:
 
         self.set_attribute('adv_rt',1)
 
-        self.add_forcing_variable('rt_adv',data,**kwargs)
+        self.add_forcing_variable('tnrt_adv',data,**kwargs)
 
     def add_nudging(self,varid,data,timescale=None,z_nudging=None,p_nudging=None,**kwargs):
         """Add a nudging forcing to a Case object.
@@ -806,14 +847,14 @@ class Case:
 
         if z_nudging is None and p_nudging is None:
             print 'WARNING: {0} will be nudged over the whole atmosphere'
-            self.set_attribute('z_nudging_{0}'.format(varid),0)
+            self.set_attribute('za_nudging_{0}'.format(varid),0)
 
         if z_nudging is not None:
-            self.set_attribute('z_nudging_{0}'.format(varid),float(z_nudging))
+            self.set_attribute('zh_nudging_{0}'.format(varid),float(z_nudging))
         else:
-            self.set_attribute('p_nudging_{0}'.format(varid),float(p_nudging))
+            self.set_attribute('pa_nudging_{0}'.format(varid),float(p_nudging))
 
-        var = '{0}_nudging'.format(varid)
+        var = '{0}_nud'.format(varid)
         self.add_forcing_variable(var,data,**kwargs)
 
 
@@ -846,11 +887,11 @@ class Case:
 
         if ulev is not None:
             kwargs['lev'] = ulev
-        self.add_nudging('u',unudg,**kwargs)
+        self.add_nudging('ua',unudg,**kwargs)
 
         if vlev is not None:
             kwargs['lev'] = vlev        
-        self.add_nudging('v',vnudg,**kwargs)
+        self.add_nudging('va',vnudg,**kwargs)
 
     def add_temp_nudging(self,data,**kwargs):
         """Add a temperature nudging forcing to a Case object.
@@ -867,7 +908,7 @@ class Case:
            If time is not provided, forcing is assumed constant in time.
         """
 
-        self.add_nudging('temp',data,**kwargs)
+        self.add_nudging('ta',data,**kwargs)
 
     def add_theta_nudging(self,data,**kwargs):
         """Add a potential temperature nudging forcing to a Case object.
@@ -980,7 +1021,15 @@ class Case:
            If time is not provided, forcing is assumed constant in time.
         """
 
-        self.add_forcing_variable('o3',data,**kwargs)
+        self.add_forcing_variable('ro3',data,**kwargs)
+
+    def activate_radiation(self):
+        """Activate radiation in a Case object
+           
+           No argument required.
+        """
+
+        self.set_attribute('radiation'.format(var),"on")
 
     def deactivate_radiation(self):
         """Deactivate radiation in a Case object
@@ -988,9 +1037,7 @@ class Case:
            No argument required.
         """
 
-        for var in ['temp','theta','thetal']:
-            if var in self.varlist:
-                self.set_attribute('rad_{0}'.format(var),"adv")
+        self.set_attribute('radiation'.format(var),"off")
 
     def add_surface_temp(self,data,**kwargs):
         """Add a surface temperature forcing to a Case object.
@@ -1005,6 +1052,19 @@ class Case:
 
         self.add_forcing_variable('ts',data,**kwargs)
 
+    def add_surface_skin_temp(self,data,**kwargs):
+        """Add a surface skin temperature forcing to a Case object.
+           This function does not imply that the surface forcing type is ts.
+           This function can be used to add a useful surface temperature in case surface fluxes are prescribed.
+
+           Required argument:
+           data -- input data as a list or a numpy array.
+
+           If time is not provided, forcing is assumed constant in time.
+        """
+
+        self.add_forcing_variable('tskin',data,**kwargs)
+
     def add_forcing_ts(self,data,z0=None,**kwargs):
         """Add a surface temperature forcing to a Case object.
            This function sets a surface temperature forcing as the case surface forcing.
@@ -1015,13 +1075,13 @@ class Case:
            If time is not provided, forcing is assumed constant in time.
         """
 
-        self.set_attribute('surfaceForcing','ts')
+        self.set_attribute('surface_forcing_temp','ts')
+        self.add_forcing_variable('ts',data,**kwargs)
 
         if z0 is not None:
-            self.set_attribute('surfaceForcingWind','z0')
-            self.set_attribute('z0',z0)
-
-        self.add_forcing_variable('ts',data,**kwargs)
+            self.set_attribute('surface_Forcing_wind','z0')
+            self.add_forcing_variable('z0',z0)
+        
 
     def add_surface_fluxes(self,sens=None,lat=None,time_sens=None,time_lat=None,forc_wind=None,z0=None,ustar=None,time_ustar=None,**kwargs):
         """Add a surface flux forcing to a Case object.
@@ -1049,16 +1109,18 @@ class Case:
             print 'ERROR: you must provide both sensible and latent heat fluxes'
             sys.exit()
 
-        self.set_attribute('surfaceForcing','surfaceFlux')
+        self.set_attribute('surface_forcing_temp','surface_flux')
+        self.set_attribute('surface_forcing_moisture','surface_flux')
 
         if forc_wind == 'z0':
-            self.set_attribute("surfaceForcingWind","z0")
+            self.set_attribute("surface_forcing_wind","z0")
             if z0 is None:
                 print 'ERROR: z0 must be provided'
                 sys.exit()
-            self.set_z0(z0)
+            self.add_forcing_variable('z0',z0)
+            #self.set_z0(z0)
         elif forc_wind == 'ustar':
-            self.set_attribute("surfaceForcingWind","ustar")
+            self.set_attribute("surface_forcing_wind","ustar")
             if ustar is None:
                 print 'ERROR: ustar must be provided'
                 sys.exit()
@@ -1072,15 +1134,15 @@ class Case:
 
         if time_sens is not None:
             kwargs['time'] = time_sens
-            self.add_forcing_variable('sfc_sens_flx',sens,**kwargs)
+            self.add_forcing_variable('hfss',sens,**kwargs)
         else:
-            self.add_forcing_variable('sfc_sens_flx',sens,**kwargs)
+            self.add_forcing_variable('hfss',sens,**kwargs)
 
         if time_lat is not None:
             kwargs['time'] = time_lat
-            self.add_forcing_variable('sfc_lat_flx',lat,**kwargs)
+            self.add_forcing_variable('hfls',lat,**kwargs)
         else:
-            self.add_forcing_variable('sfc_lat_flx',lat,**kwargs)
+            self.add_forcing_variable('hfls',lat,**kwargs)
 
     def set_betaevap(self,beta=1.):
         """Activate a beta model for surface evaporation in a Case object
@@ -1089,8 +1151,8 @@ class Case:
            beta -- beta value of the beta model (default: 1.)
         """
 
-        self.set_attribute("surfaceForcingMoisture","betaevap")
-        self.set_attribute("betaevap",float(beta))
+        self.set_attribute("surface_forcing_moisture","beta")
+        self.add_forcing_variable('beta',beta)
 
     def deactivate_surface_evaporation(self):
         """Deactivate surface evoporation in a Case object
@@ -1098,8 +1160,8 @@ class Case:
            No argument required.
         """
 
-        self.set_attribute("surfaceForcingMoisture","betaevap")
-        self.set_attribute("betaevap",0.)
+        self.set_attribute("surface_forcing_moisture","beta")
+        self.add_forcing_variable('beta',0.)
 
     def info(self):
 
@@ -1132,7 +1194,7 @@ class Case:
 
         f = nc.Dataset(filein,'r')
 
-        self.set_dates(f.startDate,f.endDate)
+        self.set_dates(f.start_date,f.end_date)
         self.set_latlon(f['lat'][0],f['lon'][0])
 
         for var in f.variables:
