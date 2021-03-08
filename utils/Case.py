@@ -158,7 +158,9 @@ class Case:
         self.attlist.append('z0')
         self.attributes['z0'] = z0
 
-    def add_variable(self,varid,vardata,lev=None,levtype=None,levid=None,time=None,timeid=None,name=None,units=None):
+    def add_variable(self, varid, vardata, name=None, units=None,
+            lev=None, levtype=None, levid=None,
+            time=None, timeid=None):
         """ Add a variable to a Case object.
             
             Required arguments:
@@ -183,7 +185,27 @@ class Case:
             sys.exit()
 
         self.varlist.append(varid)
-        #print varid, lev, time
+        #print varid, name, lev, time
+
+        ######################
+        # Prepare time axis
+        if time is None:
+            timeAxis = None
+            nt = None
+            print 'ERROR'
+            raise ValueError
+        elif isinstance(time,Axis):
+            timeAxis = time
+            nt, = time.data.shape
+        else:
+            nt, = np.array(time).shape # In case time is given as a list
+            # time is supposed to be given in seconds since beginning
+            if timeid is None:
+                timeAxis = Axis('time_{0}'.format(varid),time,
+                                name='forcing_time_for_{0}'.format(varid),
+                                units=self.tunits)
+            else:
+                timeAxis = Axis(timeid,time,name='forcing_time',units=self.tunits)
 
         ######################
         # Prepare level axis, if needed
@@ -211,23 +233,31 @@ class Case:
             else:
                 levAxis = Axis(levid,lev,name='{0}'.format(levtype),units=levunits)
 
-        ######################
-        # Prepare time axis
-        if time is None:
-            timeAxis = None
-            nt = None
-        elif isinstance(time,Axis):
-            timeAxis = time
-            nt, = time.data.shape
-        else:
-            nt, = np.array(time).shape # In case time is given as a list
-            # time is supposed to be given in seconds since beginning
-            if timeid is None:
-                timeAxis = Axis('time_{0}'.format(varid),time,
-                                name='forcing_time_for_{0}'.format(varid),
-                                units=self.tunits)
-            else:
-                timeAxis = Axis(timeid,time,name='forcing_time',units=self.tunits)
+        height = None
+        height_id = None
+        height_units = None
+
+        pressure = None
+        pressure_id = None
+        pressure_units = None
+
+        if levAxis is not None:
+            if levtype == 'altitude':
+                height = np.zeros((nt,nlev))
+                height = np.tile(lev,(nt,1))
+#                for it in range(0,nt):
+#                    height[it,:] = lev[:]
+                height_id = 'zh_{0}'.format(varid)
+                height_units = 'm'
+                #self.varlist.append(height_id)
+            elif levtype == 'pressure':
+                pressure = np.zeros((nt,nlev))
+                pressure = np.tile(lev,(nt,1))
+                #for it in range(0,nt):
+                #    pressure[it,:] = lev[:]
+                pressure_id = 'pa_{0}'.format(varid)
+                pressure_units = 'Pa'
+                #self.varlist.append(pressure_id)
 
         ######################
         # Get variable attributes
@@ -242,12 +272,14 @@ class Case:
             print 'Warning: the framework expects SI units'
             varunits = units
 
-        if var_attributes[varid].has_key('plotcoef'):
+        try:
             plotcoef = var_attributes[varid]['plotcoef']
             plotunits = var_attributes[varid]['plotunits']
-        else:
+        except KeyError:
             plotcoef = 1.
             plotunits = None
+        except:
+            raise
 
         ######################
         # Create variable
@@ -262,10 +294,14 @@ class Case:
             else:
                 tmp = np.reshape(vardata,(nt,nlev,))
 
-        self.variables[varid] = Variable(varid,name=varname,units=varunits,data=tmp,level=levAxis,time=timeAxis,plotcoef=plotcoef,plotunits=plotunits)
+        self.variables[varid] = Variable(varid, data=tmp, name=varname, units=varunits,
+                height=height, height_id=height_id, height_units=height_units,
+                pressure=pressure, pressure_id=pressure_id, pressure_units=pressure_units,
+                level=levAxis,time=timeAxis,
+                plotcoef=plotcoef,plotunits=plotunits)
 
 
-    def add_init_variable(self,varid,vardata,**kwargs): 
+    def add_init_variable(self,varid,vardata,coordinate=False,**kwargs): 
         """ Add an initial state variable to a case object.
             Prepare time axis for such initial state variable and possibly reshape input data to conform with DEPHY format.
             
@@ -1178,12 +1214,37 @@ class Case:
 
         g = nc.Dataset(fileout,'w',format='NETCDF3_CLASSIC')
 
+        # Writing first only time axes
+        for var in var_attributes.keys():
+            if var in self.varlist:
+                self.variables[var].write(g,
+                        write_time_axes=True, write_level_axes=False,
+                        write_data=False, write_vertical=False)
+
+        # Writing first only time axes
+        for var in var_attributes.keys():
+            if var in self.varlist:
+                self.variables[var].write(g,
+                        write_time_axes=False, write_level_axes=True,
+                        write_data=False, write_vertical=False)
+
+        # Writing then only vertical variables
+        for var in var_attributes.keys():
+            if var in self.varlist:
+                self.variables[var].write(g, 
+                        write_time_axes=False, write_level_axes=False,
+                        write_data=False, write_vertical=True)
+
+        # Finally write data
         for var in var_attributes.keys():
             if var in self.varlist:
                 if verbose:
                     self.variables[var].info()
-                self.variables[var].write(g)
+                self.variables[var].write(g,
+                        write_time_axes=False, write_level_axes=False,
+                        write_data=True, write_vertical=False)
 
+        # Write global attributes
         for att in known_attributes:
             if att in self.attlist:
                 g.setncattr(att,self.attributes[att])

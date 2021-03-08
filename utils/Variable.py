@@ -22,7 +22,12 @@ import plotbasics
 
 class Variable:
 
-    def __init__(self,varid,data=None,units=None,name=None,level=None,time=None,lat=None,lon=None,axlist=None,axes=None,plotcoef=1.,plotunits=None):
+    def __init__(self, varid, data=None, name=None, units=None,
+            height=None, height_id=None, height_units=None,
+            pressure=None, pressure_id=None, pressure_units=None,
+            level=None, time=None, lat=None, lon=None,
+            axlist=None, axes=None,
+            plotcoef=1., plotunits=None):
 
         self.id = varid
         self.units = units
@@ -77,6 +82,33 @@ class Variable:
         else:
             self.plotunits = plotunits
 
+        self.height = None
+        self.pressure = None
+
+        if height is not None:
+            if height_id is None:
+                height_id = 'zh_{0}'.format(self.id)
+            height_name = 'height_for_{0}'.format(self.id)
+            if height_units is None:
+                height_units = 'm'
+            self.height = Variable(height_id, data=height, units=height_units, name=height_name,
+                    level=self.level, time=self.time, lat=self.lat, lon=self.lon)
+
+            self.coord = " ".join([self.time.id,height_id,'lat','lon'])
+            self.height.set_coordinates(self.coord)
+
+        if pressure is not None:
+            if pressure_id is None:
+                pressure_id = 'pa_{0}'.format(self.id)
+            pressure_name = 'air_pressure_for_{0}'.format(self.id)
+            if pressure_units is None:
+                pressure_units = 'm'
+            self.pressure = Variable(pressure_id, data=pressure, units=pressure_units, name=pressure_name,
+                    level=self.level, time=self.time, lat=self.lat, lon=self.lon)
+
+            self.coord = " ".join([self.time.id,pressure_id,'lat','lon'])
+            self.pressure.set_coordinates(self.coord)
+
     def info(self):
         print '-'*5, 'Variable:', self.id
         print '-'*10, 'Name:', self.name
@@ -86,21 +118,38 @@ class Variable:
         print '-'*10, 'mean: {0}; min: {1}; max: {2}'.format(np.average(self.data),np.amin(self.data),np.amax(self.data))
         
 
-    def set_coordinates(self,*coord):
-        self.axlist = tuple(coord)
+    def set_coordinates(self, *coord):
+        #self.axlist = tuple(coord)
         self.coord = " ".join(coord)
  
-    def write(self,filein):
+    def write(self, filein,
+            write_time_axes=True, write_level_axes=True,
+            write_data=True, write_vertical=True):
 
-        for ax in self.axes:
-            ax.write(filein)
+        if write_time_axes:
+            for ax in self.axes:
+                if ax.id[0:4] == 'time' or ax.id == 't0':
+                    ax.write(filein)
 
-        if not(self.data is None):
-          tmp = filein.createVariable(self.id,"f8",self.axlist)
-          tmp[:] = self.data
-          tmp.standard_name = self.name
-          tmp.units = self.units
-          tmp.coordinates = self.coord
+        if write_level_axes:
+            for ax in self.axes:
+                if ax.id[0:3] == 'lev':
+                    ax.write(filein)
+
+        if write_data:
+            if self.data is not None:
+                tmp = filein.createVariable(self.id, "f8", self.axlist)
+                tmp[:] = self.data
+                tmp.standard_name = self.name
+                tmp.units = self.units
+                tmp.coordinates = self.coord
+
+        if write_vertical:
+            if self.height is not None:
+                self.height.write(filein)
+
+            if self.pressure is not None:
+                self.pressure.write(filein)
 
     def plot(self,rep_images=None,var2=None,label="",label2="",timeunits=None,levunits=None):
 
