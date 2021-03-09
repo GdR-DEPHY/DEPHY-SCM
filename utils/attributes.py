@@ -6,8 +6,8 @@ known_attributes = [
             'adv_qv','adv_qt','adv_rv','adv_rt',
             'forc_wa','forc_wap',
             'forc_geo',
-            'nudging_u','nudging_v',
-            'nudging_temp','nudging_theta','nudging_thetal',
+            'nudging_ua','nudging_va',
+            'nudging_ta','nudging_theta','nudging_thetal',
             'nudging_qv','nudging_qt','nudging_rv','nudging_rt',
             'pa_nudging_ua','pa_nudging_va',
             'pa_nudging_ta','pa_nudging_theta','pa_nudging_thetal',
@@ -21,7 +21,7 @@ known_attributes = [
 
 required_attributes = [
             'case','title','reference','author','version','format_version','modifications','script','comment',
-            'start_Date','end_date',
+            'start_date','end_date',
             'adv_ta','adv_theta','adv_thetal',
             'radiation',
             'adv_qv','adv_qt','adv_rv','adv_rt',

@@ -34,7 +34,7 @@ class Variable:
         self.name = name
 
         self.data = None
-        if not(data is None): 
+        if not(data is None):
             self.data = np.array(data,dtype=np.float32)
             self.sh = len(self.data.shape)
 
@@ -44,10 +44,10 @@ class Variable:
 
             self.time = time
             self.level = level
-            self.lat = lat
-            self.lon = lon
+            #self.lat = lat
+            #self.lon = lon
 
-            for ax in ['time','level','lat','lon']:
+            for ax in ['time','level']:#,'lat','lon']:
                 if not(self.__dict__[ax] is None):
                     self.axes.append(self.__dict__[ax])
                     self.axlist.append(self.__dict__[ax].id)
@@ -57,18 +57,18 @@ class Variable:
 
             self.time = None
             self.level = None
-            self.lat = None
-            self.lon = None
+            #self.lat = None
+            #self.lon = None
 
             for ax in axes:
                 if ax.id == 't0' or ax.id[0:4] == 'time':
                     self.time = ax
                 elif ax.id[0:3] == 'lev' or ax.id == 'nlev':
                     self.level = ax
-                elif ax.id == 'lat':
-                    self.lat = ax
-                elif ax.id == 'lon':
-                    self.lon = ax
+                #elif ax.id == 'lat':
+                #    self.lat = ax
+                #elif ax.id == 'lon':
+                #    self.lon = ax
                 else:
                     print 'Axis unexpected:', ax.id
                     ax.info()
@@ -85,28 +85,42 @@ class Variable:
         self.height = None
         self.pressure = None
 
-        if height is not None:
-            if height_id is None:
-                height_id = 'zh_{0}'.format(self.id)
-            height_name = 'height_for_{0}'.format(self.id)
-            if height_units is None:
-                height_units = 'm'
-            self.height = Variable(height_id, data=height, units=height_units, name=height_name,
-                    level=self.level, time=self.time, lat=self.lat, lon=self.lon)
+        print self.id, height is None
 
-            self.coord = " ".join([self.time.id,height_id,'lat','lon'])
+        if height is not None: # height is privileged over pressure
+            if isinstance(height,Axis) or isinstance(height,Variable):
+                self.height = Variable(height.id, data=height.data, units=height.units, name=height.name,
+                        level=self.level, time=self.time)#, lat=self.lat, lon=self.lon)
+                self.coord = " ".join([self.time.id,height.id,'lat','lon'])
+                print self.id, self.coord
+            else:
+                if height_id is None:
+                    height_id = 'zh_{0}'.format(self.id)
+                height_name = 'height_for_{0}'.format(self.id)
+                if height_units is None:
+                    height_units = 'm'
+                self.height = Variable(height_id, data=height, units=height_units, name=height_name,
+                        level=self.level, time=self.time)#, lat=self.lat, lon=self.lon)
+                self.coord = " ".join([self.time.id,height_id,'lat','lon'])
+
             self.height.set_coordinates(self.coord)
 
-        if pressure is not None:
-            if pressure_id is None:
-                pressure_id = 'pa_{0}'.format(self.id)
-            pressure_name = 'air_pressure_for_{0}'.format(self.id)
-            if pressure_units is None:
-                pressure_units = 'm'
-            self.pressure = Variable(pressure_id, data=pressure, units=pressure_units, name=pressure_name,
-                    level=self.level, time=self.time, lat=self.lat, lon=self.lon)
+        elif pressure is not None:
+            
+            if isinstance(pressure,Axis) or isinstance(pressure,Variable):
+                self.pressure = Variable(pressure.id, data=pressure.data, units=pressure.units, name=pressure.name,
+                        level=self.level, time=self.time)#, lat=self.lat, lon=self.lon)
+                self.coord = " ".join([self.time.id,pressure.id,'lat','lon'])
+            else:
+                if pressure_id is None:
+                    pressure_id = 'pa_{0}'.format(self.id)
+                pressure_name = 'air_pressure_for_{0}'.format(self.id)
+                if pressure_units is None:
+                    pressure_units = 'Pa'
+                self.pressure = Variable(pressure_id, data=pressure, units=pressure_units, name=pressure_name,
+                        level=self.level, time=self.time)#, lat=self.lat, lon=self.lon)
+                self.coord = " ".join([self.time.id,pressure_id,'lat','lon'])
 
-            self.coord = " ".join([self.time.id,pressure_id,'lat','lon'])
             self.pressure.set_coordinates(self.coord)
 
     def info(self):
@@ -121,6 +135,24 @@ class Variable:
     def set_coordinates(self, *coord):
         #self.axlist = tuple(coord)
         self.coord = " ".join(coord)
+
+    def set_level(self,lev=None):
+
+        if lev is None:
+            print 'WARNING: level is None. Nothing to do'
+        else:
+            self.level = lev
+            newaxlist = []
+            newaxes = []
+            for ax in self.axes:
+                if ax.id[0:3] == 'lev':
+                    newaxlist.append(lev.id)
+                    newaxes.append(lev)
+                else:
+                    newaxlist.append(ax.id)
+                    newaxes.append(ax)
+            self.axes = newaxes
+            self.axlist = newaxlist
  
     def write(self, filein,
             write_time_axes=True, write_level_axes=True,
@@ -138,18 +170,27 @@ class Variable:
 
         if write_data:
             if self.data is not None:
-                tmp = filein.createVariable(self.id, "f8", self.axlist)
-                tmp[:] = self.data
-                tmp.standard_name = self.name
-                tmp.units = self.units
-                tmp.coordinates = self.coord
+                if self.id in filein.variables:
+                    print 'WARNING: {0} already if netCDF file. Not overwritten'.format(self.id)
+                else:
+                    tmp = filein.createVariable(self.id, "f8", self.axlist)
+                    tmp[:] = self.data
+                    tmp.standard_name = self.name
+                    tmp.units = self.units
+                    tmp.coordinates = self.coord
 
         if write_vertical:
             if self.height is not None:
-                self.height.write(filein)
+                if self.height.id in filein.variables:
+                    print 'WARNING: {0} already if netCDF file. Not overwritten'.format(self.height.id)
+                else:
+                    self.height.write(filein)
 
             if self.pressure is not None:
-                self.pressure.write(filein)
+                if self.pressure.id in filein.variables:
+                    print 'WARNING: {0} already if netCDF file. Not overwritten'.format(self.pressure.id)
+                else:
+                    self.pressure.write(filein)
 
     def plot(self,rep_images=None,var2=None,label="",label2="",timeunits=None,levunits=None):
 
@@ -295,7 +336,140 @@ class Variable:
         else:
             print 'no plot for variable', self.id
 
+    def interpol_time(self,time=None):
 
+        if self.time is None:
+            print 'ERROR: time interpolation requested for variable {0} which does not have a time axis'.format(self.id)
+            raise ValueError
+ 
+        if time is None:
+            print 'WARNING: time is None. Thus no time interpolation'
+            return self
+
+        ntout, = time.data.shape
+        linit = self.data.shape[0] == 1
+        l2D = (len(self.data.shape) == 2) and (self.data.shape[0] > 1)
+
+        height = None
+        height_id = None
+        height_units = None
+
+        pressure = None
+        pressure_id = None
+        pressure_units = None
+
+        if linit:
+
+            print 'WARNING: Variable "{0}" is an initial state variable. No need for time interpolation.'.format(self.id)
+            return self
+
+        elif l2D: # time,level variable
+
+            ntin, nlevin = self.data.shape
+            data = np.zeros((ntout,nlevin),dtype=np.float64)
+            for ilev in range(0,nlevin):
+                ff = interpolate.interp1d(self.time.data, self.data[:,ilev],
+                        bounds_error=False, fill_value=self.data[-1,ilev]) # Pad after end date with the last value, if necessary
+                data[:,ilev] = ff(time.data)
+
+        
+            if self.height is not None:
+                height_id = self.height.id
+                height_units = self.height.units
+                height = np.zeros((ntout,nlevin),dtype=np.float64)
+                for ilev in range(0,nlevin):
+                    ff = interpolate.interp1d(self.height.time.data, self.height.data[:,ilev],
+                            bounds_error=False, fill_value=self.height.data[-1,ilev]) # Pad after end date with the last value, if necessary
+                    height[:,ilev] = ff(time.data)
+
+            if self.pressure is not None:
+                pressure_id = self.pressure.id
+                pressure_units = self.pressure.units
+                pressure = np.zeros((ntout,nlevin),dtype=np.float64)
+                for ilev in range(0,nlevin):
+                    ff = interpolate.interp1d(self.pressure.time.data, self.pressure.data[:,ilev],
+                            bounds_error=False, fill_value=self.pressure.data[-1,ilev]) # Pad after end date with the last value, if necessary
+                    pressure[:,ilev] = ff(time.data)
+
+        else: # time only variable
+ 
+            ff = interpolate.interp1d(self.time.data, self.data[:],
+                        bounds_error=False, fill_value=self.data[-1]) # Pad after end date with the last value, if necessary
+            data = ff(time.data)
+
+        return Variable(self.id, data=data, name=self.name, units=self.units,
+                level=self.level, time=time,
+                height=height, height_id=height_id, height_units=height_units,
+                pressure=pressure, pressure_id=pressure_id, pressure_units=pressure_units)
+
+    def interpol_vert(self,height=None,pressure=None,log=False):
+
+        if self.level is None:
+            print 'WARNING: vertical interpolation requested for variable {0}, which does not have a level axis'.format(self.id)
+            print 'WARNING: simply return original variable'
+            return self
+
+        if height is None and pressure is None:
+            print "WARNING: height and pressure are None. Thus no vertical interpolaton"
+            return self
+
+        ntin, nlevin = self.data.shape
+
+        _height = None
+        _height_id = None
+        _height_units = None
+
+        _pressure = None
+        _pressure_id = None
+        _pressure_units = None
+
+        if height is not None and self.height is not None:
+
+            if len(height.shape) == 1:
+                _height = np.tile(height,(ntin,1))
+            else:
+                _height = height
+
+            _, nlevout = _height.shape
+            _height_id = self.height.id
+            _height_units = self.height.units
+            _level = Axis('lev_{0}'.format(self.id), _height[0,:],
+                    name='height_for_{0}'.format(self.id), units='m')
+
+            data = np.zeros((ntin,nlevout),dtype=np.float64)
+            for it in range(0,ntin):
+                ff = interpolate.interp1d(self.height.data[it,:], self.data[it,:],
+                        bounds_error=False, fill_value=self.data[it,-1]) # Pad after end date with the last value, if necessary
+                data[it,:] = ff(_height[it,:])
+
+        elif pressure is not None and self.pressure is not None:
+
+            if len(pressure.shape) == 1:
+                _pressure = np.tile(pressure,(ntin,1))
+            else:
+                _pressure = pressure
+
+            _, nlevout = _pressure.shape
+            _pressure_id = self.pressure.id
+            _pressure_units = self.pressure.units
+            _level = Axis('lev_{0}'.format(self.id), _pressure[0,:], 
+                    name='air_pressure_for_{0}'.format(self.id), units='Pa')
+
+            data = np.zeros((ntin,nlevout),dtype=np.float64)
+            for it in range(0,ntin):
+                ff = interpolate.interp1d(self.pressure.data[it,:], self.data[it,:],
+                        bounds_error=False, fill_value=self.data[it,-1]) # Pad after end date with the last value, if necessary
+                data[it,:] = ff(_pressure[it,:])
+
+        else:
+
+            print 'ERROR: case unexpected for vertical interpolation of variable', self.id
+            raise ValueError
+
+        return Variable(self.id, data=data, name=self.name, units=self.units,
+                level=_level, time=self.time,
+                height=_height, height_id=_height_id, height_units=_height_units,
+                pressure=_pressure, pressure_id=_pressure_id, pressure_units=_pressure_units)
 
 def read(name,filein):
 
@@ -304,19 +478,52 @@ def read(name,filein):
     axlist = []
     axes = []
     for ax in tmp.dimensions:
-        try:
-            axes.append(Axis(ax,filein[ax][:],name=filein[ax].long_name,units=filein[ax].units))
-        except AttributeError:
-            axes.append(Axis(ax,filein[ax][:],units=filein[ax].units))
-        except:
-            raise
+        kwargs = {}
+        for att in filein[ax].ncattrs():
+            if att == 'standard_name':
+                kwargs['name'] = filein[ax].getncattr(att)
+            else:
+                kwargs[att] = filein[ax].getncattr(att)
+
+        tmp_ax = Axis(ax,filein[ax][:],**kwargs)
+        axes.append(tmp_ax)
 
         axlist.append(ax)
 
+    coord = tmp.coordinates
+    time_id = coord.split()[0]
+    var_vert_id = coord.split()[1]
+
+    height = None
+    height_id = None
+    height_units = None
+
+    pressure = None
+    pressure_id = None
+    pressure_units = None
+
+    if var_vert_id[0:2] == 'zh':
+        height = filein[var_vert_id][:]
+        height_id = var_vert_id
+        height_units = filein[var_vert_id].units
+    elif var_vert_id[0:2] == 'pa':
+        pressure = filein[var_vert_id][:]
+        pressure_id = var_vert_id
+        pressure_units = filein[var_vert_id].units
+    #else:
+    #    print 'ERROR: vertical variable for {0} is unexpected'.format(name)
+    #    raise ValueError
+
     try:
-        varout = Variable(name,data=tmp[:],name=tmp.long_name,units=tmp.units,axes=axes,axlist=axlist)
+        varout = Variable(name, data=tmp[:], name=tmp.standard_name, units=tmp.units,
+                height=height, height_id=height_id, height_units=height_units,
+                pressure=pressure, pressure_id=pressure_id, pressure_units=pressure_units,
+                axes=axes, axlist=axlist)
     except AttributeError:
-        varout = Variable(name,data=tmp[:],units=tmp.units,axes=axes,axlist=axlist)
+        varout = Variable(name, data=tmp[:], units=tmp.units,
+                height=height, height_id=height_id, height_units=height_units,
+                pressure=pressure, pressure_id=pressure_id, pressure_units=pressure_units,
+                axes=axes, axlist=axlist)
     except: 
         raise
 
@@ -403,4 +610,10 @@ def interpol(var,levout=None,timeout=None,log=False):
 
     return varout
  
+
+
+
+
+
+
 
