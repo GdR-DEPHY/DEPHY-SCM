@@ -58,10 +58,6 @@ timeout = np.array(range(0,86400+2*3600+1-41400,1800),dtype=np.float64)
 # conversion
 newcase = case.convert2SCM(time=timeout,lev=levout,levtype='altitude')
 
-newcase.write('ARMCU_REF_SCM_driver_new.nc',verbose=False)
-
-stop
-
 # add a surface temperature. To be improved...
 ts = timeout*0. + 310 # same shape as timeout
 

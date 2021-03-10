@@ -1280,7 +1280,7 @@ class Case:
         # Writing first only time axes
         for var in var_attributes.keys():
             if var in self.var_init_list + self.var_forcing_list:
-                print 'writing time axis for', var
+                if verbose: print 'writing time axis for', var
                 self.variables[var].write(g,
                         write_time_axes=True, write_level_axes=False,
                         write_data=False, write_vertical=False)
@@ -1288,7 +1288,7 @@ class Case:
         # Writing first only level axes
         for var in var_attributes.keys():
             if var in self.var_init_list + self.var_forcing_list:
-                print 'writing level axis for', var
+                if verbose: print 'writing level axis for', var
                 self.variables[var].write(g,
                         write_time_axes=False, write_level_axes=True,
                         write_data=False, write_vertical=False)
@@ -1296,7 +1296,7 @@ class Case:
         # Writing then only vertical variables
         for var in var_attributes.keys():
             if var in self.var_init_list + self.var_forcing_list:
-                print 'writing vertical variable for', var
+                if verbose: print 'writing vertical variable for', var
                 self.variables[var].write(g, 
                         write_time_axes=False, write_level_axes=False,
                         write_data=False, write_vertical=True)
@@ -1304,8 +1304,8 @@ class Case:
         # Finally write data
         for var in var_attributes.keys():
             if var in self.var_init_list + self.var_forcing_list:
-                print 'writing data for', var
                 if verbose:
+                    print 'writing data for', var
                     self.variables[var].info()
                 self.variables[var].write(g,
                         write_time_axes=False, write_level_axes=False,
@@ -1334,7 +1334,7 @@ class Case:
 
         for var in f.variables:
             if not(var in f.dimensions) and not(var[0:6] == 'bounds') and var[0:3] not in ['zh_','pa_']:
-                print 'Reading', var
+                if verbose: print 'Reading', var
                 tmp = readvar(var,f)
                 if tmp.level is None:
                     self.add_variable(var, tmp.data,
@@ -1573,6 +1573,343 @@ class Case:
 
         return rt
 
+    def compute_tnta_adv(self):
+
+        pressure = self.variables['pa_forc'].data
+
+        if 'tntheta_adv' in self.var_forcing_list:
+            print 'compute tnta_adv from tntheta_adv'
+            thadv = self.variables['tntheta_adv'].data
+            tadv = thermo.theta2t(p=pressure,theta=thadv)
+        elif 'tnthetal_adv' in self.var_forcing_list:
+            print 'assume tnthetal_adv=tntheta_adv and compute tnta_adv from tntheta_adv'
+            thladv = self.variables['tnthetal_adv'].data
+            tadv = thermo.theta2t(p=pressure,theta=thladv)
+        else:
+            print 'ERROR: To compute tnta_adv, tntheta_adv or tnthetal_adv must be known'
+            raise ValueError
+
+        return tadv
+
+    def compute_tntheta_adv(self):
+
+        pressure = self.variables['pa_forc'].data
+
+        if 'tnta_adv' in self.var_forcing_list:
+            print 'compute tntheta_adv from tnta_adv'
+            tadv = self.variables['tnta_adv'].data
+            thadv = thermo.t2theta(p=pressure,temp=tadv)
+        elif 'tnthetal_adv' in self.var_forcing_list:
+            print 'assume tntheta_adv=tnthetal_adv'
+            thadv = self.variables['tnthetal_adv'].data
+        else:
+            print 'ERROR: To compute tntheta_adv, tnta_adv or tnthetal_adv must be known'
+            raise ValueError
+
+        return thadv
+
+    def compute_tnthetal_adv(self):
+
+        pressure = self.variables['pa_forc'].data
+
+        if 'tnta_adv' in self.var_forcing_list:
+            print 'compute tnthetal_adv from tnta_adv assuming tnthetal_adv=tntheta_adv'
+            tadv = self.variables['tnta_adv'].data
+            thladv = thermo.t2theta(p=pressure,temp=tadv)
+        elif 'tntheta_adv' in self.var_forcing_list:
+            print 'assume tnthetal_adv=tntheta_adv'
+            thladv = self.variables['tntheta_adv'].data
+        else:
+            print 'ERROR: To compute tnthetal_adv, tnta_adv or tntheta_adv must be known'
+            raise ValueError
+
+        return thladv
+
+    def compute_tnta_rad(self):
+
+        pressure = self.variables['pa_forc'].data
+
+        if 'tntheta_rad' in self.var_forcing_list:
+            print 'compute tnta_rad from tntheta_rad'
+            thrad = self.variables['tntheta_rad'].data
+            trad = thermo.theta2t(p=pressure,theta=thrad)
+        elif 'tnthetal_rad' in self.var_forcing_list:
+            print 'assume tnthetal_rad=tntheta_rad and compute tnta_rad from tntheta_rad'
+            thlrad = self.variables['tnthetal_rad'].data
+            trad = thermo.theta2t(p=pressure,theta=thlrad)
+        else:
+            print 'ERROR: To compute tnta_rad, tntheta_rad or tnthetal_rad must be known'
+            raise ValueError
+
+        return trad
+
+    def compute_tntheta_rad(self):
+
+        pressure = self.variables['pa_forc'].data
+
+        if 'tnta_rad' in self.var_forcing_list:
+            print 'compute tntheta_rad from tnta_rad'
+            trad = self.variables['tnta_rad'].data
+            thrad = thermo.t2theta(p=pressure,temp=trad)
+        elif 'tnthetal_rad' in self.var_forcing_list:
+            print 'assume tntheta_rad=tnthetal_rad'
+            thrad = self.variables['tnthetal_rad'].data
+        else:
+            print 'ERROR: To compute tntheta_rad, tnta_rad or tnthetal_rad must be known'
+            raise ValueError
+
+        return thrad
+
+    def compute_tnthetal_rad(self):
+
+        pressure = self.variables['pa_forc'].data
+
+        if 'tnta_rad' in self.var_forcing_list:
+            print 'compute tnthetal_rad from tnta_rad assuming tnthetal_rad=tntheta_rad'
+            trad = self.variables['tnta_rad'].data
+            thlrad = thermo.t2theta(p=pressure,temp=trad)
+        elif 'tntheta_rad' in self.var_forcing_list:
+            print 'assume tnthetal_rad=tntheta_rad'
+            thlrad = self.variables['tntheta_rad'].data
+        else:
+            print 'ERROR: To compute tnthetal_rad, tnta_rad or tntheta_rad must be known'
+            raise ValueError
+
+        return thlrad
+
+    def compute_tnqv_adv(self):
+
+        if 'tnqt_adv' in self.var_forcing_list:
+            print 'assume tnqv_adv=tnqt_adv'
+            qvadv = self.variables['tnqt_adv'].data
+        elif 'tnrv_adv' in self.var_forcing_list:
+            print 'compute tnqv_adv from tnrv_adv using initial rv profile'
+            rvadv = self.variables['tnrv_adv'].data
+            rv = self.variables['rv'].data
+            qvadv =  thermo.advrt2advqt(rt=rv,advrt=rvadv)
+        elif 'tnrt_adv' in self.var_forcing_list:
+            print 'compute tnqv_adv from tnrv_adv assuming tnrv_adv=tnrt_adv and using initial rt profile'
+            rtadv = self.variables['tnrt_adv'].data
+            rt = self.variables['rt'].data
+            qvadv =  thermo.advrt2advqt(rt=rt,advrt=rtadv)
+        else:
+            print 'ERROR: To compute tnqv_adv, tnqt_adv, tnrv_adv or tnrt_adv must be known'
+            raise ValueError
+
+        return qvadv
+
+    def compute_tnqt_adv(self):
+
+        if 'tnqv_adv' in self.var_forcing_list:
+            print 'assume tnqt_adv=tnqv_adv'
+            qtadv = self.variables['tnqv_adv'].data
+        elif 'tnrv_adv' in self.var_forcing_list:
+            print 'compute tnqt_adv from tnrt_adv assuming tnrt_adv=tnrv_adv using initial rv profile'
+            rtadv = self.variables['tnrv_adv'].data
+            rt = self.variables['rv'].data
+            qtadv =  thermo.advrt2advqt(rt=rt,advrt=rtadv)
+        elif 'tnrt_adv' in self.var_forcing_list:
+            print 'compute tnqt_adv from tnrt_adv using initial rt profile'
+            rtadv = self.variables['tnrt_adv'].data
+            rt = self.variables['rt'].data
+            qtadv =  thermo.advrt2advqt(rt=rt,advrt=rtadv)
+        else:
+            print 'ERROR: To compute tnqt_adv, tnqv_adv, tnrv_adv or tnrt_adv must be known'
+            raise ValueError
+
+        return qtadv
+
+    def compute_tnrv_adv(self):
+
+        if 'tnrt_adv' in self.var_forcing_list:
+            print 'assume tnrv_adv=tnrt_adv'
+            rvadv = self.variables['tnrt_adv'].data
+        elif 'tnqv_adv' in self.var_forcing_list:
+            print 'compute tnrv_adv from tnqv_adv using initial qv profile'
+            qvadv = self.variables['tnqv_adv'].data
+            qv = self.variables['qv'].data
+            rvadv =  thermo.advqt2advrt(qt=qv,advqt=qvadv)
+        elif 'tnqt_adv' in self.var_forcing_list:
+            print 'compute tnrv_adv from tnqv_adv assuming tnqv_adv=tnqt_adv and using initial qt profile'
+            qvadv = self.variables['tnqt_adv'].data
+            qv = self.variables['qt'].data
+            rvadv =  thermo.advqt2advrt(qt=qv,advqt=qvadv)
+        else:
+            print 'ERROR: To compute tnrv_adv, tnqv_adv, tnqt_adv or tnrt_adv must be known'
+            raise ValueError
+
+        return rvadv
+
+    def compute_tnrt_adv(self):
+
+        if 'tnrv_adv' in self.var_forcing_list:
+            print 'assume tnrt_adv=tnrv_adv'
+            rtadv = self.variables['tnrv_adv'].data
+        elif 'tnqv_adv' in self.var_forcing_list:
+            print 'compute tnrt_adv from tnqt_adv assuming tnqt_adv=tnqv_adv and using initial qv profile'
+            qtadv = self.variables['tnqv_adv'].data
+            qt = self.variables['qv'].data
+            rtadv =  thermo.advqt2advrt(qt=qt,advqt=qtadv)
+        elif 'tnqt_adv' in self.var_forcing_list:
+            print 'compute tnrt_adv from tnqt_adv using initial qt profile'
+            qtadv = self.variables['tnqt_adv'].data
+            qt = self.variables['qt'].data
+            rtadv =  thermo.advqt2advrt(qt=qt,advqt=qtadv)
+        else:
+            print 'ERROR: To compute tnrt_adv, tnqv_adv, tnqt_adv or tnrv_adv must be known'
+            raise ValueError
+
+        return rtadv
+
+    def compute_ta_nud(self):
+
+        pressure = self.variables['pa_forc'].data
+
+        if 'theta_nud' in self.var_forcing_list:
+            print 'compute ta_nud from theta_nud'
+            thnud = self.variables['theta_nud'].data
+            tnud = thermo.theta2t(p=pressure,theta=thnud)
+        elif 'thetal_nud' in self.var_forcing_list:
+            print 'compute ta_nud from theta_nud assuming theta_nud=thetal_nud'
+            thnud = self.variables['thetal_nud'].data
+            tnud = thermo.theta2t(p=pressure,theta=thnud)
+        else:
+            print 'ERROR: To compute ta_nud, theta_nud or thetal_nud must be known'
+            raise ValueError
+
+        return tnud
+
+    def compute_ta_nud(self):
+
+        pressure = self.variables['pa_forc'].data
+
+        if 'theta_nud' in self.var_forcing_list:
+            print 'compute ta_nud from theta_nud'
+            thnud = self.variables['theta_nud'].data
+            tnud = thermo.theta2t(p=pressure,theta=thnud)
+        elif 'thetal_nud' in self.var_forcing_list:
+            print 'compute ta_nud from theta_nud assuming theta_nud=thetal_nud'
+            thnud = self.variables['thetal_nud'].data
+            tnud = thermo.theta2t(p=pressure,theta=thnud)
+        else:
+            print 'ERROR: To compute ta_nud, theta_nud or thetal_nud must be known'
+            raise ValueError
+
+        return tnud
+
+    def compute_theta_nud(self):
+
+        pressure = self.variables['pa_forc'].data
+
+        if 'ta_nud' in self.var_forcing_list:
+            print 'compute theta_nud from ta_nud'
+            tnud = self.variables['ta_nud'].data
+            thnud = thermo.t2theta(p=pressure,theta=tnud)
+        elif 'thetal_nud' in self.var_forcing_list:
+            print 'assume theta_nud=thetal_nud'
+            thnud = self.variables['thetal_nud'].data
+        else:
+            print 'ERROR: To compute theta_nud, ta_nud or thetal_nud must be known'
+            raise ValueError
+
+        return thnud
+
+    def compute_thetal_nud(self):
+
+        pressure = self.variables['pa_forc'].data
+
+        if 'ta_nud' in self.var_forcing_list:
+            print 'compute thetal_nud from ta_nud assuming thetal_nud=theta_nud'
+            tnud = self.variables['ta_nud'].data
+            thlnud = thermo.t2theta(p=pressure,theta=tnud)
+        elif 'theta_nud' in self.var_forcing_list:
+            print 'assume thetal_nud=theta_nud'
+            thlnud = self.variables['theta_nud'].data
+        else:
+            print 'ERROR: To compute thetal_nud, ta_nud or theta_nud must be known'
+            raise ValueError
+
+        return thlnud
+
+    def compute_qv_nud(self):
+
+        if 'qt_nud' in self.var_forcing_list:
+            print 'assume qv_nud=qt_nud'
+            qvnud = self.variables['qt_nud'].data
+        elif 'rv_nud' in self.var_forcing_list:
+            print 'compute qv_nud from rv_nud'
+            rvnud = self.variables['rv_nud'].data
+            qvnud =  thermo.rt2qt(rvnud)
+        elif 'rt_nud' in self.var_forcing_list:
+            print 'compute qv_nud from rv_nud assuming rv_nud=rt_nud'
+            rvnud = self.variables['rt_nud'].data
+            qvnud =  thermo.rt2qt(rvnud)
+        else:
+            print 'ERROR: To compute qv_nud, qt_nud, rv_nud or rt_nud must be known'
+            raise ValueError
+
+        return qvnud
+
+    def compute_qt_nud(self):
+
+        if 'qv_nud' in self.var_forcing_list:
+            print 'assume qt_nud=qv_nud'
+            qtnud = self.variables['qv_nud'].data
+        elif 'rv_nud' in self.var_forcing_list:
+            print 'compute qt_nud from rt_nud assuming rt_nud=rv_nud'
+            rtnud = self.variables['rv_nud'].data
+            qtnud =  thermo.rt2qt(rtnud)
+        elif 'rt_nud' in self.var_forcing_list:
+            print 'compute qt_nud from rt_nud'
+            rtnud = self.variables['rt_nud'].data
+            qtnud =  thermo.rt2qt(rtnud)
+        else:
+            print 'ERROR: To compute qt_nud, qv_nud, rv_nud or rt_nud must be known'
+            raise ValueError
+
+        return qtnud
+
+    def compute_rv_nud(self):
+
+        if 'qv_nud' in self.var_forcing_list:
+            print 'compute rv_nud from qv_nud'
+            qvnud = self.variables['qv_nud'].data
+            rvnud =  thermo.qt2rt(qvnud)
+        elif 'qt_nud' in self.var_forcing_list:
+            print 'compute rv_nud from qv_nud assuming qv_nud=qt_nud'
+            qvnud = self.variables['qt_nud'].data
+            rvnud =  thermo.qt2rt(qvnud)
+        elif 'rt_nud' in self.var_forcing_list:
+            print 'assume rv_nud=rt_nud'
+            rvnud = self.variables['rt_nud'].data
+        else:
+            print 'ERROR: To compute rv_nud, qv_nud, qt_nud or rt_nud must be known'
+            raise ValueError
+
+        return rvnud
+
+    def compute_rt_nud(self):
+
+        if 'qv_nud' in self.var_forcing_list:
+            print 'compute rt_nud from qt_nud assuming qt_nud=qv_nud'
+            qtnud = self.variables['qv_nud'].data
+            rtnud =  thermo.qt2rt(qtnud)
+        elif 'qt_nud' in self.var_forcing_list:
+            print 'compute rt_nud from qt_nud'
+            qtnud = self.variables['qt_nud'].data
+            rtnud =  thermo.qt2rt(qtnud)
+        elif 'rv_nud' in self.var_forcing_list:
+            print 'assume rt_nud=rv_nud'
+            rtnud = self.variables['rv_nud'].data
+        else:
+            print 'ERROR: To compute rt_nud, qv_nud, qt_nud or rv_nud must be known'
+            raise ValueError
+
+        return rtnud
+
+
+
+
     def interpolate(self,time=None,lev=None,levtype=None,usetemp=True,usetheta=True,usethetal=True):
 
         ###########################
@@ -1749,7 +2086,6 @@ class Case:
         elif VV.pressure is None:
 
             height = VV.height
-            height.info()
 
             kwargs = {}
             kwargs[var] = VV.data[0,:]
@@ -1838,7 +2174,7 @@ class Case:
         pressure = None
 
         for var in self.var_forcing_list:
-            print var
+            #print var
             VV = self.variables[var]
             if VV.time is not None:
                 time = VV.time
@@ -1884,7 +2220,6 @@ class Case:
             if 'zh_forc' not in self.var_forcing_list:
                 self.var_forcing_list.append('zh_forc')
                 self.variables['zh_forc'] = height
-            print self.var_forcing_list
 
         elif VV.height is None:
 
@@ -1900,548 +2235,215 @@ class Case:
         ##################################
 
         #---- Large-scale temperature advection
-        var = 'tnta_adv'
-        att = 'adv_ta'
-        if att in self.attlist and self.attributes[att] == 1:
-            self.add_variable(var, self.variables[var].data, 
-                    lev=level, time=time,
-                    height=height, pressure=pressure)
-            print 'compute tntheta_adv from tnta_adv'
-            pressure = self.variables['pa_forc'].data
-            tadv = self.variables['tnta_adv'].data
-            thadv = thermo.t2theta(p=pressure,temp=tadv)
-            self.add_variable('tntheta_adv', thadv,
-                    lev=level, time=time,
-                    height=height, pressure=pressure)
-            self.set_attribute('adv_theta',1)
-            print 'assume tnthetal_adv=tntheta_adv'
-            self.add_variable('tnthetal_adv', thadv, 
-                    lev=level, time=time,
-                    height=height, pressure=pressure)
-            self.set_attribute('adv_thetal',1)
+        atts = ['adv_ta','adv_theta','adv_thetal']
+        flag = False
+        for att in atts:
+            if att in self.attlist and self.attributes[att] == 1:
+                flag = True
 
-        var = 'tntheta_adv'
-        att = 'adv_theta'
-        if att in self.attlist and self.attributes[att] == 1:
-            self.add_variable(var, self.variables[var].data, 
+        if flag:
+            # large-scale advection of temperature is active. All temperature variables are added, if needed.
+            if 'tnta_adv' not in self.var_forcing_list:
+                tadv = self.compute_tnta_adv()
+                self.add_variable('tnta_adv', tadv, 
                     lev=level, time=time,
                     height=height, pressure=pressure)
-            print 'compute tnta_adv from tntheta_adv'
-            pressure = self.variables['pa_forc'].data
-            thadv = self.variables['tntheta_adv'].data
-            tadv = thermo.theta2t(p=pressure,theta=thadv)
-            self.add_variable('tnta_adv', tadv, 
+                self.set_attribute('adv_ta',1)
+            if 'tntheta_adv' not in self.var_forcing_list:
+                thadv = self.compute_tntheta_adv()
+                self.add_variable('tntheta_adv', thadv, 
                     lev=level, time=time,
                     height=height, pressure=pressure)
-            self.set_attribute('adv_temp',1)
-            print 'assumee tnthetal_adv=tntheta_adv'
-            self.add_variable('tnthetal_adv', thadv, 
+                self.set_attribute('adv_theta',1)
+            if 'tnthetal_adv' not in self.var_forcing_list:
+                thladv = self.compute_tnthetal_adv()
+                self.add_variable('tnthetal_adv', thladv, 
                     lev=level, time=time,
                     height=height, pressure=pressure)
-            self.set_attribute('adv_thetal',1)
+                self.set_attribute('adv_thetal',1)
+
 
         #---- Temperature radiative tendency
         att = 'radiation'
         if att in self.attlist and self.attributes[att] in ['tend',]:
+            # radiative tendency is active. All temperature variables are added, if needed.
 
-            var = 'tnta_rad'
-            if var in self.var_forcing_list:
-                self.add_variable(var, self.variables[var].data, 
+            if 'tnta_rad' not in self.var_forcing_list:
+                trad = self.compute_tnta_rad()
+                self.add_variable('tnta_rad', trad, 
                     lev=level, time=time,
                     height=height, pressure=pressure)
-                print 'compute tntheta_rad from tnta_rad'
-                pressure = self.variables['pressure_forc'].data
-                trad = self.variables['tnta_rad'].data
-                thrad = thermo.t2theta(p=pressure,temp=trad)
+            if 'tntheta_rad' not in self.var_forcing_list:
+                thrad = self.compute_tntheta_rad()
                 self.add_variable('tntheta_rad', thrad, 
                     lev=level, time=time,
                     height=height, pressure=pressure)
-                self.set_attribute('rad_theta',1)
-                print 'assume tnthetal_rad=tntheta_rad'
-                self.add_variable('tnthetal_rad', thrad, 
+            if 'tnthetal_rad' not in self.var_forcing_list:
+                thlrad = self.compute_tnthetal_rad()
+                self.add_variable('tnthetal_rad', thlrad, 
                     lev=level, time=time,
                     height=height, pressure=pressure)
-                self.set_attribute('rad_thetal',1)
-
-            var = 'tntheta_rad'
-            if var in self.var_forcing_list:
-                self.add_variable(var, self.variables[var].data, 
-                    lev=level, time=time,
-                    height=height, pressure=pressure)
-                print 'compute tnta_rad from theta_rad'
-                pressure = self.variables['pressure_forc'].data
-                thrad = self.variables['tntheta_rad'].data
-                trad = thermo.theta2t(p=pressure,theta=thrad)
-                self.add_variable('tnta_rad', trad, 
-                    lev=level, time=time,
-                    height=height, pressure=pressure)
-                self.set_attribute('rad_temp',1)
-                print 'assume tnthetal_rad=tntheta_rad'
-                self.add_variable('tnthetal_rad', thrad, 
-                    lev=level, time=time,
-                    height=height, pressure=pressure)
-                self.set_attribute('rad_thetal',1)
- 
-            var = 'tnthetal_rad'
-            if var in self.var_forcing_list:
-                self.add_variable(var, self.variables[var].data, 
-                    lev=level, time=time,
-                    height=height, pressure=pressure)
-                print 'compute temp_rad from thetal_rad assuming thetal_rad=theta_rad'
-                pressure = self.variables['pressure_forc'].data
-                thlrad = self.variables['thetal_rad'].data
-                trad = thermo.theta2t(p=pressure,theta=thlrad)
-                self.add_variable('tnta_rad', trad, 
-                    lev=level, time=time,
-                    height=height, pressure=pressure)
-                self.set_attribute('rad_temp',1)
-                print 'assume theta_rad=thetal_rad'
-                self.add_variable('tntheta_rad', thlrad, 
-                    lev=level, time=time,
-                    height=height, pressure=pressure)
-                self.set_attribute('rad_theta',1)
-
-        return
 
         #---- Large-scale humidity advection
-        var = 'tnqv_adv'
-        att = 'adv_qv'
-        if att in self.attlist and self.attributes[att] == 1:
-            self.add_variable(var,self.variables[var].data,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            print 'assume qt_adv=qv_adv'
-            self.add_variable('qt_adv',self.variables[var].data,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            self.set_attribute('adv_qt',1)
-            print 'Compute rv_adv from qv_adv'
-            qvadv = self.variables['qv_adv'].data
-            qv = self.variables['qv'].data
-            rvadv =  thermo.advqt2advrt(qt=qv,advqt=qvadv)
-            self.add_variable('rv_adv',rvadv,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            self.set_attribute('adv_rv',1)
-            print 'assume rt_adv=rv_adv'
-            self.add_variable('rt_adv',rvadv,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            self.set_attribute('adv_rt',1)
+        atts = ['adv_qv','adv_qt','adv_rv','adv_rt']
+        flag = False
+        for att in atts:
+            if att in self.attlist and self.attributes[att] == 1:
+                flag = True 
 
-        var = 'tnqt_adv'
-        att = 'adv_qt'
-        if att in self.attlist and self.attributes[att] == 1:
-            self.add_variable(var,self.variables[var].data,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            print 'assume qv_adv=qt_adv'
-            self.add_variable('qv_adv',self.variables[var].data,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            self.set_attribute('adv_qv',1)
-            print 'Compute rv_adv from qv_adv'
-            qtadv = self.variables['qt_adv'].data
-            qt = self.variables['qt'].data
-            rtadv =  thermo.advqt2advrt(qt=qt,advqt=qtadv)
-            self.add_variable('rt_adv',rtadv,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            self.set_attribute('adv_rt',1)
-            print 'assume rv_adv=rt_adv'
-            self.add_variable('rv_adv',rtadv,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            self.set_attribute('adv_rv',1)
-
-        var = 'tnrv_adv'
-        att = 'adv_rv'
-        if att in self.attlist and self.attributes[att] == 1:
-            self.add_variable(var,self.variables[var].data,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            print 'assume rt_adv=rv_adv'
-            self.add_variable('rt_adv',self.variables[var].data,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            self.set_attribute('adv_rt',1)
-            print 'Compute qv_adv from rv_adv'
-            rvadv = self.variables['rv_adv'].data
-            rv = self.variables['rv'].data
-            qvadv =  thermo.advrt2advqt(rt=rv,advrt=rvadv)
-            self.add_variable('qv_adv',qvadv,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            self.set_attribute('adv_qv',1)
-            print 'assume qt_adv=qv_adv'
-            self.add_variable('qt_adv',qvadv,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            self.set_attribute('adv_qt',1)
-
-        var = 'tnrt_adv'
-        att = 'adv_rt'
-        if att in self.attlist and self.attributes[att] == 1:
-            self.add_variable(var,self.variables[var].data,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            print 'assume rv_adv=rt_adv'
-            self.add_variable('rv_adv',self.variables[var].data,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            self.set_attribute('adv_rv',1)
-            print 'Compute qt_adv from rt_adv'
-            rtadv = self.variables['rt_adv'].data
-            rt = self.variables['rt'].data
-            qtadv =  thermo.advrt2advqt(rt=rt,advrt=rtadv)
-            self.add_variable('qt_adv',qtadv,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            self.set_attribute('adv_qt',1)
-            print 'assume qv_adv=qt_adv'
-            self.add_variable('qv_adv',qtadv,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            self.set_attribute('adv_qv',1)
-
-        #---- Vertical velocity forcing
-        var = 'w'
-        att = 'forc_w'
-        if att in self.attlist and self.attributes[att] == 1:
-            self.add_variable(var,self.variables[var].data,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-
-        var = 'wap'
-        att = 'forc_wap'
-        if att in self.attlist and self.attributes[att] == 1:
-            self.add_variable(var,self.variables[var].data,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-
-        #---- Geostrophic wind forcing
-        att = 'forc_geo'
-        if att in self.attlist and self.attributes[att] == 1:
-            self.add_variable('ug',self.variables['ug'].data,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            self.add_variable('vg',self.variables['vg'].data,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
+        if flag: 
+            # large-scale advection of humidity is active. All humidity variables are added, if needed.
+            if 'tnqv_adv' not in self.var_forcing_list:
+                qvadv = self.compute_tnqv_adv()
+                self.add_variable('tnqv_adv', qvadv, 
+                    lev=level, time=time,
+                    height=height, pressure=pressure)
+                self.set_attribute('adv_qv',1)
+            if 'tnqt_adv' not in self.var_forcing_list:
+                qtadv = self.compute_tnqt_adv()
+                self.add_variable('tnqt_adv', qtadv, 
+                    lev=level, time=time,
+                    height=height, pressure=pressure)
+                self.set_attribute('adv_qt',1)
+            if 'tnrv_adv' not in self.var_forcing_list:
+                rvadv = self.compute_tnrv_adv()
+                self.add_variable('tnrv_adv', rvadv, 
+                    lev=level, time=time,
+                    height=height, pressure=pressure)
+                self.set_attribute('adv_rv',1)
+            if 'tnrt_adv' not in self.var_forcing_list:
+                rtadv = self.compute_tnrt_adv()
+                self.add_variable('tnrt_adv', rtadv, 
+                    lev=level, time=time,
+                    height=height, pressure=pressure)
+                self.set_attribute('adv_rt',1)
 
         #---- Wind nudging
 
-        var = 'ua_nud'
-        att = 'nudging_ua'
-        if att in self.attlist and self.attributes[att] > 0:
-            self.add_variable(var,self.variables[var].data,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            if not('z_nudging_u' in self.attributes.keys()):
-                height = np.squeeze(self.variables['height'].data)
-                pressure = np.squeeze(self.variables['pressure'].data)
-                zlev = thermo.plev2zlev(self.attributes['p_nudging_u'],height,pressure)
-                self.set_attribute('z_nudging_u',zlev)
-            if not('p_nudging_u' in self.attributes.keys()):
-                height = np.squeeze(self.variables['height'].data)
-                pressure = np.squeeze(self.variables['pressure'].data)
-                plev = thermo.zlev2plev(self.attributes['z_nudging_u'],height,pressure)
-                self.set_attribute('p_nudging_u',plev)
-
-        var = 'va_nud'
-        att = 'nudging_va'
-        if att in self.attlist and self.attributes[att] > 0:
-            self.add_variable(var,self.variables[var].data,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            if not('z_nudging_v' in self.attributes.keys()):
-                height = np.squeeze(self.variables['height'].data)
-                pressure = np.squeeze(self.variables['pressure'].data)
-                zlev = thermo.plev2zlev(self.attributes['p_nudging_v'],height,pressure)
-                self.set_attribute('z_nudging_v',zlev)
-            if not('p_nudging_v' in self.attributes.keys()):
-                height = np.squeeze(self.variables['height'].data)
-                pressure = np.squeeze(self.variables['pressure'].data)
-                plev = thermo.zlev2plev(self.attributes['z_nudging_v'],height,pressure)
-                self.set_attribute('p_nudging_v',plev)
+        for var in ['ua','va']:
+            att = 'nudging_{0}'.format(var)
+            if att in self.attlist and self.attributes[att] > 0:
+                height = np.squeeze(self.variables['zh'].data)
+                pressure = np.squeeze(self.variables['pa'].data)
+                # Add further description of nudging altitude/pressure
+                if 'zh_nudging_{0}'.format(var) not in self.attributes.keys():
+                    zlev = thermo.plev2zlev(self.attributes['pa_nudging_{0}'.format(var)],height,pressure)
+                    self.set_attribute('zh_nudging_{0}'.format(var),zlev)
+                if 'pa_nudging_{0}'.format(var) not in self.attributes.keys():
+                    plev = thermo.zlev2plev(self.attributes['zh_nudging_{0}'.format(var)],height,pressure)
+                    self.set_attribute('pa_nudging_{0}'.format(var),plev)
 
         #---- Temperature nudging
 
-        ltemp = False
-        ltheta = False
-        lthetal = False
+        atts = ['nudging_ta','nudging_theta','nudging_thetal']
+        flag = False
+        zlev = None
+        plev = None
+        for att in atts:
+            if att in self.attlist and self.attributes[att] != 0:
+                flag = True
+                nudging_timescale = self.attributes[att]
+                if self.attributes[att] > 0: # simple nudging profile described in global attributes
+                    if 'zh_{0}'.format(att) in self.attributes:
+                        zlev = self.attributes['zh_{0}'.format(att)]
+                    if 'pa_{0}'.format(att) in self.attributes:
+                        plev = self.attributes['pa_{0}'.format(att)]
 
-        var = 'ta_nudging'
-        att = 'nudging_ta'
-        if att in self.attlist and self.attributes[att] > 0:
-            if not(usetemp) and (ltheta or lthetal):
-                print 'Warning: Several nudging variable for temperature are given, which might yield to inconsistencies'
-                #sys.exit()
-            else:
-                ltemp=True
-                print '-'*10
-                print 'temp_nudging is given'
-                self.add_variable(var,self.variables[var].data,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-                print 'compute theta_nudging from temp_nudging'
-                pressure = self.variables['pressure_forc'].data
-                tnudg = self.variables['temp_nudging'].data
-                thnudg = thermo.t2theta(p=pressure,temp=tnudg)
-                self.add_variable('theta_nudging',thnudg,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-                print 'assume thetal_nudging=theta_nudging'
-                self.add_variable('thetal_nudging',thnudg,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-                self.set_attribute('nudging_theta',self.attributes[att])
-                self.set_attribute('nudging_thetal',self.attributes[att])
-                if 'p_nudging_temp' in self.attributes.keys():
-                    self.set_attribute('p_nudging_theta',self.attributes['p_nudging_temp'])
-                    if not('z_nudging_temp' in self.attributes.keys()):
-                        height = np.squeeze(self.variables['height'].data)
-                        pressure = np.squeeze(self.variables['pressure'].data)
-                        zlev = int(thermo.plev2zlev(self.attributes['p_nudging_temp'],height,pressure))
-                        self.set_attribute('z_nudging_thetal',zlev)
-                        self.set_attribute('z_nudging_theta',zlev)
-                        self.set_attribute('z_nudging_temp',zlev)                  
-                if 'z_nudging_temp' in self.attributes.keys():
-                    self.set_attribute('z_nudging_theta',self.attributes['z_nudging_temp'])
-                    if not('p_nudging_temp' in self.attributes.keys()):
-                        height = np.squeeze(self.variables['height'].data)
-                        pressure = np.squeeze(self.variables['pressure'].data)
-                        plev = int(thermo.zlev2plev(self.attributes['z_nudging_temp'],height,pressure))
-                        self.set_attribute('p_nudging_thetal',plev)
-                        self.set_attribute('p_nudging_theta',plev)
-                        self.set_attribute('p_nudging_temp',plev) 
+        if flag:
+            if zlev is not None and plev is not None: # simple nudging profile described in global attributes
+                # update nudging height/pressure for all temperature variables
+                height = np.squeeze(self.variables['zh'].data)
+                pressure = np.squeeze(self.variables['pa'].data)
+                if zlev is None:
+                    zlev = int(thermo.plev2zlev(plev,height,pressure))
+                if plev is None:
+                    plev = int(thermo.zlev2plev(zlev,height,pressure))
 
-        var = 'theta_nud'
-        att = 'nudging_theta'
-        if att in self.attlist and self.attributes[att] > 0:
-            if not(usetheta) and (ltemp or lthetal):
-                print 'Warning: Several nudging variable for temperature are given, which might yield to inconsistencies'
-                #sys.exit()
+                for var in ['ta','theta','thetal']:
+                    self.set_attribute('zh_nudging_{0}'.format(var),zlev)
+                    self.set_attribute('pa_nudging_{0}'.format(var),plev)
             else:
-                ltheta=True   
-                print '-'*10
-                print 'theta_nudging is given'
-                self.add_variable(var,self.variables[var].data,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-                print 'compute temp_nudging from theta_nudging'
-                pressure = self.variables['pressure_forc'].data
-                thnudg = self.variables['theta_nudging'].data
-                tnudg = thermo.theta2t(p=pressure,theta=thnudg)
-                self.add_variable('temp_nudging',tnudg,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-                self.set_attribute('nudging_temp',self.attributes[att])
-                if 'p_nudging_theta' in self.attributes.keys():
-                    self.set_attribute('p_nudging_temp',self.attributes['p_nudging_theta'])
-                    if not('z_nudging_theta' in self.attributes.keys()):
-                        height = np.squeeze(self.variables['height'].data)
-                        pressure = np.squeeze(self.variables['pressure'].data)
-                        zlev = int(thermo.plev2zlev(self.attributes['p_nudging_theta'],height,pressure))
-                        self.set_attribute('z_nudging_thetal',zlev)
-                        self.set_attribute('z_nudging_theta',zlev)
-                        self.set_attribute('z_nudging_temp',zlev)  
-                if 'z_nudging_theta' in self.attributes.keys():
-                    self.set_attribute('z_nudging_temp',self.attributes['z_nudging_theta'])
-                    if not('p_nudging_theta' in self.attributes.keys()):
-                        height = np.squeeze(self.variables['height'].data)
-                        pressure = np.squeeze(self.variables['pressure'].data)
-                        plev = int(thermo.zlev2plev(self.attributes['z_nudging_theta'],height,pressure))
-                        self.set_attribute('p_nudging_thetal',plev)
-                        self.set_attribute('p_nudging_theta',plev)
-                        self.set_attribute('p_nudging_temp',plev) 
+                print 'ERROR: nudging case not yet coded'
+                raise ValueError
 
-        var = 'thetal_nud'
-        att = 'nudging_thetal'
-        if att in self.attlist and self.attributes[att] > 0:
-            if not(usethetal) and (ltemp or ltheta):
-                print 'Warning: Several nudging variable for temperature are given, which might yield to inconsistencies'
-                #sys.exit()
-            else:
-                lthetal=True   
-                print '-'*10
-                print 'thetal_nudging is given'
-                self.add_variable(var,self.variables[var].data,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-                print 'assume theta_nudging=thetal_nudging'
-                self.add_variable('theta_nudging',self.variables[var].data,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-                self.set_attribute('nudging_theta',self.attributes[att])
-                print 'compute temp_nudging from thetal_nudging assuming no liquid water'
-                pressure = self.variables['pressure_forc'].data
-                thlnudg = self.variables['thetal_nudging'].data
-                tnudg = thermo.theta2t(p=pressure,theta=thlnudg)
-                self.add_variable('temp_nudging',tnudg,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-                self.set_attribute('nudging_temp',self.attributes[att])
-                if 'p_nudging_thetal' in self.attributes.keys():
-                    self.set_attribute('p_nudging_theta',self.attributes['p_nudging_thetal'])
-                    self.set_attribute('p_nudging_temp',self.attributes['p_nudging_thetal'])
-                    if not('z_nudging_thetal' in self.attributes.keys()):
-                        height = np.squeeze(self.variables['height'].data)
-                        pressure = np.squeeze(self.variables['pressure'].data)
-                        zlev = int(thermo.plev2zlev(self.attributes['p_nudging_thetal'],height,pressure))
-                        self.set_attribute('z_nudging_thetal',zlev)
-                        self.set_attribute('z_nudging_theta',zlev)
-                        self.set_attribute('z_nudging_temp',zlev)                
-                if 'z_nudging_thetal' in self.attributes.keys():
-                    self.set_attribute('z_nudging_theta',self.attributes['z_nudging_thetal'])
-                    self.set_attribute('z_nudging_temp',self.attributes['z_nudging_thetal'])
-                    if not('p_nudging_thetal' in self.attributes.keys()):
-                        height = np.squeeze(self.variables['height'].data)
-                        pressure = np.squeeze(self.variables['pressure'].data)
-                        plev = int(thermo.zlev2plev(self.attributes['z_nudging_thetal'],height,pressure))
-                        self.set_attribute('p_nudging_thetal',plev)
-                        self.set_attribute('p_nudging_theta',plev)
-                        self.set_attribute('p_nudging_temp',plev) 
+            # temperature nudging is active. All temperature variables are added, if needed.
+            if 'ta_nud' not in self.var_forcing_list:
+                tnud = self.compute_ta_nud()
+                self.add_variable('ta_nud', tnud, 
+                    lev=level, time=time,
+                    height=height, pressure=pressure)
+                self.set_attribute('nudging_ta',nudging_timescale)
+            if 'theta_nud' not in self.var_forcing_list:
+                thnud = self.compute_theta_nud()
+                self.add_variable('theta_nud', thnud, 
+                    lev=level, time=time,
+                    height=height, pressure=pressure)
+                self.set_attribute('nudging_theta',nudging_timescale)
+            if 'thetal_nud' not in self.var_forcing_list:
+                thlnud = self.compute_thetal_nud()
+                self.add_variable('thetal_nud', thlnud, 
+                    lev=level, time=time,
+                    height=height, pressure=pressure)
+                self.set_attribute('nudging_thetal',nudging_timescale)
 
         #---- Humidity nudging
 
-        lflag = False
+        atts = ['nudging_qv','nudging_qt','nudging_rv','nudging_rt']
+        flag = False
+        zlev = None
+        plev = None
+        for att in atts:
+            if att in self.attlist and self.attributes[att] != 0:
+                flag = True
+                nudging_timescale = self.attributes[att]
+                if self.attributes[att] > 0: # simple nudging profile described in global attributes
+                    if 'zh_{0}'.format(att) in self.attributes:
+                        zlev = self.attributes['zh_{0}'.format(att)]
+                    if 'pa_{0}'.format(att) in self.attributes:
+                        plev = self.attributes['pa_{0}'.format(att)]
 
-        var = 'qv_nud'
-        att = 'nudging_qv'
-        if att in self.attlist and self.attributes[att] > 0:
-            lflag = True
-            print '-'*10
-            print 'qv_nudging is given'            
-            self.add_variable(var,self.variables[var].data,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            print 'assume qt_nudging=qv_nudging'
-            self.add_variable('qt_nudging',self.variables[var].data,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            self.set_attribute('nudging_qt',self.attributes[att])
-            qvnudg = self.variables['qv_nudging'].data
-            print 'compute rv_nudging from qv_nudging and assume rt_nudging=rv_nudging'
-            rvnudg = thermo.qt2rt(qvnudg)
-            self.add_variable('rv_nudging',rvnudg,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            self.set_attribute('nudging_rv',self.attributes[att])
-            self.add_variable('rt_nudging',rvnudg,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            self.set_attribute('nudging_rt',self.attributes[att])
-            if 'p_nudging_qv' in self.attributes.keys():
-                self.set_attribute('p_nudging_qt',self.attributes['p_nudging_qv'])
-                self.set_attribute('p_nudging_rv',self.attributes['p_nudging_qv'])
-                self.set_attribute('p_nudging_rt',self.attributes['p_nudging_qv'])
-                if not('z_nudging_qv' in self.attributes.keys()):
-                    height = np.squeeze(self.variables['height'].data)
-                    pressure = np.squeeze(self.variables['pressure'].data)
-                    zlev = int(thermo.plev2zlev(self.attributes['p_nudging_qv'],height,pressure))
-                    self.set_attribute('z_nudging_qv',zlev)
-                    self.set_attribute('z_nudging_qt',zlev)
-                    self.set_attribute('z_nudging_rv',zlev)
-                    self.set_attribute('z_nudging_rt',zlev)                  
-            if 'z_nudging_qv' in self.attributes.keys():
-                self.set_attribute('z_nudging_qt',self.attributes['z_nudging_qv'])
-                self.set_attribute('z_nudging_rv',self.attributes['z_nudging_qv'])
-                self.set_attribute('z_nudging_rt',self.attributes['z_nudging_qv'])
-                if not('p_nudging_qv' in self.attributes.keys()):
-                    height = np.squeeze(self.variables['height'].data)
-                    pressure = np.squeeze(self.variables['pressure'].data)
-                    plev = int(thermo.zlev2plev(self.attributes['z_nudging_qv'],height,pressure))
-                    self.set_attribute('p_nudging_qv',plev)
-                    self.set_attribute('p_nudging_qt',plev)
-                    self.set_attribute('p_nudging_rv',plev)
-                    self.set_attribute('p_nudging_rt',plev)
+        if flag:
+            if zlev is not None and plev is not None: # simple nudging profile described in global attributes
+                # update nudging height/pressure for all humidity variables
+                height = np.squeeze(self.variables['zh'].data)
+                pressure = np.squeeze(self.variables['pa'].data)
+                if zlev is None:
+                    zlev = int(thermo.plev2zlev(plev,height,pressure))
+                if plev is None:
+                    plev = int(thermo.zlev2plev(zlev,height,pressure))
 
-        var = 'qt_nud'
-        att = 'nudging_qt'
-        if att in self.attlist and self.attributes[att] > 0:
-            if lflag:
-                print 'Error: Several nudging variable for humidity are given, which might yield to inconsistencies'
-                sys.exit()
+                for var in ['qv','qt','rv','rt']:
+                    self.set_attribute('zh_nudging_{0}'.format(var),zlev)
+                    self.set_attribute('pa_nudging_{0}'.format(var),plev)
             else:
-                lflag=True
-            print '-'*10
-            print 'qt_nudging is given'            
-            self.add_variable(var,self.variables[var].data,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            print 'assume qv_nudging=qt_nudging'
-            self.add_variable('qv_nudging',self.variables[var].data,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            self.set_attribute('nudging_qv',self.attributes[att])
-            qtnudg = self.variables['qt_nudging'].data
-            print 'compute rt_nudging from qt_nudging and assume rv_nudging=rt_nudging'
-            rtnudg = thermo.qt2rt(qtnudg)
-            self.add_variable('rt_nudging',rtnudg,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            self.set_attribute('nudging_rt',self.attributes[att])
-            self.add_variable('rv_nudging',rtnudg,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            self.set_attribute('nudging_rv',self.attributes[att])
-            if 'p_nudging_qt' in self.attributes.keys():
-                self.set_attribute('p_nudging_qv',self.attributes['p_nudging_qt'])
-                self.set_attribute('p_nudging_rv',self.attributes['p_nudging_qt'])
-                self.set_attribute('p_nudging_rt',self.attributes['p_nudging_qt'])
-                if not('z_nudging_qt' in self.attributes.keys()):
-                    height = np.squeeze(self.variables['height'].data)
-                    pressure = np.squeeze(self.variables['pressure'].data)
-                    zlev = int(thermo.plev2zlev(self.attributes['p_nudging_qt'],height,pressure))
-                    self.set_attribute('z_nudging_qv',zlev)
-                    self.set_attribute('z_nudging_qt',zlev)
-                    self.set_attribute('z_nudging_rv',zlev)
-                    self.set_attribute('z_nudging_rt',zlev)                  
-            if 'z_nudging_qt' in self.attributes.keys():
-                self.set_attribute('z_nudging_qv',self.attributes['z_nudging_qt'])
-                self.set_attribute('z_nudging_rv',self.attributes['z_nudging_qt'])
-                self.set_attribute('z_nudging_rt',self.attributes['z_nudging_qt'])
-                if not('p_nudging_qt' in self.attributes.keys()):
-                    height = np.squeeze(self.variables['height'].data)
-                    pressure = np.squeeze(self.variables['pressure'].data)
-                    plev = int(thermo.zlev2plev(self.attributes['z_nudging_qt'],height,pressure))
-                    self.set_attribute('p_nudging_qv',plev)
-                    self.set_attribute('p_nudging_qt',plev)
-                    self.set_attribute('p_nudging_rv',plev)
-                    self.set_attribute('p_nudging_rt',plev)
+                print 'ERROR: nudging case not yet coded'
+                raise ValueError
 
-        var = 'rv_nud'
-        att = 'nudging_rv'
-        if att in self.attlist and self.attributes[att] > 0:
-            if lflag:
-                print 'Error: Several nudging variable for humidity are given, which might yield to inconsistencies'
-                sys.exit()
-            else:
-                lflag=True            
-            print '-'*10
-            print 'rv_nudging is given'
-            self.add_variable(var,self.variables[var].data,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            print 'assume rt_nudging=rv_nudging'
-            self.add_variable('rt_nudging',self.variables[var].data,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            self.set_attribute('nudging_rt',self.attributes[att])
-            rvnudg = self.variables['rv_nudging'].data
-            print 'compute qv_nudging from rv_nudging and assume qt_nudging=qv_nudging'
-            qvnudg = thermo.rt2qt(rvnudg)
-            self.add_variable('qv_nudging',qvnudg,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            self.set_attribute('nudging_qv',self.attributes[att])
-            self.add_variable('qt_nudging',qvnudg,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')   
-            self.set_attribute('nudging_qt',self.attributes[att])
-            if 'p_nudging_rv' in self.attributes.keys():
-                self.set_attribute('p_nudging_qv',self.attributes['p_nudging_rv'])
-                self.set_attribute('p_nudging_qt',self.attributes['p_nudging_rv'])
-                self.set_attribute('p_nudging_rt',self.attributes['p_nudging_rv'])
-                if not('z_nudging_rv' in self.attributes.keys()):
-                    height = np.squeeze(self.variables['height'].data)
-                    pressure = np.squeeze(self.variables['pressure'].data)
-                    zlev = int(thermo.plev2zlev(self.attributes['p_nudging_rv'],height,pressure))
-                    self.set_attribute('z_nudging_qv',zlev)
-                    self.set_attribute('z_nudging_qt',zlev)
-                    self.set_attribute('z_nudging_rv',zlev)
-                    self.set_attribute('z_nudging_rt',zlev)                  
-            if 'z_nudging_rv' in self.attributes.keys():
-                self.set_attribute('z_nudging_qv',self.attributes['z_nudging_rv'])
-                self.set_attribute('z_nudging_qt',self.attributes['z_nudging_rv'])
-                self.set_attribute('z_nudging_rt',self.attributes['z_nudging_rv'])
-                if not('p_nudging_rv' in self.attributes.keys()):
-                    height = np.squeeze(self.variables['height'].data)
-                    pressure = np.squeeze(self.variables['pressure'].data)
-                    plev = int(thermo.zlev2plev(self.attributes['z_nudging_rv'],height,pressure))
-                    self.set_attribute('p_nudging_qv',plev)
-                    self.set_attribute('p_nudging_qt',plev)
-                    self.set_attribute('p_nudging_rv',plev)
-                    self.set_attribute('p_nudging_rt',plev)
-
-        var = 'rt_nud'
-        att = 'nudging_rt'
-        if att in self.attlist and self.attributes[att] > 0:
-            if lflag:
-                print 'Error: Several nudging variable for humidity are given, which might yield to inconsistencies'
-                sys.exit()
-            else:
-                lflag=True            
-            print '-'*10
-            print 'rt_nudging is given'
-            self.add_variable(var,self.variables[var].data,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            print 'assume rv_nudging=rt_nudging'
-            self.add_variable('rv_nudging',self.variables[var].data,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            self.set_attribute('nudging_rv',self.attributes[att])
-            rtnudg = self.variables['rt_nudging'].data
-            print 'compute qt_nudging from rt_nudging and assume qv_nudging=qt_nudging'
-            qtnudg = thermo.rt2qt(rtnudg)
-            self.add_variable('qt_nudging',qtnudg,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time')
-            self.set_attribute('nudging_qt',self.attributes[att])
-            self.add_variable('qv_nudging',qvnudg,lev=lev,levtype=levtype,levid='lev',time=time,timeid='time') 
-            self.set_attribute('nudging_qv',self.attributes[att])
-            if 'p_nudging_rt' in self.attributes.keys():
-                self.set_attribute('p_nudging_qv',self.attributes['p_nudging_rt'])
-                self.set_attribute('p_nudging_qt',self.attributes['p_nudging_rt'])
-                self.set_attribute('p_nudging_rv',self.attributes['p_nudging_rt'])
-                if not('z_nudging_rt' in self.attributes.keys()):
-                    height = np.squeeze(self.variables['height'].data)
-                    pressure = np.squeeze(self.variables['pressure'].data)
-                    zlev = int(thermo.plev2zlev(self.attributes['p_nudging_rt'],height,pressure))
-                    self.set_attribute('z_nudging_qv',zlev)
-                    self.set_attribute('z_nudging_qt',zlev)
-                    self.set_attribute('z_nudging_rv',zlev)
-                    self.set_attribute('z_nudging_rt',zlev)                  
-            if 'z_nudging_rt' in self.attributes.keys():
-                self.set_attribute('z_nudging_qv',self.attributes['z_nudging_rt'])
-                self.set_attribute('z_nudging_qt',self.attributes['z_nudging_rt'])
-                self.set_attribute('z_nudging_rv',self.attributes['z_nudging_rt'])
-                if not('p_nudging_rt' in self.attributes.keys()):
-                    height = np.squeeze(self.variables['height'].data)
-                    pressure = np.squeeze(self.variables['pressure'].data)
-                    plev = int(thermo.zlev2plev(self.attributes['z_nudging_rt'],height,pressure))
-                    self.set_attribute('p_nudging_qv',plev)
-                    self.set_attribute('p_nudging_qt',plev)
-                    self.set_attribute('p_nudging_rv',plev)
-                    self.set_attribute('p_nudging_rt',plev)
-
-        #---- Surface forcing
-#        att = 'surfaceForcing'
-#        if att in self.attlist and self.attributes[att] == 'surfaceFlux':
-#            self.add_variable('sfc_sens_flx',self.variables['sfc_sens_flx'].data,time=time,timeid='time')
-#            self.add_variable('sfc_lat_flx', self.variables['sfc_lat_flx'].data, time=time,timeid='time')
-#            if 'ts' in self.variables.keys():
-#                self.add_variable('ts', self.variables['ts'].data, time=time,timeid='time')
-
-#        if att in self.attlist and self.attributes[att] == 'ts':
-#            self.add_variable('ts',self.variables['ts'].data,time=time,timeid='time')
-
-#        att = 'surfaceForcingWind'
-#        if att in self.attlist and self.attributes[att] == 'ustar':
-#            self.add_variable('ustar',self.variables['ustar'].data,time=time,timeid='time')
-
+            # humidity nudging is active. All temperature variables are added, if needed.
+            if 'qv_nud' not in self.var_forcing_list:
+                qvnud = self.compute_qv_nud()
+                self.add_variable('qv_nud', qvnud, 
+                    lev=level, time=time,
+                    height=height, pressure=pressure)
+                self.set_attribute('nudging_qv',nudging_timescale)
+            if 'qt_nud' not in self.var_forcing_list:
+                qtnud = self.compute_qt_nud()
+                self.add_variable('qt_nud', qtnud, 
+                    lev=level, time=time,
+                    height=height, pressure=pressure)
+                self.set_attribute('nudging_qt',nudging_timescale)
+            if 'rv_nud' not in self.var_forcing_list:
+                rvnud = self.compute_rv_nud()
+                self.add_variable('rv_nud', rvnud, 
+                    lev=level, time=time,
+                    height=height, pressure=pressure)
+                self.set_attribute('nudging_rv',nudging_timescale)
+            if 'rt_nud' not in self.var_forcing_list:
+                rtnud = self.compute_rt_nud()
+                self.add_variable('rt_nud', rtnud, 
+                    lev=level, time=time,
+                    height=height, pressure=pressure)
+                self.set_attribute('nudging_rt',nudging_timescale)
 
 
     def convert2SCM(self, time=None, lev=None, levtype=None,

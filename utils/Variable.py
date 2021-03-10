@@ -85,14 +85,11 @@ class Variable:
         self.height = None
         self.pressure = None
 
-        print self.id, height is None
-
         if height is not None: # height is privileged over pressure
             if isinstance(height,Axis) or isinstance(height,Variable):
                 self.height = Variable(height.id, data=height.data, units=height.units, name=height.name,
                         level=self.level, time=self.time)#, lat=self.lat, lon=self.lon)
                 self.coord = " ".join([self.time.id,height.id,'lat','lon'])
-                print self.id, self.coord
             else:
                 if height_id is None:
                     height_id = 'zh_{0}'.format(self.id)
