@@ -1939,9 +1939,9 @@ class Case:
                         level=VV.level, time=VV.time,
                         plotcoef=VV.plotcoef, plotunits=VV.plotunits)
                 if VV.time is not self.t0Axis:
-                    dataout[var].time.id = 'time'
+                    dataout[var].time.id = 'forcing_time'
         else:
-            timeout = Axis('time',time,name='time',units=self.tunits, calendar='gregorian')
+            timeout = Axis('time',time,name='forcing_time',units=self.tunits, calendar='gregorian')
             for var in self.var_init_list + self.var_forcing_list:
                 VV = self.variables[var]
                 if VV.time is not self.t0Axis:
