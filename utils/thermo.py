@@ -93,10 +93,12 @@ def t2theta(p=None,temp=None,p0=cc.p0,kappa=cc.kappa):
     return theta
 
 
-def z2p(theta=None,temp=None,z=None,ps=None,qv=None,g=cc.g,Rd=cc.Rd,Rv=cc.Rv,p0=cc.p0,kappa=cc.kappa):
+def z2p(thetal=None, theta=None, ta=None,
+        z=None, ps=None, qv=None,
+        g=cc.g, Rd=cc.Rd, Rv=cc.Rv, p0=cc.p0, kappa=cc.kappa):
 
-    if (theta is None) and (temp is None):
-        print "theta and temp are missing. At least one of them should be given"
+    if (thetal is None) and (theta is None) and (ta is None):
+        print "thetal, theta and ta are missing. At least one of them should be given"
         sys.exit()
     if z is None:
         print "z is missing"
@@ -105,7 +107,10 @@ def z2p(theta=None,temp=None,z=None,ps=None,qv=None,g=cc.g,Rd=cc.Rd,Rv=cc.Rv,p0=
         print "ps is missing"
         sys.exit()
 
-    if not(theta is None):
+    if thetal is not None and (theta, ta) is (None, None):
+        theta = thetal
+
+    if theta is not None:
         nlev, = theta.shape
 
         if qv is None:
@@ -125,11 +130,11 @@ def z2p(theta=None,temp=None,z=None,ps=None,qv=None,g=cc.g,Rd=cc.Rd,Rv=cc.Rv,p0=
 #            print 'integ =', integ
             tmp = ps**kappa-p0**kappa*kappa*integ
             p[ilev] = math.exp(math.log(tmp)/kappa)
-    else: # Use temp instead
-        nlev, = temp.shape
+    else: # Use ta instead
+        nlev, = ta.shape
 
         if qv is None:
-            R = temp*0.+Rd
+            R = ta*0.+Rd
         else:
             R = Rd+qv*(Rv-Rd)
 
@@ -141,13 +146,43 @@ def z2p(theta=None,temp=None,z=None,ps=None,qv=None,g=cc.g,Rd=cc.Rd,Rv=cc.Rv,p0=
         for ilev in range(1,nlev):
             dz = z[ilev]- z[ilev-1]    
 #            print 'dz =', dz
-            integ = integ + (g/(R[ilev-1]*temp[ilev-1])+g/(R[ilev]*temp[ilev]))/2*dz
+            integ = integ + (g/(R[ilev-1]*ta[ilev-1])+g/(R[ilev]*ta[ilev]))/2*dz
 #            print 'integ =', integ
             tmp = math.log(ps)-integ
             p[ilev] = math.exp(tmp)
 
 
     return p
+
+def p2z(thetal=None, theta=None, ta=None,
+        p=None, qv=None,
+        g=cc.g, Rd=cc.Rd, Rv=cc.Rv, p0=cc.p0, kappa=cc.kappa):
+
+    if (thetal is None) and (theta is None) and (ta is None):
+        print "thetal, theta and ta are missing. At least one of them should be given"
+        sys.exit()
+    if p is None:
+        print "p is missing"
+        sys.exit()
+
+    if theta is not None and ta is None:
+        ta = theta2t(theta=theta,p=p)
+
+    nlev, = ta.shape
+
+    if qv is None:
+        R = ta*0.+Rd
+    else:
+        R = Rd+qv*(Rv-Rd)
+
+    z = np.zeros((nlev,),dtype=np.float64)
+    z[0] = 0. 
+
+    for ilev in range(1,nlev):
+        dz = (R[ilev-1]*ta[ilev-1])+(R[ilev]*ta[ilev])/(2*g)*(math.log(p[ilev-1])-math.log(p[ilev]))
+        z[ilev] = z[ilev-1] + dz
+
+    return z
 
 def zlev2plev(zlev,z,p):
     nlev, = z.shape

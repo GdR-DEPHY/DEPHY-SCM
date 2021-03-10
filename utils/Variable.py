@@ -17,7 +17,10 @@ from scipy import interpolate
 
 from Axis import Axis
 
+from variables_attributes import attributes as var_attributes
 import plotbasics
+
+lwarnings = False
 
 
 class Variable:
@@ -34,7 +37,7 @@ class Variable:
         self.name = name
 
         self.data = None
-        if not(data is None):
+        if data is not None:
             self.data = np.array(data,dtype=np.float32)
             self.sh = len(self.data.shape)
 
@@ -76,9 +79,21 @@ class Variable:
 
         self.coord = " ".join(self.axlist + ['lat','lon'])
 
-        self.plotcoef = plotcoef
+        #self.plotcoef = plotcoef
+        try:
+            self.plotcoef = var_attributes[self.id]['plotcoef']
+        except KeyError:
+            self.plotcoef = plotcoef
+        except:
+            raise
+
         if plotunits is None:
-            self.plotunits = self.units
+            try:
+                self.plotunits = var_attributes[self.id]['plotunits']
+            except KeyError:
+                self.plotunits = self.units
+            except:
+                raise
         else:
             self.plotunits = plotunits
 
@@ -103,7 +118,6 @@ class Variable:
             self.height.set_coordinates(self.coord)
 
         elif pressure is not None:
-            
             if isinstance(pressure,Axis) or isinstance(pressure,Variable):
                 self.pressure = Variable(pressure.id, data=pressure.data, units=pressure.units, name=pressure.name,
                         level=self.level, time=self.time)#, lat=self.lat, lon=self.lon)
@@ -136,7 +150,7 @@ class Variable:
     def set_level(self,lev=None):
 
         if lev is None:
-            print 'WARNING: level is None. Nothing to do'
+            if lwarnings: print 'WARNING: level is None. Nothing to do'
         else:
             self.level = lev
             newaxlist = []
@@ -168,7 +182,7 @@ class Variable:
         if write_data:
             if self.data is not None:
                 if self.id in filein.variables:
-                    print 'WARNING: {0} already if netCDF file. Not overwritten'.format(self.id)
+                    if lwarnings: print 'WARNING: {0} already if netCDF file. Not overwritten'.format(self.id)
                 else:
                     tmp = filein.createVariable(self.id, "f8", self.axlist)
                     tmp[:] = self.data
@@ -179,13 +193,13 @@ class Variable:
         if write_vertical:
             if self.height is not None:
                 if self.height.id in filein.variables:
-                    print 'WARNING: {0} already if netCDF file. Not overwritten'.format(self.height.id)
+                    if lwarnings: print 'WARNING: {0} already if netCDF file. Not overwritten'.format(self.height.id)
                 else:
                     self.height.write(filein)
 
             if self.pressure is not None:
                 if self.pressure.id in filein.variables:
-                    print 'WARNING: {0} already if netCDF file. Not overwritten'.format(self.pressure.id)
+                    if lwarnings: print 'WARNING: {0} already if netCDF file. Not overwritten'.format(self.pressure.id)
                 else:
                     self.pressure.write(filein)
 
@@ -234,7 +248,7 @@ class Variable:
                     plotbasics.plot(self.data[0,:]*coef,levs,
                            xlabel='{0} [{1}]'.format(self.id,self.plotunits),
                            ylabel=zlabel,
-                           title='{0} ({1})'.format(self.name,self.time.name),
+                           title='{0} ({1})'.format(self.name,self.plotunits),
                            rep_images=rep_images,name='{0}.png'.format(self.id),
                            yunits=levunits)
                 else:
@@ -242,7 +256,7 @@ class Variable:
                             x2=var2.data[0,:]*coef,
                             y2=levs2,xlabel='{0} [{1}]'.format(self.id,self.plotunits),
                             ylabel=zlabel,
-                            title='{0} ({1})'.format(self.name,self.time.name),
+                            title='{0} ({1})'.format(self.name,self.plotunits),
                             rep_images=rep_images,name='{0}.png'.format(self.id),
                             label=label,label2=label2,
                             yunits=levunits)
@@ -340,7 +354,7 @@ class Variable:
             raise ValueError
  
         if time is None:
-            print 'WARNING: time is None. Thus no time interpolation'
+            if lwarnings: print 'WARNING: time is None. Thus no time interpolation'
             return self
 
         ntout, = time.data.shape
@@ -357,7 +371,7 @@ class Variable:
 
         if linit:
 
-            print 'WARNING: Variable "{0}" is an initial state variable. No need for time interpolation.'.format(self.id)
+            if lwarnings: print 'WARNING: Variable "{0}" is an initial state variable. No need for time interpolation.'.format(self.id)
             return self
 
         elif l2D: # time,level variable
@@ -402,12 +416,13 @@ class Variable:
     def interpol_vert(self,height=None,pressure=None,log=False):
 
         if self.level is None:
-            print 'WARNING: vertical interpolation requested for variable {0}, which does not have a level axis'.format(self.id)
-            print 'WARNING: simply return original variable'
+            if lwarnings: 
+                print 'WARNING: vertical interpolation requested for variable {0}, which does not have a level axis'.format(self.id)
+                print 'WARNING: simply return original variable'
             return self
 
         if height is None and pressure is None:
-            print "WARNING: height and pressure are None. Thus no vertical interpolaton"
+            if lwarnings: print "WARNING: height and pressure are None. Thus no vertical interpolaton"
             return self
 
         ntin, nlevin = self.data.shape
@@ -507,6 +522,7 @@ def read(name,filein):
         pressure = filein[var_vert_id][:]
         pressure_id = var_vert_id
         pressure_units = filein[var_vert_id].units
+
     #else:
     #    print 'ERROR: vertical variable for {0} is unexpected'.format(name)
     #    raise ValueError

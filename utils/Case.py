@@ -25,6 +25,8 @@ from attributes import known_attributes, required_attributes
 
 import thermo
 
+lwarnings = False
+
 startDate0 = datetime(1979,1,1,0,0,0)
 endDate0 = datetime(1979,1,1,0,0,0)
 
@@ -189,11 +191,12 @@ class Case:
         # if not, add it to case variables dictionnary
 
         if varid in self.var_init_list + self.var_forcing_list:
-            print 'WARNING: Variable {0} is already defined'.format(varid)
-            print 'WARNING: It will be overwritten'
+            if lwarnings:
+                print 'WARNING: Variable {0} is already defined'.format(varid)
+                print 'WARNING: It will be overwritten'
             #sys.exit()
         else:
-            if varid in ['zh','pa','ua','va','ta','theta','thetal','qv','qt','rv','rt','rl','ri','ql','qi','tke']:
+            if varid in ['ps','zh','pa','ua','va','ta','theta','thetal','qv','qt','rv','rt','rl','ri','ql','qi','tke']:
                 self.var_init_list.append(varid)
             else:
                 self.var_forcing_list.append(varid)
@@ -1956,56 +1959,66 @@ class Case:
             for var in self.var_init_list:
                 VV = dataout[var]
 
-                if VV.level.units == 'm':
-                    levout = Axis('lev',VV.level.data,name='height',units='m')
-                elif VV.level.units == 'Pa':
-                    levout = Axis('lev',VV.level.data,name='air_pressure',units='Pa')
-                else:
-                    print 'ERROR: Level type undefined for level units:', VV.level.units
-                    raise ValueError
+                if VV.level is not None:
+                    if VV.level.units == 'm':
+                        levout = Axis('lev',VV.level.data,name='height',units='m')
+                    elif VV.level.units == 'Pa':
+                        levout = Axis('lev',VV.level.data,name='air_pressure',units='Pa')
+                    else:
+                        print 'ERROR: Level type undefined for level units:', VV.level.units
+                        raise ValueError
 
-                height = None
-                pressure = None
+                    height = None
+                    pressure = None
 
-                if VV.height is not None:
-                    height = Variable('zh', data=VV.height.data, units=VV.height.units, name='height',
-                        level=levout, time=VV.time)
-                if VV.pressure is not None:
-                    pressure = Variable('pa', data=VV.pressure.data, units=VV.pressure.units, name='air_pressure',
-                        level=levout, time=VV.time)
+                    if VV.height is not None:
+                        height = Variable('zh', data=VV.height.data, units=VV.height.units, name='height',
+                                level=levout, time=VV.time)
+                    if VV.pressure is not None:
+                        pressure = Variable('pa', data=VV.pressure.data, units=VV.pressure.units, name='air_pressure',
+                                level=levout, time=VV.time)
 
                         
-                dataout[var] = Variable(var, data=VV.data, name=VV.name, units=VV.units,
-                        height=height, pressure=pressure,
-                        level=VV.level, time=VV.time,
-                        plotcoef=VV.plotcoef, plotunits=VV.plotunits)
+                    dataout[var] = Variable(var, data=VV.data, name=VV.name, units=VV.units,
+                            height=height, pressure=pressure,
+                            level=VV.level, time=VV.time,
+                            plotcoef=VV.plotcoef, plotunits=VV.plotunits)
+                else:
+                    dataout[var] = Variable(var, data=VV.data, name=VV.name, units=VV.units,
+                            time=VV.time,
+                            plotcoef=VV.plotcoef, plotunits=VV.plotunits)
 
             for var in self.var_forcing_list:
                 VV = dataout[var]
 
-                if VV.level.units == 'm':
-                    levout = Axis('lev',VV.level.data,name='height',units='m')
-                elif VV.level.units == 'Pa':
-                    levout = Axis('lev',VV.level.data,name='air_pressure',units='Pa')
-                else:
-                    print 'ERROR: Level type undefined for level units:', VV.level.units
-                    raise ValueError
+                if VV.level is not None:
+                    if VV.level.units == 'm':
+                        levout = Axis('lev',VV.level.data,name='height',units='m')
+                    elif VV.level.units == 'Pa':
+                        levout = Axis('lev',VV.level.data,name='air_pressure',units='Pa')
+                    else:
+                        print 'ERROR: Level type undefined for level units:', VV.level.units
+                        raise ValueError
 
-                height = None
-                pressure = None
+                    height = None
+                    pressure = None
 
-                if VV.height is not None:
-                    height = Variable('zh_forc', data=VV.height.data, units=VV.height.units, name='height_forcing',
-                        level=levout, time=VV.time)
-                if VV.pressure is not None:
-                    pressure = Variable('pa_forc', data=VV.pressure.data, units=VV.pressure.units, name='air_pressure_forcing',
-                        level=levout, time=VV.time)
+                    if VV.height is not None:
+                        height = Variable('zh_forc', data=VV.height.data, units=VV.height.units, name='height_forcing',
+                                level=levout, time=VV.time)
+                    if VV.pressure is not None:
+                        pressure = Variable('pa_forc', data=VV.pressure.data, units=VV.pressure.units, name='air_pressure_forcing',
+                                level=levout, time=VV.time)
 
                         
-                dataout[var] = Variable(var, data=VV.data, name=VV.name, units=VV.units,
-                        height=height, pressure=pressure,
-                        level=VV.level, time=VV.time,
-                        plotcoef=VV.plotcoef, plotunits=VV.plotunits)
+                    dataout[var] = Variable(var, data=VV.data, name=VV.name, units=VV.units,
+                            height=height, pressure=pressure,
+                            level=VV.level, time=VV.time,
+                            plotcoef=VV.plotcoef, plotunits=VV.plotunits)
+                else:
+                    dataout[var] = Variable(var, data=VV.data, name=VV.name, units=VV.units,
+                            time=VV.time,
+                            plotcoef=VV.plotcoef, plotunits=VV.plotunits)
 
         else:
 
@@ -2095,6 +2108,10 @@ class Case:
                 kwargs['qv'] = self.variables['qv'].data[0,:]
             elif 'qt' in self.var_init_list:
                 kwargs['qv'] = self.variables['qt'].data[0,:]
+            elif 'rv' in self.var_init_list:
+                kwargs['qv'] = thermo.rt2qt(self.variables['rv'].data[0,:])
+            elif 'rt' in self.var_init_list:
+                kwargs['qv'] = thermo.rt2qt(self.variables['rt'].data[0,:])
             else:
                 kwargs['qv'] = None
 
@@ -2119,12 +2136,44 @@ class Case:
 
         elif VV.height is None:
 
-            print 'ERROR: case not yet coded'
-            raise ValueError
+            pressure = VV.pressure
+
+            kwargs = {}
+            kwargs[var] = VV.data[0,:]
+            kwargs['p'] = pressure.data[0,:]
+            if 'qv' in self.var_init_list:
+                kwargs['qv'] = self.variables['qv'].data[0,:]
+            elif 'qt' in self.var_init_list:
+                kwargs['qv'] = self.variables['qt'].data[0,:]
+            elif 'rv' in self.var_init_list:
+                kwargs['qv'] = thermo.rt2qt(self.variables['rv'].data[0,:])
+            elif 'rt' in self.var_init_list:
+                kwargs['qv'] = thermo.rt2qt(self.variables['rt'].data[0,:])
+            else:
+                kwargs['qv'] = None
+
+            height = thermo.p2z(**kwargs)
+            height = np.reshape(height,(1,nlev))
+            height = Variable('zh', data=height, name='height', units='Pa',
+                        pressure=VV.pressure, 
+                        level=VV.level, time=VV.time,
+                        plotcoef=var_attributes['zh']['plotcoef'],
+                        plotunits=var_attributes['zh']['plotunits'])
+
+            self.variables['zh'] = height
+            self.var_init_list.append('zh')
+
+            for var in self.var_init_list:
+                if self.variables[var].time.id == 't0':
+                    self.variables[var].height = height
+
+            if 'pa' not in self.var_init_list:
+                self.variables['pa'] = pressure
+                self.var_init_list.append('pa')
 
         else:
             
-            print 'WARNING: Nothing to do. height and pressure already defined. Just pass'
+            if lwarnings: print 'WARNING: Nothing to do. height and pressure already defined. Just pass'
 
         ##################################
         # Initial state variables
@@ -2164,6 +2213,7 @@ class Case:
 
         if not(self.var_forcing_list):
             print 'WARNING: no forcing variable. Nothing to do'
+            # TODO: add ps_forc
             return
 
         ##################################
@@ -2174,7 +2224,6 @@ class Case:
         pressure = None
 
         for var in self.var_forcing_list:
-            #print var
             VV = self.variables[var]
             if VV.time is not None:
                 time = VV.time
@@ -2184,9 +2233,8 @@ class Case:
                 height = VV.height
                 nt, nlev = VV.data.shape
             if VV.pressure is not None:
-                presssure = VV.pressure
+                pressure = VV.pressure
                 nt, nlev = VV.data.shape
-
 
         #---- Surface pressure forcing
         var = 'ps_forc'
@@ -2197,7 +2245,7 @@ class Case:
         #---- Height/pressure
         if height is None and pressure is None:
 
-            print 'ERROR: height and pressure are None for {0}'.format(var)
+            print 'ERROR: height and pressure are None. Unexpected in add_missing_forcing_variables'
             raise ValueError
 
         elif pressure is None:
@@ -2223,12 +2271,28 @@ class Case:
 
         elif VV.height is None:
 
-            print 'ERROR: case not yet coded'
-            raise ValueError
+            print 'assume zh_forc is constant over time'
+            height = np.tile(self.variables['zh'].data[0,:],(nt,1))
+            height = Variable('zh_forc', data=height, name='height_forcing', units='m',
+                        pressure=pressure, 
+                        level=level, time=time,
+                        plotcoef=var_attributes['zh_forc']['plotcoef'],
+                        plotunits=var_attributes['zh_forc']['plotunits'])
+
+            self.variables['zh_forc'] = height
+            self.var_forcing_list.append('zh_forc')
+
+            for var in self.var_forcing_list:
+                if self.variables[var].time.id == 'time':
+                    self.variables[var].height = height
+
+            if 'pa_forc' not in self.var_forcing_list:
+                self.var_forcing_list.append('pa_forc')
+                self.variables['pa_forc'] = pressure
 
         else:
             
-            print 'WARNING: Nothing to do. height and pressure already defined. Just pass' 
+            if lwarnings: print 'WARNING: Nothing to do. height and pressure already defined. Just pass' 
 
         ##################################
         # Forcing variables
@@ -2453,6 +2517,9 @@ class Case:
         # Interpolation
         ###########################################
 
+        print '#'*40
+        print '#### Interpolate available variables'
+
         caseSCM = self.interpolate(time=time, lev=lev, levtype=levtype,
                 usetemp=usetemp, usetheta=usetheta, usethetal=usethetal)
 
@@ -2460,17 +2527,25 @@ class Case:
         # Add missing variables for initial state
         ###########################################
 
+        print '#'*40
+        print '#### Add missing initial variables'
+
         caseSCM.add_missing_init_variables()
 
         ###########################################
         # Add missing forcing variables
         ###########################################
 
+        print '#'*40
+        print '#### Add missing forcing variables'
+
         caseSCM.add_missing_forcing_variables()
 
         ###########################################
         # Final
         ###########################################
+
+        print '#'*40
 
         return caseSCM
 

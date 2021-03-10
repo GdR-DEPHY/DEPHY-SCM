@@ -5,7 +5,7 @@ attributes = OrderedDict([
         # Initial variables
         ###########################
         ('ps',       {'name': 'surface_air_pressure',                       'units': 'Pa',      'plotcoef': 0.01,  'plotunits': 'hPa'}),
-        ('zh',       {'name': 'height',                                     'units': 'm'}),
+        ('zh',       {'name': 'height',                                     'units': 'm',       'plotcoef': 1.,    'plotunits': 'm'}),
         ('pa',       {'name': 'air_pressure',                               'units': 'Pa',      'plotcoef': 0.01,  'plotunits': 'hPa'}),
         ('ua',       {'name': 'eastward_wind',                              'units': 'm s-1'}),
         ('va',       {'name': 'northward_wind',                             'units': 'm s-1'}),
@@ -17,7 +17,7 @@ attributes = OrderedDict([
         ('qv',       {'name': 'specific_humidity',                          'units': '1', 'plotcoef': 1000., 'plotunits': 'g kg-1'}),
         ('qt',       {'name': 'mass_fraction_of_water_in_air',              'units': '1', 'plotcoef': 1000., 'plotunits': 'g kg-1'}),
         ('ql',       {'name': 'mass_fraction_of_cloud_liquid_water_in_air', 'units': '1', 'plotcoef': 1000., 'plotunits': 'g kg-1'}),
-        ('qi',       {'name': 'mass_Fraction_of_cloud_ice_water_in_air',    'units': '1', 'plotcoef': 1000., 'plotunits': 'g kg-1'}),        
+        ('qi',       {'name': 'mass_fraction_of_cloud_ice_water_in_air',    'units': '1', 'plotcoef': 1000., 'plotunits': 'g kg-1'}),        
         ('rv',       {'name': 'humidity_mixing_ratio',                      'units': '1',     'plotcoef': 1000., 'plotunits': 'g kg-1'}),
         ('rt',       {'name': 'water_mixing_ratio',                         'units': '1', 'plotcoef': 1000., 'plotunits': 'g kg-1'}),
         ('rl',       {'name': 'cloud_liquid_water_mixing_ratio',            'units': '1', 'plotcoef': 1000., 'plotunits': 'g kg-1'}),
@@ -31,7 +31,7 @@ attributes = OrderedDict([
         ('lat',     {'name': 'latitude',                     'units': 'degrees_north'}),
         ('lon',     {'name': 'longitude',                    'units': 'degrees_east'}),
         ('ps_forc', {'name': 'forcing_surface_air_pressure', 'units': 'Pa', 'plotcoef': 0.01, 'plotunits': 'hPa'}),
-        ('zh_forc', {'name': 'forcing_height',               'units': 'm'}),
+        ('zh_forc', {'name': 'forcing_height',               'units': 'm',  'plotcoef': 1.,   'plotunits': 'm'}),
         ('pa_forc', {'name': 'forcing_air_pressure',         'units': 'Pa', 'plotcoef': 0.01, 'plotunits': 'hPa'}),
         # Geostrophic forcings
         ('ug', {'name': 'geostrophic_eastward_wind',  'units': 'm s-1'}),

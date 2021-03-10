@@ -46,8 +46,11 @@ if lverbose:
 #    and add new variables if needed
 ################################################
 
-# conversion, keeping the original grid of the input data
-newcase = case.convert2SCM()
+# New temporal grid, from 11:30 UTC, 21 June 1997 to 02:00 UTC, 22 June 1997, 20-min timestep (as in original)
+timeout = np.array(range(0,51600+1,1200),dtype=np.float64) 
+
+# conversion, keeping the vertical original grid of the input data
+newcase = case.convert2SCM(time=timeout)
 
 # update some attributes
 newcase.set_title(title)
