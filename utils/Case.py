@@ -1336,7 +1336,8 @@ class Case:
         #self.set_latlon(f['lat'][0],f['lon'][0])
 
         for var in f.variables:
-            if not(var in f.dimensions) and not(var[0:6] == 'bounds') and var[0:3] not in ['zh_','pa_']:
+            if (var not in f.dimensions and var[0:6] != 'bounds' and var[0:3] not in ['zh_','pa_'])\
+                    or var in ['zh_forc','pa_forc']:
                 if verbose: print 'Reading', var
                 tmp = readvar(var,f)
                 if tmp.level is None:
