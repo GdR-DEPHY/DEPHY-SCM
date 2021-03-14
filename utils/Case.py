@@ -53,7 +53,8 @@ class Case:
         # Attributes
         self.attlist = ['case','title','reference','author','version','format_version','modifications','script','comment',
                 'start_date','end_date',
-                'surface_type',
+                'radiation',
+                'surface_type','surface_forcing_temp','surface_forcing_moisture','surface_forcing_wind'
                 ]
         self.attributes = {
                 'case': self.id,
@@ -61,13 +62,17 @@ class Case:
                 'reference': "",
                 'author': "",
                 'version': "Created on " + time.ctime(time.time()),
-                'format_version': "DEPHY SCM format version 0",
+                'format_version': "DEPHY SCM format version 1",
                 'modifications': "",
                 'script': "",
                 'comment': "",
                 'start_date': self.start_date.strftime('%Y-%m-%d %H:%M:%S'),
                 'end_date': self.end_date.strftime('%Y-%m-%d %H:%M:%S'),
+                'radiation': 'on',
                 'surface_type': self.surface_type,
+                'surface_forcing_temp': 'none',
+                'surface_forcing_moisture': 'none',
+                'surface_forcing_wind': 'none',
                 }
 
         for att in set(required_attributes).difference(set(self.attlist)):
