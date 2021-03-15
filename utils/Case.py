@@ -1128,7 +1128,7 @@ class Case:
         No argument required.
         """
 
-        self.set_attribute('radiation'.format(var),"off")
+        self.set_attribute('radiation',"off")
 
     def add_surface_temp(self,data,**kwargs):
         """Add a surface temperature forcing to a Case object.
