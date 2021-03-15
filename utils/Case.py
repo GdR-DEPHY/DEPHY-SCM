@@ -1813,7 +1813,7 @@ class Case:
         if 'ta_nud' in self.var_forcing_list:
             print 'compute theta_nud from ta_nud'
             tnud = self.variables['ta_nud'].data
-            thnud = thermo.t2theta(p=pressure,theta=tnud)
+            thnud = thermo.t2theta(p=pressure,temp=tnud)
         elif 'thetal_nud' in self.var_forcing_list:
             print 'assume theta_nud=thetal_nud'
             thnud = self.variables['thetal_nud'].data
@@ -1830,7 +1830,7 @@ class Case:
         if 'ta_nud' in self.var_forcing_list:
             print 'compute thetal_nud from ta_nud assuming thetal_nud=theta_nud'
             tnud = self.variables['ta_nud'].data
-            thlnud = thermo.t2theta(p=pressure,theta=tnud)
+            thlnud = thermo.t2theta(p=pressure,temp=tnud)
         elif 'theta_nud' in self.var_forcing_list:
             print 'assume thetal_nud=theta_nud'
             thlnud = self.variables['theta_nud'].data
@@ -2420,7 +2420,7 @@ class Case:
                         plev = self.attributes['pa_{0}'.format(att)]
 
         if flag:
-            if zlev is not None and plev is not None: # simple nudging profile described in global attributes
+            if zlev is not None or plev is not None: # simple nudging profile described in global attributes
                 # update nudging height/pressure for all temperature variables
                 height = np.squeeze(self.variables['zh'].data)
                 pressure = np.squeeze(self.variables['pa'].data)
@@ -2473,7 +2473,7 @@ class Case:
                         plev = self.attributes['pa_{0}'.format(att)]
 
         if flag:
-            if zlev is not None and plev is not None: # simple nudging profile described in global attributes
+            if zlev is not None or plev is not None: # simple nudging profile described in global attributes
                 # update nudging height/pressure for all humidity variables
                 height = np.squeeze(self.variables['zh'].data)
                 pressure = np.squeeze(self.variables['pa'].data)

@@ -107,7 +107,7 @@ def z2p(thetal=None, theta=None, ta=None,
         print "ps is missing"
         sys.exit()
 
-    if thetal is not None and (theta, ta) is (None, None):
+    if thetal is not None and theta is None and ta is None:
         theta = thetal
 
     if theta is not None:
