@@ -169,12 +169,18 @@ class Variable:
             write_time_axes=True, write_level_axes=True,
             write_data=True, write_vertical=True):
 
+        lvert = False
+        for ax in self.axes:
+            if ax.id[0:3] == 'lev':
+                lvert = True
+
+
         if write_time_axes:
             for ax in self.axes:
                 if ax.id[0:4] == 'time' or ax.id == 't0':
                     ax.write(filein)
 
-        if write_level_axes:
+        if write_level_axes and lvert:
             for ax in self.axes:
                 if ax.id[0:3] == 'lev':
                     ax.write(filein)
@@ -190,7 +196,7 @@ class Variable:
                     tmp.units = self.units
                     tmp.coordinates = self.coord
 
-        if write_vertical:
+        if write_vertical and lvert:
             if self.height is not None:
                 if self.height.id in filein.variables:
                     if lwarnings: print 'WARNING: {0} already if netCDF file. Not overwritten'.format(self.height.id)

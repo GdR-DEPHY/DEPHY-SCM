@@ -1312,9 +1312,7 @@ class Case:
         # Finally write data
         for var in var_attributes.keys():
             if var in self.var_init_list + self.var_forcing_list:
-                if verbose:
-                    print 'writing data for', var
-                    self.variables[var].info()
+                if verbose: print 'writing data for', var
                 self.variables[var].write(g,
                         write_time_axes=False, write_level_axes=False,
                         write_data=True, write_vertical=False)
@@ -1945,7 +1943,7 @@ class Case:
                         level=VV.level, time=VV.time,
                         plotcoef=VV.plotcoef, plotunits=VV.plotunits)
                 if VV.time is not self.t0Axis:
-                    dataout[var].time.id = 'forcing_time'
+                    dataout[var].time.id = 'time'
         else:
             timeout = Axis('time',time,name='forcing_time',units=self.tunits, calendar='gregorian')
             for var in self.var_init_list + self.var_forcing_list:
@@ -1979,19 +1977,19 @@ class Case:
 
                     if VV.height is not None:
                         height = Variable('zh', data=VV.height.data, units=VV.height.units, name='height',
-                                level=levout, time=VV.time)
+                                level=levout, time=self.t0Axis)
                     if VV.pressure is not None:
                         pressure = Variable('pa', data=VV.pressure.data, units=VV.pressure.units, name='air_pressure',
-                                level=levout, time=VV.time)
+                                level=levout, time=self.t0Axis)
 
                         
                     dataout[var] = Variable(var, data=VV.data, name=VV.name, units=VV.units,
                             height=height, pressure=pressure,
-                            level=VV.level, time=VV.time,
+                            level=VV.level, time=self.t0Axis,
                             plotcoef=VV.plotcoef, plotunits=VV.plotunits)
                 else:
                     dataout[var] = Variable(var, data=VV.data, name=VV.name, units=VV.units,
-                            time=VV.time,
+                            time=self.t0Axis,
                             plotcoef=VV.plotcoef, plotunits=VV.plotunits)
 
             for var in self.var_forcing_list:
@@ -2144,21 +2142,25 @@ class Case:
 
             pressure = VV.pressure
 
-            kwargs = {}
-            kwargs[var] = VV.data[0,:]
-            kwargs['p'] = pressure.data[0,:]
-            if 'qv' in self.var_init_list:
-                kwargs['qv'] = self.variables['qv'].data[0,:]
-            elif 'qt' in self.var_init_list:
-                kwargs['qv'] = self.variables['qt'].data[0,:]
-            elif 'rv' in self.var_init_list:
-                kwargs['qv'] = thermo.rt2qt(self.variables['rv'].data[0,:])
-            elif 'rt' in self.var_init_list:
-                kwargs['qv'] = thermo.rt2qt(self.variables['rt'].data[0,:])
+            if 'zh' in self.var_init_list:
+                height = self.variables['zh'].data
             else:
-                kwargs['qv'] = None
+                kwargs = {}
+                kwargs[var] = VV.data[0,:]
+                kwargs['p'] = pressure.data[0,:]
+                if 'qv' in self.var_init_list:
+                    kwargs['qv'] = self.variables['qv'].data[0,:]
+                elif 'qt' in self.var_init_list:
+                    kwargs['qv'] = self.variables['qt'].data[0,:]
+                elif 'rv' in self.var_init_list:
+                    kwargs['qv'] = thermo.rt2qt(self.variables['rv'].data[0,:])
+                elif 'rt' in self.var_init_list:
+                    kwargs['qv'] = thermo.rt2qt(self.variables['rt'].data[0,:])
+                else:
+                    kwargs['qv'] = None
 
-            height = thermo.p2z(**kwargs)
+                height = thermo.p2z(**kwargs)
+
             height = np.reshape(height,(1,nlev))
             height = Variable('zh', data=height, name='height', units='Pa',
                         pressure=VV.pressure, 
@@ -2185,7 +2187,7 @@ class Case:
         # Initial state variables
         ##################################
 
-        for var in ['ua','va','ta','theta','thetal','qv','qt','rv','rt','rl','ri','ql','qi','tke']:
+        for var in ['zh','pa','ua','va','ta','theta','thetal','qv','qt','rv','rt','rl','ri','ql','qi','tke']:
             if var in self.var_init_list:
                 pass 
             elif var == 'theta':
