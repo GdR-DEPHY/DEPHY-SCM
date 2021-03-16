@@ -46,8 +46,10 @@ if lverbose:
 #    and add new variables if needed
 ################################################
 
+timeout = case.variables['tnta_adv'].time.data
+
 # conversion, keeping the original grid of the input data
-newcase = case.convert2SCM()
+newcase = case.convert2SCM(time=timeout)
 
 # update some attributes
 newcase.set_title(title)

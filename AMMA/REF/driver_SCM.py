@@ -52,10 +52,10 @@ if lverbose:
 
 # New vertical grid, 10-m resolution from surface to 6000 m (above the surface)
 #levout = np.array(range(0,6001,10),dtype=np.float64) 
-levout = fin['lev_height'][:]
+levout = np.array(fin['lev_zh'][:])
 # New temporal grid, from 11:30 UTC, 21 June 1997 to 02:00 UTC, 22 June 1997, 30-min timestep
 #timeout = np.array(range(0,86400+2*3600+1-41400,1800),dtype=np.float64) 
-timeout = fin['time_sfc_sens_flx'][:]
+timeout = np.array(fin['time_hfss'][:])
 # conversion
 newcase = case.convert2SCM(time=timeout,lev=levout,levtype='altitude')
 
