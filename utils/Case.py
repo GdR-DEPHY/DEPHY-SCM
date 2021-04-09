@@ -1173,7 +1173,7 @@ class Case:
         self.add_forcing_variable('ts',data,**kwargs)
 
         if z0 is not None:
-            self.set_attribute('surface_Forcing_wind','z0')
+            self.set_attribute('surface_forcing_wind','z0')
             self.add_forcing_variable('z0',z0)
         
 

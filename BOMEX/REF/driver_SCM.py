@@ -21,7 +21,7 @@ from Case import Case
 
 lplot = True     # plot the new version of the case
 lcompare = True  # plot comparisons between original and new versions
-lverbose = True # print information on variables and case
+lverbose = False # print information on variables and case
 
 ################################################
 # 1. Get the original version of the case
@@ -71,7 +71,7 @@ if lverbose:
 ################################################
 
 # save the new version of the case in netcdf file 
-newcase.write('BOMEX_REF_SCM_driver.nc',verbose=True)
+newcase.write('BOMEX_REF_SCM_driver.nc',verbose=False)
 
 ################################################
 # 4. Plots if asked

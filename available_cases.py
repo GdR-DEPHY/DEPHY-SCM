@@ -97,15 +97,15 @@ def available(case=None):
 
     if case is None:
         print '-'*30, 'Available cases'
-        for cc in cases:
+        for cc in sorted(cases):
             print '{0:>10}:'.format(cc),
-            for ss in subcases[cc]:
+            for ss in sorted(subcases[cc]):
                 print ss,
             print ''
         print '-'*60
     else:
         print '-'*30, 'Available subcase for case =', case
-        for ss in subcases[case]:
+        for ss in sorted(subcases[case]):
             print ss
         print '-'*60
 
