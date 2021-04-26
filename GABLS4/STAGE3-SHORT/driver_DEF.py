@@ -38,7 +38,7 @@ subcase_name = 'STAGE3-SHORT'
 
 case = Case('{0}/{1}'.format(case_name,subcase_name),
         lat=-75.1,
-        lon=-123.3,
+        lon=123.3,
         startDate="20091211100000",
         endDate="20091211220000",
         surfaceType="land",
