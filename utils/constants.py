@@ -24,6 +24,9 @@ Md=28.9644
 # Water vapor molar mass (g mol-1)
 Mv=18.0153
 
+# ozone molar mass (g mol-1)
+Mo3 = 47.9982
+
 # Dry air gaz constant (J kg-1 K-1)
 Rd=1000.*R/Md
 

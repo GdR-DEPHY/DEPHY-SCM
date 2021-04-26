@@ -101,8 +101,8 @@ w = fin['w'][:]
 case.add_vertical_velocity(w=w,lev=height,levtype='altitude')
 
 # Ozone
-o3 = fin['o3mmr'][:]
-case.add_ozone(o3,lev=height,levtype='altitude')
+ro3 = fin['o3mmr'][:]
+case.add_ozone(ro3=ro3,lev=height,levtype='altitude')
 
 # Forcing time axis
 timeForc = fin['time'][:]

@@ -24,6 +24,9 @@ attributes = OrderedDict([
         ('ri',       {'name': 'cloud_ice_water_mixing_ratio',               'units': '1', 'plotcoef': 1000., 'plotunits': 'g kg-1'}),        
         ('tke',      {'name': 'specific_turbulent_kinetic_energy',          'units': 'm2 s-2'}),
         ('hur',      {'name': 'relative_humidity',                          'units': '%'}),
+        # Surface
+        ('ts',    {'name': 'surface_temperature',                  'units': 'K'}),
+        ('mrsos', {'name': 'mass_content_of_water_in_soil_layer',  'units': 'kg m-2'}),
         ###########################
         # Forcing
         ###########################
@@ -72,13 +75,19 @@ attributes = OrderedDict([
         ('wpqtp_s',    {'name': 'surface_upward_water_mass_fraction_flux',      'units': 'm s-1'}),
         ('wprvp_s',    {'name': 'surface_upward_humidity_mixing_ratio_flux',    'units': 'm s-1'}),
         ('wprtp_s',    {'name': 'surface_upward_water_mixing_ratio_flux',       'units': 'm s-1'}),
-        ('ts',         {'name': 'surface_temperature',                          'units': 'K'}),
+        ('ts_forc',    {'name': 'forcing_surface_temperature',                  'units': 'K'}),
         ('tskin',      {'name': 'surface_skin_temperature',                     'units': 'K'}),
         ('ustar',      {'name': 'surface_friction_velocity',                    'units': 'm s-1'}),
         ('z0',         {'name': 'surface_roughness_length_for_momentum_in_air', 'units': 'm'}),
         ('z0h',        {'name': 'surface_roughness_length_for_heat_in_air',     'units': 'm'}),
         ('z0q',        {'name': 'surface_roughness_length_for_humidity_in_air', 'units': 'm'}),
         ('beta',       {'name': 'soil_water_stress_factor',                     'units': '-'}),
+        ('mrsos_forc', {'name': 'forcing_mass_content_of_water_in_soil_layer',  'units': 'kg m-2'}),
         # Atmospheric composition
-        ('ro3',        {'name': 'ozone_mixing_ratio','units': '1'}),
+        ('o3', {'name': 'mole_fraction_of_ozone_in_air', 'units': '1'}),
+        # Radiation
+        ('alb',  {'name': 'surface_albedo',              'units': '1'}),
+        ('emis', {'name': 'surface_longwave_emissivity', 'units': '1'}),
+        ('sza',  {'name': 'solar_zenith_angle',          'units': 'degree'}),
+        ('i0',   {'name': 'solar_irradiance',            'units': 'W m-2'}),
         ])

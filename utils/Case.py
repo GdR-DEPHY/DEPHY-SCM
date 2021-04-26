@@ -24,6 +24,7 @@ from variables_attributes import attributes as var_attributes
 from attributes import known_attributes, required_attributes
 
 import thermo
+import constants as CC
 
 lwarnings = False
 
@@ -201,7 +202,7 @@ class Case:
                 print 'WARNING: It will be overwritten'
             #sys.exit()
         else:
-            if varid in ['ps','zh','pa','ua','va','ta','theta','thetal','qv','qt','rv','rt','rl','ri','ql','qi','tke']:
+            if varid in ['ps','zh','pa','ua','va','ta','theta','thetal','qv','qt','rv','rt','rl','ri','ql','qi','tke','ts']:
                 self.var_init_list.append(varid)
             else:
                 self.var_forcing_list.append(varid)
@@ -333,7 +334,7 @@ class Case:
         # Get time axis for initial state variables
         kwargs['time'] = self.t0Axis
 
-        if varid in ['ps']:
+        if varid in ['ps','ts']:
             # Put the expected shape of the input data
             tmp = np.reshape(vardata,(1,))
         else:
@@ -538,6 +539,17 @@ class Case:
 
         self.add_init_variable('tke',vardata,**kwargs)
 
+    def add_init_ts(self,vardata,**kwargs):
+        """Add initial state variable for surface temperature to a Case object.
+           
+        Required argument:
+        vardata -- input data as an integer or a float.
+
+        See add_variable function for optional arguments.
+        """
+
+        self.add_init_variable('ts',vardata,**kwargs)
+
     def add_forcing_variable(self,varid,vardata,**kwargs): 
         """ Add a forcing variable to a case object.
             
@@ -562,7 +574,7 @@ class Case:
             kwargs['time'] = [self.tstart,self.tend]
             nt = 2
 
-        if varid in ['ps_forc','hfss','hfls','ustar','ts','tskin','orog','lat','lon','z0','z0h','z0q','beta']:
+        if varid in ['ps_forc','hfss','hfls','ustar','ts_forc','tskin','orog','lat','lon','z0','z0h','z0q','beta']:
             # Put the expected shape of the input data
             if lconstant: 
                 tmp = np.zeros((nt),dtype=np.float32)
@@ -640,6 +652,32 @@ class Case:
         """
 
         self.add_forcing_variable('z0',data,**kwargs)
+
+    def add_z0h(self,data,**kwargs):
+        """Add roughness length for heat to a Case object
+        
+        Required argument:
+        data -- input data as a list or a numpy array.
+
+        See add_variable function for optional arguments.
+
+        If time is not provided, forcing is assumed constant in time.           
+        """
+
+        self.add_forcing_variable('z0h',data,**kwargs)
+
+    def add_z0q(self,data,**kwargs):
+        """Add roughness length for moisture to a Case object
+        
+        Required argument:
+        data -- input data as a list or a numpy array.
+
+        See add_variable function for optional arguments.
+
+        If time is not provided, forcing is assumed constant in time.           
+        """
+
+        self.add_forcing_variable('z0q',data,**kwargs)
 
     def add_surface_pressure_forcing(self,data,**kwargs):
         """Add a surface pressure forcing to a Case object
@@ -911,7 +949,7 @@ class Case:
         z_nudging -- altitude above which nudging is applied (integer or float)
         p_nudging -- pressure altitude under which nudging is applied (integer or float)
 
-        Either z_nudging or p_nudging must be defined.
+        Either z_nudging, p_nudging or nudging_profile must be defined.
 
         See add_variable function for optional arguments.
         Note that:
@@ -1102,17 +1140,23 @@ class Case:
 
         self.add_nudging('rt',data,**kwargs)
 
-    def add_ozone(self,data,**kwargs):
+    def add_ozone(self,ro3=None,o3=None,**kwargs):
         """Add an ozone forcing to a Case object.
 
         
-        Required argument:
-        data -- input data as a list or a numpy array.
+        One of the following argument is required:
+        ro3 -- ozone mixing ratio as a list or a numpy array.
+        o3 -- ozone mole fraction in air as a list or a numpy array.
 
         If time is not provided, forcing is assumed constant in time.
         """
 
-        self.add_forcing_variable('ro3',data,**kwargs)
+        if ro3 is not None:
+            self.add_forcing_variable('o3',ro3*CC.Md/CC.Mo3,**kwargs)
+        elif o3 is not None:
+            self.add_forcing_variable('o3',o3,**kwargs)
+        else:
+            raise ValueError('Either ozone mixing ratio or ozone mole fraction in air must be provided')
 
     def activate_radiation(self):
         """Activate radiation in a Case object
@@ -1142,7 +1186,7 @@ class Case:
         If time is not provided, forcing is assumed constant in time.
         """
 
-        self.add_forcing_variable('ts',data,**kwargs)
+        self.add_forcing_variable('ts_forc',data,**kwargs)
 
     def add_surface_skin_temp(self,data,**kwargs):
         """Add a surface skin temperature forcing to a Case object.
@@ -1170,7 +1214,7 @@ class Case:
         """
 
         self.set_attribute('surface_forcing_temp','ts')
-        self.add_forcing_variable('ts',data,**kwargs)
+        self.add_forcing_variable('ts_forc',data,**kwargs)
 
         if z0 is not None:
             self.set_attribute('surface_forcing_wind','z0')

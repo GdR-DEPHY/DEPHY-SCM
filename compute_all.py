@@ -22,6 +22,12 @@ for case in AA.cases:
         print "CASE: {0}, SUBCASE: {1}".format(case,subcase)
         tmp = os.path.join(cwd,case,subcase)
         os.chdir(tmp)
+
+        try:
+            shutil.rmtree('images')
+        except:
+            pass
+
         cmd = "python driver_DEF.py"
         os.system(cmd)
         cmd = "python driver_SCM.py"
@@ -32,11 +38,6 @@ for case in AA.cases:
         #except OSError:
         #    pass
 
-        #try:
-        #    shutil.rmtree('images')
-        #except:
-        #    pass
-        
         #print os.listdir('./')
 
 

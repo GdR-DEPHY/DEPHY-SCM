@@ -86,7 +86,7 @@ subcases[case] = ['REF','FAST','SLOW']
 
 case = 'DYNAMO'
 cases.append(case)
-subcases[case] = ['NSA3A','NSA3A_D1']
+subcases[case] = ['NSA3A','NSA3A_D1','NSA3A_MJO1']
 
 ####################################
 
