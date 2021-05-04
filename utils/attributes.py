@@ -1,6 +1,7 @@
 known_attributes = [
             'case','title','reference','author','version','format_version','modifications','script','comment',
             'start_date','end_date',
+            'forcing_scale',
             'adv_ta','adv_theta','adv_thetal',
             'radiation',
             'adv_qv','adv_qt','adv_rv','adv_rt',
@@ -22,6 +23,7 @@ known_attributes = [
 required_attributes = [
             'case','title','reference','author','version','format_version','modifications','script','comment',
             'start_date','end_date',
+            'forcing_scale',
             'adv_ta','adv_theta','adv_thetal',
             'radiation',
             'adv_qv','adv_qt','adv_rv','adv_rt',

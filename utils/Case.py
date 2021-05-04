@@ -33,7 +33,11 @@ endDate0 = datetime(1979,1,1,0,0,0)
 
 class Case:
 
-    def __init__(self,caseid,lat=None,lon=None,startDate=startDate0,endDate=endDate0,surfaceType='ocean',zorog=0.):
+    def __init__(self, caseid,
+            lat=None, lon=None,
+            startDate=startDate0, endDate=endDate0,
+            surfaceType='ocean', zorog=0.,
+            forcing_scale=-1):
 
         self.id = caseid
 
@@ -46,6 +50,9 @@ class Case:
         # Surface type
         self.surface_type = surfaceType
 
+        # Forcing scale
+        self.forcing_scale = forcing_scale
+
         # Variables
         self.var_init_list = []
         self.var_forcing_list = []
@@ -54,6 +61,7 @@ class Case:
         # Attributes
         self.attlist = ['case','title','reference','author','version','format_version','modifications','script','comment',
                 'start_date','end_date',
+                'forcing_scale',
                 'radiation',
                 'surface_type','surface_forcing_temp','surface_forcing_moisture','surface_forcing_wind'
                 ]
@@ -69,6 +77,7 @@ class Case:
                 'comment': "",
                 'start_date': self.start_date.strftime('%Y-%m-%d %H:%M:%S'),
                 'end_date': self.end_date.strftime('%Y-%m-%d %H:%M:%S'),
+                'forcing_scale': self.forcing_scale,
                 'radiation': 'on',
                 'surface_type': self.surface_type,
                 'surface_forcing_temp': 'none',
