@@ -28,6 +28,7 @@ import constants as CC
 
 lwarnings = False
 
+# Default start and en dates
 startDate0 = datetime(1979,1,1,0,0,0)
 endDate0 = datetime(1979,1,1,0,0,0)
 
@@ -373,6 +374,17 @@ class Case:
         """
 
         self.add_init_variable('ps',vardata,**kwargs)
+
+    def add_init_ts(self,vardata,**kwargs):
+        """Add initial state variable for surface temperature to a Case object.
+           
+        Required argument:
+        vardata -- input data as an integer or a float.
+
+        See add_variable function for optional arguments.
+        """
+
+        self.add_init_variable('ts',vardata,**kwargs)
 
     def add_init_height(self,vardata,**kwargs):
         """Add initial state variable for height to a Case object.
@@ -1215,6 +1227,7 @@ class Case:
         """Add a surface temperature forcing to a Case object.
         
         This function sets a surface temperature forcing as the case surface forcing.
+        In case the initial surface temperature is not defined, add it.
 
         Required argument:
         data -- input data as a list or a numpy array.
@@ -1224,6 +1237,12 @@ class Case:
 
         self.set_attribute('surface_forcing_temp','ts')
         self.add_forcing_variable('ts_forc',data,**kwargs)
+
+        if 'ts' not in self.var_init_list:
+            if isinstance(data,float):
+                self.add_init_ts(data,**kwargs)
+            else:
+                self.add_init_ts(data[0],**kwargs)
 
         if z0 is not None:
             self.set_attribute('surface_forcing_wind','z0')

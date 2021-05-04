@@ -41,7 +41,7 @@ case = Case('{0}/{1}'.format(case_name,subcase_name),
         lon=123.3,
         startDate="20091211100000",
         endDate="20091211220000",
-        surfaceType="land",
+        surfaceType="landice",
         zorog=3233.)
 
 case.set_title("Forcing and initial conditions for the {0}/{1} case - Original definition".format(case_name,subcase_name))
