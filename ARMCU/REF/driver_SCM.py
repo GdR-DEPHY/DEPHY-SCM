@@ -7,6 +7,7 @@ Created on 29 November 2019
 
 Modification
   2020/11/11, R. Roehrig: update for improved case definition interface.
+  2021/07/05, R. Roehrig: update tskin
 """
 
 ## ARM-Cumulus SCM-enabled case definition
@@ -14,11 +15,10 @@ Modification
 import sys
 sys.path = ['../../utils/',] + sys.path
 
+import netCDF4 as nc
 import numpy as np
 
 from Case import Case
-
-from Axis import Axis
 
 ################################################
 # 0. General configuration of the present script
@@ -47,6 +47,17 @@ if lverbose:
 #    and add new variables if needed
 ################################################
 
+# Extend profiles using ERA5
+
+# Add a surface temperature
+with nc.Dataset('../aux/tskin/tskin_SGP_C1_irt10m_19970621003000-19970622233000.nc') as f:
+    dates = nc.num2date(f['time'][:], units=f['time'].units)
+    index = [d.day == 21 and d.hour >= 11 or d.day == 22 and d.hour <= 2 for d in dates ]
+    times = f['time'][index]
+    tskin = f['tskin'][index]
+
+    case.add_surface_skin_temp(tskin,time=times-times[0])
+
 # grid onto which interpolate the input data
 
 # New vertical grid, 10-m resolution from surface to 6000 m (above the surface)
@@ -57,11 +68,6 @@ timeout = np.array(range(0,86400+2*3600+1-41400,1800),dtype=np.float64)
 
 # conversion
 newcase = case.convert2SCM(time=timeout,lev=levout,levtype='altitude')
-
-# add a surface temperature. To be improved...
-ts = timeout*0. + 310 # same shape as timeout
-
-newcase.add_surface_temp(ts,time=timeout,timeid='time')
 
 # update some attributes
 newcase.set_title("Forcing and initial conditions for ARM-Cumulus case - SCM-enabled version")
