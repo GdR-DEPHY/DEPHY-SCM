@@ -142,7 +142,7 @@ case.add_surface_temp(ts,timeid='time')
 # 4. Writing file
 ################################################
 
-case.write('MPACE_REF_DEF_driver.nc',verbose=False)
+case.write('MPACE_REF_DEF_driver.nc')
 
 if lverbose:
     case.info()

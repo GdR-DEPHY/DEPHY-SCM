@@ -21,15 +21,15 @@ class Axis:
             self.__dict__[x] = kwargs[x]
 
     def info(self,data=False):
-        print '-'*10, 'axis id:', self.id
-        print '-'*10, 'name:', self.name
-        print '-'*10, 'units:', self.units
-        print '-'*10, 'length:', self.length
+        print('-'*10, 'axis id:', self.id)
+        print('-'*10, 'name:', self.name)
+        print('-'*10, 'units:', self.units)
+        print('-'*10, 'length:', self.length)
         for x in self.__dict__.keys():
             if not(x in ['id','name','units','length','data']):
-                print '-'*10, '{0}: {1}'.format(x,self.__dict__[x])
+                print('-'*10, '{0}: {1}'.format(x,self.__dict__[x]))
         if data:
-            print '-'*10, 'data:', self.data
+            print('-'*10, 'data:', self.data)
 
 
     def write(self,filein):

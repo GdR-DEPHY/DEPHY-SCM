@@ -66,7 +66,7 @@ if lverbose:
 ################################################
 
 # save the new version of the case in netcdf file 
-newcase.write('RICO_SHORT_SCM_driver.nc',verbose=False)
+newcase.write('RICO_SHORT_SCM_driver.nc')
 
 ################################################
 # 4. Plots if asked

@@ -249,7 +249,7 @@ case.add_surface_fluxes(sens=XSFTH[1:],lat=XSFTQ[1:]*constants.Lv,time=XTIMEF[1:
 # 4. Writing file
 ################################################
 
-case.write('ARMCU_MESONH_DEF_driver.nc',verbose=False)
+case.write('ARMCU_MESONH_DEF_driver.nc')
 
 if lverbose:
     case.info()

@@ -178,7 +178,7 @@ case.add_surface_temp(ts,time=tsec)
 # 4. Writing file
 ################################################
 
-case.write('{0}_{1}_DEF_driver.nc'.format(case_name,subcase_name),verbose=False)
+case.write('{0}_{1}_DEF_driver.nc'.format(case_name,subcase_name))
 
 if lverbose:
     case.info()

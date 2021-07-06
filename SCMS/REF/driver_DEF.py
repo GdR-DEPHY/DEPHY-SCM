@@ -107,7 +107,7 @@ case.add_surface_fluxes(sens=shf,lat=lhf,time=timeSfc,forc_wind='z0',z0=0.035)
 # 4. Writing file
 ################################################
 
-case.write('SCMS_REF_DEF_driver.nc',verbose=False)
+case.write('SCMS_REF_DEF_driver.nc')
 
 if lverbose:
     case.info()

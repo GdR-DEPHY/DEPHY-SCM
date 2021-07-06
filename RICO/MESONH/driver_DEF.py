@@ -147,7 +147,7 @@ case.add_rv_advection(rvadv,lev=zforc,levtype='altitude') # converted in kg kg-1
 # 4. Writing file
 ################################################
 
-case.write('RICO_MESONH_DEF_driver.nc',verbose=False)
+case.write('RICO_MESONH_DEF_driver.nc')
 
 if lverbose:
     case.info()

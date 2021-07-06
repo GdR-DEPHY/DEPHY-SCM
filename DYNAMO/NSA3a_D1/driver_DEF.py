@@ -179,7 +179,7 @@ fin.close()
 # 4. Writing file
 ################################################
 
-case.write('DYNAMO_NSA3A_D1_DEF_driver.nc',verbose=False)
+case.write('DYNAMO_NSA3A_D1_DEF_driver.nc')
 
 if lverbose:
     case.info()

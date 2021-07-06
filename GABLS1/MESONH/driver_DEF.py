@@ -133,7 +133,7 @@ case.deactivate_radiation()
 # 4. Writing file
 ################################################
 
-case.write('GABLS1_MESONH_DEF_driver.nc',verbose=False)
+case.write('GABLS1_MESONH_DEF_driver.nc')
 
 if lverbose:
     case.info()

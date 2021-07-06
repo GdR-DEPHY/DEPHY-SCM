@@ -1,8 +1,9 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 """
-Created on 27 November 2019
+Provide a set of useful fundamental constant
 
+Created on 27 November 2019
 @author: Romain Roehrig
 """
 

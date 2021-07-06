@@ -106,7 +106,7 @@ case. add_forcing_ts(ts)
 # 4. Writing file
 ################################################
 
-case.write('RICO_SHORT_DEF_driver.nc',verbose=False)
+case.write('RICO_SHORT_DEF_driver.nc')
 
 if lverbose:
     case.info()

@@ -118,7 +118,7 @@ case.add_surface_fluxes(sens,flat,time=timeForc,forc_wind='z0',z0=0.001)
 # 4. Writing file
 ################################################
 
-case.write('AMMA_REF_DEF_driver.nc',verbose=False)
+case.write('AMMA_REF_DEF_driver.nc')
 
 if lverbose:
     case.info()

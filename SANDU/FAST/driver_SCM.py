@@ -71,7 +71,7 @@ if lverbose:
 ################################################
 
 # save the new version of the case in netcdf file 
-newcase.write('{0}_{1}_SCM_driver.nc'.format(case_name,subcase_name),verbose=False)
+newcase.write('{0}_{1}_SCM_driver.nc'.format(case_name,subcase_name))
 
 ################################################
 # 4. Plots if asked

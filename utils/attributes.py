@@ -1,3 +1,10 @@
+#!/usr/bin/env python2
+# -*- coding: utf-8 -*-
+"""
+Created on 27 November 2019
+
+@author: Romain Roehrig
+"""
 known_attributes = [
             'case','title','reference','author','version','format_version','modifications','script','comment',
             'start_date','end_date',

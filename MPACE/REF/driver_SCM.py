@@ -67,7 +67,7 @@ if lverbose:
 ################################################
 
 # save the new version of the case in netcdf file 
-newcase.write('MPACE_REF_SCM_driver.nc',verbose=False)
+newcase.write('MPACE_REF_SCM_driver.nc')
 
 ################################################
 # 4. Plots if asked

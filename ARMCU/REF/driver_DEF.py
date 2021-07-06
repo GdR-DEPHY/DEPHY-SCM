@@ -151,7 +151,7 @@ case.add_surface_fluxes(sens=sfcForc[1::3],lat=sfcForc[2::3],time=timeSfc,forc_w
 # 4. Writing file
 ################################################
 
-case.write('ARMCU_REF_DEF_driver.nc',verbose=False)
+case.write('ARMCU_REF_DEF_driver.nc')
 
 if lverbose:
     case.info()

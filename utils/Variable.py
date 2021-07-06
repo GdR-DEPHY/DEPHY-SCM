@@ -7,7 +7,9 @@ Created on 27 November 2019
 """
 
 import os
-import sys
+import logging
+logger = logging.getLogger(__name__)
+
 import time
 
 import netCDF4 as nc
@@ -19,9 +21,6 @@ from Axis import Axis
 
 from variables_attributes import attributes as var_attributes
 import plotbasics
-
-lwarnings = False
-
 
 class Variable:
 
@@ -47,10 +46,8 @@ class Variable:
 
             self.time = time
             self.level = level
-            #self.lat = lat
-            #self.lon = lon
 
-            for ax in ['time','level']:#,'lat','lon']:
+            for ax in ['time','level']:
                 if not(self.__dict__[ax] is None):
                     self.axes.append(self.__dict__[ax])
                     self.axlist.append(self.__dict__[ax].id)
@@ -60,26 +57,19 @@ class Variable:
 
             self.time = None
             self.level = None
-            #self.lat = None
-            #self.lon = None
 
             for ax in axes:
                 if ax.id == 't0' or ax.id[0:4] == 'time':
                     self.time = ax
                 elif ax.id[0:3] == 'lev' or ax.id == 'nlev':
                     self.level = ax
-                #elif ax.id == 'lat':
-                #    self.lat = ax
-                #elif ax.id == 'lon':
-                #    self.lon = ax
                 else:
-                    print 'Axis unexpected:', ax.id
-                    ax.info()
-                    sys.exit()
+                    logger.error('Axis unexpected: {0}'.format(ax.id))
+                    if logger.level == logging.DEBUG: ax.info()
+                    raise ValueError('Axis unexpected: {0}'.format(ax.id))
 
         self.coord = " ".join(self.axlist + ['lat','lon'])
 
-        #self.plotcoef = plotcoef
         try:
             self.plotcoef = var_attributes[self.id]['plotcoef']
         except KeyError:
@@ -103,7 +93,7 @@ class Variable:
         if height is not None: # height is privileged over pressure
             if isinstance(height,Axis) or isinstance(height,Variable):
                 self.height = Variable(height.id, data=height.data, units=height.units, name=height.name,
-                        level=self.level, time=self.time)#, lat=self.lat, lon=self.lon)
+                        level=self.level, time=self.time)
                 self.coord = " ".join([self.time.id,height.id,'lat','lon'])
             else:
                 if height_id is None:
@@ -112,7 +102,7 @@ class Variable:
                 if height_units is None:
                     height_units = 'm'
                 self.height = Variable(height_id, data=height, units=height_units, name=height_name,
-                        level=self.level, time=self.time)#, lat=self.lat, lon=self.lon)
+                        level=self.level, time=self.time)
                 self.coord = " ".join([self.time.id,height_id,'lat','lon'])
 
             self.height.set_coordinates(self.coord)
@@ -120,7 +110,7 @@ class Variable:
         elif pressure is not None:
             if isinstance(pressure,Axis) or isinstance(pressure,Variable):
                 self.pressure = Variable(pressure.id, data=pressure.data, units=pressure.units, name=pressure.name,
-                        level=self.level, time=self.time)#, lat=self.lat, lon=self.lon)
+                        level=self.level, time=self.time)
                 self.coord = " ".join([self.time.id,pressure.id,'lat','lon'])
             else:
                 if pressure_id is None:
@@ -129,28 +119,27 @@ class Variable:
                 if pressure_units is None:
                     pressure_units = 'Pa'
                 self.pressure = Variable(pressure_id, data=pressure, units=pressure_units, name=pressure_name,
-                        level=self.level, time=self.time)#, lat=self.lat, lon=self.lon)
+                        level=self.level, time=self.time)
                 self.coord = " ".join([self.time.id,pressure_id,'lat','lon'])
 
             self.pressure.set_coordinates(self.coord)
 
     def info(self):
-        print '-'*5, 'Variable:', self.id
-        print '-'*10, 'Name:', self.name
-        print '-'*10, 'Units:', self.units
-        print '-'*10, 'Axes:', self.axlist
-        print '-'*10, 'Coordinates:', self.coord
-        print '-'*10, 'mean: {0}; min: {1}; max: {2}'.format(np.average(self.data),np.amin(self.data),np.amax(self.data))
+        print('-'*5, 'Variable:', self.id)
+        print('-'*10, 'Name:', self.name)
+        print('-'*10, 'Units:', self.units)
+        print('-'*10, 'Axes:', self.axlist)
+        print('-'*10, 'Coordinates:', self.coord)
+        print('-'*10, 'mean: {0}; min: {1}; max: {2}'.format(np.average(self.data),np.amin(self.data),np.amax(self.data)))
         
 
     def set_coordinates(self, *coord):
-        #self.axlist = tuple(coord)
         self.coord = " ".join(coord)
 
     def set_level(self,lev=None):
 
         if lev is None:
-            if lwarnings: print 'WARNING: level is None. Nothing to do'
+            logger.warning('level is None. Nothing to do')
         else:
             self.level = lev
             newaxlist = []
@@ -188,7 +177,7 @@ class Variable:
         if write_data:
             if self.data is not None:
                 if self.id in filein.variables:
-                    if lwarnings: print 'WARNING: {0} already if netCDF file. Not overwritten'.format(self.id)
+                    logger.debug('{0} already if netCDF file. Not overwritten'.format(self.id))
                 else:
                     tmp = filein.createVariable(self.id, "f8", self.axlist)
                     tmp[:] = self.data
@@ -199,13 +188,13 @@ class Variable:
         if write_vertical and lvert:
             if self.height is not None:
                 if self.height.id in filein.variables:
-                    if lwarnings: print 'WARNING: {0} already if netCDF file. Not overwritten'.format(self.height.id)
+                    logger.debug('{0} already if netCDF file. Not overwritten'.format(self.height.id))
                 else:
                     self.height.write(filein)
 
             if self.pressure is not None:
                 if self.pressure.id in filein.variables:
-                    if lwarnings: print 'WARNING: {0} already if netCDF file. Not overwritten'.format(self.pressure.id)
+                    logger.debug('{0} already if netCDF file. Not overwritten'.format(self.pressure.id))
                 else:
                     self.pressure.write(filein)
 
@@ -231,7 +220,8 @@ class Variable:
                 levs = self.level.data
                 zlabel = 'Altitude [{0}]'.format(levunits)
             else:
-                print "ERROR: unexpected case for levunits:", levunits, self.level.units
+                logger.error("Unexpected case for levunits: {0} {1}".format(levunits, self.level.units))
+                raise ValueError("Unexpected case for levunits: {0} {1}".format(levunits, self.level.units))
             if not(var2 is None):
                 if levunits is None:
                     levs2 = var2.level.data
@@ -244,7 +234,8 @@ class Variable:
                 elif (levunits == 'km' and var2.level.units == 'km') or (levunits == 'm' and var2.level.units == 'm'):
                     levs2 = var2.level.data
                 else:
-                    print "ERROR: unexpected case for levunits (var2):", levunits, var2.level.units
+                    logger.error("Unexpected case for levunits (var2): {0} {1}".forma(levunits, var2.level.units))
+                    raise ValueError("Unexpected case for levunits (var2): {0} {1}".forma(levunits, var2.level.units))
 
 
         if not(self.time is None) and not(self.level is None):
@@ -278,8 +269,8 @@ class Variable:
                         time = self.time.data/86400.
                         tunits = self.time.units.replace("seconds","days")
                     else:
-                        print "ERROR: timeunits unexpected for plotting:", timeunits
-                        sys.exit()
+                        logger.error("timeunits unexpected for plotting: {0}".forma(timeunits))
+                        raise NotImplementedError("timeunits unexpected for plotting: {0}".forma(timeunits))
 
                 plotbasics.plot2D(time,levs,self.data[:,:]*coef,
                         xlabel=tunits,
@@ -309,8 +300,8 @@ class Variable:
                             time2 = var2.time.data/86400.
                         tunits = self.time.units.replace("seconds","days")
                     else:
-                        print "ERROR: timeunits unexpected for plotting:", timeunits
-                        sys.exit()
+                        logger.error("timeunits unexpected for plotting: {0}".forma(timeunits))
+                        raise NotImplementedError("timeunits unexpected for plotting: {0}".forma(timeunits))
 
                 if var2 is None:
                     plotbasics.plot(time,self.data[:]*coef,
@@ -328,7 +319,7 @@ class Variable:
                             rep_images=rep_images,name='{0}.png'.format(self.id),
                             label=label,label2=label2)
             else:
-                print 'no plot for variable', self.id
+                logger.warning('no plot for variable {0}'.format(self.id))
 
         elif not(self.level is None):
 
@@ -351,16 +342,16 @@ class Variable:
                         yunits=levunits)
 
         else:
-            print 'no plot for variable', self.id
+            logger.warning('no plot for variable {0}'.format(self.id))
 
     def interpol_time(self,time=None):
 
         if self.time is None:
-            print 'ERROR: time interpolation requested for variable {0} which does not have a time axis'.format(self.id)
-            raise ValueError
+            logger.error('Time interpolation requested for variable {0} which does not have a time axis'.format(self.id))
+            raise ValueError('Time interpolation requested for variable {0} which does not have a time axis'.format(self.id))
  
         if time is None:
-            if lwarnings: print 'WARNING: time is None. Thus no time interpolation'
+            logger.warning('time is None. Thus no time interpolation')
             return self
 
         ntout, = time.data.shape
@@ -377,7 +368,7 @@ class Variable:
 
         if linit:
 
-            if lwarnings: print 'WARNING: Variable "{0}" is an initial state variable. No need for time interpolation.'.format(self.id)
+            logger.debug('Variable "{0}" is an initial state variable. No need for time interpolation.'.format(self.id))
             return self
 
         elif l2D: # time,level variable
@@ -422,13 +413,12 @@ class Variable:
     def interpol_vert(self,height=None,pressure=None,log=False):
 
         if self.level is None:
-            if lwarnings: 
-                print 'WARNING: vertical interpolation requested for variable {0}, which does not have a level axis'.format(self.id)
-                print 'WARNING: simply return original variable'
+            logger.debug('Vertical interpolation requested for variable {0}, which does not have a level axis'.format(self.id))
+            logger.debug('Simply return original variable')
             return self
 
         if height is None and pressure is None:
-            if lwarnings: print "WARNING: height and pressure are None. Thus no vertical interpolaton"
+            logger.warning("height and pressure are None. Thus no vertical interpolation")
             return self
 
         ntin, nlevin = self.data.shape
@@ -481,8 +471,8 @@ class Variable:
 
         else:
 
-            print 'ERROR: case unexpected for vertical interpolation of variable', self.id
-            raise ValueError
+            logger.error('Case unexpected for vertical interpolation of variable {0}'.forma(self.id))
+            raise ValueError('Case unexpected for vertical interpolation of variable {0}'.forma(self.id))
 
         return Variable(self.id, data=data, name=self.name, units=self.units,
                 level=_level, time=self.time,
@@ -560,7 +550,6 @@ def interpol(var,levout=None,timeout=None,log=False):
             nlevout = levout.length
             tmp = np.zeros((ntin,nlevout,1,1),dtype=np.float64)
             for it in range(0,ntin):
-                #ff = interpolate.interp1d(var.level.data,var.data[it,:,0,0],bounds_error=False,fill_value="extrapolate")
                 if log:
                     ff = interpolate.interp1d(var.level.data,np.log(var.data[it,:,0,0]),bounds_error=False,fill_value=np.log(var.data[it,-1,0,0]))
                     tmp[it,:,0,0] = np.exp(ff(levout.data))
@@ -576,7 +565,6 @@ def interpol(var,levout=None,timeout=None,log=False):
             ntout = timeout.length
             tmp2 = np.zeros((ntout,nlevout,1,1),dtype=np.float64)
             for ilev in range(0,nlevout):
-                #ff = interpolate.interp1d(var.time.data,tmp[:,ilev,0,0],bounds_error=False,fill_value="extrapolate")
                 ff = interpolate.interp1d(var.time.data,tmp[:,ilev,0,0],bounds_error=False,fill_value=tmp[-1,ilev,0,0])
                 tmp2[:,ilev,0,0] = ff(timeout.data)
         else:
@@ -592,7 +580,6 @@ def interpol(var,levout=None,timeout=None,log=False):
         if not(timeout is None) and ntin > 1:
             ntout = timeout.length
             tmp = np.zeros((ntout,1,1),dtype=np.float64)
-            #ff = interpolate.interp1d(var.time.data,var.data[:,0,0],bounds_error=False,fill_value="extrapolate")
             ff = interpolate.interp1d(var.time.data,var.data[:,0,0],bounds_error=False,fill_value=var.data[-1,0,0])
             tmp[:,0,0] = ff(timeout.data)
         else:
@@ -609,7 +596,6 @@ def interpol(var,levout=None,timeout=None,log=False):
         if not(levout is None):
             nlevout = levout.length
             tmp = np.zeros((nlevout,1,1),dtype=np.float64)
-            #ff = interpolate.interp1d(var.level.data,var.data[:,0,0],bounds_error=False,fill_value="extrapolate")
             if log:
                 ff = interpolate.interp1d(var.level.data,np.log(var.data[:,0,0]),bounds_error=False,fill_value=var.data[-1,0,0])
                 tmp[:,0,0] = np.exp(ff(levout.data))
@@ -624,8 +610,8 @@ def interpol(var,levout=None,timeout=None,log=False):
         varout = Variable(var.id,name=var.name,units=var.units,data=tmp,level=levout,lat=var.lat,lon=var.lon)
 
     else:
-        print 'ERROR: Weird, time and level are None for var=', var
-        sys.exit()
+        logger.error('Weird, time and level are None for {0}'.format(var))
+        raise ValueError('Weird, time and level are None for {0}'.format(var))
 
     return varout
  

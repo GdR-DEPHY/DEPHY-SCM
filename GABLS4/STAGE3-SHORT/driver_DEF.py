@@ -140,7 +140,7 @@ case.deactivate_radiation()
 # 4. Writing file
 ################################################
 
-case.write('{0}_{1}_DEF_driver.nc'.format(case_name,subcase_name),verbose=False)
+case.write('{0}_{1}_DEF_driver.nc'.format(case_name,subcase_name))
 
 fin.close()
 
