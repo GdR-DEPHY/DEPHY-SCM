@@ -178,8 +178,24 @@ class Case:
         self.attributes['script'] = script
 
 ###################################################################################################
-#                  Generic addition of a variable
+#                  Generic removal/addition of a variable
 ###################################################################################################
+
+    def remove_variable(self, varid):
+        """Remove a variable of a Case object
+
+        Require arguments:
+        varid -- string for the variable id
+        """
+
+        if varid in self.var_init_list:
+            self.var_init_list.remove(varid)
+
+        if varid in self.var_forcing_list:
+            self.var_forcing_list.remove(varid)
+
+        del(self.variables[varid])
+
 
     def add_variable(self, varid, vardata, name=None, units=None,
             lev=None, levtype=None, levid=None,
@@ -1937,7 +1953,6 @@ class Case:
 #                  Case interpolation
 ###################################################################################################
 
-
     def interpolate(self,time=None,lev=None,levtype=None,usetemp=True,usetheta=True,usethetal=True):
 
         ###########################
@@ -2549,38 +2564,169 @@ class Case:
     def convert2SCM(self, time=None, lev=None, levtype=None,
             usetemp=True, usetheta=True, usethetal=True):
 
-        ###########################################
         # Interpolation
-        ###########################################
-
         logger.info('#'*40)
         logger.info('#### Interpolate available variables')
 
         caseSCM = self.interpolate(time=time, lev=lev, levtype=levtype,
                 usetemp=usetemp, usetheta=usetheta, usethetal=usethetal)
 
-        ###########################################
         # Add missing variables for initial state
-        ###########################################
-
         logger.info('#'*40)
         logger.info('#### Add missing initial variables')
 
         caseSCM.add_missing_init_variables()
 
-        ###########################################
         # Add missing forcing variables
-        ###########################################
-
         logger.info('#'*40)
         logger.info('#### Add missing forcing variables')
 
         caseSCM.add_missing_forcing_variables()
 
-        ###########################################
         # Final
-        ###########################################
-
         logger.info('#'*40)
 
         return caseSCM
+
+###################################################################################################
+#                  Vertically extended variables
+###################################################################################################
+
+    def extend_variable(self, varid, data=None, height=None, pressure=None, time=None, tunits=None):
+        """Vertically extend the variable varid using data
+
+        Arguments:
+        varid -- string for the variable id
+        data -- data to be used to extend vertically the variable varid
+        height -- altitude above the reference geoide (m)
+        pressure -- pressure (Pa)
+        time -- time stamps
+        tunits -- units to interpret time data
+
+        Either height or pressure must be given
+
+        if data is None, the variable is extended constantly from its highest value.
+        if data is a float or an integer, the variable is extended by on level based on either (data,height) 
+            or (data,pressure). height or pressure must be a float or an integer.
+        if data is a 1D array, it is supposed to be a vertical profile. Either height or pressure must be given 
+            and must have the same shape.
+        if data is a 2D array, first dimension is supposed to be time and second to be either height or pressure. 
+            height or pressure must be given and could be 1D or 2D (shape to be consistent with data)
+            time and tunits must be given. time must have a shape consistent with the data first dimention. 
+        """
+
+        if height is None and pressure is None:
+            logger.error('Either height or pressure must be given')
+            raise ValueError('Either height or pressure must be given')
+
+        if data is None:
+            _data = float(self.variables[varid].data[0,-1])
+            self.extend_variable(varid, data=_data, height=height, pressure=pressure)
+
+        if isinstance(data,float) or isinstance(data,int):
+            if height is not None:
+                if isinstance(height,float) or isinstance(height,int):
+                    _data = np.array([0,data])
+                    _height = np.array([0,height])
+                    self.extend_variable(varid, data=_data, height=_height)
+                else:
+                    logger.error('height and data are incompatible (data is float)')
+                    raise ValueError('height and data are incompatible (data is float)')
+     
+            if pressure is not None:
+                if isinstance(pressure,float) or isinstance(pressure,int):
+                    _data = np.array([0,data])
+                    _pressure = np.array([self.variables['ps'].data[0],pressure])
+                    self.extend_variable(varid, data=_data, pressure=_pressure)
+                else:
+                    logger.error('pressure and data are incompatible (data is float)')
+                    raise ValueError('pressure and data are incompatible (data is float)')
+
+        if isinstance(data,list): data = np.array(data)
+        if isinstance(height,list): height = np.array(height)
+        if isinstance(pressure,list): pressure = np.array(pressure)
+        if isinstance(time,list): time = np.array(time)
+        
+        if isinstance(data,np.ndarray):
+            if len(data.shape) == 1:
+                # Checking consistency
+                if height is not None and height.shape != data.shape:
+                    logger.error('Incompatibility between data and height shapes')
+                    raise ValueError('Incompatibility between data and height shapes')
+                if pressure is not None and pressure.shape != data.shape:
+                    logger.error('Incompatibility between data and pressure shapes')
+                    raise ValueError('Incompatibility between data and pressure shapes')
+
+                # Extending data
+                nt, _ = self.variables[varid].data.shape
+                _time = self.variables[varid].time.data
+                _tunits = self.variables[varid].time.units
+                _data = np.tile(data,(nt,1))
+                _varnew = self.variables[varid].extend_vert(data=_data, height=height, pressure=pressure,
+                                                            time=_time, tunits=_tunits)
+
+                self.variables[varid] = _varnew
+
+            elif len(data.shape) == 2:
+                # Checking consistency
+                if time is None and tunits is None:
+                    logger.error('data is 2D. time and tunits must be given')
+                    raise ValueError('data is 2D. time and tunits must be given')
+                if data.shape[0] != time.shape[0]:
+                    logger.error('Incompatibility between data and time shapes')
+                    raise ValueError('Incompatibility between data and time shapes')
+                if (height is not None and len(height.shape) == 2 and height.shape != data.shape)\
+                        or (height is not None and len(height.shape) == 1 and height.shape[0] != data.shape[1]):
+                    logger.error('Incompatibility between data and height shapes')
+                    raise ValueError('Incompatibility between data and height shapes')
+                if (pressure is not None and len(pressure.shape) == 2 and pressure.shape != data.shape)\
+                        or (pressure is not None and len(pressure.shape) == 1 and pressure.shape[0] != data.shape[1]):
+                    logger.error('Incompatibility between data and pressure shapes')
+                    raise ValueError('Incompatibility between data and pressure shapes')
+
+                # Extending data
+                _varnew = self.variables[varid].extend_vert(data=data, height=height, pressure=pressure,
+                                                            time=time, tunits=tunits)
+
+                self.variables[varid] = _varnew
+
+            else:
+                logger.error('shape unexpected for data : {0}'.format(data.shape))
+                raise ValueError
+
+
+    def extend_init_wind(self, u=None, v=None, **kwargs):
+        """Vertically extend the two wind initial components"""
+
+        self.extend_variable('ua', data=u, **kwargs)
+        self.extend_variable('va', data=v, **kwargs)
+
+    def extend_init_temp(self, temp=None, **kwargs):
+        """Vertically extend the temperarture"""
+
+        self.extend_variable('ta', data=temp, **kwargs)
+
+    def extend_init_theta(self, theta=None, **kwargs):
+        """Vertically extend the potential temperature"""
+
+        self.extend_variable('theta', data=theta, **kwargs)
+
+    def extend_init_qv(self, qv=None, **kwargs):
+        """Vertically extend the specific humidity"""
+
+        self.extend_variable('qv', data=qv, **kwargs)
+
+    def extend_init_qt(self, qt=None, **kwargs):
+        """Vertically extend the total water"""
+
+        self.extend_variable('qt', data=qt, **kwargs)
+
+    def extend_init_rv(self, rv=None, **kwargs):
+        """Vertically extend the water vapor mixing ratio"""
+
+        self.extend_variable('rv', data=rv, **kwargs)
+
+    def extend_init_rt(self, rt=None, **kwargs):
+        """Vertically extend the total water mixing ratio"""
+
+        self.extend_variable('rt', data=rt, **kwargs)

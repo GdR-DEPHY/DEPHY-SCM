@@ -19,6 +19,7 @@ import netCDF4 as nc
 import numpy as np
 
 from Case import Case
+import thermo
 
 ################################################
 # 0. General configuration of the present script
@@ -47,7 +48,25 @@ if lverbose:
 #    and add new variables if needed
 ################################################
 
-# Extend profiles using ERA5
+# Extend profiles 
+# Wind: just constant above what is presently defined
+case.extend_init_wind(height=80000.)
+
+# Total water: 0 above what is presently defined
+case.extend_init_rt(rt=[0,0], height=[5600., 80000.])
+
+# Temperature using ERA5
+with nc.Dataset('../aux/ERA5/ERA5_SGP_19970621000000-19970622230000.nc') as f:
+    tunits = case.start_date.strftime('seconds since %Y-%m-%d %H:%M:%S')
+    dates = nc.num2date(f['time'][:], units=f['time'].units)
+    times = nc.date2num(dates, tunits)
+    temp = np.squeeze(f['ta'][:,::-1])
+    plev = f['plev'][::-1]
+    nt, _ = temp.shape
+    pa = np.tile(plev, (nt,1))
+    theta = thermo.t2theta(p=pa, temp=temp)
+    height = np.squeeze(f['zg'][:,::-1])
+    case.extend_init_theta(theta=theta, height=height, time=times, tunits=tunits)
 
 # Add a surface temperature
 with nc.Dataset('../aux/tskin/tskin_SGP_C1_irt10m_19970621003000-19970622233000.nc') as f:
@@ -61,7 +80,7 @@ with nc.Dataset('../aux/tskin/tskin_SGP_C1_irt10m_19970621003000-19970622233000.
 # grid onto which interpolate the input data
 
 # New vertical grid, 10-m resolution from surface to 6000 m (above the surface)
-levout = np.array(range(0,6001,10),dtype=np.float64) 
+levout = np.array(range(0,20001,10),dtype=np.float64) 
 
 # New temporal grid, from 11:30 UTC, 21 June 1997 to 02:00 UTC, 22 June 1997, 30-min timestep
 timeout = np.array(range(0,86400+2*3600+1-41400,1800),dtype=np.float64) 

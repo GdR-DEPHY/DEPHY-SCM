@@ -479,6 +479,109 @@ class Variable:
                 height=_height, height_id=_height_id, height_units=_height_units,
                 pressure=_pressure, pressure_id=_pressure_id, pressure_units=_pressure_units)
 
+    def extend_vert(self,height=None,pressure=None,data=None,time=None,tunits=None):
+
+        if self.level is None:
+            logger.error('Vertical extension requested for variable {0}, which does not have a level axis'.format(self.id))
+            raise ValueError('Vertical extension requested for variable {0}, which does not have a level axis'.format(self.id))
+
+        if height is None and pressure is None:
+            logger.error("height and pressure are both None.")
+            raise ValueError("height and pressure are both None.")
+
+        if data is None:
+            logger.error("data is None")
+            raise ValueError("data is None")
+
+        if height is not None and len(height.shape) == 2 and time is None and tunits is None:
+            logger.error('As given height is a 2D array, time must be given with tunits')
+            raise ValueError('As given height is a 2D array, time must be given with tunits')
+
+        #if height is not None and height.shape != data.shape:
+        #    logger.error('height and input data must have the same shape: {0} vs {1}'.format(height.shape,data.shape))
+        #    raise ValueError('height and input data must have the same shape: {0} vs {1}'.format(height.shape,data.shape))
+
+        if pressure is not None and len(pressure.shape) == 2 and time is None and tunits is None:
+            logger.error('As given pressure is a 2D array, time must be given with tunits')
+            raise ValueError('As given pressure is a 2D array, time must be given with tunits')
+
+        #if pressure is not None and pressure.shape != data.shape:
+        #    logger.error('pressure and input data must have the same shape')
+        #    raise ValueError('pressure and input data must have the same shape')
+
+        ntin, nlevin = self.data.shape
+
+        _height = None
+        _height_id = None
+        _height_units = None
+
+        _pressure = None
+        _pressure_id = None
+        _pressure_units = None
+
+        if height is not None and self.height is not None:
+
+            hmax = np.max(self.height.data)
+
+
+            if len(height.shape) == 2:
+                __time = Axis('tmp', time, name='tmp', units=tunits)
+                #__time.info()
+                __level = Axis('tmp', height[0,:], name='tmp', units='m')
+                vartmp = Variable('tmp', data=data, name='tmp', units='-',
+                                  level=__level, time=__time,
+                                  height=height, height_id='height', height_units='m')
+                var2add = vartmp.interpol_time(time=self.time)
+            elif len(height.shape) == 1:
+                __height = np.tile(height,(ntin,1))
+                __level = Axis('tmp', height, name='tmp', units='m')
+                __data = np.tile(data,(ntin,1))
+                var2add = Variable('tmp', data=__data, name='tmp', units='-',
+                                   level=__level, time=self.time,
+                                   height=__height, height_id='height', height_units='m')
+            else:
+                logger.error("Shape of given height array is unexpected: {0}".format(height.shape))
+                raise ValueError("Shape of given height array is unexpected: {0}".format(height.shape))
+
+            mask = var2add.height.data > hmax
+
+            nlev2add = np.sum(mask, axis=1)
+            if np.min(nlev2add) != np.max(nlev2add):
+                logger.error("Case unexpected: the number of level to add is not constant in time: min={0} max={1}".format(np.min(nlev2add), np.max(nlev2add)))
+                raise NotImplementedError
+            nlev2add = int(nlev2add[0])
+
+            nlev_new = nlevin + nlev2add
+
+            _data = np.zeros((ntin,nlev_new), dtype=np.float64)
+            _data[:,:nlevin] = self.data[:,:]
+            _data[:,nlevin:] = var2add.data[:,mask[0]]
+
+            _height = np.zeros((ntin,nlev_new), dtype=np.float64)
+            _height[:,:nlevin] = self.height.data[:,:]
+            _height[:,nlevin:] = var2add.height.data[:,mask[0]]
+            _height_id = self.height.id
+            _height_units = self.height.units
+
+            _level = Axis('lev_{0}'.format(self.id), _height[0,:],
+                          name='height_for_{0}'.format(self.id), units=self.height.units)
+
+        elif pressure is not None and self.pressure is not None:
+
+            logger.error('Case not yet coded')
+            raise NotImplementedError
+
+        else:
+
+            logger.error('Case unexpected for vertical extension of variable {0}'.forma(self.id))
+            raise ValueError('Case unexpected for vertical extension of variable {0}'.forma(self.id))
+
+        return Variable(self.id, data=_data, name=self.name, units=self.units,
+                level=_level, time=self.time,
+                height=_height, height_id=_height_id, height_units=_height_units,
+                pressure=_pressure, pressure_id=_pressure_id, pressure_units=_pressure_units,
+                plotcoef=self.plotcoef, plotunits=self.plotunits)
+
 def read(name,filein):
 
     tmp = filein[name]
