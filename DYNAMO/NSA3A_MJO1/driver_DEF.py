@@ -112,7 +112,7 @@ case.add_init_qv(qv,lev=pressure,levtype='pressure',levid='lev')
 ################################################
 
 t0 = 0         # 00:00 UTC, 15 October 2011
-t1 = 20*24.*3600 # 00:00 UTC, 05 November 2011 - (20*3)-hour long simulation
+t1 = 21*24.*3600 + 3*3600 # 00:00 UTC, 05 November 2011 - (20*3)-hour long simulation
 
 timeForc = np.arange(t0,t1,3600.*3.) # Forcing data are provided every 3 hours
 levForc = fin['level'][:]*100. # first level pressure (1025 hPa) is arbitrary and corresponds to surface values
@@ -122,7 +122,9 @@ nt, = timeForc.shape
 nlev, = levForc.shape
 
 nt0 = 14*8
-nt1 = nt0 + 20*8
+nt1 = nt0 + 21*8 + 1
+
+dates = nc.num2date(fin['time'][:],fin['time'].units)
 
 # Surface pressure
 ps_forc = fin['ps'][nt0:nt1]*100. # from hPa to Pa

@@ -1821,21 +1821,21 @@ class Case:
 
         return tnud
 
-    def compute_ta_nud(self):
-
-        pressure = self.variables['pa_forc'].data
-
-        if 'theta_nud' in self.var_forcing_list:
-            logger.info('Compute ta_nud from theta_nud')
-            thnud = self.variables['theta_nud'].data
-            tnud = thermo.theta2t(p=pressure,theta=thnud)
-        elif 'thetal_nud' in self.var_forcing_list:
-            logger.info('Compute ta_nud from theta_nud assuming theta_nud=thetal_nud')
-            thnud = self.variables['thetal_nud'].data
-            tnud = thermo.theta2t(p=pressure,theta=thnud)
-        else:
-            logger.error('To compute ta_nud, theta_nud or thetal_nud must be known')
-            raise ValueError('To compute ta_nud, theta_nud or thetal_nud must be known')
+#    def compute_ta_nud(self):
+#
+#        pressure = self.variables['pa_forc'].data
+#
+#        if 'theta_nud' in self.var_forcing_list:
+#            logger.info('Compute ta_nud from theta_nud')
+#            thnud = self.variables['theta_nud'].data
+#            tnud = thermo.theta2t(p=pressure,theta=thnud)
+#        elif 'thetal_nud' in self.var_forcing_list:
+#            logger.info('Compute ta_nud from theta_nud assuming theta_nud=thetal_nud')
+#            thnud = self.variables['thetal_nud'].data
+#            tnud = thermo.theta2t(p=pressure,theta=thnud)
+#        else:
+#            logger.error('To compute ta_nud, theta_nud or thetal_nud must be known')
+#            raise ValueError('To compute ta_nud, theta_nud or thetal_nud must be known')
 
         return tnud
 
@@ -2435,14 +2435,14 @@ class Case:
         for var in ['ua','va']:
             att = 'nudging_{0}'.format(var)
             if att in self.attlist and self.attributes[att] > 0:
-                height = np.squeeze(self.variables['zh'].data)
-                pressure = np.squeeze(self.variables['pa'].data)
+                height_loc = np.squeeze(self.variables['zh'].data)
+                pressure_loc = np.squeeze(self.variables['pa'].data)
                 # Add further description of nudging altitude/pressure
                 if 'zh_nudging_{0}'.format(var) not in self.attributes.keys():
-                    zlev = thermo.plev2zlev(self.attributes['pa_nudging_{0}'.format(var)],height,pressure)
+                    zlev = thermo.plev2zlev(self.attributes['pa_nudging_{0}'.format(var)],height_loc,pressure_loc)
                     self.set_attribute('zh_nudging_{0}'.format(var),zlev)
                 if 'pa_nudging_{0}'.format(var) not in self.attributes.keys():
-                    plev = thermo.zlev2plev(self.attributes['zh_nudging_{0}'.format(var)],height,pressure)
+                    plev = thermo.zlev2plev(self.attributes['zh_nudging_{0}'.format(var)],height_loc,pressure_loc)
                     self.set_attribute('pa_nudging_{0}'.format(var),plev)
 
         #---- Temperature nudging
@@ -2464,12 +2464,12 @@ class Case:
         if flag:
             if zlev is not None or plev is not None: # simple nudging profile described in global attributes
                 # update nudging height/pressure for all temperature variables
-                height = np.squeeze(self.variables['zh'].data)
-                pressure = np.squeeze(self.variables['pa'].data)
+                height_loc = np.squeeze(self.variables['zh'].data)
+                pressure_loc = np.squeeze(self.variables['pa'].data)
                 if zlev is None:
-                    zlev = int(thermo.plev2zlev(plev,height,pressure))
+                    zlev = int(thermo.plev2zlev(plev,height_loc,pressure_loc))
                 if plev is None:
-                    plev = int(thermo.zlev2plev(zlev,height,pressure))
+                    plev = int(thermo.zlev2plev(zlev,height_loc,pressure_loc))
 
                 for var in ['ta','theta','thetal']:
                     self.set_attribute('zh_nudging_{0}'.format(var),zlev)
@@ -2517,12 +2517,12 @@ class Case:
         if flag:
             if zlev is not None or plev is not None: # simple nudging profile described in global attributes
                 # update nudging height/pressure for all humidity variables
-                height = np.squeeze(self.variables['zh'].data)
-                pressure = np.squeeze(self.variables['pa'].data)
+                height_loc = np.squeeze(self.variables['zh'].data)
+                pressure_loc = np.squeeze(self.variables['pa'].data)
                 if zlev is None:
-                    zlev = int(thermo.plev2zlev(plev,height,pressure))
+                    zlev = int(thermo.plev2zlev(plev,height_loc,pressure_loc))
                 if plev is None:
-                    plev = int(thermo.zlev2plev(zlev,height,pressure))
+                    plev = int(thermo.zlev2plev(zlev,height_loc,pressure_loc))
 
                 for var in ['qv','qt','rv','rt']:
                     self.set_attribute('zh_nudging_{0}'.format(var),zlev)
