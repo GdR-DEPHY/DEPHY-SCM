@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
 Created on 09 June 2020
@@ -67,43 +67,43 @@ case.add_init_ps(ps)
 nlev, = fin['height'].shape
 
 # Height
-height = np.zeros(nlev+1,dtype=np.float)
+height = np.zeros(nlev+1,dtype=np.float64)
 height[1:] = fin['height'][::-1] # reverse altitude order
 case.add_init_height(height,lev=height,levtype='altitude')
 
 # Pressure
-pressure = np.zeros(nlev+1,dtype=np.float)
+pressure = np.zeros(nlev+1,dtype=np.float64)
 pressure[0] = ps # add surface level value 
 pressure[1:]  = fin['pf'][::-1]
 case.add_init_pressure(pressure,lev=height,levtype='altitude')
 
 # Zonal and meridional wind (same value for the first two levels)
-u = np.zeros(nlev+1,dtype=np.float)
+u = np.zeros(nlev+1,dtype=np.float64)
 u[1:]  = fin['u'][::-1]
 u[0] = u[1]
 
-v = np.zeros(nlev+1,dtype=np.float)
+v = np.zeros(nlev+1,dtype=np.float64)
 v[1:] = fin['v'][::-1]
 v[0] = v[1] 
 
 case.add_init_wind(u=u,v=v, lev=height, levtype='altitude')
 
 # Potential temperature
-theta = np.zeros(nlev+1,dtype=np.float)
+theta = np.zeros(nlev+1,dtype=np.float64)
 theta[0] = thermo.t2theta(p=ps,temp=fin['Tg'][0])
 theta[1:] = fin['theta'][::-1]
 
 case.add_init_theta(theta, lev=height, levtype='altitude')
 
 # Temperature
-temp = np.zeros(nlev+1,dtype=np.float)
+temp = np.zeros(nlev+1,dtype=np.float64)
 temp[0] = fin['Tg'][0]
 temp[1:] = fin['t'][::-1]
 
 case.add_init_temp(temp, lev=height, levtype='altitude')
 
 # Total water content (0 everywhere)
-qv = np.zeros(nlev+1,dtype=np.float)
+qv = np.zeros(nlev+1,dtype=np.float64)
 qv[1:] = fin['qv'][::-1]
 
 case.add_init_qv(qv, lev=height, levtype='altitude')
@@ -116,8 +116,8 @@ timeForc = fin['time'][:]
 nt, = timeForc.shape
 
 # Constant geostrophic wind (same value for the first two levels)
-ug = np.zeros((nt,nlev+1),dtype=np.float)
-vg = np.zeros((nt,nlev+1),dtype=np.float)
+ug = np.zeros((nt,nlev+1),dtype=np.float64)
+vg = np.zeros((nt,nlev+1),dtype=np.float64)
 ug[:,1:] = fin['Ug'][:,::-1]
 vg[:,1:] = fin['Vg'][:,::-1]
 ug[:,0] = ug[:,1]

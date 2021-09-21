@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
 Created on 03 January 2020
@@ -96,18 +96,18 @@ def available(case=None):
     """
 
     if case is None:
-        print '-'*30, 'Available cases'
+        print('-'*30, 'Available cases')
         for cc in sorted(cases):
-            print '{0:>10}:'.format(cc),
+            tmp = '{0:>10}: '.format(cc)
             for ss in sorted(subcases[cc]):
-                print ss,
-            print ''
-        print '-'*60
+                tmp += ss + ' '
+            print(tmp)
+        print('-'*60)
     else:
-        print '-'*30, 'Available subcase for case =', case
+        print('-'*30, 'Available subcase for case =', case)
         for ss in sorted(subcases[case]):
-            print ss
-        print '-'*60
+            print (ss)
+        print('-'*60)
 
 if __name__ == "__main__":
     available()

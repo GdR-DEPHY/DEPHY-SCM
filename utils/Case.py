@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
 Created on 27 November 2019
@@ -364,7 +364,7 @@ class Case:
             tmp = np.reshape(vardata,(1,))
         else:
             # Check if lev optional argument is given
-            if not(kwargs.has_key('lev')):
+            if 'lev' not in kwargs:
                 logger.error('level axis should be given for variable {0}'.format(varid))
                 raise ValueError('level axis should be given for variable {0}'.format(varid))
 
@@ -549,7 +549,7 @@ class Case:
             logger.error('You must provide both zonal and meridional wind')
             raise ValueError('You must provide both zonal and meridional wind')
 
-        if not(kwargs.has_key('lev')) and ulev is None and vlev is None:
+        if 'lev' not in kwargs and ulev is None and vlev is None:
             logger.error('You must provide a vertical axis either with lev or with both ulev/vlev')
             raise ValueError('You must provide a vertical axis either with lev or with both ulev/vlev')
 
@@ -606,7 +606,7 @@ class Case:
         """
 
         # Prepare time axis
-        if kwargs.has_key('time'):
+        if 'time' in kwargs:
             lconstant = False
             nt, = np.array(kwargs['time']).shape
         else: # forcing is constant in time
@@ -624,7 +624,7 @@ class Case:
                 tmp = np.reshape(vardata,(nt,))
         else:
             # Check if lev optional argument is given
-            if not(kwargs.has_key('lev')):
+            if 'lev' not in kwargs:
                 logger.error('level axis should be given for variable {0}'.format(varid))
                 raise ValueError('level axis should be given for variable {0}'.format(varid))
 
@@ -788,7 +788,7 @@ class Case:
             logger.error('You must provide both zonal and meridional geostrophic wind')
             raise ValueError('You must provide both zonal and meridional geostrophic wind')
 
-        if not(kwargs.has_key('lev')) and uglev is None and vglev is None:
+        if 'lev' not in kwargs and uglev is None and vglev is None:
             logger.error('You must provide a vertical axis either with lev or with both uglev/vglev')
             raise ValueError('You must provide a vertical axis either with lev or with both uglev/vglev')
 
@@ -1042,7 +1042,7 @@ class Case:
             logger.error('You must provide both zonal and meridional nudging wind')
             raise ValueError('You must provide both zonal and meridional nudging wind')
 
-        if not(kwargs.has_key('lev')) and ulev is None and vlev is None:
+        if 'lev' not in kwargs and ulev is None and vlev is None:
             logger.error('You must provide a vertical axis either with lev or with both ulev/vlev')
             raise ValueError('You must provide a vertical axis either with lev or with both ulev/vlev')
 
@@ -1818,24 +1818,6 @@ class Case:
         else:
             logger.error('To compute ta_nud, theta_nud or thetal_nud must be known')
             raise ValueError('To compute ta_nud, theta_nud or thetal_nud must be known')
-
-        return tnud
-
-#    def compute_ta_nud(self):
-#
-#        pressure = self.variables['pa_forc'].data
-#
-#        if 'theta_nud' in self.var_forcing_list:
-#            logger.info('Compute ta_nud from theta_nud')
-#            thnud = self.variables['theta_nud'].data
-#            tnud = thermo.theta2t(p=pressure,theta=thnud)
-#        elif 'thetal_nud' in self.var_forcing_list:
-#            logger.info('Compute ta_nud from theta_nud assuming theta_nud=thetal_nud')
-#            thnud = self.variables['thetal_nud'].data
-#            tnud = thermo.theta2t(p=pressure,theta=thnud)
-#        else:
-#            logger.error('To compute ta_nud, theta_nud or thetal_nud must be known')
-#            raise ValueError('To compute ta_nud, theta_nud or thetal_nud must be known')
 
         return tnud
 

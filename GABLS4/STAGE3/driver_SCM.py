@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
 Created on 09 June 2020
@@ -48,7 +48,7 @@ if lverbose:
 # grid onto which interpolate the input data
 
 # New vertical grid, 2-m resolution from the surface to 500 m and then 10-m resolution up to 30000 m (above the surface)
-levout = np.array(range(0,501,2)+range(510,30001,10),dtype=np.float64) 
+levout = np.array(list(range(0,501,2))+list(range(510,30001,10)),dtype=np.float64) 
 
 # New temporal grid, from 00:00 UTC, 11 December 2009 to 12:00 UTC 12 December 2009, 1-hour timestep
 timeout = np.arange(0.,(36+1)*3600.,3600.)

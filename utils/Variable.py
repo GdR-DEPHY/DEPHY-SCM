@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
 Created on 27 November 2019
@@ -37,7 +37,7 @@ class Variable:
 
         self.data = None
         if data is not None:
-            self.data = np.array(data,dtype=np.float32)
+            self.data = np.array(data,dtype=np.float64)
             self.sh = len(self.data.shape)
 
         if axes is None:
@@ -130,7 +130,7 @@ class Variable:
         print('-'*10, 'Units:', self.units)
         print('-'*10, 'Axes:', self.axlist)
         print('-'*10, 'Coordinates:', self.coord)
-        print('-'*10, 'mean: {0}; min: {1}; max: {2}'.format(np.average(self.data),np.amin(self.data),np.amax(self.data)))
+        print('-'*10, 'mean: {0:13f}; min: {1:13f}; max: {2:13f}'.format(np.average(self.data),np.amin(self.data),np.amax(self.data)))
         
 
     def set_coordinates(self, *coord):
@@ -179,7 +179,7 @@ class Variable:
                 if self.id in filein.variables:
                     logger.debug('{0} already if netCDF file. Not overwritten'.format(self.id))
                 else:
-                    tmp = filein.createVariable(self.id, "f8", self.axlist)
+                    tmp = filein.createVariable(self.id, np.float32, self.axlist)
                     tmp[:] = self.data
                     tmp.standard_name = self.name
                     tmp.units = self.units
@@ -380,7 +380,6 @@ class Variable:
                         bounds_error=False, fill_value=self.data[-1,ilev]) # Pad after end date with the last value, if necessary
                 data[:,ilev] = ff(time.data)
 
-        
             if self.height is not None:
                 height_id = self.height.id
                 height_units = self.height.units

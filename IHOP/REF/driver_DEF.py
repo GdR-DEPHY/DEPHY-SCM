@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
 Created on 30 October 2020
@@ -86,7 +86,7 @@ ntf = len(timeF)
 
 zforc = np.genfromtxt('atm_forcing.txt',dtype=None,skip_header=1,usecols=0)
 nzf, = zforc.shape
-nzf = nzf/ntf
+nzf = nzf//ntf
 zforc = zforc[0:nzf]
 
 # Geostrophic wind

@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
 Created on 03 January 2020
@@ -18,8 +18,8 @@ cwd = os.getcwd()
 
 for case in AA.cases:
     for subcase in AA.subcases[case]:
-        print "#"*60
-        print "CASE: {0}, SUBCASE: {1}".format(case,subcase)
+        print("#"*60)
+        print("CASE: {0}, SUBCASE: {1}".format(case,subcase))
         tmp = os.path.join(cwd,case,subcase)
         os.chdir(tmp)
 
