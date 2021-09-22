@@ -2602,8 +2602,30 @@ class Case:
             raise ValueError('Either height or pressure must be given')
 
         if data is None:
-            _data = float(self.variables[varid].data[0,-1])
-            self.extend_variable(varid, data=_data, height=height, pressure=pressure)
+            _height = height
+            _pressure = pressure
+            _time = None
+            _tunits = None
+            try:
+                _data = float(self.variables[varid].data[:,-1])
+            except TypeError:
+                _data = self.variables[varid].data[:,-1]
+                _data = _data[:,np.newaxis]
+                _time = self.variables[varid].time.data
+                _tunits = self.variables[varid].time.units
+                #print(varid, _data.shape)
+                if height is not None and (isinstance(height,float) or isinstance(height,int)):
+                    _height = np.zeros(_data.shape, dtype=np.float32) + height
+                elif pressure is not None and (isinstance(pressure,float) or isinstance(pressure,int)):
+                    _pressure = np.zeros(_data.shape, dtype=np.float32) + pressure
+                else:
+                    logger.error("Case unexpected in extended variable {0}".format(varid))
+                    raise NotImplementedError
+            except:
+                raise
+
+            self.extend_variable(varid, data=_data, height=_height, pressure=_pressure,
+                    time=_time, tunits=_tunits)
 
         if isinstance(data,float) or isinstance(data,int):
             if height is not None:
@@ -2644,7 +2666,14 @@ class Case:
                 _time = self.variables[varid].time.data
                 _tunits = self.variables[varid].time.units
                 _data = np.tile(data,(nt,1))
-                _varnew = self.variables[varid].extend_vert(data=_data, height=height, pressure=pressure,
+                _height = height
+                _pressure = pressure
+                if height is not None:
+                    _height = np.tile(height,(nt,1))
+                if pressure is not None:
+                    _pressure = np.tile(pressure,(nt,1))
+                #print('CASE',_data.shape)
+                _varnew = self.variables[varid].extend_vert(data=_data, height=_height, pressure=_pressure,
                                                             time=_time, tunits=_tunits)
 
                 self.variables[varid] = _varnew
@@ -2712,3 +2741,44 @@ class Case:
         """Vertically extend the total water mixing ratio"""
 
         self.extend_variable('rt', data=rt, **kwargs)
+
+    def extend_geostrophic_wind(self, ug=None, vg=None, **kwards):
+        """Vertically extend the geostrophic wind components"""
+
+        self.extend_variable('ug', data=ug, **kwards)
+        self.extend_variable('vg', data=vg, **kwards)
+
+    def extend_temperature_advection(self, temp_adv=None, **kwargs):
+        """Vertically extend the temperature large-scale advection"""
+
+        self.extend_variable('tnt_adv', data=temp_adv, **kwargs)
+
+    def extend_theta_advection(self, theta_adv=None, **kwargs):
+        """Vertically extend the potential temperature large-scale advection"""
+
+        self.extend_variable('tntheta_adv', data=theta_adv, **kwargs)
+
+    def extend_thetal_advection(self, thetal_adv=None, **kwargs):
+        """Vertically extend the liquid-water potential temperature large-scale advection"""
+
+        self.extend_variable('tnthetal_adv', data=thetal_adv, **kwargs)
+
+    def extend_qv_advection(self, qv_adv=None, **kwargs):
+        """Vertically extend the specific humidity large-scale advection"""
+
+        self.extend_variable('tnqv_adv', data=qv_adv, **kwargs)
+
+    def extend_qt_advection(self, qt_adv=None, **kwargs):
+        """Vertically extend the total water content large-scale advection"""
+
+        self.extend_variable('tnqt_adv', data=qt_adv, **kwargs)
+
+    def extend_rv_advection(self, rv_adv=None, **kwargs):
+        """Vertically extend the water vapor mixing ratio large-scale advection"""
+
+        self.extend_variable('tnrv_adv', data=rv_adv, **kwargs)
+
+    def extend_rt_advection(self, rt_adv=None, **kwargs):
+        """Vertically extend the total water mixing ratio large-scale advection"""
+
+        self.extend_variable('tnrt_adv', data=rt_adv, **kwargs)

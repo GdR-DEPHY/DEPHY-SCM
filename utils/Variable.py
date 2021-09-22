@@ -521,6 +521,9 @@ class Variable:
         if height is not None and self.height is not None:
 
             hmax = np.max(self.height.data)
+            #print(hmax)
+            #print(data.shape)
+            #print(height.shape)
 
 
             if len(height.shape) == 2:
@@ -542,7 +545,10 @@ class Variable:
                 logger.error("Shape of given height array is unexpected: {0}".format(height.shape))
                 raise ValueError("Shape of given height array is unexpected: {0}".format(height.shape))
 
+            #var2add.info()
+            #print(var2add.data.shape)
             mask = var2add.height.data > hmax
+            #print(mask, mask.shape)
 
             nlev2add = np.sum(mask, axis=1)
             if np.min(nlev2add) != np.max(nlev2add):
@@ -554,6 +560,7 @@ class Variable:
 
             _data = np.zeros((ntin,nlev_new), dtype=np.float64)
             _data[:,:nlevin] = self.data[:,:]
+            #print(self.id, _data[:,nlevin:].shape, var2add.data.shape, var2add.data[:,mask[0]].shape)
             _data[:,nlevin:] = var2add.data[:,mask[0]]
 
             _height = np.zeros((ntin,nlev_new), dtype=np.float64)
