@@ -76,6 +76,11 @@ subcases[case] = ['REF']
 ####################################
 #### Stratocumulus cases
 
+# FIRE case
+case = 'FIRE'
+cases.append(case)
+subcases[case] = ['REF']
+
 # SANDU composite cases
 case = 'SANDU'
 cases.append(case)
