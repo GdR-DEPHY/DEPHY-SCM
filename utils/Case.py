@@ -2722,6 +2722,11 @@ class Case:
 
         self.extend_variable('theta', data=theta, **kwargs)
 
+    def extend_init_thetal(self, thetal=None, **kwargs):
+        """Vertically extend the liquid-water potential temperature"""
+
+        self.extend_variable('thetal', data=thetal, **kwargs)
+
     def extend_init_qv(self, qv=None, **kwargs):
         """Vertically extend the specific humidity"""
 
@@ -2742,11 +2747,22 @@ class Case:
 
         self.extend_variable('rt', data=rt, **kwargs)
 
-    def extend_geostrophic_wind(self, ug=None, vg=None, **kwards):
+    def extend_geostrophic_wind(self, ug=None, vg=None, **kwargs):
         """Vertically extend the geostrophic wind components"""
 
-        self.extend_variable('ug', data=ug, **kwards)
-        self.extend_variable('vg', data=vg, **kwards)
+        self.extend_variable('ug', data=ug, **kwargs)
+        self.extend_variable('vg', data=vg, **kwargs)
+
+    def extend_vertical_velocity(self, w=None, omega=None, **kwargs):
+        """Vertically extend the vertical velocity, either w or omega"""
+
+        if w is not None:
+            self.extend_variable('wa', data=w, **kwargs)
+        elif omega is not None:
+            self.extend_variable('wap', data=omega, **kwargs)
+        else:
+            logger.error('At least w or omega must be given')
+            raise ValueError
 
     def extend_temperature_advection(self, temp_adv=None, **kwargs):
         """Vertically extend the temperature large-scale advection"""

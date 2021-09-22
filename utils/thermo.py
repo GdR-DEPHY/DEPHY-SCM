@@ -267,10 +267,6 @@ def z2p(thetal=None, theta=None, ta=None,
     if thetal is not None and theta is None and ta is None:
         theta = thetal
 
-    print(ps)
-    print(theta)
-    print(qv)
-
     if theta is not None:
         nlev, = theta.shape
 
