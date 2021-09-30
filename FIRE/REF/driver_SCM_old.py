@@ -44,43 +44,23 @@ if lverbose:
 #    and add new variables if needed
 ################################################
 
-htop = 40000.
+htop = 20000.
 
 # Extend profiles
 # Wind: just make it constant above what is presently defined
 case.extend_init_wind(height=htop)
 
-# First extend thetal up to 2500m with the same thetal vertical gradient 
-# (and limit discontinuity with ERA5 profile)
-def f_thetal(z):
-    if z <= 595:
-        return 287.5
-    elif z <= 605:
-        return 287.5+12.*(z-595.)/(605.-595.)
-    else:
-        return 287.5+12 + 0.0075*(z-605)
-
-case.extend_init_thetal(thetal=f_thetal(2500.), height=2500.)
 # Then use ERA5 above
-with nc.Dataset('../aux/ERA5/ERA5_FIRE_19870714000000-19870715230000.nc') as f:
-    temp = np.average(f['ta'][:,::-1,0,0], axis=0) # time average over the two days
-    pa = f['plev'][::-1]
-    thetal = thermo.t2theta(p=pa, temp=temp)
-    height = np.average(f['zg'][:,::-1,0,0], axis=0)
+with nc.Dataset('/Users/romain/Desktop/TMP/FIRE/Fire-I_driver_RR_v3.nc') as f:
+    thetal = f['thl'][0,:,0,0]
+    height = f['height'][0,:,0,0]
     case.extend_init_thetal(thetal=thetal, height=height)
 
-# First extend qt up to 2800m with the same qt vertical gradient
-def f_qt(z):
-    if z <= 595:
-        return 9.6
-    elif z <= 605:
-        return 9.6-3.0*(z-595.)/(605.-595.)
-    else:
-        return max(9.6-3.0 - 0.003*(z-605), 0.)
+with nc.Dataset('/Users/romain/Desktop/TMP/FIRE/Fire-I_driver_RR_v3.nc') as f:
+    qt = f['qt'][0,:,0,0]
+    height = f['height'][0,:,0,0]
+    case.extend_init_qt(qt=qt, height=height)
 
-case.extend_init_qt(qt=f_qt(2800.)/1000., height=2800.)
-# Then put it to zero above
-case.extend_init_qt(qt=[0,0], height=[3000,htop])
 
 # Geostrophic wind: just make it constant above what is presently defined
 case.extend_geostrophic_wind(height=htop)
@@ -95,7 +75,7 @@ case.extend_qt_advection(qt_adv=[0,0], height=[1300.,htop])
 # grid onto which interpolate the input data
 
 # New vertical grid, 10-m resolution from surface to 60000 m (above the surface)
-levout = np.array(list(range(0,2001,5)) + list(range(2100,int(htop)+1,100)),dtype=np.float64) 
+levout = np.array(list(range(0,2001,10)) + list(range(2100,int(htop)+1,100)),dtype=np.float64) 
 
 # New temporal grid, from 00:00 UTC, 16 December 2004 to 00:00 UTC 19 December 2004, 1-hour timestep
 timeout = np.arange(0.,(37+1)*3600.,3600.)

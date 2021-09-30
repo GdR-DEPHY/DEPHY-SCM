@@ -1,0 +1,11 @@
+ ! NOAA/PMEL TMAP
+ ! PyFerret v7.63 (optimized)
+ ! Darwin 19.6.0 - 10/13/20
+ ! 28-Sep-21 11:25     
+
+use /Users/romain/MUSC/V2.1.mac/simulations/V631/arp631_diag_CMIP6_nolpble/FIRE/REF/Output/netcdf/Out_klevel.nc
+use /Users/romain/MUSC/V2.1.mac/simulations/V631/arp631_diag_CMIP6/FIRE/REF/Output/netcdf/Out_klevel.nc
+set v upper
+shade/vlimits=91:80 rneb[d=2]
+set v lower
+shade/vlimits=91:80 rneb[d=1]

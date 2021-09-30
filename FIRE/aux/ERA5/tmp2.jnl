@@ -1,0 +1,11 @@
+ ! NOAA/PMEL TMAP
+ ! PyFerret v7.63 (optimized)
+ ! Darwin 19.6.0 - 10/13/20
+ ! 28-Sep-21 11:25     
+
+use /Users/romain/Desktop/TMP/FIRE/old.nc
+use /Users/romain/Desktop/TMP/FIRE/new.nc
+set v upper
+shade/vlimits=91:80 rneb[d=2]
+set v lower
+shade/vlimits=91:80 rneb[d=1]
