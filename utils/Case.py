@@ -606,7 +606,7 @@ class Case:
         """
 
         # Prepare time axis
-        if 'time' in kwargs:
+        if 'time' in kwargs and kwargs['time'] is not None:
             lconstant = False
             nt, = np.array(kwargs['time']).shape
         else: # forcing is constant in time
@@ -906,6 +906,57 @@ class Case:
             self.set_attribute('radiation','off')
 
         self.add_forcing_variable('tnthetal_adv',data,**kwargs)
+
+    def add_temp_radiation_tendency(self,data,**kwargs):
+        """Add a temperature radiative tendency to a Case object.
+        
+        Required argument:
+        data -- input data as a list or a numpy array.
+
+        See add_variable function for optional arguments.
+        Note that:
+        - a level axis is required (lev optional argument).
+        - a levtype is required (levtype optional argument).
+
+        If time is not provided, forcing is assumed constant in time.
+        """
+
+        self.set_attribute('radiation','tend')
+        self.add_forcing_variable('tnta_rad',data,**kwargs)
+
+    def add_theta_radiation_tendency(self,data,**kwargs):
+        """Add a potential temperature radiative tendency to a Case object.
+        
+        Required argument:
+        data -- input data as a list or a numpy array.
+
+        See add_variable function for optional arguments.
+        Note that:
+        - a level axis is required (lev optional argument).
+        - a levtype is required (levtype optional argument).
+
+        If time is not provided, forcing is assumed constant in time.
+        """
+
+        self.set_attribute('radiation','tend')
+        self.add_forcing_variable('tntheta_rad',data,**kwargs)
+
+    def add_thetal_radiation_tendency(self,data,**kwargs):
+        """Add a liquid-water potential temperature radiative tendency to a Case object.
+        
+        Required argument:
+        data -- input data as a list or a numpy array.
+
+        See add_variable function for optional arguments.
+        Note that:
+        - a level axis is required (lev optional argument).
+        - a levtype is required (levtype optional argument).
+
+        If time is not provided, forcing is assumed constant in time.
+        """
+
+        self.set_attribute('radiation','tend')
+        self.add_forcing_variable('tnthetal_rad',data,**kwargs)
 
     def add_qv_advection(self,data,**kwargs):
         """Add a specific humidity advection to a Case object.

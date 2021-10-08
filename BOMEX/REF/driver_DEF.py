@@ -20,6 +20,7 @@ import netCDF4 as nc
 import numpy as np
 
 from Case import Case
+import constants as cc
 
 ################################################
 # 0. General configuration of the present script
@@ -54,33 +55,33 @@ ps = 101500.
 case.add_init_ps(ps)
 
 # Zonal and meridional wind
-zu = [   0,    700.,  20000.]
-u  = [-8.75,  -8.75,   25.99]
+zu = [  0.,    700.,  3000.  ]
+u  = [ -8.75,   -8.75,  -4.61]
 
-zv = [ 0.,   20000. ]
+zv = [ 0.,   3000. ]
 v  = [ 0.,     0.]
 
 case.add_init_wind(u=u,v=v, ulev=zu, vlev=zv, levtype='altitude')
 
-# Potential Temperature
-ztheta = [  0.,     520.,  1480.,  2000., 20000.]
-theta  = [298.7,   298.7, 302.4,  308.2,   373.9]
+# Liquid-water Potential Temperature
+zthetal = [  0.,     520.,  1480.,  2000., 3000.]
+thetal  = [298.7,   298.7, 302.4,  308.2,   311.85]
 
-case.add_init_theta(theta, lev=ztheta, levtype='altitude')
+case.add_init_thetal(thetal, lev=zthetal, levtype='altitude')
 
-# Specific humidity
-zqv =[ 0.,  520., 1480., 2000., 20000.] 
-qv = [17.,  16.3,  10.7,   4.2,   0.] # in g kg-1
+# Total water
+zqt =[ 0.,  520., 1480., 2000., 3000. ] 
+qt = [17.,   16.3,  10.7,   4.2,   3.0] # in g kg-1
 
-case.add_init_qv(np.array(qv)/1000., lev=zqv, levtype='altitude') # converted in kg kg-1
+case.add_init_qt(np.array(qt)/1000., lev=zqt, levtype='altitude') # converted in kg kg-1
 
 # Turbulent Kinetic Energy
-ztke = range(0,6000+1,10)
+ztke = [0, 3000.]
 nztke = len(ztke)
 tke = np.zeros(nztke,dtype=np.float64)
 
 for iz in range(0,nztke):
-    if ztke[iz] < 3000:
+    if ztke[iz] <= 3000:
       tke[iz] = 1.-ztke[iz]/3000.
     else:
       tke[iz] = 0.
@@ -94,12 +95,12 @@ case.add_init_tke(tke, lev=ztke, levtype='altitude')
 # Constant geostrophic wind across the simulation
 # Siebesma et Cuijpers donnent ug=-10.+0.0018*zz  vg=0.
 
-zug = range(0,6000+1,10)
+zug = range(0,3000+1,10)
 nzug = len(zug)
 ug = np.zeros(nzug,dtype=np.float64)
 for iz in range(0,nzug):
-    ug[iz] = -10.+0.0018*zug[iz]
-    ug[iz] = -10.+0.0018*zug[iz]
+    ug[iz] = -10.+1.8e-3**zug[iz]
+    ug[iz] = -10.+1.8e-3*zug[iz]
 
 vg = np.zeros(nzug,dtype=np.float64)
 
@@ -112,25 +113,29 @@ w  = [0., -0.0065,    0.]
 case.add_vertical_velocity(w=w,lev=zw,levtype='altitude')
 
 # Constant large-scale advection of potential temperature + radiative tendency 
-zthetaladv = [ 0.,        1500.,  2500.]
-thetaladv  = [-2.00016, -2.00016,   0.] # in K day-1
+zthetal_rad = [ 0.,  1500.,  3000.]
+thetal_rad  = [-2.0,   -2.0,    0.] # in K day-1
 
-case.add_thetal_advection(np.array(thetaladv)/86400.,lev=zthetaladv,levtype='altitude',include_rad=True) # converted in K s-1
+case.add_thetal_radiation_tendency(np.array(thetal_rad)/86400.,
+        lev=zthetal_rad, levtype='altitude') # converted in K s-1
 
 # Constant large-scale advection of specific humidity
-zqtadv = [ 0.,      300.,  500.]
-qtadv  = [-1.0368, -1.0368,  0.] # in g kg-1 day-1
+zqt_adv = [ 0.,    300.,     500.]
+qt_adv  = [-1.2e-8, -1.2e-8,   0.] # in kg kg-1 s-1
 
-case.add_qt_advection(np.array(qtadv)/86400./1000.,lev=zqtadv,levtype='altitude') # converted in kg kg-1 s-1
+case.add_qt_advection(qt_adv, lev=zqt_adv, levtype='altitude') 
 
 # Surface Forcing
-#            t(s)      H (W m-2)             LE (W m-2)
-sfcForc = [   0., 9.4589217426112491,   153.03603975594794,\
-          86400., 9.4589217426112491,   153.03603975594794]
+#            t(s)    H (W m-2)     LE (W m-2)  ustar (m s-1)
+sfcForc = [    0., 8e-3*cc.Cpd,   5.2e-5*cc.Lv,  0.28,\
+           86400., 8e-3*cc.Cpd,   5.3e-5*cc.Lv,  0.28]
 
 timeSfc = sfcForc[0::3]
 
-case.add_surface_fluxes(sens=sfcForc[1::3],lat=sfcForc[2::3],time=timeSfc,forc_wind='z0',z0=0.001019)
+case.add_surface_fluxes(sens=8e-3*cc.Cpd, lat=5.2e-5*cc.Lv, 
+        forc_wind='ustar', ustar=0.28)
+
+case.add_surface_skin_temp(300.4)
 
 ################################################
 # 4. Writing file
