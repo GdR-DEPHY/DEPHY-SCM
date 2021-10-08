@@ -72,12 +72,12 @@ case.add_init_rt(init[2::5]/1000., lev=z, levtype='altitude')
 case.add_init_wind(u=init[3::5],v=init[4::5], lev=z, levtype='altitude')
 
 # Turbulent Kinetic Energy
-ztke = range(0,6000+1,10)
+ztke = [0, 150, 5500.]
 nztke = len(ztke)
 tke = np.zeros(nztke,dtype=np.float64)
 
 for iz in range(0,nztke):
-    if ztke[iz] < 150:
+    if ztke[iz] < 150.:
       tke[iz] = 0.15*(1.-ztke[iz]/150.)
     else:
       tke[iz] = 0.
@@ -108,7 +108,7 @@ A_theta = advF[1::4]
 R_theta = advF[2::4]
 A_rt = advF[3::4]
 
-zforc = range(0,6000+1,10)
+zforc = [0, 1000., 3000., 5500.]
 nzf = len(zforc)
 forc_theta = np.zeros((ntf,nzf),dtype=np.float64)
 forc_rt = np.zeros((ntf,nzf),dtype=np.float64)
@@ -118,7 +118,7 @@ forc_rt = np.zeros((ntf,nzf),dtype=np.float64)
 
 for it in range(0,ntf):
     for iz in range(0,nzf):
-        if zforc[iz] < 1000.:
+        if zforc[iz] <= 1000.:
           forc_theta[it,iz] = A_theta[it]+R_theta[it]
           forc_rt[it,iz] = A_rt[it]
         elif zforc[iz] <= 3000. :
