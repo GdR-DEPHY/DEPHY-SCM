@@ -1,0 +1,15 @@
+ ! NOAA/PMEL TMAP
+ ! PyFerret v7.63 (optimized)
+ ! Darwin 19.6.0 - 10/13/20
+ !  8-Oct-21 18:02     
+
+set mode verify
+use ERA5_SGP_19970621000000-19970622230000.nc
+sh da
+shade ta
+plot ta[l=1]
+plot ta[l=1],ta[l=@ave]
+plot ta[l=1],ta[l=10]
+plot/vlimits=110000:0 ta[l=1],ta[l=10]
+plot/vlimits=110000:0 ta[l=1],ta[l=20]
+plot/vlimits=110000:0 ta[l=1],ta[l=@ave]
