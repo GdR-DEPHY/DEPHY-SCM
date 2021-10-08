@@ -56,33 +56,17 @@ case.extend_init_wind(height=20000.)
 case.extend_init_rt(rt=[0,0], height=[5600., 20000.])
 
 # Temperature using ERA5
+# Only above 12 km to have a nicer and more stable extrapolated profile.
 with nc.Dataset('../aux/ERA5/ERA5_SGP_19970621000000-19970622230000.nc') as f:
-    #tunits = case.start_date.strftime('seconds since %Y-%m-%d %H:%M:%S')
-    #dates = nc.num2date(f['time'][:], units=f['time'].units)
-    #times = nc.date2num(dates, tunits)
-    #temp = np.squeeze(f['ta'][:,::-1])
-    #plev = f['plev'][::-1]
-    #nt, _ = temp.shape
-    #pa = np.tile(plev, (nt,1))
-    #theta = thermo.t2theta(p=pa, temp=temp)
-    #height = np.squeeze(f['zg'][:,::-1])
-    #case.extend_init_theta(theta=theta, height=height, time=times, tunits=tunits)
-
-    #tunits = case.start_date.strftime('seconds since %Y-%m-%d %H:%M:%S')
-    #dates = nc.num2date(f['time'][:], units=f['time'].units)
-    #times = nc.date2num(dates, tunits)
     temp = np.average(np.squeeze(f['ta'][:,::-1]), axis=0)
     pa = f['plev'][::-1]
-    #nt, _ = temp.shape
-    #pa = np.tile(plev, (nt,1))
     theta = thermo.t2theta(p=pa, temp=temp)
     height = np.average(np.squeeze(f['zg'][:,::-1]), axis=0)
     theta = theta[height >= 12000]
-    #pa = pa[height >= 10000]
     height = height[height >= 12000]
     case.extend_init_theta(theta=theta, height=height)
 
-# Add a surface temperature
+# Add a surface temperature based on SGP observations
 with nc.Dataset('../aux/tskin/tskin_SGP_C1_irt10m_19970621003000-19970622233000.nc') as f:
     dates = nc.num2date(f['time'][:], units=f['time'].units)
     index = [d.day == 21 and d.hour >= 11 or d.day == 22 and d.hour <= 2 for d in dates ]
