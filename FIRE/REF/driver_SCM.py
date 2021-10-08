@@ -86,11 +86,11 @@ case.extend_init_qt(qt=[0,0], height=[3000,htop])
 case.extend_geostrophic_wind(height=htop)
 
 # Large-scale forcing vertical velocity: linear to 0 between 1200 and 1300m, 0 above
-case.extend_vertical_velocity(w=[0,0],height=[1300.,htop])
+case.extend_vertical_velocity(w=[0,0],height=[1205.,htop])
 
 # Thetal and qt large-scale advection: linear to 0 between 1200 and 1300m, 0 above
-case.extend_thetal_advection(thetal_adv=[0,0], height=[1300.,htop])
-case.extend_qt_advection(qt_adv=[0,0], height=[1300.,htop])
+case.extend_thetal_advection(thetal_adv=[0,0], height=[1205.,htop])
+case.extend_qt_advection(qt_adv=[0,0], height=[1205.,htop])
 
 # grid onto which interpolate the input data
 
