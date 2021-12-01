@@ -1,7 +1,7 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 """
-Created on 25 January 2021
+Created on 01 October 2020
 
 @author: Etienne Vignon
 """
@@ -14,7 +14,6 @@ sys.path = ['../../utils/',] + sys.path
 import numpy as np
 
 from Case import Case
-
 
 ################################################
 # 0. General configuration of the present script
@@ -29,10 +28,10 @@ lverbose = False # print information on variables and case
 ################################################
 
 # initialize the case structure for the original version
-case = Case('MPACE/REF')
+case = Case('MPACE/E3SM')
 
 # read case information in file
-case.read('MPACE_REF_DEF_driver.nc')
+case.read('MPACE_E3SM_DEF_driver.nc')
 
 # display some information about the case
 if lverbose:
@@ -42,15 +41,18 @@ if lverbose:
 # 2. Interpolate onto a new grid, same for all the variables
 #    and add new variables if needed
 ################################################
-# New vertical grid, altitude up to 6000m
-levout = np.array(range(0,6001,10),dtype=np.float64)
 
-# New temporal grid, from 17:00 UTC, 09 October 2004 to 05:00 UTC, 10 October 2004, 30-min timestep
-#timeout = np.array(range(0,43200+1,1800),dtype=np.float64)
-timeout=[0,43200]
+# grid onto which interpolate the input data
+
+# New vertical grid, 10-m resolution from surface to 6000 m (above the surface)
+#levout = np.array(range(0,6001,10),dtype=np.float64) 
+
+# New temporal grid, from 17:00 UTC, 09 October 2004 to 05:00 UTC, 10 October 2004, 1-hour timestep
+#timeout = np.array(range(0,43201,3600),dtype=np.float64) 
 
 # conversion
-newcase = case.convert2SCM(time=timeout,lev=levout,levtype='altitude')
+newcase = case.convert2SCM()
+
 
 # update some attributes
 newcase.set_title("Forcing and initial conditions for MPACE/REF case - SCM-enabled version")
@@ -65,14 +67,14 @@ if lverbose:
 ################################################
 
 # save the new version of the case in netcdf file 
-newcase.write('MPACE_REF_SCM_driver.nc')
+newcase.write('MPACE_E3SM_SCM_driver.nc')
 
 ################################################
 # 4. Plots if asked
 ################################################
 
 if lplot:
-    newcase.plot(rep_images='./images/driver_SCM/',timeunits='hours',levunits='m')
+    newcase.plot(rep_images='./images/driver_SCM/',timeunits='hours')
 
 if lcompare:
     newcase.plot_compare(case,rep_images='./images/compare/',label1="SCM-enabled",label2="Original",timeunits='hours')

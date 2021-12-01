@@ -234,8 +234,9 @@ class Variable:
                 elif (levunits == 'km' and var2.level.units == 'km') or (levunits == 'm' and var2.level.units == 'm'):
                     levs2 = var2.level.data
                 else:
-                    logger.error("Unexpected case for levunits (var2): {0} {1}".forma(levunits, var2.level.units))
-                    raise ValueError("Unexpected case for levunits (var2): {0} {1}".forma(levunits, var2.level.units))
+                    logger.error("Unexpected case for levunits (var2): {0} {1}".format(levunits, var2.level.units))
+                    logger.error("it is possible that the vertical units for DEF and SCM files differ and the comparison cannot be plotted ")
+                    raise ValueError("Unexpected case for levunits (var2): {0} {1}".format(levunits, var2.level.units))
 
 
         if not(self.time is None) and not(self.level is None):
@@ -269,8 +270,8 @@ class Variable:
                         time = self.time.data/86400.
                         tunits = self.time.units.replace("seconds","days")
                     else:
-                        logger.error("timeunits unexpected for plotting: {0}".forma(timeunits))
-                        raise NotImplementedError("timeunits unexpected for plotting: {0}".forma(timeunits))
+                        logger.error("timeunits unexpected for plotting: {0}".format(timeunits))
+                        raise NotImplementedError("timeunits unexpected for plotting: {0}".format(timeunits))
 
                 plotbasics.plot2D(time,levs,self.data[:,:]*coef,
                         xlabel=tunits,
@@ -300,8 +301,8 @@ class Variable:
                             time2 = var2.time.data/86400.
                         tunits = self.time.units.replace("seconds","days")
                     else:
-                        logger.error("timeunits unexpected for plotting: {0}".forma(timeunits))
-                        raise NotImplementedError("timeunits unexpected for plotting: {0}".forma(timeunits))
+                        logger.error("timeunits unexpected for plotting: {0}".format(timeunits))
+                        raise NotImplementedError("timeunits unexpected for plotting: {0}".format(timeunits))
 
                 if var2 is None:
                     plotbasics.plot(time,self.data[:]*coef,
@@ -409,7 +410,7 @@ class Variable:
                 height=height, height_id=height_id, height_units=height_units,
                 pressure=pressure, pressure_id=pressure_id, pressure_units=pressure_units)
 
-    def interpol_vert(self,height=None,pressure=None,log=False):
+    def interpol_vert(self,height=None,pressure=None,height_fromp=None,log=False):
 
         if self.level is None:
             logger.debug('Vertical interpolation requested for variable {0}, which does not have a level axis'.format(self.id))
@@ -468,10 +469,30 @@ class Variable:
                         bounds_error=False, fill_value=self.data[it,-1]) # Pad after end date with the last value, if necessary
                 data[it,:] = ff(_pressure[it,:])
 
+        elif height is not None and self.pressure is not None and height_fromp is not None:
+
+
+            if len(height.shape) == 1:
+                _height = np.tile(height,(ntin,1))
+            else:
+                _height = height
+
+            _, nlevout = _height.shape
+            _height_id = self.pressure.id
+            _height_units = 'm'
+            _level = Axis('lev_{0}'.format(self.id), _height[0,:],
+                    name='height_for_{0}'.format(self.id), units='m')
+
+            data = np.zeros((ntin,nlevout),dtype=np.float64)
+            for it in range(0,ntin):
+                ff = interpolate.interp1d(height_fromp, self.data[it,:],
+                        bounds_error=False, fill_value=self.data[it,-1]) # Pad after end date with the last value, if necessary
+                data[it,:] = ff(_height[it,:])
+
         else:
 
-            logger.error('Case unexpected for vertical interpolation of variable {0}'.forma(self.id))
-            raise ValueError('Case unexpected for vertical interpolation of variable {0}'.forma(self.id))
+            logger.error('Case unexpected for vertical interpolation of variable {0}'.format(self.id))
+            raise ValueError('Case unexpected for vertical interpolation of variable {0}'.format(self.id))
 
         return Variable(self.id, data=data, name=self.name, units=self.units,
                 level=_level, time=self.time,
@@ -579,8 +600,8 @@ class Variable:
 
         else:
 
-            logger.error('Case unexpected for vertical extension of variable {0}'.forma(self.id))
-            raise ValueError('Case unexpected for vertical extension of variable {0}'.forma(self.id))
+            logger.error('Case unexpected for vertical extension of variable {0}'.format(self.id))
+            raise ValueError('Case unexpected for vertical extension of variable {0}'.format(self.id))
 
         return Variable(self.id, data=_data, name=self.name, units=self.units,
                 level=_level, time=self.time,

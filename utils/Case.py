@@ -1030,7 +1030,7 @@ class Case:
 
         self.add_forcing_variable('tnrt_adv',data,**kwargs)
 
-    def add_nudging(self,varid,data,timescale=None,z_nudging=None,p_nudging=None,**kwargs):
+    def add_nudging(self,varid,data,timescale=None,nudging_constant=None,z_nudging=None,p_nudging=None,**kwargs):
         """Add a nudging forcing to a Case object.
         
         Required argument:
@@ -1053,7 +1053,16 @@ class Case:
         if timescale is None:
             logger.error('You must provide a nudging timescale for variable {0}'.format(varid))
             raise ValueError('You must provide a nudging timescale for variable {0}'.format(varid))
+        
 
+        if nudging_constant is not None:
+            if np.min(timescale)>0.:
+                logger.error('You must provide a vertical profile of nudging_constant for variable {0}'.format(varid))
+                raise ValueError('You must provide a vertical profile of nudging_constant for variable {0}'.format(varid))
+            else:
+                var= 'nudging_constant_{0}'.format(varid)
+                self.add_forcing_variable(var,nudging_constant,**kwargs)
+        
         self.set_attribute('nudging_{0}'.format(varid),float(timescale))
 
         if z_nudging is None and p_nudging is None:
@@ -1062,7 +1071,7 @@ class Case:
 
         if z_nudging is not None:
             self.set_attribute('zh_nudging_{0}'.format(varid),float(z_nudging))
-        else:
+        if p_nudging is not None:
             self.set_attribute('pa_nudging_{0}'.format(varid),float(p_nudging))
 
         var = '{0}_nud'.format(varid)
@@ -2092,13 +2101,27 @@ class Case:
                             plotcoef=VV.plotcoef, plotunits=VV.plotunits)
 
         else:
-
             if levtype == 'altitude':
 
+                height_fromp=None
+                if 'pa' in self.var_init_list:
+                    var1=None
+                    var2=None
+                    var3=None
+                    if 'ta' in self.var_init_list:
+                        var1=self.variables['ta'].data
+                    elif 'theta' in self.var_init_list:
+                        var2=self.variables['theta'].data
+                    elif 'thetal' in self.var_init_list:
+                        var3=self.variables['thetal'].data
+                    else:
+                        raise ValueError('missing temperature variable for equivalent height calculation')
+                    height_fromp=thermo.p2z(ta=var1,theta=var2,thetal=var3, p=self.variables['pa'].data, zs=self.variables['orog'].data[0])
+                
                 levout = Axis('lev', lev, name='height', units='m')
                 for var in self.var_init_list:
                     VV = dataout[var]
-                    dataout[var] = VV.interpol_vert(height=lev)
+                    dataout[var] = VV.interpol_vert(height=lev,height_fromp=height_fromp)
                     if dataout[var].level is not None:
                         dataout[var].set_level(lev=levout)
                         dataout[var].height.set_level(lev=levout)
@@ -2109,7 +2132,7 @@ class Case:
 
                 for var in self.var_forcing_list:
                     VV = dataout[var]
-                    dataout[var] = VV.interpol_vert(height=lev)
+                    dataout[var] = VV.interpol_vert(height=lev,height_fromp=height_fromp)
                     if dataout[var].level is not None:
                         dataout[var].set_level(lev=levout)
                         dataout[var].height.set_level(lev=levout)
@@ -2463,36 +2486,68 @@ class Case:
                     height=height, pressure=pressure)
                 self.set_attribute('adv_rt',1)
 
+
         #---- Wind nudging
 
-        for var in ['ua','va']:
-            att = 'nudging_{0}'.format(var)
-            if att in self.attlist and self.attributes[att] > 0:
-                height_loc = np.squeeze(self.variables['zh'].data)
-                pressure_loc = np.squeeze(self.variables['pa'].data)
-                # Add further description of nudging altitude/pressure
-                if 'zh_nudging_{0}'.format(var) not in self.attributes.keys():
-                    zlev = thermo.plev2zlev(self.attributes['pa_nudging_{0}'.format(var)],height_loc,pressure_loc)
-                    self.set_attribute('zh_nudging_{0}'.format(var),zlev)
-                if 'pa_nudging_{0}'.format(var) not in self.attributes.keys():
-                    plev = thermo.zlev2plev(self.attributes['zh_nudging_{0}'.format(var)],height_loc,pressure_loc)
-                    self.set_attribute('pa_nudging_{0}'.format(var),plev)
-
-        #---- Temperature nudging
-
-        atts = ['nudging_ta','nudging_theta','nudging_thetal']
+        atts = ['ua','va']
         flag = False
         zlev = None
         plev = None
         for att in atts:
-            if att in self.attlist and self.attributes[att] != 0:
+            natt='nudging_'+att
+            if att in self.attlist and self.attributes[natt] != 0:
                 flag = True
-                nudging_timescale = self.attributes[att]
-                if self.attributes[att] > 0: # simple nudging profile described in global attributes
+                nudging_timescale = self.attributes[natt]
+                if self.attributes[natt] > 0: # simple nudging profile described in global attributes
                     if 'zh_{0}'.format(att) in self.attributes:
                         zlev = self.attributes['zh_{0}'.format(att)]
                     if 'pa_{0}'.format(att) in self.attributes:
                         plev = self.attributes['pa_{0}'.format(att)]
+                else:
+                    if 'zh_nudging_{0}'.format(att) in self.attributes:
+                        zlev = self.attributes['zh_nudging_{0}'.format(att)]
+                    if 'pa_nudging_{0}'.format(att) in self.attributes:
+                        plev = self.attributes['pa_nudging_{0}'.format(att)]
+
+        if flag:
+            if zlev is not None or plev is not None: # simple nudging profile described in global attributes
+                # update nudging height/pressure for all wind variables
+                height_loc = np.squeeze(self.variables['zh'].data)
+                pressure_loc = np.squeeze(self.variables['pa'].data)
+                if zlev is None:
+                    zlev = int(thermo.plev2zlev(plev,height_loc,pressure_loc))
+                if plev is None:
+                    plev = int(thermo.zlev2plev(zlev,height_loc,pressure_loc))
+                for var in ['ua','va']:
+                    self.set_attribute('zh_nudging_{0}'.format(var),zlev)
+                    self.set_attribute('pa_nudging_{0}'.format(var),plev)
+            else:
+                logger.error('Issue in wind nudging')
+                raise NotImplementedError('Issue in wind nudging')
+
+
+        #---- Temperature nudging
+
+        atts = ['ta','theta','thetal']
+        flag = False
+        zlev = None
+        plev = None
+        for att in atts:
+            natt='nudging_'+att
+            if att in self.attlist and self.attributes[natt] != 0:
+                flag = True
+                nudging_timescale = self.attributes[natt]
+                if self.attributes[natt] > 0: # simple nudging profile described in global attributes
+                    if 'zh_{0}'.format(att) in self.attributes:
+                        zlev = self.attributes['zh_{0}'.format(att)]
+                    if 'pa_{0}'.format(att) in self.attributes:
+                        plev = self.attributes['pa_{0}'.format(att)]
+                else:
+                    if 'zh_nudging_{0}'.format(att) in self.attributes:
+                        zlev = self.attributes['zh_nudging_{0}'.format(att)]
+                    if 'pa_nudging_{0}'.format(att) in self.attributes:
+                        plev = self.attributes['pa_nudging_{0}'.format(att)]
+
 
         if flag:
             if zlev is not None or plev is not None: # simple nudging profile described in global attributes
@@ -2503,13 +2558,12 @@ class Case:
                     zlev = int(thermo.plev2zlev(plev,height_loc,pressure_loc))
                 if plev is None:
                     plev = int(thermo.zlev2plev(zlev,height_loc,pressure_loc))
-
                 for var in ['ta','theta','thetal']:
                     self.set_attribute('zh_nudging_{0}'.format(var),zlev)
                     self.set_attribute('pa_nudging_{0}'.format(var),plev)
             else:
-                logger.error('Nudging case not yet coded')
-                raise NotImplementedError('Nudging case not yet coded')
+                logger.error('Issue in temperature nudging')
+                raise NotImplementedError('Issue in temperature nudging')
 
             # temperature nudging is active. All temperature variables are added, if needed.
             if 'ta_nud' not in self.var_forcing_list:
@@ -2533,19 +2587,24 @@ class Case:
 
         #---- Humidity nudging
 
-        atts = ['nudging_qv','nudging_qt','nudging_rv','nudging_rt']
+        atts = ['qv','qt','rv','rt']
         flag = False
         zlev = None
         plev = None
         for att in atts:
-            if att in self.attlist and self.attributes[att] != 0:
+            if att in self.attlist and self.attributes[natt] != 0:
                 flag = True
-                nudging_timescale = self.attributes[att]
-                if self.attributes[att] > 0: # simple nudging profile described in global attributes
+                nudging_timescale = self.attributes[natt]
+                if self.attributes[natt] > 0: # simple nudging profile described in global attributes
                     if 'zh_{0}'.format(att) in self.attributes:
                         zlev = self.attributes['zh_{0}'.format(att)]
                     if 'pa_{0}'.format(att) in self.attributes:
                         plev = self.attributes['pa_{0}'.format(att)]
+                else:
+                    if 'zh_nudging_{0}'.format(att) in self.attributes:
+                        zlev = self.attributes['zh_nudging_{0}'.format(att)]
+                    if 'pa_nudging_{0}'.format(att) in self.attributes:
+                        plev = self.attributes['pa_nudging_{0}'.format(att)]
 
         if flag:
             if zlev is not None or plev is not None: # simple nudging profile described in global attributes
@@ -2561,8 +2620,8 @@ class Case:
                     self.set_attribute('zh_nudging_{0}'.format(var),zlev)
                     self.set_attribute('pa_nudging_{0}'.format(var),plev)
             else:
-                logger.error('Nudging case not yet coded')
-                raise NotImplementedError('Nudging case not yet coded')
+                logger.error('Issue in humidity nudging')
+                raise NotImplementedError('Issue in humidity nudging')
 
             # humidity nudging is active. All temperature variables are added, if needed.
             if 'qv_nud' not in self.var_forcing_list:
