@@ -628,6 +628,11 @@ class Case:
                 logger.error('level axis should be given for variable {0}'.format(varid))
                 raise ValueError('level axis should be given for variable {0}'.format(varid))
 
+            if len(np.array(kwargs['lev']).shape) != 1:
+                logger.error('level axis should have only one dimension for variable {0}'.format(varid))
+                logger.error('You may have mixed lev and height/pressure arguments')
+                logger.error('lev argument is used to provide an axis within the netcdf files')
+
             nlev, = np.array(kwargs['lev']).shape # In case lev is given as a list
 
             # Put the expected shape of the input data
