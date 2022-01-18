@@ -1,0 +1,126 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""
+Created on 10 January 2022
+
+@author: Maike Ahlgrimm
+
+Modification
+
+"""
+
+## MAGIC Leg13A SCM-enabled case definition
+
+import sys
+sys.path = ['../../utils/',] + sys.path
+
+import netCDF4 as nc
+import numpy as np
+
+from Case import Case
+import thermo
+
+################################################
+# 0. General configuration of the present script
+################################################
+
+lplot = True     # plot the new version of the case
+lcompare = True  # plot comparisons between original and new versions
+lverbose = True # print information on variables and case
+
+################################################
+# 1. Get the original version of the case
+################################################
+
+# initialize the case structure for the original version
+case = Case('MAGIC_Leg15a/REF')
+
+# read case information in file
+case.read('MAGIC_Leg15a_REF_DEF_driver.nc')
+
+# display some information about the case
+if lverbose:
+    case.info()
+
+################################################
+# 2. Interpolate onto a new grid, same for all the variables
+#    and add new variables if needed
+################################################
+
+# To run the IFS SCM, the SCM is relaxed (throughout the whole column) against
+# the observed (radiosonde) atmospheric thermodynamic state (T, qv).
+# However, because the radiosonde data in the upper atmosphere and right
+# above the surface was missing in places
+# or giving unreliable values, the observed profiles were blended with the
+# IFS model-derived profiles contained in the lsf forcing. On the 137
+# model level grid of the IFS, levels 0:34 were replaced with model data,
+# levels 35:44 were given a linearly weighted blend of sonde/IFS data.
+# Sonde data was used between levels 45:133, an levels 134:136 were a
+# linear blend of sonde/IFS data again. Any missing sonde values were
+# replaced with corresponding model values.
+
+# The vertical velocity forcing (wls) was interpolated to the 137 model
+# level grid, and the uppermost 7 levels scaled down to zero by hand.
+
+# Extend profiles 
+# Wind: just constant above what is presently defined
+#case.extend_init_wind(height=20000.)
+
+# Total water: 0 above what is presently defined
+#case.extend_init_rt(rt=[0,0], height=[5600., 20000.])
+
+# Temperature using ERA5
+# Only above 12 km to have a nicer and more stable extrapolated profile.
+#with nc.Dataset('../aux/ERA5/ERA5_SGP_19970621000000-19970622230000.nc') as f:
+#    temp = np.average(np.squeeze(f['ta'][:,::-1]), axis=0)
+#    pa = f['plev'][::-1]
+#    theta = thermo.t2theta(p=pa, temp=temp)
+#    height = np.average(np.squeeze(f['zg'][:,::-1]), axis=0)
+#    theta = theta[height >= 12000]
+#    height = height[height >= 12000]
+#    case.extend_init_theta(theta=theta, height=height)
+
+# Add a surface temperature based on SGP observations
+#with nc.Dataset('../aux/tskin/tskin_SGP_C1_irt10m_19970621003000-19970622233000.nc') as f:
+#    dates = nc.num2date(f['time'][:], units=f['time'].units)
+#    index = [d.day == 21 and d.hour >= 11 or d.day == 22 and d.hour <= 2 for d in dates ]
+#    times = f['time'][index]
+#    tskin = f['tskin'][index]
+
+#    case.add_surface_skin_temp(tskin,time=times-times[0])
+
+# grid onto which interpolate the input data
+
+# New vertical grid, 10-m resolution from surface to 6000 m (above the surface)
+levout = np.array(range(0,20001,10),dtype=np.float64) 
+
+# New temporal grid, from 13:00 UTC, 20 July 2013 to 04:00 UTC, 25 July 2013, 30-min timestep
+timeout = np.array(range(0,403200,1800),dtype=np.float64) 
+
+# conversion
+newcase = case.convert2SCM(time=timeout,lev=levout,usetemp=True,levtype='altitude')
+
+# update some attributes
+newcase.set_title("Forcing and initial conditions for MAGIC Leg13A case - SCM-enabled version")
+newcase.set_script("DEPHY-SCM/MAGIC/REF/driver_SCM.py")
+
+# display some information about the new version of the case
+if lverbose:
+    newcase.info()
+
+################################################
+# 3. Save new version of the case in netcdf file
+################################################
+
+# save the new version of the case in netcdf file 
+newcase.write('MAGIC_Leg13a_REF_SCM_driver.nc')
+
+################################################
+# 4. Plots if asked
+################################################
+
+if lplot:
+    newcase.plot(rep_images='./images/driver_SCM/',timeunits='hours')
+
+if lcompare:
+    newcase.plot_compare(case,rep_images='./images/compare/',label1="SCM-enabled",label2="Original",timeunits='hours')
