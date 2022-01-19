@@ -26,9 +26,9 @@ import thermo
 # 0. General configuration of the present script
 ################################################
 
-lplot = True     # plot the new version of the case
-lcompare = True  # plot comparisons between original and new versions
-lverbose = True # print information on variables and case
+lplot = False     # plot the new version of the case
+lcompare = False  # plot comparisons between original and new versions
+lverbose = False # print information on variables and case
 
 ################################################
 # 1. Get the original version of the case
@@ -97,14 +97,14 @@ if lverbose:
 levout = np.array(range(0,20001,10),dtype=np.float64) 
 
 # New temporal grid, from 13:00 UTC, 20 July 2013 to 04:00 UTC, 25 July 2013, 30-min timestep
-#timeout = np.array(range(0,403200,1800),dtype=np.float64)
-timeout = np.arange(datetime(2013, 7, 20, 17, 30),datetime(2013, 7, 25, 4, 0), timedelta(minutes=30))
+timeout = np.array(range(0,383400,1800),dtype=np.float64)
+#timeout = np.arange(datetime(2013, 7, 20, 17, 30),datetime(2013, 7, 25, 4, 0), timedelta(minutes=30))
 
 # conversion
 newcase = case.convert2SCM(time=timeout,lev=levout,usetemp=True,levtype='altitude')
 
 # update some attributes
-newcase.set_title("Forcing and initial conditions for MAGIC Leg13A case - SCM-enabled version")
+newcase.set_title("Forcing and initial conditions for MAGIC Leg15A case - SCM-enabled version")
 newcase.set_script("DEPHY-SCM/MAGIC/REF/driver_SCM.py")
 
 # display some information about the new version of the case
@@ -116,7 +116,7 @@ if lverbose:
 ################################################
 
 # save the new version of the case in netcdf file 
-newcase.write('MAGIC_Leg13a_REF_SCM_driver.nc')
+newcase.write('MAGIC_LEG15A_SCM_driver.nc')
 
 ################################################
 # 4. Plots if asked

@@ -17,6 +17,8 @@ sys.path = ['../../utils/',] + sys.path
 import netCDF4 as nc
 import numpy as np
 
+from datetime import datetime, timedelta
+
 from Case import Case
 import thermo
 
@@ -33,10 +35,10 @@ lverbose = True # print information on variables and case
 ################################################
 
 # initialize the case structure for the original version
-case = Case('MAGIC_Leg15a/REF')
+case = Case('MAGIC/LEG15A')
 
 # read case information in file
-case.read('MAGIC_Leg15a_REF_DEF_driver.nc')
+case.read('MAGIC_LEG15A_DEF_driver.nc')
 
 # display some information about the case
 if lverbose:
@@ -95,7 +97,8 @@ if lverbose:
 levout = np.array(range(0,20001,10),dtype=np.float64) 
 
 # New temporal grid, from 13:00 UTC, 20 July 2013 to 04:00 UTC, 25 July 2013, 30-min timestep
-timeout = np.array(range(0,403200,1800),dtype=np.float64) 
+#timeout = np.array(range(0,403200,1800),dtype=np.float64)
+timeout = np.arange(datetime(2013, 7, 20, 17, 30),datetime(2013, 7, 25, 4, 0), timedelta(minutes=30))
 
 # conversion
 newcase = case.convert2SCM(time=timeout,lev=levout,usetemp=True,levtype='altitude')
