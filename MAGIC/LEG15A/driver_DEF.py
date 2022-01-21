@@ -9,7 +9,7 @@ Modification
 
 """
 
-## MAGIC Leg15 case definition, based on ship-following
+## MAGIC Leg15A case definition, based on ship-following
 ## SCM forcing. Original ship-following LES forcing
 ## derived by Jeremy McGibbon and Chris Bretherton
 ## (JAMES 2017), adapted for SCM use by M Ahlgrimm
@@ -32,7 +32,6 @@ from scipy import interpolate
 import matplotlib.pyplot as plt
 
 def ___convert_to_datetime(d):
-#    ss=len(d)
   return datetime.strptime(np.datetime_as_string(d,unit='s'), '%Y-%m-%dT%H:%M:%S')
 
 ################################################
@@ -68,7 +67,7 @@ sfc=xr.open_dataset('../aux/15A/15A_sfc.nc')
 ################################################
 # 2. Initial state
 ################################################
-basetime=datetime(2013,7,20,17,30)
+basetime=datetime(2013,7,20,17,30) # Time of initial radiosonde ascent
 
 sndtimeorig=snd.time #minutes since 2013-07-20 17:29:00
 lsftimeorig=lsf.time #hours   since 2013-07-20 13:00:00
@@ -92,12 +91,9 @@ sfctime=delta.total_seconds()
 for i in np.arange(1,len(sfctimeorig),1):
   delta=___convert_to_datetime(sfctimeorig[i])-basetime
   sfctime= np.append(sfctime,delta.total_seconds())  
-#
-# Model-derived forcing is available from 13UTC, but
-# the initial profile from sonde only at 17:30UTC.
-# The case should start at 17:30
 
-#Profiles from sonde
+# Profiles from sonde, on a fixed height grid
+# Lowest level 7.5m
 zsnd_temp=snd.z.values         #m
 qsnd_temp=snd.q.values/1000.   #kg/kg
 psnd_temp=snd.p.values*100.    #Pa
@@ -106,10 +102,6 @@ vsnd_temp=snd.v.values         #m/s
 tsnd_temp=snd.T.values         #K
 thetasnd_temp=snd.theta.values #K
 rhsnd_temp=snd.RH.values       #1
-
-# Initial state from surface file
-sst0 = sfc.sst[255].values
-case.add_init_ts(sst0)
 
 # Since sonde profile starts at 7.5m above surface,
 # add values at surface
@@ -146,6 +138,7 @@ for istep in range(0,len(sndtime)):
 
 
 # Large-scale state - model derived
+# First profile at 17:00 - discard prior profiles
 zlsf=lsf.z.values[4:,:] #m
 ulsf=lsf.u.values[4:,:] #m/s
 vlsf=lsf.v.values[4:,:] #m/s
@@ -153,7 +146,7 @@ qlsf=lsf.q.values[4:,:] #kg/kg
 tlsf=lsf.T.values[4:,:] #k
 
 # In order to merge sonde data with model data, first
-# interpolate hourly model data in time to sonde time
+# interpolate hourly model data to sonde time
 
 # dimensions of model data
 ntim,nlevin=zlsf.shape
@@ -190,8 +183,11 @@ ulsf_sonde=np.zeros((nsnd,nlevsnd),dtype=np.float64)
 vlsf_sonde=np.zeros((nsnd,nlevsnd),dtype=np.float64)
 qlsf_sonde=np.zeros((nsnd,nlevsnd),dtype=np.float64)
 tlsf_sonde=np.zeros((nsnd,nlevsnd),dtype=np.float64)
+zlsf_sondetime_orig=np.zeros((nsnd,nlevin),dtype=np.float64)
 for istep in range(0,nsnd):
+  zlsf_sondetime_orig[istep,:]=zlsf_sondetime[istep,:]
   zlsf_sondetime[istep,:]=zlsf_sondetime[10,:]
+  
   ff = interpolate.interp1d(zlsf_sondetime[istep,:], tlsf_sondetime[istep,:],
                             bounds_error=False, fill_value=tlsf_sondetime[istep,-1]) # Pad lowest level, if necessary
   tlsf_sonde[istep,:] = ff(zsnd)
@@ -212,7 +208,8 @@ tbg=np.zeros((nsnd,nlevsnd),dtype=np.float64)
 qbg=np.zeros((nsnd,nlevsnd),dtype=np.float64)
 
 for istep in range(0,nsnd):
-  #Blend model data in with sonde data in lowest 5 levels
+  # Blend model data in with sonde data in lowest 8 levels for winds
+  # Leave T and q profiles unchanged
   ubg[istep,7:]=usnd[istep,7:]
   vbg[istep,7:]=vsnd[istep,7:]
   qbg[istep,:]=qsnd[istep,:]
@@ -236,6 +233,7 @@ if (lblend):
     ytop=500
     plt.subplot(r,c,w)
     plt.plot(tlsf_sondetime[tidx,:],zlsf_sondetime[tidx,:],label='lsf')
+    plt.plot(tlsf_sondetime[tidx,:],zlsf_sondetime_orig[tidx,:],color='orange',label='lsf orig')
     plt.plot(tsnd[tidx,:],zsnd,color='red',label='sonde')
     plt.plot(tbg[tidx,:],zsnd,color='green',label='blend')
     plt.legend(loc='best')
@@ -245,6 +243,7 @@ if (lblend):
 
     plt.subplot(r,c,w)
     plt.plot(qlsf_sondetime[tidx,:],zlsf_sondetime[tidx,:],label='lsf')
+    plt.plot(qlsf_sondetime[tidx,:],zlsf_sondetime_orig[tidx,:],color='orange',label='lsf orig')
     plt.plot(qsnd[tidx,:],zsnd,color='red',label='sonde')
     plt.plot(qbg[tidx,:],zsnd,color='green',label='blend')
     plt.legend(loc='best')
@@ -285,6 +284,7 @@ if (lblend):
     ytop=20000
     plt.subplot(r,c,w)
     plt.plot(tlsf_sondetime[tidx,:],zlsf_sondetime[tidx,:],label='lsf')
+    plt.plot(tlsf_sondetime[tidx,:],zlsf_sondetime_orig[tidx,:],color='orange',label='lsf')
     plt.plot(tsnd[tidx,:],zsnd,color='red',label='sonde')
     plt.plot(tbg[tidx,:],zsnd,color='green',label='blend')
     plt.legend(loc='best')
@@ -293,6 +293,7 @@ if (lblend):
 
     plt.subplot(r,c,w)
     plt.plot(qlsf_sondetime[tidx,:],zlsf_sondetime[tidx,:],label='lsf')
+    plt.plot(qlsf_sondetime[tidx,:],zlsf_sondetime_orig[tidx,:],color='orange',label='lsf')
     plt.plot(qsnd[tidx,:],zsnd,color='red',label='sonde')
     plt.plot(qbg[tidx,:],zsnd,color='green',label='blend')
     plt.legend(loc='best')
@@ -320,29 +321,27 @@ if (lblend):
   #  plt.show()
 
   
-# Winds
+# Initial winds
 case.add_init_wind(u=ubg[0,:], v=vbg[0,:], lev=zsnd, levtype='altitude')
 
-# Temperature
+# Initial temperature
 case.add_init_temp(tsnd[0,:], lev=zsnd, levtype='altitude')
-#print(zsnd[0:10])
-#print(tsnd[0:10])
-#print(qsnd[0:10])
-#print(usnd[0:10])
-#print(vsnd[0:10])
-# Potential temperature
+
+# Initial potential temperature
 case.add_init_theta(thetasnd[0,:], lev=zsnd, levtype='altitude')
 
-# Water vapor mixing ratio
+# Initial water vapor mixing ratio
 case.add_init_rv(qsnd[0,:], lev=zsnd, levtype='altitude')
 
-# Pressure
+# Initial pressure
 case.add_init_pressure(psnd[0,:],lev=zsnd, levtype='altitude')
 
-
-# Initial state from large scale forcing
+# Initial state from surface file
+sst0 = sfc.sst[255].values
+case.add_init_ts(sst0)
 
 # Surface pressure
+# Assumption here: sonde pressure at 7.5m plus 10Pa
 ps0 = psnd[0,0]
 case.add_init_ps(ps0)
 
@@ -356,36 +355,28 @@ case.add_init_ps(ps0)
 # deviation of 2deg) was applied to the model
 # fields
 
-# height on model levels (hybrid pressure coordinate,
-# varying in time)
-
+# Time-varying location, based on hourly model data, starting at 17:00
 lat = lsf.lat.values[4:]
 lon = lsf.lon.values[4:]
-
 case.add_latitude(lat,time=lsftime[4:])
 case.add_longitude(lon,time=lsftime[4:])
 
-#  Geostrophic wind
+
+# Geostrophic wind
+# Use representative mid-track vertical coordinate instead of time-varying coordinate
 ug=lsf.u_geo.values[4:,:]
 vg=lsf.v_geo.values[4:,:]
 case.add_geostrophic_wind(ug=ug,vg=vg,time=lsftime[4:],lev=zlsf_sondetime[0,:],height=zlsf_sondetime[0,:],levtype='altitude')
 
 # large-scale horizontal advective tendencies
+# Use representative mid-track vertical coordinate instead of time-varying coordinate
 t_adv  = lsf.tls[4:,:] #K/s
 rv_adv = lsf.qls[4:,:] #kg/kg/s
-#case.add_rv_advection(rv_adv,time=lsftime[4:],lev=zlsf[-1,:],height=zlsf,levtype='altitude')
-#case.add_temp_advection(t_adv,time=lsftime[4:],lev=zlsf[-1,:],height=zlsf,levtype='altitude',include_rad=False)
-
 case.add_rv_advection(rv_adv,time=lsftime[4:],lev=zlsf_sondetime[0,:],height=zlsf_sondetime[0,:],levtype='altitude')
 case.add_temp_advection(t_adv,time=lsftime[4:],lev=zlsf_sondetime[0,:],height=zlsf_sondetime[0,:],levtype='altitude',include_rad=False)
 
-# Pressure levels 
-#plsf=lsf.p[4:,:]
-#case.add_pressure_forcing(plsf,time=lsftime[4:],lev=zlsf[-1,:],height=zlsf,levtype='altitude')
-
 # Surface pressure
-#ps=lsf.p_surf[4:]*100. #Pa
-#case.add_surface_pressure_forcing(ps,time=lsftime[4:])
+# Use interpolated sonde pressure from lowest level at 7.5m, plus 10Pa
 case.add_surface_pressure_forcing(psnd[:,0],time=sndtime)
 
 
@@ -396,15 +387,23 @@ case.add_surface_pressure_forcing(psnd[:,0],time=sndtime)
 
 
 # Large-scale vertical velocity
+# Use representative mid-track vertical coordinate instead of time-varying coordinate
 w=lsf.wls[4:,:] #m/s
 case.add_vertical_velocity(w=w,lev=zlsf_sondetime[0,:],height=zlsf_sondetime[0,:],time=lsftime[4:],levtype='altitude')
 
 
-#case.add_wind_nudging(unudg=unudg,vnudg=vnudg,timescale=3600.*3.,p_nudging=110000.,time=timeForc,timeid='time',lev=levForc,levtype='pressure',levid='lev')
-case.add_temp_nudging(tbg,timescale=3600.*3.,z_nudging=0.,time=sndtime,timeid='time',lev=zsnd,levtype='altitude')
-case.add_qv_nudging(qbg,timescale=3600.*3.,z_nudging=0.,time=sndtime,timeid='time',lev=zsnd,levtype='altitude')
+# Add sonde profiles (winds blended with model profiles in the lowest 8 layers) to nudge against
+# Winds: time scale 12 hours, nudge all levels above surface
+case.add_wind_nudging(unudg=ubg,vnudg=vbg,timescale=3600.*12.,z_nudging=0.,time=sndtime,timeid='time',lev=zsnd,levtype='altitude')
+# Thermodynamic profiles:
+# Nudge temperature with time scale 30min above 3km
+case.add_temp_nudging(tbg,timescale=1800.,z_nudging=3000.,time=sndtime,timeid='time',lev=zsnd,levtype='altitude')
+# Nudge humidity with time scale of 2 days below 3km, and time scale 30min above 3km (according to LES reference)
+# Not possible in current DEPHY format, so choose here nudging of 30min timescale above 3km
+case.add_qv_nudging(qbg,timescale=1800.,z_nudging=3000.,time=sndtime,timeid='time',lev=zsnd,levtype='altitude')
 
 # Surface Forcing
+# time-varying SST from file, starting at 17:30UTC
 sst     = sfc.sst[255:] #K
 case.add_forcing_ts(sst, time=sfctime[255:])
 
