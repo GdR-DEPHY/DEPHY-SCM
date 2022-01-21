@@ -1,0 +1,45 @@
+The Atmospheric Radiation Measurement (ARM)/ Atmospheric System Research (ASR) program deployed observational equipment on a container ship traveling between Los Angeles, CA and Hawaii during a period from 2012-10-01 to 2013-09-30.
+During this "Marine ARM GPCI Investigation of Clouds" (MAGIC) campaign, the ship completed 18 round trips, observing the transition from the coastal stratocumulus to subtropical cumulus regime. The trips are numbered sequentially, and outgoing (from LA to Hawaii) "Legs" are labelled "A", return "Legs" are labelled "B".
+
+  Jeremy McGibbon and Chris Bretherton from University of Washington ran ship-following large-eddy simulations for the outgoing legs. Quality and availability of observations varies for the cases, and Leg15A is the most well-studied case to date.
+
+  A description of the LES study can be found in McGibbon and Bretherton (2017), and the forcing in particular is described in Section 2 of that paper.
+
+The SCM forcing created in this repository is based on the original LES forcing files provided by Jeremy McGibbon, which consist of three files per case:
+  1) A file containing the radiosonde profiles for each leg, interpolated onto a common height grid.
+  2) A file containing the time-varying SST for the leg.
+  3) Large-scale forcing derived from ECMWF gridded model data.
+
+  In support of the MAGIC campaign, ECMWF provided hourly gridded (0.5deg lat/lon) short-term operational forecast data to ARM. Each day, the forecast was initialised at 12 UTC, and forecast hours 12-35 (verifying at 0-23UTC the following day) were stitched together to provide a continuous hourly data set. The native horizontal resolution of the operational IFS was 16km at the time.
+  This gridded data set is the basis for the model-derived large-scale forcing. McGibbon and Bretherton discovered that small-scale variability, particularly in the vertical pressure velocity was leading to unwanted perturbations in the LES simulations and therefore smoothed the model fields by convolution with a Gaussian kernel (2deg standard deviation) prior to deriving ship-following advective tendencies for temperature and moisture, geostrophic winds and a large-scale vertical velocity.
+
+  The IFS uses a terrain-following pressure-hybrid coordinate, and the large-scale forcing is provided on the native IFS vertical model levels. Unfortunately, the horizontal smoothing of the model variables also leads to a blending of the (surface) pressure fields, blending profiles above substantial orography over the Californian coast with profiles over ocean. This results in surface pressure and elevation values significantly above sea level also for grid points located over ocean.
+
+  As radiosondes were launched off the moving container ship, wind profiles can have unrealistic wind shear in the lowest levels.
+
+  To construct the SCM forcing, the following assumptions were made:
+
+ 1) Near the Californian coast, the model vertical coordinate starts at about 950hPa or 400m. This is clearly unrealistic for an ocean point. I have chosen to replace the time (and location)-varying height/pressure fields of the model data with a single fixed profile taken from a grid point mid-track over the free ocean.
+  Plotting model thermodynamic profiles against the observed sonde profiles at the initial time shows better agreement of the trade inversion for this representative height profile compared to the original height profile based on blended orography.
+  
+  2) The inital profiles are based on the first radiosonde profile for each leg (with the exception of Leg18A, where the third profile was chosen, see McGibbon & Bretherton (2017) for discussion).
+  Since the vertical coordinate for sonde data starts at 7.5m and the SCM forcing requires surface values, all thermodynamic variables have the value at 7.5m repeated at the surface. To avoid unrealistic wind shear in the lowest few layers, the radiosonde wind profiles are linearly blended with the model winds in the lowest 8 sonde-height bins. Model fields are first interpolated in time and height to match the sonde time and height coordinates.
+
+3) Geostrophic winds, advective tendencies for T and q as well as vertical velocity are taken straight from the LES large-scale forcing. The time- and location-varying model vertical coordinate is replaced by a representative height coordinate taken mid-track over open ocean.
+
+4) SST is taken straight from the LES surface file. Since time coordinates vary for the three original forcing files, the SST data before the first radiosonde ascent is discarded.
+
+5) The radiosonde profiles of u, v, T and q are also added as nudging variables. Similar to the initial profiles, u and v profiles are blended with model wind profiles in the lowest 8 layers, while for T and q, the 7.5m value is also used as surface value.
+  McGibbon and Bretherton nudge the LES against the time-interpolated sonde winds with a time scale of 12 h to damp inertial oszillations.
+  They use a slightly more complicated vertical velocity perturbation to try and keep the inversion height of the simulation similar to the observed state. This, we cannot reproduce here. Instead, the sonde T and q profiles are also included as variabled that the model can be nudged towards. Previous experimentation in the IFS SCM has shown this to be a successful approach. (Timescale?)
+
+
+
+
+
+  
+
+   McGibbon, J., & Bretherton, C. S. (2017). Skill of shipÅ]following largeÅ]eddy simulations in reproducing MAGIC observations across the northeast Pacific stratocumulus to cumulus transition region. Journal of Advances in Modeling Earth Systems, 9(2), 810-831.
+
+
+  
