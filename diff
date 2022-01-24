@@ -1,0 +1,1096 @@
+diff --git a/MAGIC/LEG15A/MAGIC_LEG15A_DEF_driver.nc b/MAGIC/LEG15A/MAGIC_LEG15A_DEF_driver.nc
+deleted file mode 100644
+index dda5bba..0000000
+Binary files a/MAGIC/LEG15A/MAGIC_LEG15A_DEF_driver.nc and /dev/null differ
+diff --git a/MAGIC/LEG15A/MAGIC_LEG15A_SCM_driver.nc b/MAGIC/LEG15A/MAGIC_LEG15A_SCM_driver.nc
+deleted file mode 100644
+index f13ee6e..0000000
+Binary files a/MAGIC/LEG15A/MAGIC_LEG15A_SCM_driver.nc and /dev/null differ
+diff --git a/MAGIC/LEG15A/driver_DEF.py b/MAGIC/LEG15A/driver_DEF.py
+deleted file mode 100644
+index 690f0dc..0000000
+--- a/MAGIC/LEG15A/driver_DEF.py
++++ /dev/null
+@@ -1,424 +0,0 @@
+-#!/usr/bin/env python
+-# -*- coding: utf-8 -*-
+-"""
+-Created on 10 January 2022
+-
+-@author: Maike Ahlgrimm
+-
+-Modification
+-
+-"""
+-
+-## MAGIC Leg15A case definition, based on ship-following
+-## SCM forcing. Original ship-following LES forcing
+-## derived by Jeremy McGibbon and Chris Bretherton
+-## (JAMES 2017), adapted for SCM use by M Ahlgrimm
+-
+-import os
+-import sys
+-sys.path = ['../../utils/',] + sys.path
+-
+-import netCDF4 as nc
+-from netCDF4 import Dataset
+-import numpy as np
+-
+-from datetime import datetime, timedelta
+-
+-#import constants
+-from Case import Case
+-import xarray as xr
+-
+-from scipy import interpolate
+-import matplotlib.pyplot as plt
+-
+-def ___convert_to_datetime(d):
+-  return datetime.strptime(np.datetime_as_string(d,unit='s'), '%Y-%m-%dT%H:%M:%S')
+-
+-################################################
+-# 0. General configuration of the present script
+-################################################
+-
+-lplot = False # plot all the variables
+-lverbose = False # print information about variables and case
+-lblend = False
+-
+-################################################
+-# 1. General information about the case
+-################################################
+-
+-case = Case('MAGIC/LEG15A',
+-        startDate="20130720173000",
+-        endDate="20130725040000",
+-        surfaceType='ocean',
+-        zorog=0.)
+-
+-case.set_title("Forcing and initial conditions for ship-following MAGIC LEG15A case")
+-case.set_reference("J. McGibbon, C. Bretherton (JAMES 2017)")
+-case.set_author("M. Ahlgrimm")
+-case.set_script("DEPHY-SCM/MAGIC/LEG15A/driver_DEF.py")
+-
+-# radiosonde profiles
+-snd=xr.open_dataset('../aux/15A/15A_snd.nc')
+-# large-scale forcing derived from IFS model data
+-lsf=xr.open_dataset('../aux/15A/15A_lsf.nc')
+-# SST
+-sfc=xr.open_dataset('../aux/15A/15A_sfc.nc')
+-
+-################################################
+-# 2. Initial state
+-################################################
+-basetime=datetime(2013,7,20,17,30) # Time of initial radiosonde ascent
+-
+-sndtimeorig=snd.time #minutes since 2013-07-20 17:29:00
+-lsftimeorig=lsf.time #hours   since 2013-07-20 13:00:00
+-sfctimeorig=sfc.time #minutes since 2013-07-20 13:15:00
+-
+-# Convert times into seconds since 2013-07-20T173000
+-delta=___convert_to_datetime(sndtimeorig[0])-basetime
+-sndtime=delta.total_seconds()
+-for i in np.arange(1,len(sndtimeorig),1):
+-  delta=___convert_to_datetime(sndtimeorig[i])-basetime
+-  sndtime= np.append(sndtime,delta.total_seconds())
+-
+-delta=___convert_to_datetime(lsftimeorig[0])-basetime
+-lsftime=delta.total_seconds()
+-for i in np.arange(1,len(lsftimeorig),1):
+-  delta=___convert_to_datetime(lsftimeorig[i])-basetime
+-  lsftime= np.append(lsftime,delta.total_seconds())
+-
+-delta=___convert_to_datetime(sfctimeorig[0])-basetime
+-sfctime=delta.total_seconds()
+-for i in np.arange(1,len(sfctimeorig),1):
+-  delta=___convert_to_datetime(sfctimeorig[i])-basetime
+-  sfctime= np.append(sfctime,delta.total_seconds())  
+-
+-# Profiles from sonde, on a fixed height grid
+-# Lowest level 7.5m
+-zsnd_temp=snd.z.values         #m
+-qsnd_temp=snd.q.values/1000.   #kg/kg
+-psnd_temp=snd.p.values*100.    #Pa
+-usnd_temp=snd.u.values         #m/s
+-vsnd_temp=snd.v.values         #m/s
+-tsnd_temp=snd.T.values         #K
+-thetasnd_temp=snd.theta.values #K
+-rhsnd_temp=snd.RH.values       #1
+-
+-# Since sonde profile starts at 7.5m above surface,
+-# add values at surface
+-nsnd,nlevsnd=tsnd_temp.shape
+-nlevsnd=nlevsnd+1
+-zsnd=np.zeros((nlevsnd),dtype=np.float64)
+-qsnd=np.zeros((nsnd,nlevsnd),dtype=np.float64)
+-psnd=np.zeros((nsnd,nlevsnd),dtype=np.float64)
+-usnd=np.zeros((nsnd,nlevsnd),dtype=np.float64)
+-vsnd=np.zeros((nsnd,nlevsnd),dtype=np.float64)
+-tsnd=np.zeros((nsnd,nlevsnd),dtype=np.float64)
+-thetasnd=np.zeros((nsnd,nlevsnd),dtype=np.float64)
+-rhsnd=np.zeros((nsnd,nlevsnd),dtype=np.float64)
+-
+-zsnd[1:] = zsnd_temp
+-zsnd[0]  = 0.        # add lowest height level 0m
+-
+-for istep in range(0,len(sndtime)):
+-  qsnd[istep,1:]=qsnd_temp[istep,:]
+-  psnd[istep,1:]=psnd_temp[istep,:]
+-  usnd[istep,1:]=usnd_temp[istep,:]
+-  vsnd[istep,1:]=vsnd_temp[istep,:]
+-  tsnd[istep,1:]=tsnd_temp[istep,:]
+-  thetasnd[istep,1:]=thetasnd_temp[istep,:]
+-  rhsnd[istep,1:]=rhsnd_temp[istep,:]
+-  
+-  qsnd[istep,0]     = qsnd_temp[istep,0]      # assume same value as at 7.5m
+-  psnd[istep,0]     = psnd_temp[istep,0]+10.  # assume same value as at 7.5m plus 10Pa
+-  usnd[istep,0]     = 0.                      # assume no-slip surface
+-  vsnd[istep,0]     = 0.                      # assume no-slip surface
+-  tsnd[istep,0]     = tsnd_temp[istep,0]      # assume same value as at 7.5m
+-  thetasnd[istep,0] = thetasnd_temp[istep,0]  # assume same value as at 7.5m
+-  rhsnd[istep,0]    = rhsnd_temp[istep,0]     # assume same value as at 7.5m
+-
+-
+-# Large-scale state - model derived
+-# First profile at 17:00 - discard prior profiles
+-zlsf=lsf.z.values[4:,:] #m
+-ulsf=lsf.u.values[4:,:] #m/s
+-vlsf=lsf.v.values[4:,:] #m/s
+-qlsf=lsf.q.values[4:,:] #kg/kg
+-tlsf=lsf.T.values[4:,:] #k
+-
+-# In order to merge sonde data with model data, first
+-# interpolate hourly model data to sonde time
+-
+-# dimensions of model data
+-ntim,nlevin=zlsf.shape
+-# time dimension of sonde data
+-nsnd,nlevsnd=tsnd.shape
+-
+-ulsf_sondetime=np.zeros((nsnd,nlevin),dtype=np.float64)
+-vlsf_sondetime=np.zeros((nsnd,nlevin),dtype=np.float64)
+-qlsf_sondetime=np.zeros((nsnd,nlevin),dtype=np.float64)
+-tlsf_sondetime=np.zeros((nsnd,nlevin),dtype=np.float64)
+-zlsf_sondetime=np.zeros((nsnd,nlevin),dtype=np.float64)
+-
+-for ilev in range(0,nlevin):
+-  ff = interpolate.interp1d(lsftime[4:], tlsf[:,ilev],
+-                            bounds_error=False, fill_value=tlsf[-1,ilev]) # Pad after end date with the last value, if necessary
+-  tlsf_sondetime[:,ilev] = ff(sndtime)
+-  vv = interpolate.interp1d(lsftime[4:], vlsf[:,ilev],
+-                            bounds_error=False, fill_value=vlsf[-1,ilev]) # Pad after end date with the last value, if necessary
+-  vlsf_sondetime[:,ilev] = vv(sndtime)
+-  uu = interpolate.interp1d(lsftime[4:], ulsf[:,ilev],
+-                            bounds_error=False, fill_value=ulsf[-1,ilev]) # Pad after end date with the last value, if necessary
+-  ulsf_sondetime[:,ilev] = uu(sndtime)
+-  qq = interpolate.interp1d(lsftime[4:], qlsf[:,ilev],
+-                            bounds_error=False, fill_value=qlsf[-1,ilev]) # Pad after end date with the last value, if necessary
+-  qlsf_sondetime[:,ilev] = qq(sndtime)
+-  zz = interpolate.interp1d(lsftime[4:], zlsf[:,ilev],
+-                            bounds_error=False, fill_value=zlsf[-1,ilev]) # Pad after end date with the last value, if necessary
+-  zlsf_sondetime[:,ilev] = zz(sndtime)
+-
+-  
+-    
+-# Now interpolate model data to sonde vertical grid
+-ulsf_sonde=np.zeros((nsnd,nlevsnd),dtype=np.float64)
+-vlsf_sonde=np.zeros((nsnd,nlevsnd),dtype=np.float64)
+-qlsf_sonde=np.zeros((nsnd,nlevsnd),dtype=np.float64)
+-tlsf_sonde=np.zeros((nsnd,nlevsnd),dtype=np.float64)
+-zlsf_sondetime_orig=np.zeros((nsnd,nlevin),dtype=np.float64)
+-for istep in range(0,nsnd):
+-  zlsf_sondetime_orig[istep,:]=zlsf_sondetime[istep,:]
+-  zlsf_sondetime[istep,:]=zlsf_sondetime[10,:]
+-  
+-  ff = interpolate.interp1d(zlsf_sondetime[istep,:], tlsf_sondetime[istep,:],
+-                            bounds_error=False, fill_value=tlsf_sondetime[istep,-1]) # Pad lowest level, if necessary
+-  tlsf_sonde[istep,:] = ff(zsnd)
+-  uu = interpolate.interp1d(zlsf_sondetime[istep,:], ulsf_sondetime[istep,:],
+-                            bounds_error=False, fill_value=ulsf_sondetime[istep,-1]) # Pad lowest level, if necessary
+-  ulsf_sonde[istep,:] = uu(zsnd)
+-  vv = interpolate.interp1d(zlsf_sondetime[istep,:], vlsf_sondetime[istep,:],
+-                            bounds_error=False, fill_value=vlsf_sondetime[istep,-1]) # Pad lowest level, if necessary
+-  vlsf_sonde[istep,:] = vv(zsnd)
+-  qq = interpolate.interp1d(zlsf_sondetime[istep,:], qlsf_sondetime[istep,:],
+-                            bounds_error=False, fill_value=qlsf_sondetime[istep,-1]) # Pad lowest level, if necessary
+-  qlsf_sonde[istep,:] = qq(zsnd)
+-
+-# Define "background" fields and blend sonde data with model data
+-ubg=np.zeros((nsnd,nlevsnd),dtype=np.float64)
+-vbg=np.zeros((nsnd,nlevsnd),dtype=np.float64)
+-tbg=np.zeros((nsnd,nlevsnd),dtype=np.float64)
+-qbg=np.zeros((nsnd,nlevsnd),dtype=np.float64)
+-
+-for istep in range(0,nsnd):
+-  # Blend model data in with sonde data in lowest 8 levels for winds
+-  # Leave T and q profiles unchanged
+-  ubg[istep,7:]=usnd[istep,7:]
+-  vbg[istep,7:]=vsnd[istep,7:]
+-  qbg[istep,:]=qsnd[istep,:]
+-  tbg[istep,:]=tsnd[istep,:]  
+-  weight=[0.,0.,0.2,.4,.6,.8,1.]
+-  for ilev in range(0,7):
+-    ubg[istep,ilev]=(1.-weight[ilev])*ulsf_sonde[istep,ilev]+weight[ilev]*usnd[istep,ilev]
+-    vbg[istep,ilev]=(1.-weight[ilev])*vlsf_sonde[istep,ilev]+weight[ilev]*vsnd[istep,ilev]
+-#    qbg[istep,ilev]=(1.-weight[ilev])*qlsf_sonde[istep,ilev]+weight[ilev]*qsnd[istep,ilev]
+-#    tbg[istep,ilev]=(1.-weight[ilev])*tlsf_sonde[istep,ilev]+weight[ilev]*tsnd[istep,ilev]
+-
+-
+-if (lblend):
+-  for tidx in range(0,nsnd): 
+-    plt.figure(figsize=(14,6))
+-    plt.suptitle("sonde nr "+str(tidx))
+-    c=4
+-    r=1
+-    w=1
+-    #tidx=10
+-    ytop=500
+-    plt.subplot(r,c,w)
+-    plt.plot(tlsf_sondetime[tidx,:],zlsf_sondetime[tidx,:],label='lsf')
+-    plt.plot(tlsf_sondetime[tidx,:],zlsf_sondetime_orig[tidx,:],color='orange',label='lsf orig')
+-    plt.plot(tsnd[tidx,:],zsnd,color='red',label='sonde')
+-    plt.plot(tbg[tidx,:],zsnd,color='green',label='blend')
+-    plt.legend(loc='best')
+-    plt.ylim([0,ytop])
+-    plt.xlim([285,295])
+-    w=w+1
+-
+-    plt.subplot(r,c,w)
+-    plt.plot(qlsf_sondetime[tidx,:],zlsf_sondetime[tidx,:],label='lsf')
+-    plt.plot(qlsf_sondetime[tidx,:],zlsf_sondetime_orig[tidx,:],color='orange',label='lsf orig')
+-    plt.plot(qsnd[tidx,:],zsnd,color='red',label='sonde')
+-    plt.plot(qbg[tidx,:],zsnd,color='green',label='blend')
+-    plt.legend(loc='best')
+-    plt.ylim([0,ytop])
+-    plt.xlim([0.005,.015])
+-    w=w+1
+-
+-    plt.subplot(r,c,w)
+-    plt.plot(ulsf_sondetime[tidx,:],zlsf_sondetime[tidx,:],label='lsf')
+-    plt.plot(usnd[tidx,:],zsnd,color='red',label='sonde')
+-    plt.plot(ubg[tidx,:],zsnd,color='green',label='blend')
+-
+-    plt.legend(loc='best')
+-    plt.ylim([0,ytop])
+-    plt.xlim([-10.,10])
+-    w=w+1
+-
+-    plt.subplot(r,c,w)
+-    plt.plot(vlsf_sondetime[tidx,:],zlsf_sondetime[tidx,:],label='lsf')
+-    plt.plot(vsnd[tidx,:],zsnd,color='red',label='sonde')
+-    plt.plot(vbg[tidx,:],zsnd,color='green',label='blend')
+-    plt.legend(loc='best')
+-    plt.ylim([0,ytop])
+-    plt.xlim([-10.,0.])
+-    w=w+1
+-    plt.savefig('images/driver_DEF/merged_background_surface_'+str(tidx).zfill(2)+'.png')
+-    plt.close()
+-  #  plt.show()
+-
+-
+-    plt.figure(figsize=(14,6))
+-    plt.suptitle("sonde nr "+str(tidx))      
+-
+-    c=4
+-    r=1
+-    w=1
+-  #  tidx=10
+-    ytop=20000
+-    plt.subplot(r,c,w)
+-    plt.plot(tlsf_sondetime[tidx,:],zlsf_sondetime[tidx,:],label='lsf')
+-    plt.plot(tlsf_sondetime[tidx,:],zlsf_sondetime_orig[tidx,:],color='orange',label='lsf')
+-    plt.plot(tsnd[tidx,:],zsnd,color='red',label='sonde')
+-    plt.plot(tbg[tidx,:],zsnd,color='green',label='blend')
+-    plt.legend(loc='best')
+-    plt.ylim([0,ytop])
+-    w=w+1
+-
+-    plt.subplot(r,c,w)
+-    plt.plot(qlsf_sondetime[tidx,:],zlsf_sondetime[tidx,:],label='lsf')
+-    plt.plot(qlsf_sondetime[tidx,:],zlsf_sondetime_orig[tidx,:],color='orange',label='lsf')
+-    plt.plot(qsnd[tidx,:],zsnd,color='red',label='sonde')
+-    plt.plot(qbg[tidx,:],zsnd,color='green',label='blend')
+-    plt.legend(loc='best')
+-    plt.ylim([0,ytop])
+-    w=w+1
+-
+-    plt.subplot(r,c,w)
+-    plt.plot(ulsf_sondetime[tidx,:],zlsf_sondetime[tidx,:],label='lsf')
+-    plt.plot(usnd[tidx,:],zsnd,color='red',label='sonde')
+-    plt.plot(ubg[tidx,:],zsnd,color='green',label='blend')
+-
+-    plt.legend(loc='best')
+-    plt.ylim([0,ytop])
+-    w=w+1
+-
+-    plt.subplot(r,c,w)
+-    plt.plot(vlsf_sondetime[tidx,:],zlsf_sondetime[tidx,:],label='lsf')
+-    plt.plot(vsnd[tidx,:],zsnd,color='red',label='sonde')
+-    plt.plot(vbg[tidx,:],zsnd,color='green',label='blend')
+-    plt.legend(loc='best')
+-    plt.ylim([0,ytop])
+-    w=w+1
+-    plt.savefig('images/driver_DEF/merged_background_all_'+str(tidx).zfill(2)+'.png')
+-    plt.close()
+-  #  plt.show()
+-
+-  
+-# Initial winds
+-case.add_init_wind(u=ubg[0,:], v=vbg[0,:], lev=zsnd, levtype='altitude')
+-
+-# Initial temperature
+-case.add_init_temp(tsnd[0,:], lev=zsnd, levtype='altitude')
+-
+-# Initial potential temperature
+-case.add_init_theta(thetasnd[0,:], lev=zsnd, levtype='altitude')
+-
+-# Initial water vapor mixing ratio
+-case.add_init_rv(qsnd[0,:], lev=zsnd, levtype='altitude')
+-
+-# Initial pressure
+-case.add_init_pressure(psnd[0,:],lev=zsnd, levtype='altitude')
+-
+-# Initial state from surface file
+-sst0 = sfc.sst[255].values
+-case.add_init_ts(sst0)
+-
+-# Surface pressure
+-# Assumption here: sonde pressure at 7.5m plus 10Pa
+-ps0 = psnd[0,0]
+-case.add_init_ps(ps0)
+-
+-################################################
+-# 3. Forcing
+-################################################
+-
+-# Model-field-derived large-scale forcing
+-# Based on 0.5deg lat/lon gridded ECMWF data
+-# A smoothing (Gaussian kernel with standard
+-# deviation of 2deg) was applied to the model
+-# fields
+-
+-# Time-varying location, based on hourly model data, starting at 17:00
+-lat = lsf.lat.values[4:]
+-lon = lsf.lon.values[4:]
+-case.add_latitude(lat,time=lsftime[4:])
+-case.add_longitude(lon,time=lsftime[4:])
+-
+-
+-# Geostrophic wind
+-# Use representative mid-track vertical coordinate instead of time-varying coordinate
+-ug=lsf.u_geo.values[4:,:]
+-vg=lsf.v_geo.values[4:,:]
+-case.add_geostrophic_wind(ug=ug,vg=vg,time=lsftime[4:],lev=zlsf_sondetime[0,:],height=zlsf_sondetime[0,:],levtype='altitude')
+-
+-# large-scale horizontal advective tendencies
+-# Use representative mid-track vertical coordinate instead of time-varying coordinate
+-t_adv  = lsf.tls[4:,:] #K/s
+-rv_adv = lsf.qls[4:,:] #kg/kg/s
+-case.add_rv_advection(rv_adv,time=lsftime[4:],lev=zlsf_sondetime[0,:],height=zlsf_sondetime[0,:],levtype='altitude')
+-case.add_temp_advection(t_adv,time=lsftime[4:],lev=zlsf_sondetime[0,:],height=zlsf_sondetime[0,:],levtype='altitude',include_rad=False)
+-
+-# Surface pressure
+-# Use interpolated sonde pressure from lowest level at 7.5m, plus 10Pa
+-case.add_surface_pressure_forcing(psnd[:,0],time=sndtime)
+-
+-
+-#plt.figure(figsize=(14,6))
+-#plt.plot(sndtime,psnd[:,0]/100.)
+-#plt.plot(lsftime[4:],ps/100.,color='red')
+-#plt.show()
+-
+-
+-# Large-scale vertical velocity
+-# Use representative mid-track vertical coordinate instead of time-varying coordinate
+-w=lsf.wls[4:,:] #m/s
+-case.add_vertical_velocity(w=w,lev=zlsf_sondetime[0,:],height=zlsf_sondetime[0,:],time=lsftime[4:],levtype='altitude')
+-
+-
+-# Add sonde profiles (winds blended with model profiles in the lowest 8 layers) to nudge against
+-# Winds: time scale 12 hours, nudge all levels above surface
+-case.add_wind_nudging(unudg=ubg,vnudg=vbg,timescale=3600.*12.,z_nudging=0.,time=sndtime,timeid='time',lev=zsnd,levtype='altitude')
+-# Thermodynamic profiles:
+-# Nudge temperature with time scale 30min above 3km
+-case.add_temp_nudging(tbg,timescale=1800.,z_nudging=3000.,time=sndtime,timeid='time',lev=zsnd,levtype='altitude')
+-# Nudge humidity with time scale of 2 days below 3km, and time scale 30min above 3km (according to LES reference)
+-# Not possible in current DEPHY format, so choose here nudging of 30min timescale above 3km
+-case.add_qv_nudging(qbg,timescale=1800.,z_nudging=3000.,time=sndtime,timeid='time',lev=zsnd,levtype='altitude')
+-
+-# Surface Forcing
+-# time-varying SST from file, starting at 17:30UTC
+-sst     = sfc.sst[255:] #K
+-case.add_forcing_ts(sst, time=sfctime[255:])
+-
+-################################################
+-# 4. Writing file
+-################################################
+-
+-case.write('MAGIC_LEG15A_DEF_driver.nc')
+-
+-if lverbose:
+-    case.info()
+-
+-################################################
+-# 5. Ploting, if asked
+-################################################
+-
+-if lplot:
+-    case.plot(rep_images='./images/driver_DEF/',timeunits='hours')
+diff --git a/MAGIC/LEG15A/driver_SCM.py b/MAGIC/LEG15A/driver_SCM.py
+deleted file mode 100644
+index 2b70bfa..0000000
+--- a/MAGIC/LEG15A/driver_SCM.py
++++ /dev/null
+@@ -1,84 +0,0 @@
+-#!/usr/bin/env python
+-# -*- coding: utf-8 -*-
+-"""
+-Created on 10 January 2022
+-
+-@author: Maike Ahlgrimm
+-
+-Modification
+-
+-"""
+-
+-## MAGIC Leg13A SCM-enabled case definition
+-
+-import sys
+-sys.path = ['../../utils/',] + sys.path
+-
+-import netCDF4 as nc
+-import numpy as np
+-
+-from datetime import datetime, timedelta
+-
+-from Case import Case
+-import thermo
+-
+-################################################
+-# 0. General configuration of the present script
+-################################################
+-
+-lplot = False     # plot the new version of the case
+-lcompare = False  # plot comparisons between original and new versions
+-lverbose = False # print information on variables and case
+-
+-################################################
+-# 1. Get the original version of the case
+-################################################
+-
+-# initialize the case structure for the original version
+-case = Case('MAGIC/LEG15A')
+-
+-# read case information in file
+-case.read('MAGIC_LEG15A_DEF_driver.nc')
+-
+-# display some information about the case
+-if lverbose:
+-    case.info()
+-
+-################################################
+-# 2. Interpolate onto a new grid, same for all the variables
+-#    and add new variables if needed
+-################################################
+-
+-# New vertical grid, 10-m resolution from surface to 6000 m (above the surface)
+-levout = np.array(range(0,20001,10),dtype=np.float64) 
+-
+-# New temporal grid, from 13:00 UTC, 20 July 2013 to 04:00 UTC, 25 July 2013, 30-min timestep
+-timeout = np.array(range(0,383400,1800),dtype=np.float64)
+-
+-# conversion
+-newcase = case.convert2SCM(time=timeout,lev=levout,usetemp=True,levtype='altitude')
+-
+-# update some attributes
+-newcase.set_title("Forcing and initial conditions for MAGIC Leg15A case - SCM-enabled version")
+-newcase.set_script("DEPHY-SCM/MAGIC/REF/driver_SCM.py")
+-
+-# display some information about the new version of the case
+-if lverbose:
+-    newcase.info()
+-
+-################################################
+-# 3. Save new version of the case in netcdf file
+-################################################
+-
+-# save the new version of the case in netcdf file 
+-newcase.write('MAGIC_LEG15A_SCM_driver.nc')
+-
+-################################################
+-# 4. Plots if asked
+-################################################
+-
+-if lplot:
+-    newcase.plot(rep_images='./images/driver_SCM/',timeunits='hours')
+-
+-if lcompare:
+-    newcase.plot_compare(case,rep_images='./images/compare/',label1="SCM-enabled",label2="Original",timeunits='hours')
+diff --git a/MAGIC/LEG15A/images/compare/lat.png b/MAGIC/LEG15A/images/compare/lat.png
+deleted file mode 100644
+index 202fca4..0000000
+Binary files a/MAGIC/LEG15A/images/compare/lat.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/compare/lon.png b/MAGIC/LEG15A/images/compare/lon.png
+deleted file mode 100644
+index ad0b8c3..0000000
+Binary files a/MAGIC/LEG15A/images/compare/lon.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/compare/orog.png b/MAGIC/LEG15A/images/compare/orog.png
+deleted file mode 100644
+index 914e616..0000000
+Binary files a/MAGIC/LEG15A/images/compare/orog.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/compare/pa.png b/MAGIC/LEG15A/images/compare/pa.png
+deleted file mode 100644
+index ae57620..0000000
+Binary files a/MAGIC/LEG15A/images/compare/pa.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/compare/ps_forc.png b/MAGIC/LEG15A/images/compare/ps_forc.png
+deleted file mode 100644
+index d550970..0000000
+Binary files a/MAGIC/LEG15A/images/compare/ps_forc.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/compare/qv_nud.png b/MAGIC/LEG15A/images/compare/qv_nud.png
+deleted file mode 100644
+index 17d7f0e..0000000
+Binary files a/MAGIC/LEG15A/images/compare/qv_nud.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/compare/rv.png b/MAGIC/LEG15A/images/compare/rv.png
+deleted file mode 100644
+index b80d4a2..0000000
+Binary files a/MAGIC/LEG15A/images/compare/rv.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/compare/ta.png b/MAGIC/LEG15A/images/compare/ta.png
+deleted file mode 100644
+index fc12bee..0000000
+Binary files a/MAGIC/LEG15A/images/compare/ta.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/compare/ta_nud.png b/MAGIC/LEG15A/images/compare/ta_nud.png
+deleted file mode 100644
+index 474e972..0000000
+Binary files a/MAGIC/LEG15A/images/compare/ta_nud.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/compare/theta.png b/MAGIC/LEG15A/images/compare/theta.png
+deleted file mode 100644
+index b50bb1f..0000000
+Binary files a/MAGIC/LEG15A/images/compare/theta.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/compare/tnrv_adv.png b/MAGIC/LEG15A/images/compare/tnrv_adv.png
+deleted file mode 100644
+index 8ec2adc..0000000
+Binary files a/MAGIC/LEG15A/images/compare/tnrv_adv.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/compare/tnta_adv.png b/MAGIC/LEG15A/images/compare/tnta_adv.png
+deleted file mode 100644
+index f652066..0000000
+Binary files a/MAGIC/LEG15A/images/compare/tnta_adv.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/compare/ts_forc.png b/MAGIC/LEG15A/images/compare/ts_forc.png
+deleted file mode 100644
+index 6027b77..0000000
+Binary files a/MAGIC/LEG15A/images/compare/ts_forc.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/compare/ua.png b/MAGIC/LEG15A/images/compare/ua.png
+deleted file mode 100644
+index 32e1445..0000000
+Binary files a/MAGIC/LEG15A/images/compare/ua.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/compare/ua_nud.png b/MAGIC/LEG15A/images/compare/ua_nud.png
+deleted file mode 100644
+index f553be7..0000000
+Binary files a/MAGIC/LEG15A/images/compare/ua_nud.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/compare/ug.png b/MAGIC/LEG15A/images/compare/ug.png
+deleted file mode 100644
+index c0856c3..0000000
+Binary files a/MAGIC/LEG15A/images/compare/ug.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/compare/va.png b/MAGIC/LEG15A/images/compare/va.png
+deleted file mode 100644
+index 49886f0..0000000
+Binary files a/MAGIC/LEG15A/images/compare/va.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/compare/va_nud.png b/MAGIC/LEG15A/images/compare/va_nud.png
+deleted file mode 100644
+index fc925a3..0000000
+Binary files a/MAGIC/LEG15A/images/compare/va_nud.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/compare/vg.png b/MAGIC/LEG15A/images/compare/vg.png
+deleted file mode 100644
+index 253975c..0000000
+Binary files a/MAGIC/LEG15A/images/compare/vg.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/compare/wa.png b/MAGIC/LEG15A/images/compare/wa.png
+deleted file mode 100644
+index ca01fb0..0000000
+Binary files a/MAGIC/LEG15A/images/compare/wa.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_DEF/lat.png b/MAGIC/LEG15A/images/driver_DEF/lat.png
+deleted file mode 100644
+index dd32acc..0000000
+Binary files a/MAGIC/LEG15A/images/driver_DEF/lat.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_DEF/lon.png b/MAGIC/LEG15A/images/driver_DEF/lon.png
+deleted file mode 100644
+index 8f220bc..0000000
+Binary files a/MAGIC/LEG15A/images/driver_DEF/lon.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_DEF/merged_background_all_00.png b/MAGIC/LEG15A/images/driver_DEF/merged_background_all_00.png
+deleted file mode 100644
+index 996b6ab..0000000
+Binary files a/MAGIC/LEG15A/images/driver_DEF/merged_background_all_00.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_DEF/merged_background_all_01.png b/MAGIC/LEG15A/images/driver_DEF/merged_background_all_01.png
+deleted file mode 100644
+index af7072a..0000000
+Binary files a/MAGIC/LEG15A/images/driver_DEF/merged_background_all_01.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_DEF/merged_background_all_02.png b/MAGIC/LEG15A/images/driver_DEF/merged_background_all_02.png
+deleted file mode 100644
+index b38ff81..0000000
+Binary files a/MAGIC/LEG15A/images/driver_DEF/merged_background_all_02.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_DEF/merged_background_all_03.png b/MAGIC/LEG15A/images/driver_DEF/merged_background_all_03.png
+deleted file mode 100644
+index 8586366..0000000
+Binary files a/MAGIC/LEG15A/images/driver_DEF/merged_background_all_03.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_DEF/merged_background_all_04.png b/MAGIC/LEG15A/images/driver_DEF/merged_background_all_04.png
+deleted file mode 100644
+index 5fd942e..0000000
+Binary files a/MAGIC/LEG15A/images/driver_DEF/merged_background_all_04.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_DEF/merged_background_all_05.png b/MAGIC/LEG15A/images/driver_DEF/merged_background_all_05.png
+deleted file mode 100644
+index 1b931f8..0000000
+Binary files a/MAGIC/LEG15A/images/driver_DEF/merged_background_all_05.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_DEF/merged_background_all_06.png b/MAGIC/LEG15A/images/driver_DEF/merged_background_all_06.png
+deleted file mode 100644
+index 667b337..0000000
+Binary files a/MAGIC/LEG15A/images/driver_DEF/merged_background_all_06.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_DEF/merged_background_all_07.png b/MAGIC/LEG15A/images/driver_DEF/merged_background_all_07.png
+deleted file mode 100644
+index 3c80276..0000000
+Binary files a/MAGIC/LEG15A/images/driver_DEF/merged_background_all_07.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_DEF/merged_background_all_08.png b/MAGIC/LEG15A/images/driver_DEF/merged_background_all_08.png
+deleted file mode 100644
+index e277540..0000000
+Binary files a/MAGIC/LEG15A/images/driver_DEF/merged_background_all_08.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_DEF/merged_background_all_09.png b/MAGIC/LEG15A/images/driver_DEF/merged_background_all_09.png
+deleted file mode 100644
+index ef9da19..0000000
+Binary files a/MAGIC/LEG15A/images/driver_DEF/merged_background_all_09.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_DEF/merged_background_all_10.png b/MAGIC/LEG15A/images/driver_DEF/merged_background_all_10.png
+deleted file mode 100644
+index 84171c3..0000000
+Binary files a/MAGIC/LEG15A/images/driver_DEF/merged_background_all_10.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_DEF/merged_background_all_11.png b/MAGIC/LEG15A/images/driver_DEF/merged_background_all_11.png
+deleted file mode 100644
+index 47a07a1..0000000
+Binary files a/MAGIC/LEG15A/images/driver_DEF/merged_background_all_11.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_DEF/merged_background_all_12.png b/MAGIC/LEG15A/images/driver_DEF/merged_background_all_12.png
+deleted file mode 100644
+index a5b11ee..0000000
+Binary files a/MAGIC/LEG15A/images/driver_DEF/merged_background_all_12.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_DEF/merged_background_all_13.png b/MAGIC/LEG15A/images/driver_DEF/merged_background_all_13.png
+deleted file mode 100644
+index eb3e0db..0000000
+Binary files a/MAGIC/LEG15A/images/driver_DEF/merged_background_all_13.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_DEF/merged_background_all_14.png b/MAGIC/LEG15A/images/driver_DEF/merged_background_all_14.png
+deleted file mode 100644
+index 4f088a7..0000000
+Binary files a/MAGIC/LEG15A/images/driver_DEF/merged_background_all_14.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_DEF/merged_background_all_15.png b/MAGIC/LEG15A/images/driver_DEF/merged_background_all_15.png
+deleted file mode 100644
+index 90c4adb..0000000
+Binary files a/MAGIC/LEG15A/images/driver_DEF/merged_background_all_15.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_DEF/merged_background_all_16.png b/MAGIC/LEG15A/images/driver_DEF/merged_background_all_16.png
+deleted file mode 100644
+index 5a3458b..0000000
+Binary files a/MAGIC/LEG15A/images/driver_DEF/merged_background_all_16.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_DEF/merged_background_all_17.png b/MAGIC/LEG15A/images/driver_DEF/merged_background_all_17.png
+deleted file mode 100644
+index 9f81830..0000000
+Binary files a/MAGIC/LEG15A/images/driver_DEF/merged_background_all_17.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_DEF/merged_background_surface_00.png b/MAGIC/LEG15A/images/driver_DEF/merged_background_surface_00.png
+deleted file mode 100644
+index efe061f..0000000
+Binary files a/MAGIC/LEG15A/images/driver_DEF/merged_background_surface_00.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_DEF/merged_background_surface_01.png b/MAGIC/LEG15A/images/driver_DEF/merged_background_surface_01.png
+deleted file mode 100644
+index e3af94f..0000000
+Binary files a/MAGIC/LEG15A/images/driver_DEF/merged_background_surface_01.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_DEF/merged_background_surface_02.png b/MAGIC/LEG15A/images/driver_DEF/merged_background_surface_02.png
+deleted file mode 100644
+index 6cd12e0..0000000
+Binary files a/MAGIC/LEG15A/images/driver_DEF/merged_background_surface_02.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_DEF/merged_background_surface_03.png b/MAGIC/LEG15A/images/driver_DEF/merged_background_surface_03.png
+deleted file mode 100644
+index f8690f6..0000000
+Binary files a/MAGIC/LEG15A/images/driver_DEF/merged_background_surface_03.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_DEF/merged_background_surface_04.png b/MAGIC/LEG15A/images/driver_DEF/merged_background_surface_04.png
+deleted file mode 100644
+index a52a837..0000000
+Binary files a/MAGIC/LEG15A/images/driver_DEF/merged_background_surface_04.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_DEF/merged_background_surface_05.png b/MAGIC/LEG15A/images/driver_DEF/merged_background_surface_05.png
+deleted file mode 100644
+index 01909db..0000000
+Binary files a/MAGIC/LEG15A/images/driver_DEF/merged_background_surface_05.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_DEF/merged_background_surface_06.png b/MAGIC/LEG15A/images/driver_DEF/merged_background_surface_06.png
+deleted file mode 100644
+index 7b5e9c2..0000000
+Binary files a/MAGIC/LEG15A/images/driver_DEF/merged_background_surface_06.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_DEF/merged_background_surface_07.png b/MAGIC/LEG15A/images/driver_DEF/merged_background_surface_07.png
+deleted file mode 100644
+index 9925b1b..0000000
+Binary files a/MAGIC/LEG15A/images/driver_DEF/merged_background_surface_07.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_DEF/merged_background_surface_08.png b/MAGIC/LEG15A/images/driver_DEF/merged_background_surface_08.png
+deleted file mode 100644
+index 11410ae..0000000
+Binary files a/MAGIC/LEG15A/images/driver_DEF/merged_background_surface_08.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_DEF/merged_background_surface_09.png b/MAGIC/LEG15A/images/driver_DEF/merged_background_surface_09.png
+deleted file mode 100644
+index 719383d..0000000
+Binary files a/MAGIC/LEG15A/images/driver_DEF/merged_background_surface_09.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_DEF/merged_background_surface_10.png b/MAGIC/LEG15A/images/driver_DEF/merged_background_surface_10.png
+deleted file mode 100644
+index d4c21ac..0000000
+Binary files a/MAGIC/LEG15A/images/driver_DEF/merged_background_surface_10.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_DEF/merged_background_surface_11.png b/MAGIC/LEG15A/images/driver_DEF/merged_background_surface_11.png
+deleted file mode 100644
+index 858b48e..0000000
+Binary files a/MAGIC/LEG15A/images/driver_DEF/merged_background_surface_11.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_DEF/merged_background_surface_12.png b/MAGIC/LEG15A/images/driver_DEF/merged_background_surface_12.png
+deleted file mode 100644
+index 2745570..0000000
+Binary files a/MAGIC/LEG15A/images/driver_DEF/merged_background_surface_12.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_DEF/merged_background_surface_13.png b/MAGIC/LEG15A/images/driver_DEF/merged_background_surface_13.png
+deleted file mode 100644
+index 46ede9c..0000000
+Binary files a/MAGIC/LEG15A/images/driver_DEF/merged_background_surface_13.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_DEF/merged_background_surface_14.png b/MAGIC/LEG15A/images/driver_DEF/merged_background_surface_14.png
+deleted file mode 100644
+index ccb78d0..0000000
+Binary files a/MAGIC/LEG15A/images/driver_DEF/merged_background_surface_14.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_DEF/merged_background_surface_15.png b/MAGIC/LEG15A/images/driver_DEF/merged_background_surface_15.png
+deleted file mode 100644
+index 7cf94b0..0000000
+Binary files a/MAGIC/LEG15A/images/driver_DEF/merged_background_surface_15.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_DEF/merged_background_surface_16.png b/MAGIC/LEG15A/images/driver_DEF/merged_background_surface_16.png
+deleted file mode 100644
+index 095174c..0000000
+Binary files a/MAGIC/LEG15A/images/driver_DEF/merged_background_surface_16.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_DEF/merged_background_surface_17.png b/MAGIC/LEG15A/images/driver_DEF/merged_background_surface_17.png
+deleted file mode 100644
+index c5b4ae0..0000000
+Binary files a/MAGIC/LEG15A/images/driver_DEF/merged_background_surface_17.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_DEF/orog.png b/MAGIC/LEG15A/images/driver_DEF/orog.png
+deleted file mode 100644
+index fdd9bc6..0000000
+Binary files a/MAGIC/LEG15A/images/driver_DEF/orog.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_DEF/pa.png b/MAGIC/LEG15A/images/driver_DEF/pa.png
+deleted file mode 100644
+index bb24e90..0000000
+Binary files a/MAGIC/LEG15A/images/driver_DEF/pa.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_DEF/ps_forc.png b/MAGIC/LEG15A/images/driver_DEF/ps_forc.png
+deleted file mode 100644
+index d104813..0000000
+Binary files a/MAGIC/LEG15A/images/driver_DEF/ps_forc.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_DEF/qv_nud.png b/MAGIC/LEG15A/images/driver_DEF/qv_nud.png
+deleted file mode 100644
+index 3721aa2..0000000
+Binary files a/MAGIC/LEG15A/images/driver_DEF/qv_nud.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_DEF/rv.png b/MAGIC/LEG15A/images/driver_DEF/rv.png
+deleted file mode 100644
+index 49680ce..0000000
+Binary files a/MAGIC/LEG15A/images/driver_DEF/rv.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_DEF/ta.png b/MAGIC/LEG15A/images/driver_DEF/ta.png
+deleted file mode 100644
+index 22a376e..0000000
+Binary files a/MAGIC/LEG15A/images/driver_DEF/ta.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_DEF/ta_nud.png b/MAGIC/LEG15A/images/driver_DEF/ta_nud.png
+deleted file mode 100644
+index 1f086c3..0000000
+Binary files a/MAGIC/LEG15A/images/driver_DEF/ta_nud.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_DEF/theta.png b/MAGIC/LEG15A/images/driver_DEF/theta.png
+deleted file mode 100644
+index 218db88..0000000
+Binary files a/MAGIC/LEG15A/images/driver_DEF/theta.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_DEF/tnrv_adv.png b/MAGIC/LEG15A/images/driver_DEF/tnrv_adv.png
+deleted file mode 100644
+index 3266fd2..0000000
+Binary files a/MAGIC/LEG15A/images/driver_DEF/tnrv_adv.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_DEF/tnta_adv.png b/MAGIC/LEG15A/images/driver_DEF/tnta_adv.png
+deleted file mode 100644
+index ae75310..0000000
+Binary files a/MAGIC/LEG15A/images/driver_DEF/tnta_adv.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_DEF/ts_forc.png b/MAGIC/LEG15A/images/driver_DEF/ts_forc.png
+deleted file mode 100644
+index 2e81843..0000000
+Binary files a/MAGIC/LEG15A/images/driver_DEF/ts_forc.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_DEF/ua.png b/MAGIC/LEG15A/images/driver_DEF/ua.png
+deleted file mode 100644
+index a04921e..0000000
+Binary files a/MAGIC/LEG15A/images/driver_DEF/ua.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_DEF/ua_nud.png b/MAGIC/LEG15A/images/driver_DEF/ua_nud.png
+deleted file mode 100644
+index ae5ddec..0000000
+Binary files a/MAGIC/LEG15A/images/driver_DEF/ua_nud.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_DEF/ug.png b/MAGIC/LEG15A/images/driver_DEF/ug.png
+deleted file mode 100644
+index 06ee195..0000000
+Binary files a/MAGIC/LEG15A/images/driver_DEF/ug.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_DEF/va.png b/MAGIC/LEG15A/images/driver_DEF/va.png
+deleted file mode 100644
+index db393bd..0000000
+Binary files a/MAGIC/LEG15A/images/driver_DEF/va.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_DEF/va_nud.png b/MAGIC/LEG15A/images/driver_DEF/va_nud.png
+deleted file mode 100644
+index 536eb18..0000000
+Binary files a/MAGIC/LEG15A/images/driver_DEF/va_nud.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_DEF/vg.png b/MAGIC/LEG15A/images/driver_DEF/vg.png
+deleted file mode 100644
+index 51121b2..0000000
+Binary files a/MAGIC/LEG15A/images/driver_DEF/vg.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_DEF/wa.png b/MAGIC/LEG15A/images/driver_DEF/wa.png
+deleted file mode 100644
+index 04b7a5a..0000000
+Binary files a/MAGIC/LEG15A/images/driver_DEF/wa.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_SCM/lat.png b/MAGIC/LEG15A/images/driver_SCM/lat.png
+deleted file mode 100644
+index 1ecadce..0000000
+Binary files a/MAGIC/LEG15A/images/driver_SCM/lat.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_SCM/lon.png b/MAGIC/LEG15A/images/driver_SCM/lon.png
+deleted file mode 100644
+index 27a8e43..0000000
+Binary files a/MAGIC/LEG15A/images/driver_SCM/lon.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_SCM/orog.png b/MAGIC/LEG15A/images/driver_SCM/orog.png
+deleted file mode 100644
+index 0630127..0000000
+Binary files a/MAGIC/LEG15A/images/driver_SCM/orog.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_SCM/pa.png b/MAGIC/LEG15A/images/driver_SCM/pa.png
+deleted file mode 100644
+index 61fd09e..0000000
+Binary files a/MAGIC/LEG15A/images/driver_SCM/pa.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_SCM/pa_forc.png b/MAGIC/LEG15A/images/driver_SCM/pa_forc.png
+deleted file mode 100644
+index 30b8a7b..0000000
+Binary files a/MAGIC/LEG15A/images/driver_SCM/pa_forc.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_SCM/ps_forc.png b/MAGIC/LEG15A/images/driver_SCM/ps_forc.png
+deleted file mode 100644
+index 826b3b5..0000000
+Binary files a/MAGIC/LEG15A/images/driver_SCM/ps_forc.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_SCM/qi.png b/MAGIC/LEG15A/images/driver_SCM/qi.png
+deleted file mode 100644
+index e522d67..0000000
+Binary files a/MAGIC/LEG15A/images/driver_SCM/qi.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_SCM/ql.png b/MAGIC/LEG15A/images/driver_SCM/ql.png
+deleted file mode 100644
+index 571b6ee..0000000
+Binary files a/MAGIC/LEG15A/images/driver_SCM/ql.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_SCM/qt.png b/MAGIC/LEG15A/images/driver_SCM/qt.png
+deleted file mode 100644
+index 8fa52ec..0000000
+Binary files a/MAGIC/LEG15A/images/driver_SCM/qt.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_SCM/qt_nud.png b/MAGIC/LEG15A/images/driver_SCM/qt_nud.png
+deleted file mode 100644
+index 6b3ac61..0000000
+Binary files a/MAGIC/LEG15A/images/driver_SCM/qt_nud.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_SCM/qv.png b/MAGIC/LEG15A/images/driver_SCM/qv.png
+deleted file mode 100644
+index 1f8de4d..0000000
+Binary files a/MAGIC/LEG15A/images/driver_SCM/qv.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_SCM/qv_nud.png b/MAGIC/LEG15A/images/driver_SCM/qv_nud.png
+deleted file mode 100644
+index 17d7f0e..0000000
+Binary files a/MAGIC/LEG15A/images/driver_SCM/qv_nud.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_SCM/ri.png b/MAGIC/LEG15A/images/driver_SCM/ri.png
+deleted file mode 100644
+index 511841e..0000000
+Binary files a/MAGIC/LEG15A/images/driver_SCM/ri.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_SCM/rl.png b/MAGIC/LEG15A/images/driver_SCM/rl.png
+deleted file mode 100644
+index ef8d82a..0000000
+Binary files a/MAGIC/LEG15A/images/driver_SCM/rl.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_SCM/rt.png b/MAGIC/LEG15A/images/driver_SCM/rt.png
+deleted file mode 100644
+index f11ec31..0000000
+Binary files a/MAGIC/LEG15A/images/driver_SCM/rt.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_SCM/rt_nud.png b/MAGIC/LEG15A/images/driver_SCM/rt_nud.png
+deleted file mode 100644
+index dd897db..0000000
+Binary files a/MAGIC/LEG15A/images/driver_SCM/rt_nud.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_SCM/rv.png b/MAGIC/LEG15A/images/driver_SCM/rv.png
+deleted file mode 100644
+index 08b2d10..0000000
+Binary files a/MAGIC/LEG15A/images/driver_SCM/rv.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_SCM/rv_nud.png b/MAGIC/LEG15A/images/driver_SCM/rv_nud.png
+deleted file mode 100644
+index b1fc9c9..0000000
+Binary files a/MAGIC/LEG15A/images/driver_SCM/rv_nud.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_SCM/ta.png b/MAGIC/LEG15A/images/driver_SCM/ta.png
+deleted file mode 100644
+index e4a45b0..0000000
+Binary files a/MAGIC/LEG15A/images/driver_SCM/ta.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_SCM/ta_nud.png b/MAGIC/LEG15A/images/driver_SCM/ta_nud.png
+deleted file mode 100644
+index 474e972..0000000
+Binary files a/MAGIC/LEG15A/images/driver_SCM/ta_nud.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_SCM/theta.png b/MAGIC/LEG15A/images/driver_SCM/theta.png
+deleted file mode 100644
+index a6116db..0000000
+Binary files a/MAGIC/LEG15A/images/driver_SCM/theta.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_SCM/theta_nud.png b/MAGIC/LEG15A/images/driver_SCM/theta_nud.png
+deleted file mode 100644
+index 105a448..0000000
+Binary files a/MAGIC/LEG15A/images/driver_SCM/theta_nud.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_SCM/thetal.png b/MAGIC/LEG15A/images/driver_SCM/thetal.png
+deleted file mode 100644
+index a4bf72e..0000000
+Binary files a/MAGIC/LEG15A/images/driver_SCM/thetal.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_SCM/thetal_nud.png b/MAGIC/LEG15A/images/driver_SCM/thetal_nud.png
+deleted file mode 100644
+index bec85b5..0000000
+Binary files a/MAGIC/LEG15A/images/driver_SCM/thetal_nud.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_SCM/tke.png b/MAGIC/LEG15A/images/driver_SCM/tke.png
+deleted file mode 100644
+index b9eaa95..0000000
+Binary files a/MAGIC/LEG15A/images/driver_SCM/tke.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_SCM/tnqt_adv.png b/MAGIC/LEG15A/images/driver_SCM/tnqt_adv.png
+deleted file mode 100644
+index 1ad0cd5..0000000
+Binary files a/MAGIC/LEG15A/images/driver_SCM/tnqt_adv.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_SCM/tnqv_adv.png b/MAGIC/LEG15A/images/driver_SCM/tnqv_adv.png
+deleted file mode 100644
+index 83a2c44..0000000
+Binary files a/MAGIC/LEG15A/images/driver_SCM/tnqv_adv.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_SCM/tnrt_adv.png b/MAGIC/LEG15A/images/driver_SCM/tnrt_adv.png
+deleted file mode 100644
+index ae76914..0000000
+Binary files a/MAGIC/LEG15A/images/driver_SCM/tnrt_adv.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_SCM/tnrv_adv.png b/MAGIC/LEG15A/images/driver_SCM/tnrv_adv.png
+deleted file mode 100644
+index 8ec2adc..0000000
+Binary files a/MAGIC/LEG15A/images/driver_SCM/tnrv_adv.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_SCM/tnta_adv.png b/MAGIC/LEG15A/images/driver_SCM/tnta_adv.png
+deleted file mode 100644
+index f652066..0000000
+Binary files a/MAGIC/LEG15A/images/driver_SCM/tnta_adv.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_SCM/tntheta_adv.png b/MAGIC/LEG15A/images/driver_SCM/tntheta_adv.png
+deleted file mode 100644
+index b862464..0000000
+Binary files a/MAGIC/LEG15A/images/driver_SCM/tntheta_adv.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_SCM/tnthetal_adv.png b/MAGIC/LEG15A/images/driver_SCM/tnthetal_adv.png
+deleted file mode 100644
+index 81b8472..0000000
+Binary files a/MAGIC/LEG15A/images/driver_SCM/tnthetal_adv.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_SCM/ts_forc.png b/MAGIC/LEG15A/images/driver_SCM/ts_forc.png
+deleted file mode 100644
+index ecd0f37..0000000
+Binary files a/MAGIC/LEG15A/images/driver_SCM/ts_forc.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_SCM/ua.png b/MAGIC/LEG15A/images/driver_SCM/ua.png
+deleted file mode 100644
+index 2bb22af..0000000
+Binary files a/MAGIC/LEG15A/images/driver_SCM/ua.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_SCM/ua_nud.png b/MAGIC/LEG15A/images/driver_SCM/ua_nud.png
+deleted file mode 100644
+index f553be7..0000000
+Binary files a/MAGIC/LEG15A/images/driver_SCM/ua_nud.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_SCM/ug.png b/MAGIC/LEG15A/images/driver_SCM/ug.png
+deleted file mode 100644
+index c0856c3..0000000
+Binary files a/MAGIC/LEG15A/images/driver_SCM/ug.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_SCM/va.png b/MAGIC/LEG15A/images/driver_SCM/va.png
+deleted file mode 100644
+index a775286..0000000
+Binary files a/MAGIC/LEG15A/images/driver_SCM/va.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_SCM/va_nud.png b/MAGIC/LEG15A/images/driver_SCM/va_nud.png
+deleted file mode 100644
+index fc925a3..0000000
+Binary files a/MAGIC/LEG15A/images/driver_SCM/va_nud.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_SCM/vg.png b/MAGIC/LEG15A/images/driver_SCM/vg.png
+deleted file mode 100644
+index 253975c..0000000
+Binary files a/MAGIC/LEG15A/images/driver_SCM/vg.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_SCM/wa.png b/MAGIC/LEG15A/images/driver_SCM/wa.png
+deleted file mode 100644
+index ca01fb0..0000000
+Binary files a/MAGIC/LEG15A/images/driver_SCM/wa.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_SCM/zh.png b/MAGIC/LEG15A/images/driver_SCM/zh.png
+deleted file mode 100644
+index 8127948..0000000
+Binary files a/MAGIC/LEG15A/images/driver_SCM/zh.png and /dev/null differ
+diff --git a/MAGIC/LEG15A/images/driver_SCM/zh_forc.png b/MAGIC/LEG15A/images/driver_SCM/zh_forc.png
+deleted file mode 100644
+index 3064fdb..0000000
+Binary files a/MAGIC/LEG15A/images/driver_SCM/zh_forc.png and /dev/null differ
+diff --git a/MAGIC/README b/MAGIC/README
+deleted file mode 100644
+index 3050ec5..0000000
+--- a/MAGIC/README
++++ /dev/null
+@@ -1,45 +0,0 @@
+-The Atmospheric Radiation Measurement (ARM)/ Atmospheric System Research (ASR) program deployed observational equipment on a container ship traveling between Los Angeles, CA and Hawaii during a period from 2012-10-01 to 2013-09-30.
+-During this "Marine ARM GPCI Investigation of Clouds" (MAGIC) campaign, the ship completed 18 round trips, observing the transition from the coastal stratocumulus to subtropical cumulus regime. The trips are numbered sequentially, and outgoing (from LA to Hawaii) "Legs" are labelled "A", return "Legs" are labelled "B".
+-
+-  Jeremy McGibbon and Chris Bretherton from University of Washington ran ship-following large-eddy simulations for the outgoing legs. Quality and availability of observations varies for the cases, and Leg15A is the most well-studied case to date.
+-
+-  A description of the LES study can be found in McGibbon and Bretherton (2017), and the forcing in particular is described in Section 2 of that paper.
+-
+-The SCM forcing created in this repository is based on the original LES forcing files provided by Jeremy McGibbon, which consist of three files per case:
+-  1) A file containing the radiosonde profiles for each leg, interpolated onto a common height grid.
+-  2) A file containing the time-varying SST for the leg.
+-  3) Large-scale forcing derived from ECMWF gridded model data.
+-
+-  In support of the MAGIC campaign, ECMWF provided hourly gridded (0.5deg lat/lon) short-term operational forecast data to ARM. Each day, the forecast was initialised at 12 UTC, and forecast hours 12-35 (verifying at 0-23UTC the following day) were stitched together to provide a continuous hourly data set. The native horizontal resolution of the operational IFS was 16km at the time.
+-  This gridded data set is the basis for the model-derived large-scale forcing. McGibbon and Bretherton discovered that small-scale variability, particularly in the vertical pressure velocity was leading to unwanted perturbations in the LES simulations and therefore smoothed the model fields by convolution with a Gaussian kernel (2deg standard deviation) prior to deriving ship-following advective tendencies for temperature and moisture, geostrophic winds and a large-scale vertical velocity.
+-
+-  The IFS uses a terrain-following pressure-hybrid coordinate, and the large-scale forcing is provided on the native IFS vertical model levels. Unfortunately, the horizontal smoothing of the model variables also leads to a blending of the (surface) pressure fields, blending profiles above substantial orography over the Californian coast with profiles over ocean. This results in surface pressure and elevation values significantly above sea level also for grid points located over ocean.
+-
+-  As radiosondes were launched off the moving container ship, wind profiles can have unrealistic wind shear in the lowest levels.
+-
+-  To construct the SCM forcing, the following assumptions were made:
+-
+- 1) Near the Californian coast, the model vertical coordinate starts at about 950hPa or 400m. This is clearly unrealistic for an ocean point. I have chosen to replace the time (and location)-varying height/pressure fields of the model data with a single fixed profile taken from a grid point mid-track over the free ocean.
+-  Plotting model thermodynamic profiles against the observed sonde profiles at the initial time shows better agreement of the trade inversion for this representative height profile compared to the original height profile based on blended orography.
+-  
+-  2) The inital profiles are based on the first radiosonde profile for each leg (with the exception of Leg18A, where the third profile was chosen, see McGibbon & Bretherton (2017) for discussion).
+-  Since the vertical coordinate for sonde data starts at 7.5m and the SCM forcing requires surface values, all thermodynamic variables have the value at 7.5m repeated at the surface. To avoid unrealistic wind shear in the lowest few layers, the radiosonde wind profiles are linearly blended with the model winds in the lowest 8 sonde-height bins. Model fields are first interpolated in time and height to match the sonde time and height coordinates.
+-
+-3) Geostrophic winds, advective tendencies for T and q as well as vertical velocity are taken straight from the LES large-scale forcing. The time- and location-varying model vertical coordinate is replaced by a representative height coordinate taken mid-track over open ocean.
+-
+-4) SST is taken straight from the LES surface file. Since time coordinates vary for the three original forcing files, the SST data before the first radiosonde ascent is discarded.
+-
+-5) The radiosonde profiles of u, v, T and q are also added as nudging variables. Similar to the initial profiles, u and v profiles are blended with model wind profiles in the lowest 8 layers, while for T and q, the 7.5m value is also used as surface value.
+-  McGibbon and Bretherton nudge the LES against the time-interpolated sonde winds with a time scale of 12 h to damp inertial oszillations.
+-  They use a slightly more complicated vertical velocity perturbation to try and keep the inversion height of the simulation similar to the observed state. This, we cannot reproduce here. Instead, the sonde T and q profiles are also included as variabled that the model can be nudged towards. Previous experimentation in the IFS SCM has shown this to be a successful approach. (Timescale?)
+-
+-
+-
+-
+-
+-  
+-
+-   McGibbon, J., & Bretherton, C. S. (2017). Skill of shipÅ]following largeÅ]eddy simulations in reproducing MAGIC observations across the northeast Pacific stratocumulus to cumulus transition region. Journal of Advances in Modeling Earth Systems, 9(2), 810-831.
+-
+-
+-  
+\ No newline at end of file
+diff --git a/MAGIC/aux/13A/13A_lsf.nc b/MAGIC/aux/13A/13A_lsf.nc
+deleted file mode 100644
+index 311c8ac..0000000
+Binary files a/MAGIC/aux/13A/13A_lsf.nc and /dev/null differ
+diff --git a/MAGIC/aux/13A/13A_lsf_to_append.nc b/MAGIC/aux/13A/13A_lsf_to_append.nc
+deleted file mode 100644
+index 7f8ee61..0000000
+Binary files a/MAGIC/aux/13A/13A_lsf_to_append.nc and /dev/null differ
+diff --git a/MAGIC/aux/13A/13A_sfc.nc b/MAGIC/aux/13A/13A_sfc.nc
+deleted file mode 100644
+index 51f041b..0000000
+Binary files a/MAGIC/aux/13A/13A_sfc.nc and /dev/null differ
+diff --git a/MAGIC/aux/13A/13A_snd.nc b/MAGIC/aux/13A/13A_snd.nc
+deleted file mode 100644
+index 08505e4..0000000
+Binary files a/MAGIC/aux/13A/13A_snd.nc and /dev/null differ
+diff --git a/MAGIC/aux/15A/15A_lsf.nc b/MAGIC/aux/15A/15A_lsf.nc
+deleted file mode 100644
+index 1ec0e5d..0000000
+Binary files a/MAGIC/aux/15A/15A_lsf.nc and /dev/null differ
+diff --git a/MAGIC/aux/15A/15A_sfc.nc b/MAGIC/aux/15A/15A_sfc.nc
+deleted file mode 100644
+index a980336..0000000
+Binary files a/MAGIC/aux/15A/15A_sfc.nc and /dev/null differ
+diff --git a/MAGIC/aux/15A/15A_snd.nc b/MAGIC/aux/15A/15A_snd.nc
+deleted file mode 100644
+index eafb225..0000000
+Binary files a/MAGIC/aux/15A/15A_snd.nc and /dev/null differ
+diff --git a/utils/Case.py b/utils/Case.py
+index b231d65..4288773 100644
+--- a/utils/Case.py
++++ b/utils/Case.py
+@@ -628,6 +628,11 @@ class Case:
+                 logger.error('level axis should be given for variable {0}'.format(varid))
+                 raise ValueError('level axis should be given for variable {0}'.format(varid))
+ 
++            if len(np.array(kwargs['lev']).shape) != 1:
++                logger.error('level axis should have only one dimension for variable {0}'.format(varid))
++                logger.error('You may have mixed lev and height/pressure arguments')
++                logger.error('lev argument is used to provide an axis within the netcdf files')
++
+             nlev, = np.array(kwargs['lev']).shape # In case lev is given as a list
+ 
+             # Put the expected shape of the input data
