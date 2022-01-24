@@ -2017,7 +2017,7 @@ class Case:
             timeout = Axis('time',time,name='forcing_time',units=self.tunits, calendar='gregorian')
             for var in self.var_init_list + self.var_forcing_list:
                 VV = self.variables[var]
-                if VV.time is not self.t0Axis:
+                if VV.time.id != 't0':
                     dataout[var] = VV.interpol_time(time=timeout)
                 else:
                     dataout[var] = Variable(var, data=VV.data, name=VV.name, units=VV.units,
