@@ -2024,6 +2024,7 @@ class Case:
                         height=VV.height, pressure=VV.pressure,
                         level=VV.level, time=VV.time,
                         plotcoef=VV.plotcoef, plotunits=VV.plotunits)
+                    print(dataout[var].coord)
 
         if lev is None:
             logger.warning('No vertical interpolation')
@@ -2104,8 +2105,8 @@ class Case:
                         dataout[var].height.set_level(lev=levout)
                         dataout[var].height.id = 'zh'
                         dataout[var].height.name = 'height'
-                        dataout[var].set_coordinates('time','zh','lat','lon')
-                        dataout[var].height.set_coordinates('time','zh','lat','lon')
+                        dataout[var].set_coordinates('t0','zh','lat','lon')
+                        dataout[var].height.set_coordinates('t0','zh','lat','lon')
 
                 for var in self.var_forcing_list:
                     VV = dataout[var]
