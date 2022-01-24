@@ -2011,7 +2011,7 @@ class Case:
                         height=VV.height, pressure=VV.pressure,
                         level=VV.level, time=VV.time,
                         plotcoef=VV.plotcoef, plotunits=VV.plotunits)
-                if VV.time is not self.t0Axis:
+                if VV.time.id != 't0':
                     dataout[var].time.id = 'time'
         else:
             timeout = Axis('time',time,name='forcing_time',units=self.tunits, calendar='gregorian')
@@ -2024,7 +2024,6 @@ class Case:
                         height=VV.height, pressure=VV.pressure,
                         level=VV.level, time=VV.time,
                         plotcoef=VV.plotcoef, plotunits=VV.plotunits)
-                    print(dataout[var].coord)
 
         if lev is None:
             logger.warning('No vertical interpolation')
