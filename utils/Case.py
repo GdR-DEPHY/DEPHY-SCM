@@ -2016,7 +2016,7 @@ class Case:
                         height=VV.height, pressure=VV.pressure,
                         level=VV.level, time=VV.time,
                         plotcoef=VV.plotcoef, plotunits=VV.plotunits)
-                if VV.time is not self.t0Axis:
+                if VV.time.id != 't0':
                     dataout[var].time.id = 'time'
         else:
             timeout = Axis('time',time,name='forcing_time',units=self.tunits, calendar='gregorian')
@@ -2109,8 +2109,8 @@ class Case:
                         dataout[var].height.set_level(lev=levout)
                         dataout[var].height.id = 'zh'
                         dataout[var].height.name = 'height'
-                        dataout[var].set_coordinates('time','zh','lat','lon')
-                        dataout[var].height.set_coordinates('time','zh','lat','lon')
+                        dataout[var].set_coordinates('t0','zh','lat','lon')
+                        dataout[var].height.set_coordinates('t0','zh','lat','lon')
 
                 for var in self.var_forcing_list:
                     VV = dataout[var]
