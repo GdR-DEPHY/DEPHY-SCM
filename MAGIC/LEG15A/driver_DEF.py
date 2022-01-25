@@ -269,7 +269,7 @@ if (lblend):
     plt.ylim([0,ytop])
     plt.xlim([-10.,0.])
     w=w+1
-    plt.savefig('/hpc/uhome/mahlgrim/DEPHY-SCM/MAGIC/LEG15A/images/driver_DEF/merged_background_surface_'+str(tidx).zfill(2)+'.png')
+    plt.savefig('images/driver_DEF/merged_background_surface_'+str(tidx).zfill(2)+'.png')
     plt.close()
   #  plt.show()
 
@@ -316,7 +316,7 @@ if (lblend):
     plt.legend(loc='best')
     plt.ylim([0,ytop])
     w=w+1
-    plt.savefig('/hpc/uhome/mahlgrim/DEPHY-SCM/MAGIC/LEG15A/images/driver_DEF/merged_background_all_'+str(tidx).zfill(2)+'.png')
+    plt.savefig('images/driver_DEF/merged_background_all_'+str(tidx).zfill(2)+'.png')
     plt.close()
   #  plt.show()
 
