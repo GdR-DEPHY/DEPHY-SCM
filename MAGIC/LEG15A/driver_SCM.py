@@ -60,7 +60,7 @@ newcase = case.convert2SCM(time=timeout,lev=levout,usetemp=True,levtype='altitud
 
 # update some attributes
 newcase.set_title("Forcing and initial conditions for MAGIC Leg15A case - SCM-enabled version")
-newcase.set_script("DEPHY-SCM/MAGIC/REF/driver_SCM.py")
+newcase.set_script("DEPHY-SCM/MAGIC/LEG15A/driver_SCM.py")
 
 # display some information about the new version of the case
 if lverbose:
