@@ -38,17 +38,17 @@ def ___convert_to_datetime(d):
 # 0. General configuration of the present script
 ################################################
 
-lplot = True # plot all the variables
+lplot = False # plot all the variables
 lverbose = False # print information about variables and case
-lblend = True
+lblend = False
 
 ################################################
 # 1. General information about the case
 ################################################
 
 case = Case('MAGIC/LEG18A',
-        startDate="20130818174500",
-        endDate="20130808220000",
+        startDate="20130901053000",
+        endDate="20130905053000",
         surfaceType='ocean',
         zorog=0.)
 
@@ -76,7 +76,7 @@ print(sndtimeorig[0].values,sndtimeorig[-1].values)
 print(lsftimeorig[16].values,lsftimeorig[-1].values)
 print(sfctimeorig[998].values,sfctimeorig[-1].values)
 
-# Convert times into seconds since 2013-07-20T173000
+# Convert times into seconds since basetime
 delta=___convert_to_datetime(sndtimeorig[0])-basetime
 sndtime=delta.total_seconds()
 for i in np.arange(1,len(sndtimeorig),1):
@@ -141,7 +141,7 @@ for istep in range(0,len(sndtime)):
 
 
 # Large-scale state - model derived
-# First profile at 17:00 - discard prior profiles
+# First profile at 5:00 - discard prior profiles
 zlsf=lsf.z.values[16:,:] #m
 ulsf=lsf.u.values[16:,:] #m/s
 vlsf=lsf.v.values[16:,:] #m/s

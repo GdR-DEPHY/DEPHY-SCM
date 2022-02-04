@@ -26,8 +26,8 @@ import thermo
 # 0. General configuration of the present script
 ################################################
 
-lplot = True     # plot the new version of the case
-lcompare = True  # plot comparisons between original and new versions
+lplot = False     # plot the new version of the case
+lcompare = False  # plot comparisons between original and new versions
 lverbose = False # print information on variables and case
 
 ################################################

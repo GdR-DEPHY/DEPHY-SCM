@@ -72,8 +72,11 @@ basetime=datetime(2013,8,3,23,30) # Time of initial radiosonde ascent
 sndtimeorig=snd.time #minutes since 2013-08-03 23:33:00
 lsftimeorig=lsf.time #hours   since 2013-08-03 15:00:00
 sfctimeorig=sfc.time #minutes since 2013-08-03 14:37:00
+print(sndtimeorig[0].values,sndtimeorig[-1].values)
+print(lsftimeorig[8].values,lsftimeorig[-1].values)
+print(sfctimeorig[533].values,sfctimeorig[-1].values)
 
-# Convert times into seconds since 2013-07-20T173000
+# Convert times into seconds since basetime
 delta=___convert_to_datetime(sndtimeorig[0])-basetime
 sndtime=delta.total_seconds()
 for i in np.arange(1,len(sndtimeorig),1):
@@ -138,7 +141,7 @@ for istep in range(0,len(sndtime)):
 
 
 # Large-scale state - model derived
-# First profile at 17:00 - discard prior profiles
+# First profile at 23:00 - discard prior profiles
 zlsf=lsf.z.values[8:,:] #m
 ulsf=lsf.u.values[8:,:] #m/s
 vlsf=lsf.v.values[8:,:] #m/s
