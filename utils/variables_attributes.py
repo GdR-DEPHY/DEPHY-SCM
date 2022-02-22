@@ -46,7 +46,7 @@ attributes = OrderedDict([
         ('tnqv_adv',     {'name': 'tendency_of_specific_humidity_due_to_advection',                'units': 's-1',   'plotcoef': 86400.*1000., 'plotunits': 'g kg-1 day-1'}),
         ('tnqt_adv',     {'name': 'tendency_of_mass_fraction_of_water_in_air_due_To_advection',    'units': 's-1',   'plotcoef': 86400.*1000., 'plotunits': 'g kg-1 day-1'}),
         ('tnrv_adv',     {'name': 'tendency_of_humidity_mixing_ratio_due_to_advection',            'units': 's-1',   'plotcoef': 86400.*1000., 'plotunits': 'g kg-1 day-1'}),
-        ('tnrt_adv',     {'name': 'tendency_of_water_mixing_Ratio_due_to_advection',               'units': 's-1',   'plotcoef': 86400.*1000., 'plotunits': 'g kg-1 day-1'}),
+        ('tnrt_adv',     {'name': 'tendency_of_water_mixing_ratio_due_to_advection',               'units': 's-1',   'plotcoef': 86400.*1000., 'plotunits': 'g kg-1 day-1'}),
         ('tnua_adv',     {'name': 'tendency_of_eastward_wind_due_to_advection',                    'units': 'm s-2', 'plotcoef': 86400.,       'plotunits': 'K day-1'}),
         ('tnva_adv',     {'name': 'tendency_of_northward_wind_due_to_advection',                   'units': 'm s-2', 'plotcoef': 86400.,       'plotunits': 'K day-1'}),
         # Radiative tendency
