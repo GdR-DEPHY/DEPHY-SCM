@@ -2643,7 +2643,7 @@ class Case:
 
         Either height or pressure must be given
 
-        if data is None, the variable is extended constantly from its highest value.
+        if data is None, the variable is extended constantly from its highest or lowest value.
         if data is a float or an integer, the variable is extended by on level based on either (data,height) 
             or (data,pressure). height or pressure must be a float or an integer.
         if data is a 1D array, it is supposed to be a vertical profile. Either height or pressure must be given 
@@ -2662,8 +2662,20 @@ class Case:
             _pressure = pressure
             _time = None
             _tunits = None
+            hmin = np.min(self.variables[varid].height.data)
+            hmax = np.max(self.variables[varid].height.data)
+            if np.min(height) < hmax and np.max(height) > hmin:
+                logger.error("Case unexpected: cannot add levels up and down at the same time")
+                raise NotImplementedError
+
             try:
-                _data = float(self.variables[varid].data[:,-1])
+                if np.max(height) <= hmin:
+                    _data = float(self.variables[varid].data[:,0])
+                elif np.min(height) >= hmax:
+                    _data = float(self.variables[varid].data[:,-1])
+                else:
+                    logger.error("You should not be in this case")
+                    raise ValueError
             except TypeError:
                 _data = self.variables[varid].data[:,-1]
                 _data = _data[:,np.newaxis]

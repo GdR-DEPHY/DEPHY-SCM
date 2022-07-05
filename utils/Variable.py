@@ -521,6 +521,7 @@ class Variable:
         if height is not None and self.height is not None:
 
             hmax = np.max(self.height.data)
+            hmin = np.min(self.height.data)
             #print(hmax)
             #print(data.shape)
             #print(height.shape)
@@ -546,26 +547,37 @@ class Variable:
                 raise ValueError("Shape of given height array is unexpected: {0}".format(height.shape))
 
             #var2add.info()
-            #print(var2add.data.shape)
-            mask = var2add.height.data > hmax
-            #print(mask, mask.shape)
+            mask_up = var2add.height.data > hmax
+            mask_dn = var2add.height.data < hmin
 
-            nlev2add = np.sum(mask, axis=1)
-            if np.min(nlev2add) != np.max(nlev2add):
-                logger.error("Case unexpected: the number of level to add is not constant in time: min={0} max={1}".format(np.min(nlev2add), np.max(nlev2add)))
+            nlev2add_up = np.sum(mask_up, axis=1)
+            nlev2add_dn = np.sum(mask_dn, axis=1)
+            if np.min(nlev2add_up) != np.max(nlev2add_up):
+                logger.error("Case unexpected: the number of level to add is not constant in time: min={0} max={1}".format(np.min(nlev2add_up), np.max(nlev2add_up)))
                 raise NotImplementedError
-            nlev2add = int(nlev2add[0])
 
-            nlev_new = nlevin + nlev2add
+            if np.min(nlev2add_dn) != np.max(nlev2add_dn):
+                logger.error("Case unexpected: the number of level to add is not constant in time: min={0} max={1}".format(np.min(nlev2add_dn), np.max(nlev2add_dn)))
+                raise NotImplementedError
+
+            if np.max(nlev2add_dn) > 0 and np.max(nlev2add_up) > 0:
+                logger.error("Case unexpected: cannot add levels up and down at the same time")
+                raise NotImplementedError
+
+            nlev2add_up = int(nlev2add_up[0])
+            nlev2add_dn = int(nlev2add_dn[0])
+
+            nlev_new = nlevin + nlev2add_up + nlev2add_dn
 
             _data = np.zeros((ntin,nlev_new), dtype=np.float64)
-            _data[:,:nlevin] = self.data[:,:]
-            #print(self.id, _data[:,nlevin:].shape, var2add.data.shape, var2add.data[:,mask[0]].shape)
-            _data[:,nlevin:] = var2add.data[:,mask[0]]
+            _data[:,nlev2add_dn:(nlev2add_dn+nlevin)] = self.data[:,:]
+            _data[:,(nlev2add_dn+nlevin):] = var2add.data[:,mask_up[0]]
+            _data[:,:nlev2add_dn] = var2add.data[:,mask_dn[0]]
 
             _height = np.zeros((ntin,nlev_new), dtype=np.float64)
-            _height[:,:nlevin] = self.height.data[:,:]
-            _height[:,nlevin:] = var2add.height.data[:,mask[0]]
+            _height[:,nlev2add_dn:(nlev2add_dn+nlevin)] = self.height.data[:,:]
+            _height[:,(nlev2add_dn+nlevin):] = var2add.height.data[:,mask_up[0]]
+            _height[:,:nlev2add_dn] = var2add.height.data[:,mask_dn[0]]
             _height_id = self.height.id
             _height_units = self.height.units
 

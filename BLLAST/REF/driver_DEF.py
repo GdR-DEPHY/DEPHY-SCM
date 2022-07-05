@@ -5,7 +5,9 @@ Created on 26 August 2021
 
 @author: Fleur Couvreux
 
-Modification
+Modifications
+  2022/07/04, Romain Roehrig, Make start/end dates consistent with Darbieu et al.
+                              Add P2OA altitude, and a consistent surface pressure (from ERA5)
 
 """
 
@@ -37,13 +39,13 @@ lverbose = False # print information about variables and case
 case = Case('BLLAST/REF',
         lat=43.1,
         lon=0.21,
-        startDate="20110620060000",
-        endDate="20110620233000",
+        startDate="20110620050000",
+        endDate="20110620180000",
         surfaceType='land',
-        zorog=0.)
+        zorog=588.)
 
 case.set_title("Forcing and initial conditions for BLLAST case - Meso-NH definition")
-case.set_reference(" Darbieu et al. (2015, ACP)")
+case.set_reference("Darbieu et al. (2015, ACP)")
 case.set_author("F. Couvreux")
 case.set_script("DEPHY-SCM/BLLAST/REF/driver_REF.py")
 
@@ -52,7 +54,7 @@ case.set_script("DEPHY-SCM/BLLAST/REF/driver_REF.py")
 ################################################
 
 # Surface pressure
-ps = 101300. # not indicated in the description of the case
+ps = 90000. # Approximate value from ERA5
 case.add_init_ps(ps)
 
 
@@ -80,7 +82,7 @@ case.add_init_rv(rv, lev=z, levtype='altitude')
 # 3. Forcing
 ################################################
 zadv=[100.,225.,350.,475.,600.,725.,850.,975,1100.,1225.,1350.,1475.,1600.,1725.,1850.,1975.,2100.,2225.,2350.,2475.]
-print('z adv=',zadv)
+#print('z adv=',zadv)
 timeadv=[0.,3600.,7200.,10800.,14400.,18000.,21600.,25200.,28800.,32400.,36000.,39600.,43200.,46800.]
 
 advth=np.genfromtxt('advection_profiles_Theta.txt',dtype=None,skip_header=8)
@@ -94,7 +96,6 @@ advrv=advrv/86400./1000. #conversion g/kg/day en kg/kg/s
 case.add_theta_advection(advth,time=timeadv,lev=zadv,levtype='altitude')
 case.add_rv_advection(advrv,time=timeadv,lev=zadv,levtype='altitude')
 
-#A INCLURE DANS UN 2E TEMPS QUAND on veut avoir un vrai bilan d'energie en surface
 # No radiation
 case.deactivate_radiation()
 

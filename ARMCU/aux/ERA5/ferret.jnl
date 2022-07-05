@@ -1,8 +1,0 @@
- ! NOAA/PMEL TMAP
- ! PyFerret v7.63 (optimized)
- ! Darwin 19.6.0 - 10/13/20
- !  8-Oct-21 19:39     
-
-set mode verify
-use /Users/romain/MUSC/V2.2.mac/simulations/V631/arp631d_CMIP6/BOMEX/REF/Output/netcdf/Out_klevel.nc
-shade rneb
