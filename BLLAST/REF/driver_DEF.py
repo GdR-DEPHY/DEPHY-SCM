@@ -86,10 +86,10 @@ zadv=[100.,225.,350.,475.,600.,725.,850.,975,1100.,1225.,1350.,1475.,1600.,1725.
 timeadv=[0.,3600.,7200.,10800.,14400.,18000.,21600.,25200.,28800.,32400.,36000.,39600.,43200.,46800.]
 
 advth=np.genfromtxt('advection_profiles_Theta.txt',dtype=None,skip_header=8)
-print('size advth',advth.shape)
+#print('size advth',advth.shape)
 advth=advth/86400. #conversion K/day en K/s
 advrv=np.genfromtxt('advection_profiles_qv.txt',dtype=None,skip_header=8)
-print('size advrv',advrv.shape)
+#print('size advrv',advrv.shape)
 advrv=advrv/86400./1000. #conversion g/kg/day en kg/kg/s
 
 
@@ -104,7 +104,7 @@ timeSfc = np.genfromtxt('Surface_flux.txt',dtype=None,skip_header=6,usecols=0)
 timeref=timeSfc[0]*3600.
 for it in range(0,timeSfc.shape[0]):
     timeSfc[it]=timeSfc[it]*3600.-timeref
-print('timeSfc',timeSfc)
+#print('timeSfc',timeSfc)
 
 shf = np.genfromtxt('Surface_flux.txt',dtype=None,skip_header=6,usecols=1)
 lhf = np.genfromtxt('Surface_flux.txt',dtype=None,skip_header=6,usecols=2)

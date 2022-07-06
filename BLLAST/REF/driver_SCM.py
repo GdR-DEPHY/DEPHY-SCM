@@ -56,8 +56,9 @@ case.extend_init_rv(height=0)
 case.extend_theta_advection(height=0)
 case.extend_rv_advection(height=0)
 
+
 # Extend profiles above what is described in Darbieu et al.
-hera5 = 6000 # continue with ERA5 above hera5
+hera5 = 4000 # continue with ERA5 above hera5
 with nc.Dataset('../aux/ERA5/ERA5_P2OA_20110620000000-20110620230000.nc') as f:
     temp = np.average(np.squeeze(f['ta'][:,::-1]), axis=0)
     pa = f['plev'][::-1]
@@ -68,7 +69,7 @@ with nc.Dataset('../aux/ERA5/ERA5_P2OA_20110620000000-20110620230000.nc') as f:
     case.extend_init_theta(theta=theta, height=height)
 
     qv = np.average(np.squeeze(f['qv'][:,::-1]), axis=0)
-    qv = qv[height0 >= hera5]
+    qv = qv[height0 >= hera5]*0
     case.extend_init_rv(rv=qv, height=height)
 
     u = np.average(np.squeeze(f['ua'][:,::-1]), axis=0)
@@ -91,7 +92,8 @@ with nc.Dataset('../aux/ERA5/ERA5_P2OA_20110620000000-20110620230000.nc') as f:
 # Grids onto which interpolate the input data
 
 # New vertical grid, 10-m resolution from surface to 3000 m and 100-m resolution above, up to htop
-htop = 60000
+#htop = 60000
+htop = 20000
 levout = np.array(list(range(0,3000,10)) + list(range(3100,int(htop)+1,100)),dtype=np.float64)
 
 #  New temporal grid, from 05:00 UTC to 18:00 UTC, 20 June 2011, 30-min timestep
