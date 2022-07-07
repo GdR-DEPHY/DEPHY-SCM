@@ -234,8 +234,9 @@ class Variable:
                 elif (levunits == 'km' and var2.level.units == 'km') or (levunits == 'm' and var2.level.units == 'm'):
                     levs2 = var2.level.data
                 else:
-                    logger.error("Unexpected case for levunits (var2): {0} {1}".forma(levunits, var2.level.units))
-                    raise ValueError("Unexpected case for levunits (var2): {0} {1}".forma(levunits, var2.level.units))
+                    logger.error("Unexpected case for levunits (var2): {0} {1}".format(levunits, var2.level.units))
+                    logger.error("it is possible that the vertical units for DEF and SCM files differ and the comparison cannot be plotted ")
+                    raise ValueError("Unexpected case for levunits (var2): {0} {1}".format(levunits, var2.level.units))
 
 
         if not(self.time is None) and not(self.level is None):
@@ -269,8 +270,8 @@ class Variable:
                         time = self.time.data/86400.
                         tunits = self.time.units.replace("seconds","days")
                     else:
-                        logger.error("timeunits unexpected for plotting: {0}".forma(timeunits))
-                        raise NotImplementedError("timeunits unexpected for plotting: {0}".forma(timeunits))
+                        logger.error("timeunits unexpected for plotting: {0}".format(timeunits))
+                        raise NotImplementedError("timeunits unexpected for plotting: {0}".format(timeunits))
 
                 plotbasics.plot2D(time,levs,self.data[:,:]*coef,
                         xlabel=tunits,
@@ -300,8 +301,8 @@ class Variable:
                             time2 = var2.time.data/86400.
                         tunits = self.time.units.replace("seconds","days")
                     else:
-                        logger.error("timeunits unexpected for plotting: {0}".forma(timeunits))
-                        raise NotImplementedError("timeunits unexpected for plotting: {0}".forma(timeunits))
+                        logger.error("timeunits unexpected for plotting: {0}".format(timeunits))
+                        raise NotImplementedError("timeunits unexpected for plotting: {0}".format(timeunits))
 
                 if var2 is None:
                     plotbasics.plot(time,self.data[:]*coef,
@@ -470,8 +471,8 @@ class Variable:
 
         else:
 
-            logger.error('Case unexpected for vertical interpolation of variable {0}'.forma(self.id))
-            raise ValueError('Case unexpected for vertical interpolation of variable {0}'.forma(self.id))
+            logger.error('Case unexpected for vertical interpolation of variable {0}'.format(self.id))
+            raise ValueError('Case unexpected for vertical interpolation of variable {0}'.format(self.id))
 
         return Variable(self.id, data=data, name=self.name, units=self.units,
                 level=_level, time=self.time,
@@ -591,8 +592,8 @@ class Variable:
 
         else:
 
-            logger.error('Case unexpected for vertical extension of variable {0}'.forma(self.id))
-            raise ValueError('Case unexpected for vertical extension of variable {0}'.forma(self.id))
+            logger.error('Case unexpected for vertical extension of variable {0}'.format(self.id))
+            raise ValueError('Case unexpected for vertical extension of variable {0}'.format(self.id))
 
         return Variable(self.id, data=_data, name=self.name, units=self.units,
                 level=_level, time=self.time,

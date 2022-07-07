@@ -352,6 +352,9 @@ def p2z(thetal=None, theta=None, ta=None,
 
     if theta is not None and ta is None:
         ta = theta2t(theta=theta,p=p)
+    if thetal is not None and ta is None:
+        # we assume thetal=theta for ta calculation
+        ta = theta2t(theta=thetal,p=p)
 
     nlev, = ta.shape
 
@@ -364,7 +367,7 @@ def p2z(thetal=None, theta=None, ta=None,
     z[0] = zs
 
     for ilev in range(1,nlev):
-        dz = (R[ilev-1]*ta[ilev-1])+(R[ilev]*ta[ilev])/(2*g)*(math.log(p[ilev-1])-math.log(p[ilev]))
+        dz = (R[ilev-1]*ta[ilev-1]+R[ilev]*ta[ilev])/(2.0*g)*(math.log(p[ilev-1])-math.log(p[ilev]))
         z[ilev] = z[ilev-1] + dz
 
     return z
