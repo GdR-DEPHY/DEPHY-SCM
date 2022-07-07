@@ -45,6 +45,11 @@ case = 'IHOP'
 cases.append(case)
 subcases[case] = ['REF']
 
+# IHOP Case
+case = 'BLLAST'
+cases.append(case)
+subcases[case] = ['REF','MESONH','NOADV']
+
 ####################################
 #### Shallow convection cases
 
