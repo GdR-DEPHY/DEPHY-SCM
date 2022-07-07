@@ -22,12 +22,12 @@ subcases = {}
 ####################################
 #### Stable boundary-layer cases
 
-# GABLS1 Case
+# GABLS1 case
 case = 'GABLS1'
 cases.append(case)
 subcases[case] = ['REF','MESONH']
 
-# GABLS4 Case
+# GABLS4 case
 case = 'GABLS4'
 cases.append(case)
 subcases[case] = ['STAGE3','STAGE3-SHORT']
@@ -35,17 +35,17 @@ subcases[case] = ['STAGE3','STAGE3-SHORT']
 ####################################
 #### Dry convection cases
 
-# AYOTTE Cases
+# AYOTTE cases
 case = 'AYOTTE'
 cases.append(case)
 subcases[case] = ['00SC','00WC','03SC','05SC','05WC','24SC']
 
-# IHOP Case
+# IHOP case
 case = 'IHOP'
 cases.append(case)
 subcases[case] = ['REF']
 
-# IHOP Case
+# IHOP cases
 case = 'BLLAST'
 cases.append(case)
 subcases[case] = ['REF','MESONH','NOADV']
@@ -53,28 +53,36 @@ subcases[case] = ['REF','MESONH','NOADV']
 ####################################
 #### Shallow convection cases
 
-# RICO Case
+# RICO cases
 case = 'RICO'
 cases.append(case)
 subcases[case] = ['SHORT','MESONH']
 
-# ARMCU Case
+# ARMCU cases
 case = 'ARMCU'
 cases.append(case)
 subcases[case] = ['REF','E3SM','MESONH']
 
-# BOMEX Case
+# BOMEX case
 case = 'BOMEX'
 cases.append(case)
 subcases[case] = ['REF']
 
-# SCMS Case
+# SCMS case
 case = 'SCMS'
 cases.append(case)
 subcases[case] = ['REF']
 
-# MPACE Case
+####################################
+#### Cold clouds
+
+# MPACE cases
 case = 'MPACE'
+cases.append(case)
+subcases[case] = ['REF','E3SM']
+
+# ISDAC case
+case = 'ISDAC'
 cases.append(case)
 subcases[case] = ['REF']
 
@@ -94,6 +102,7 @@ subcases[case] = ['REF','FAST','SLOW']
 ####################################
 #### Deep convection cases
 
+# CINDY2011/DYNAMO cases
 case = 'DYNAMO'
 cases.append(case)
 subcases[case] = ['NSA3A','NSA3A_D1','NSA3A_MJO1']
