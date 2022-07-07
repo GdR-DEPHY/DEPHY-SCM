@@ -108,6 +108,14 @@ cases.append(case)
 subcases[case] = ['NSA3A','NSA3A_D1','NSA3A_MJO1']
 
 ####################################
+#### Other
+
+# MAGIC
+case = 'MAGIC'
+cases.append(case)
+subcases[case] = ['LEG{0:0>2}A'.format(i) for i in [4, 5, 6, 7, 11, 12, 13, 14, 15, 16, 17, 18]]
+
+####################################
 
 def available(case=None):
     """
