@@ -2313,6 +2313,7 @@ class Case:
             VV = self.variables[var]
             if VV.time is not None:
                 time = VV.time
+                nt, = VV.time.data.shape
             if VV.level is not None:
                 level = VV.level
             if VV.height is not None:
@@ -2331,8 +2332,9 @@ class Case:
         #---- Height/pressure
         if height is None and pressure is None:
 
-            logger.error('height and pressure are None. Unexpected in add_missing_forcing_variables')
-            raise ValueError('height and pressure are None. Unexpected in add_missing_forcing_variables')
+            logger.warning('No 3D forcing')
+            #logger.error('height and pressure are None. Unexpected in add_missing_forcing_variables')
+            #raise ValueError('height and pressure are None. Unexpected in add_missing_forcing_variables')
 
         elif pressure is None:
 
@@ -2355,7 +2357,7 @@ class Case:
                 self.var_forcing_list.append('zh_forc')
                 self.variables['zh_forc'] = height
 
-        elif VV.height is None:
+        elif height is None:
 
             logger.info('Assume zh_forc is constant over time')
             height = np.tile(self.variables['zh'].data[0,:],(nt,1))
