@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Created on 09 June 2020
@@ -12,15 +12,11 @@ Modification
 
 ## GABLS4/STAGE3 original case definition
 
-import sys
-sys.path = ['../../utils/',] + sys.path
-
 import netCDF4 as nc
 import numpy as np
 
-import thermo
-
-from Case import Case
+from dephycf import thermo
+from dephycf.Case import Case
 
 ################################################
 # 0. General configuration of the present script

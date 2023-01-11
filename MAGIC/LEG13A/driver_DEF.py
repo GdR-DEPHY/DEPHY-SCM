@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Created on 10 January 2022
@@ -23,8 +23,6 @@ Modification
 # model data record.
 
 import os
-import sys
-sys.path = ['../../utils/',] + sys.path
 
 import netCDF4 as nc
 from netCDF4 import Dataset
@@ -32,8 +30,7 @@ import numpy as np
 
 from datetime import datetime, timedelta
 
-#import constants
-from Case import Case
+from dephycf.Case import Case
 import xarray as xr
 
 from scipy import interpolate
@@ -327,6 +324,9 @@ for istep in range(0,nsnd):
 
 
 if (lblend):
+  if not(os.path.exists('./images/driver_DEF')):
+    os.makedirs('./images/driver_DEF')
+
   for tidx in range(0,nsnd): 
     plt.figure(figsize=(14,6))
     plt.suptitle("sonde nr "+str(tidx))

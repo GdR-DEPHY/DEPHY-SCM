@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Created on 29 November 2019
@@ -12,14 +12,11 @@ Modification
 
 ## ARM-Cumulus SCM-enabled case definition
 
-import sys
-sys.path = ['../../utils/',] + sys.path
-
 import netCDF4 as nc
 import numpy as np
 
-from Case import Case
-import thermo
+from dephycf.Case import Case
+from dephycf import thermo
 
 ################################################
 # 0. General configuration of the present script

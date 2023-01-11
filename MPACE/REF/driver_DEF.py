@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Created on 01 October 2020
@@ -14,13 +14,11 @@ In  the  baseline  simulation, longitude is 209.0, latitude is 71.75. The lower 
 """
 
 import os
-import sys
-sys.path = ['../../utils/',] + sys.path
 
 import netCDF4 as nc
 import numpy as np
 
-from Case import Case
+from dephycf.Case import Case
 
 ################################################
 # 0. General configuration of the present script

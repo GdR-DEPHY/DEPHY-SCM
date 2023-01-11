@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Created on 03 January 2020
@@ -32,12 +32,3 @@ for case in AA.cases:
         os.system(cmd)
         cmd = "python driver_SCM.py"
         os.system(cmd)
-
-        #try:
-        #    os.remove('.DS_Store')
-        #except OSError:
-        #    pass
-
-        #print os.listdir('./')
-
-

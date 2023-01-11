@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Created on 26 August 2021
@@ -16,14 +16,11 @@ Modifications
 ## afternoon transition doi:10.5194/acp-15-10071-2015
 
 import os
-import sys
-sys.path = ['../../utils/',] + sys.path
 
 import netCDF4 as nc
 import numpy as np
 
-import constants
-from Case import Case
+from dephycf.Case import Case
 
 ################################################
 # 0. General configuration of the present script

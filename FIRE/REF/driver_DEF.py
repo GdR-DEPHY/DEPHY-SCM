@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Created on 21 Septembre 2021
@@ -9,14 +9,11 @@ Created on 21 Septembre 2021
 
 ## EUROCS FIRE straotumulus case original case definition
 
-import sys
-sys.path = ['../../utils/',] + sys.path
-
 from datetime import datetime, timedelta
 
 import numpy as np
 
-from Case import Case
+from dephycf.Case import Case
 
 ################################################
 # 0. General configuration of the present script

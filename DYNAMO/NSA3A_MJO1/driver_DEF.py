@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Created on 7 April 2020
@@ -9,14 +9,14 @@ Created on 7 April 2020
 ## DYNAMO/NSA3A_D1 case definition
 
 import sys
-sys.path = ['../','../../utils/',] + sys.path
+sys.path.append('..')
 
 import netCDF4 as nc
 import numpy as np
 
-from Case import Case
+from dephycf.Case import Case
+from dephycf import thermo
 
-import thermo
 from myfunctions import extend
 
 ################################################

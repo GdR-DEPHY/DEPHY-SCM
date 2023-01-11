@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Created on 10 December 2019
@@ -15,14 +15,12 @@ Modification
 ## From http://projects.knmi.nl/eurocs/ARM/case_ARM_html/
 
 import os
-import sys
-sys.path = ['../../utils/',] + sys.path
 
 import netCDF4 as nc
 import numpy as np
 
-import constants
-from Case import Case
+from dephycf import constants
+from dephycf.Case import Case
 
 ################################################
 # 0. General configuration of the present script

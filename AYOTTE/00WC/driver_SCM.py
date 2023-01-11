@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Created on 10 Avril 2020
@@ -8,12 +8,9 @@ Created on 10 Avril 2020
 
 ## AYOTTE/00WC
 
-import sys
-sys.path = ['../../utils/',] + sys.path
-
 import numpy as np
 
-from Case import Case
+from dephycf.Case import Case
 
 ################################################
 # 0. General configuration of the present script

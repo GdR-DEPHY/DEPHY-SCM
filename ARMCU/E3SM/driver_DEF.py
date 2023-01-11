@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Created on 09 January 2021
@@ -9,17 +9,14 @@ Created on 09 January 2021
 ## ARM-Cumulus case definition from E3SM database
 
 import os
-import sys
-sys.path = ['../../utils/',] + sys.path
 
 import datetime
 
 import netCDF4 as nc
 import numpy as np
 
-import constants as CC
-
-from Case import Case
+from dephycf import constants as CC
+from dephycf.Case import Case
 
 ################################################
 # 0. General configuration of the present script

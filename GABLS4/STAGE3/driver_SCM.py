@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Created on 09 June 2020
@@ -8,12 +8,9 @@ Created on 09 June 2020
 
 ## GABLS4/STAGE3 SCM-enabled case definition
 
-import sys
-sys.path = ['../../utils/',] + sys.path
-
 import numpy as np
 
-from Case import Case
+from dephycf.Case import Case
 
 ################################################
 # 0. General configuration of the present script

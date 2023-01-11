@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Created on 30 October 2020
@@ -15,14 +15,11 @@ Modification
 ## doi: 10.1256/qj.04.167
 
 import os
-import sys
-sys.path = ['../../utils/',] + sys.path
 
 import netCDF4 as nc
 import numpy as np
 
-import constants
-from Case import Case
+from dephycf.Case import Case
 
 ################################################
 # 0. General configuration of the present script

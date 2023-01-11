@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Created on 21 January 2022
@@ -11,16 +11,12 @@ Modification
 
 ## MAGIC Leg17A SCM-enabled case definition
 
-import sys
-sys.path = ['../../utils/',] + sys.path
-
 import netCDF4 as nc
 import numpy as np
 
 from datetime import datetime, timedelta
 
-from Case import Case
-import thermo
+from dephycf.Case import Case
 
 ################################################
 # 0. General configuration of the present script

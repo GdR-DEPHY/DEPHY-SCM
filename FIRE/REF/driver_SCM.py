@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Created on 21 September 2021
@@ -8,14 +8,11 @@ Created on 21 September 2021
 
 ## FIRE Reference case SCM-enabled definition
 
-import sys
-sys.path = ['../../utils/',] + sys.path
-
 import numpy as np
 import netCDF4 as nc
 
-from Case import Case
-import thermo
+from dephycf.Case import Case
+from dephycf import thermo
 
 ################################################
 # 0. General configuration of the present script

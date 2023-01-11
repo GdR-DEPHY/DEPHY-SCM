@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Created on 01 May 2020
@@ -17,13 +17,11 @@ In  the  baseline  simulation,  the  latitude  was 73.8N, the geostrophic wind w
 """
 
 import os
-import sys
-sys.path = ['../../utils/',] + sys.path
 
 import netCDF4 as nc
 import numpy as np
 
-from Case import Case
+from dephycf.Case import Case
 
 ################################################
 # 0. General configuration of the present script
