@@ -22,15 +22,15 @@ subcases = {}
 ####################################
 #### Stable boundary-layer cases
 
-# GABLS1 case
+# GABLS1 cases
 case = 'GABLS1'
 cases.append(case)
-subcases[case] = ['REF','MESONH']
+subcases[case] = ['REF', 'MESONH']
 
-# GABLS4 case
+# GABLS4 cases
 case = 'GABLS4'
 cases.append(case)
-subcases[case] = ['STAGE3','STAGE3-SHORT']
+subcases[case] = ['STAGE3', 'STAGE3-SHORT']
 
 ####################################
 #### Dry convection cases
@@ -38,17 +38,17 @@ subcases[case] = ['STAGE3','STAGE3-SHORT']
 # AYOTTE cases
 case = 'AYOTTE'
 cases.append(case)
-subcases[case] = ['00SC','00WC','03SC','05SC','05WC','24SC']
+subcases[case] = ['00SC', '00WC', '03SC', '05SC', '05WC', '24SC']
 
 # IHOP case
 case = 'IHOP'
 cases.append(case)
 subcases[case] = ['REF']
 
-# IHOP cases
+# BLLAST cases
 case = 'BLLAST'
 cases.append(case)
-subcases[case] = ['REF','MESONH','NOADV']
+subcases[case] = ['REF', 'NOADV', 'MESONH']
 
 ####################################
 #### Shallow convection cases
@@ -56,12 +56,12 @@ subcases[case] = ['REF','MESONH','NOADV']
 # RICO cases
 case = 'RICO'
 cases.append(case)
-subcases[case] = ['SHORT','MESONH']
+subcases[case] = ['SHORT', 'MESONH']
 
 # ARMCU cases
 case = 'ARMCU'
 cases.append(case)
-subcases[case] = ['REF','E3SM','MESONH']
+subcases[case] = ['REF', 'MESONH', 'E3SM']
 
 # BOMEX case
 case = 'BOMEX'
@@ -79,7 +79,7 @@ subcases[case] = ['REF']
 # MPACE cases
 case = 'MPACE'
 cases.append(case)
-subcases[case] = ['REF','E3SM']
+subcases[case] = ['REF', 'E3SM']
 
 # ISDAC case
 case = 'ISDAC'
@@ -97,15 +97,28 @@ subcases[case] = ['REF']
 # SANDU composite cases
 case = 'SANDU'
 cases.append(case)
-subcases[case] = ['REF','FAST','SLOW']
+subcases[case] = ['REF', 'FAST', 'SLOW']
+####################################
+#### Transition from shallow to deep convection cases
+
+# Kuang and Bretherton (2006) Case
+case = 'KB2006'
+cases.append(case)
+subcases[case] = ['REF']
 
 ####################################
 #### Deep convection cases
 
+# AMMA case
+case = 'AMMA'
+cases.append(case)
+subcases[case] = ['REF']
+
+
 # CINDY2011/DYNAMO cases
 case = 'DYNAMO'
 cases.append(case)
-subcases[case] = ['NSA3A','NSA3A_D1','NSA3A_MJO1']
+subcases[case] = ['NSA3A', 'NSA3A_D1', 'NSA3A_MJO1']
 
 ####################################
 #### Other
