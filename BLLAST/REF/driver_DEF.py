@@ -8,6 +8,8 @@ Created on 26 August 2021
 Modifications
   2022/07/04, Romain Roehrig, Make start/end dates consistent with Darbieu et al.
                               Add P2OA altitude, and a consistent surface pressure (from ERA5)
+  2023/02/13, Romain Roehrig, Surface pressure from BLLAST observations (950 hPa)
+                              Correction of longitude
 
 """
 
@@ -35,7 +37,7 @@ lverbose = False # print information about variables and case
 
 case = Case('BLLAST/REF',
         lat=43.1,
-        lon=0.21,
+        lon=0.36,
         startDate="20110620050000",
         endDate="20110620180000",
         surfaceType='land',
@@ -51,7 +53,7 @@ case.set_script("DEPHY-SCM/BLLAST/REF/driver_REF.py")
 ################################################
 
 # Surface pressure
-ps = 90000. # Approximate value from ERA5
+ps = 95000. # Approximate value from ERA5
 case.add_init_ps(ps)
 
 
