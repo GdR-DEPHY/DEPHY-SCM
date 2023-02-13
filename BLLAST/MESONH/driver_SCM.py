@@ -56,7 +56,7 @@ case.extend_init_rv(height=0)
 
 
 # Extend profiles above what is described in Darbieu et al.
-hera5 = 4000 # continue with ERA5 above hera5
+hera5 = 6000 # continue with ERA5 above hera5. Not to low to avoid mid-level clouds.
 with nc.Dataset('../aux/ERA5/ERA5_P2OA_20110620000000-20110620230000.nc') as f:
     temp = np.average(np.squeeze(f['ta'][:,::-1]), axis=0)
     pa = f['plev'][::-1]
