@@ -1057,6 +1057,7 @@ class Case:
 
         if timescale is not None and nudging_coefficient is not None:
             logger.error('You cannot provide both a nudging timescale and a nudging coefficient profile for {0}'.format(varid))
+            raise ValueError('You must provide a nudging timescale for variable {0}'.format(varid))
 
         if timescale is not None:
             if timescale >= 0.:
@@ -2491,7 +2492,6 @@ class Case:
                     lev=level, time=time,
                     height=height, pressure=pressure)
                 self.set_attribute('adv_rt',1)
-
 
         #---- Wind nudging
 
