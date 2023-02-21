@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on 06 Avril 2022
+Created on 21 Fevrier 2023
 
 @author: Fleur Couvreux
 
 from Kuang and Bretherton, 2006
+
+use wind from BOMEX case (while KB06 uses no wind)
+and profile modified near tropopause to use an inversion
 """
 
 ## BOMEX original case definition
@@ -52,7 +55,7 @@ case.add_init_ps(ps)
 
 # Zonal and meridional wind
 zu = [   0,    700.,  3000., 5600. ,20000.]
-u  = [ 0.,   0.,    0., 0.00, 0.00]
+u  = [-8.75,  -8.75,   -4.61, 0.00, 0.00]
 
 zv = [ 0.,   700., 3000., 5600., 20000. ]
 v  = [ 0.,     0.,    0.,    0.,     0. ]
@@ -60,16 +63,16 @@ v  = [ 0.,     0.,    0.,    0.,     0. ]
 case.add_init_wind(u=u,v=v, ulev=zu, vlev=zv, levtype='altitude')
 
 # Potential Temperature
-zthetal = [  0.,     520.,  1480.,  2000., 3000., 4000., 20000.]
-thetal  = [298.7,   298.7, 302.4,  308.2, 311.85, 315.5,  373.9]
+zthetal = [  0.,     520.,  1480.,  2000., 3000., 4000., 15000., 20000.]
+thetal  = [298.7,   298.7, 302.4,  308.2, 311.85, 316.93, 362.95, 383.87]
 
 case.add_init_thetal(thetal, lev=zthetal, levtype='altitude')
 
 # Specific humidity
-zqt =[ 0.,  520., 1480., 2000., 3000., 4000., 20000.] 
-qt = [17.,  16.57,  10.82, 4.22, 3.01,    0., 0.] # in g kg-1
+zrt =[ 0.,  520., 1480., 2000., 3000., 4000., 15000., 20000.] 
+rt = [17.293998,  16.57,  10.82, 4.22, 3.01, 0., 0., 0.] # in g kg-1
 
-case.add_init_qt(np.array(qt)/1000., lev=zqt, levtype='altitude') # converted in kg kg-1
+case.add_init_rt(np.array(rt)/1000., lev=zrt, levtype='altitude') # converted in kg kg-1
 
 # Turbulent Kinetic Energy
 ztke = range(0,6000+1,10)
@@ -91,8 +94,8 @@ case.add_init_tke(tke, lev=ztke, levtype='altitude')
 # Constant geostrophic wind across the simulation
 # Siebesma et Cuijpers donnent ug=-10.+0.0018*zz  vg=0.
 
-zug = [0., 300., 500., 1500., 2100., 2500.,4000., 5600., 20000.]
-ug =  [0.,0., 0., 0., 0., 0., 0., 0.0, 0.0]
+zug = [0., 300., 500., 1500., 2100., 2500.,4000., 5600., 20060.]
+ug =  [-10.,-9.46, -9.10, -7.30, -6.22, -5.50, -2.80, 0.0, 0.0]
 nzug=len(zug)
 vg = np.zeros(nzug,dtype=np.float64)
 
@@ -111,10 +114,10 @@ thetaladv  = [-2.315e-5, -2.315e-5, -2.315e-5, -2.315e-5, -0.926e-5, 0., 0., 0.,
 case.add_thetal_advection(np.array(thetaladv),lev=zthetaladv,levtype='altitude',include_rad=True) # converted in K s-1
 
 # Constant large-scale advection of specific humidity
-zqtadv = zug 
-qtadv  = [-1.2e-5, -1.2e-5, 0., 0., 0., 0., 0., 0.,  0.] # in g kg-1 s-1
+zrtadv = zug 
+rtadv  = [-1.2e-5, -1.2e-5, 0., 0., 0., 0., 0., 0.,  0.] # in g kg-1 s-1
 
-case.add_qt_advection(np.array(qtadv)/1000.,lev=zqtadv,levtype='altitude') # converted in kg kg-1 s-1
+case.add_rt_advection(np.array(rtadv)/1000.,lev=zrtadv,levtype='altitude') # converted in kg kg-1 s-1
 
 # Surface Forcing
 #            t(s)      H (W m-2)         LE (W m-2)
@@ -148,7 +151,7 @@ case.add_surface_fluxes(sens=sfcForc[1::3],lat=sfcForc[2::3],time=timeSfc,forc_w
 # 4. Writing file
 ################################################
 
-case.write('KB2006_REF_DEF_driver.nc')
+case.write('KB2006_MESONH_DEF_driver.nc')
 
 if lverbose:
     case.info()

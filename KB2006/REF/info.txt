@@ -1,0 +1,4 @@
+Attention les profils qui sont pour l'instant donnés dans KB2006/REF corresponde au prolongement de BOMEX au-dessus de 3000m.
+Mais d'après la Fig 2 et 3 de Kuang & Bretherton 2006 ca ne correspond pas tout a fait. 
+En meme temps, nous n'avons pas les valeurs numériques dans le papier.
+Le cas MESO-NH correspond a celui qui a été lancé par Aude Champouillon et qui s'inspire du papier Kuang & Bretherton 2006
