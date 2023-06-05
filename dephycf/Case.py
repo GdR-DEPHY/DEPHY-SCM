@@ -1044,8 +1044,10 @@ class Case:
         timescale -- nudging timescale in seconds (integer or float)
         z_nudging -- altitude above which nudging is applied (integer or float)
         p_nudging -- pressure altitude under which nudging is applied (integer or float)
+        nudging_coefficient -- profile of nudging coefficien
 
-        Either z_nudging, p_nudging or nudging_profile must be defined.
+        Either timescale or nudging_coefficient must be defined.
+        If z_nudging and p_nudging are not provided, nudging is assumed to over the whole atmosphere
 
         See add_variable function for optional arguments.
         Note that:
@@ -1071,7 +1073,7 @@ class Case:
 
             if z_nudging is None and p_nudging is None:
                 logger.warning('{0} will be nudged over the whole atmosphere'.format(varid))
-                self.set_attribute('za_nudging_{0}'.format(varid),0)
+                self.set_attribute('zh_nudging_{0}'.format(varid),0)
 
             if z_nudging is not None:
                 self.set_attribute('zh_nudging_{0}'.format(varid),float(z_nudging))
