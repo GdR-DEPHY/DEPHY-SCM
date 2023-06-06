@@ -445,9 +445,6 @@ class Variable:
                     name='height_for_{0}'.format(self.id), units='m')
 
             data = np.zeros((ntin,nlevout),dtype=np.float64)
-            #print('-'*10, self.id)
-            #print(self.height.data[0,:])
-            #print(_height[0,:])
             for it in range(0,ntin):
                 ff = interpolate.interp1d(self.height.data[it,:], self.data[it,:],
                         bounds_error=False, fill_value=(self.data[it,0],self.data[it,-1])) # Pad below and above, if necessary
