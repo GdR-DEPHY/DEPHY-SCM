@@ -614,7 +614,7 @@ class Case:
             kwargs['time'] = [self.tstart,self.tend]
             nt = 2
 
-        if varid in ['ps_forc','hfss','hfls','ustar','ts_forc','tskin','orog','lat','lon','z0','z0h','z0q','beta']:
+        if varid in ['ps_forc','hfss','hfls','ustar','ts_forc','tskin','orog','lat','lon','z0','z0h','z0q','beta','alb','emis']:
             # Put the expected shape of the input data
             if lconstant: 
                 tmp = np.zeros((nt),dtype=np.float32)
@@ -1285,7 +1285,7 @@ class Case:
         No argument required.
         """
 
-        self.set_attribute('radiation'.format(var),"on")
+        self.set_attribute('radiation',"on")
 
     def deactivate_radiation(self):
         """Deactivate radiation in a Case object
@@ -1349,7 +1349,7 @@ class Case:
             self.add_forcing_variable('z0',z0)
         
 
-    def add_surface_fluxes(self,sens=None,lat=None,time_sens=None,time_lat=None,forc_wind=None,z0=None,ustar=None,time_ustar=None,**kwargs):
+    def add_surface_fluxes(self,sens=None,lat=None,time_sens=None,time_lat=None,forc_wind=None,z0=None,time_z0=None,ustar=None,time_ustar=None,**kwargs):
         """Add a surface flux forcing to a Case object.
 
         Required argument:
@@ -1383,7 +1383,7 @@ class Case:
             if z0 is None:
                 logger.error('z0 must be provided')
                 raise ValueError('z0 must be provided')
-            self.add_forcing_variable('z0',z0)
+            self.add_forcing_variable('z0',z0,time=time_z0)
         elif forc_wind == 'ustar':
             self.set_attribute("surface_forcing_wind","ustar")
             if ustar is None:

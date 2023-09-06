@@ -57,3 +57,6 @@ eps=Rv/Rd-1.0
 # Reference pressure
 p0 = 100000.
 
+# Stefan-Boltzmann constant
+sigma = 5.67e-8 # W m-2 K-4
+
