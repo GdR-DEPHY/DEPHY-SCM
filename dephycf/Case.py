@@ -440,7 +440,7 @@ class Case:
         - a level axis is required (lev optional argument).
         - a levtype is required (levtype optional argument).
         """
-
+        self.set_attribute('ini_ta',1)
         self.add_init_variable('ta',vardata,**kwargs)
 
     def add_init_theta(self,vardata,**kwargs):
@@ -454,7 +454,7 @@ class Case:
         - a level axis is required (lev optional argument).
         - a levtype is required (levtype optional argument).
         """
-
+        self.set_attribute('ini_theta',1)
         self.add_init_variable('theta',vardata,**kwargs)
 
     def add_init_thetal(self,vardata,**kwargs):
@@ -468,7 +468,7 @@ class Case:
         - a level axis is required (lev optional argument).
         - a levtype is required (levtype optional argument).
         """
-
+        self.set_attribute('ini_thetal',1)
         self.add_init_variable('thetal',vardata,**kwargs)
 
     def add_init_qv(self,vardata,**kwargs):
@@ -482,7 +482,7 @@ class Case:
         - a level axis is required (lev optional argument).
         - a levtype is required (levtype optional argument).
         """
-
+        self.set_attribute('ini_qv',1)
         self.add_init_variable('qv',vardata,**kwargs)
 
     def add_init_qt(self,vardata,**kwargs):
@@ -496,7 +496,7 @@ class Case:
         - a level axis is required (lev optional argument).
         - a levtype is required (levtype optional argument).
         """
-
+        self.set_attribute('ini_qt',1)
         self.add_init_variable('qt',vardata,**kwargs)
 
     def add_init_rv(self,vardata,**kwargs):
@@ -510,7 +510,7 @@ class Case:
         - a level axis is required (lev optional argument).
         - a levtype is required (levtype optional argument).
         """
-
+        self.set_attribute('ini_rv',1)
         self.add_init_variable('rv',vardata,**kwargs)
 
     def add_init_rt(self,vardata,**kwargs):
@@ -524,7 +524,7 @@ class Case:
         - a level axis is required (lev optional argument).
         - a levtype is required (levtype optional argument).
         """
-
+        self.set_attribute('ini_rt',1)
         self.add_init_variable('rt',vardata,**kwargs)
 
     def add_init_wind(self,u=None,v=None,ulev=None,vlev=None,**kwargs):

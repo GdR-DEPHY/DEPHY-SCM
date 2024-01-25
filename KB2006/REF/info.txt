@@ -1,4 +1,12 @@
-Attention les profils qui sont pour l'instant donnés dans KB2006/REF corresponde au prolongement de BOMEX au-dessus de 3000m.
+Attention les profils qui sont pour l'instant donnés dans KB2006/REF correspondent au prolongement de BOMEX au-dessus de 3000m.
 Mais d'après la Fig 2 et 3 de Kuang & Bretherton 2006 ca ne correspond pas tout a fait. 
 En meme temps, nous n'avons pas les valeurs numériques dans le papier.
 Le cas MESO-NH correspond a celui qui a été lancé par Aude Champouillon et qui s'inspire du papier Kuang & Bretherton 2006
+
+Différences principales:
+Vent: pas de vent dans REF U=0 alors que U=-9.5m/s dans la couche limite pour MESONH)- différence similaire sur le vent géostrophique Ug=0 dans REF et Ug=-10 dans MESONH
+
+thetal: différences au dessus de 3000m entre REF et MESONH
+rt: sont identifiques
+
+Les autres forcages sont identiques
