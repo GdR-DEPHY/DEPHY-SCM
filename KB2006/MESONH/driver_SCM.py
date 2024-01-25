@@ -60,8 +60,13 @@ timeout = np.array(range(0,86400*7+3600,3600),dtype=np.float64)
 newcase = case.convert2SCM(time=timeout,lev=levout,levtype='altitude')
 
 # update some attributes
+<<<<<<< HEAD
 newcase.set_title("Forcing and initial conditions for KB case - SCM-enabled version")
 newcase.set_script("DEPHY-SCM/KB2006/MESONH/driver_SCM.py")
+=======
+newcase.set_title("Forcing and initial conditions for BOMEX case - SCM-enabled version")
+newcase.set_script("DEPHY-SCM/BOMEX/MESONH/driver_SCM.py")
+>>>>>>> 390ecda956c8fb0ac9d37e29161a0d2e7c3c3634
 
 # display some information about the new version of the case
 if lverbose:

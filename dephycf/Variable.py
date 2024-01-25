@@ -447,7 +447,7 @@ class Variable:
             data = np.zeros((ntin,nlevout),dtype=np.float64)
             for it in range(0,ntin):
                 ff = interpolate.interp1d(self.height.data[it,:], self.data[it,:],
-                        bounds_error=False, fill_value=self.data[it,-1]) # Pad after end date with the last value, if necessary
+                        bounds_error=False, fill_value=(self.data[it,0],self.data[it,-1])) # Pad below and above, if necessary
                 data[it,:] = ff(_height[it,:])
 
         elif pressure is not None and self.pressure is not None:
@@ -466,7 +466,7 @@ class Variable:
             data = np.zeros((ntin,nlevout),dtype=np.float64)
             for it in range(0,ntin):
                 ff = interpolate.interp1d(self.pressure.data[it,:], self.data[it,:],
-                        bounds_error=False, fill_value=self.data[it,-1]) # Pad after end date with the last value, if necessary
+                        bounds_error=False, fill_value=(self.data[it,-1],self.data[it,0])) # Pad below and above, if necessary
                 data[it,:] = ff(_pressure[it,:])
 
         else:

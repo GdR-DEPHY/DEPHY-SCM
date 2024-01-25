@@ -614,7 +614,7 @@ class Case:
             kwargs['time'] = [self.tstart,self.tend]
             nt = 2
 
-        if varid in ['ps_forc','hfss','hfls','ustar','ts_forc','tskin','orog','lat','lon','z0','z0h','z0q','beta']:
+        if varid in ['ps_forc','hfss','hfls','ustar','ts_forc','tskin','orog','lat','lon','z0','z0h','z0q','beta','alb','emis']:
             # Put the expected shape of the input data
             if lconstant: 
                 tmp = np.zeros((nt),dtype=np.float32)
@@ -1044,8 +1044,10 @@ class Case:
         timescale -- nudging timescale in seconds (integer or float)
         z_nudging -- altitude above which nudging is applied (integer or float)
         p_nudging -- pressure altitude under which nudging is applied (integer or float)
+        nudging_coefficient -- profile of nudging coefficien
 
-        Either z_nudging, p_nudging or nudging_profile must be defined.
+        Either timescale or nudging_coefficient must be defined.
+        If z_nudging and p_nudging are not provided, nudging is assumed to over the whole atmosphere
 
         See add_variable function for optional arguments.
         Note that:
@@ -1071,7 +1073,7 @@ class Case:
 
             if z_nudging is None and p_nudging is None:
                 logger.warning('{0} will be nudged over the whole atmosphere'.format(varid))
-                self.set_attribute('za_nudging_{0}'.format(varid),0)
+                self.set_attribute('zh_nudging_{0}'.format(varid),0)
 
             if z_nudging is not None:
                 self.set_attribute('zh_nudging_{0}'.format(varid),float(z_nudging))
@@ -1283,7 +1285,7 @@ class Case:
         No argument required.
         """
 
-        self.set_attribute('radiation'.format(var),"on")
+        self.set_attribute('radiation',"on")
 
     def deactivate_radiation(self):
         """Deactivate radiation in a Case object
@@ -1347,7 +1349,7 @@ class Case:
             self.add_forcing_variable('z0',z0)
         
 
-    def add_surface_fluxes(self,sens=None,lat=None,time_sens=None,time_lat=None,forc_wind=None,z0=None,ustar=None,time_ustar=None,**kwargs):
+    def add_surface_fluxes(self,sens=None,lat=None,time_sens=None,time_lat=None,forc_wind=None,z0=None,time_z0=None,ustar=None,time_ustar=None,**kwargs):
         """Add a surface flux forcing to a Case object.
 
         Required argument:
@@ -1381,7 +1383,7 @@ class Case:
             if z0 is None:
                 logger.error('z0 must be provided')
                 raise ValueError('z0 must be provided')
-            self.add_forcing_variable('z0',z0)
+            self.add_forcing_variable('z0',z0,time=time_z0)
         elif forc_wind == 'ustar':
             self.set_attribute("surface_forcing_wind","ustar")
             if ustar is None:
