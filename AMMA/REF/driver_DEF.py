@@ -8,6 +8,7 @@ Created on 11 December 2019
 Modification
   2020/11/12, R. Roehrig: update for improved case definition interface.
   2020/11/16, C. Rio: AMMA case
+  2024/01/26, F Couvreux: modification du cas car il a été défini en th/rv et comme tous les champs sont disponibles dans le fichier AMMA j'ai choisi de l'écrire en th & rv
 """
 
 ## AMMA/REF original case definition
@@ -81,10 +82,15 @@ case.add_init_wind(u=u,v=v,lev=height,levtype='altitude')
 # potential temperature
 temp = fin['temp'][:]
 case.add_init_temp(temp,lev=height,levtype='altitude')
+# potential temperature
+theta = fin['theta'][:]
+case.add_init_theta(theta,lev=height,levtype='altitude')
 
 # Vapor water content
 qv = fin['qv'][:]
 case.add_init_qv(qv,lev=height,levtype='altitude')
+rv = fin['rv'][:]
+case.add_init_rv(rv,lev=height,levtype='altitude')
 
 ################################################
 # 3. Forcing
@@ -101,15 +107,23 @@ case.add_vertical_velocity(w=w,lev=height,levtype='altitude',time=timeForc)
 #Moisture advection
 hq = fin['dq'][:,:]
 case.add_qv_advection(hq,time=timeForc,lev=height,levtype='altitude')
+#Moisture advection
+hrv = fin['drv'][:,:]
+case.add_rv_advection(hrv,time=timeForc,lev=height,levtype='altitude')
+
+
 
 #temperature advection and radiation
-hT = fin['dt'][:,:]
-case.add_theta_advection(hT,include_rad=True,lev=height,levtype='altitude',time=timeForc)
+#hT = fin['dt'][:,:]
+#case.add_theta_advection(hT,include_rad=True,lev=height,levtype='altitude',time=timeForc)
+#temperature advection and radiation
+hth = fin['dth'][:,:]
+case.add_theta_advection(hth,include_rad=True,lev=height,levtype='altitude',time=timeForc)
 
 # Surface fluxes
 sens=fin['sens'][:]
 flat=fin['flat'][:]
-case.add_surface_fluxes(sens,flat,time=timeForc,forc_wind='z0',z0=0.001)
+case.add_surface_fluxes(sens,flat,time=timeForc,forc_wind='z0',z0=0.01)
 
 ################################################
 # 4. Writing file
