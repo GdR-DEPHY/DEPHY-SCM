@@ -56,8 +56,8 @@ case.add_init_ps(ps)
 zu = [  0.,    700.,  3000.  ]
 u  = [ -8.75,   -8.75,  -4.61]
 
-zv = [ 0.,   3000. ]
-v  = [ 0.,     0.]
+zv = [ 0.,   700., 3000. ]
+v  = [ 0.,    0.,  0.]
 
 case.add_init_wind(u=u,v=v, ulev=zu, vlev=zv, levtype='altitude')
 
@@ -93,7 +93,7 @@ case.add_init_tke(tke, lev=ztke, levtype='altitude')
 # Constant geostrophic wind across the simulation
 # Siebesma et Cuijpers donnent ug=-10.+0.0018*zz  vg=0.
 
-zug = range(0,3000+1,10)
+zug = [0.,300.,500., 1500., 2100.,3000.]
 nzug = len(zug)
 ug = np.zeros(nzug,dtype=np.float64)
 for iz in range(0,nzug):

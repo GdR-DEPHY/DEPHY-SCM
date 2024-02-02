@@ -80,9 +80,9 @@ case.add_init_rv(rv, lev=z, levtype='altitude')
 ################################################
 
 # Constant Geostrophic wind across the simulation
-zforc = [0., 1500., 5000.]
-ug = [-4., -4., -4.]
-vg = [ 4.,  4.,  4.]
+zforc = [0., 1500., 3000., 5000.]
+ug = [-4., -4., -4., -4.]
+vg = [ 4.,  4.,  4., 4.]
 case.add_geostrophic_wind(ug=ug,vg=vg,lev=zforc,levtype='altitude')
 
 # Potential temperature and water vapor mixing ratio advection
