@@ -290,11 +290,13 @@ class Case:
                     height = np.tile(levdata,(nt,1))
                     height_id = 'zh_{0}'.format(varid)
                     height_units = 'm'
+                    self.set_attribute('forc_z',1)
             elif levtype == 'pressure':
                 if pressure is None:
                     pressure = np.tile(levdata,(nt,1))
                     pressure_id = 'pa_{0}'.format(varid)
                     pressure_units = 'Pa'
+                    self.set_attribute('forc_p',1)
 
         ######################
         # Get variable attributes

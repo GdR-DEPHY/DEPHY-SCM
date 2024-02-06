@@ -51,13 +51,8 @@ ps = 101500.
 case.add_init_ps(ps)
 
 # Zonal and meridional wind
-<<<<<<< HEAD
 zu = [   0,    700.,  3000., 5600. ,20000.]
 u  = [ 0.,   0.,    0., 0.00, 0.00]
-=======
-zu = [    0,    700.,   3000.,  5600., 20000.]
-u  = [-8.75,   -8.75,   -4.61,     0.,     0.]
->>>>>>> 390ecda956c8fb0ac9d37e29161a0d2e7c3c3634
 
 zv = [ 0.,   700., 3000., 5600., 20000. ]
 v  = [ 0.,     0.,    0.,    0.,     0. ]
@@ -96,15 +91,8 @@ case.add_init_tke(tke, lev=ztke, levtype='altitude')
 # Constant geostrophic wind across the simulation
 # Siebesma et Cuijpers donnent ug=-10.+0.0018*zz  vg=0.
 
-<<<<<<< HEAD
 zug = [0., 300., 500., 1500., 2100., 2500.,4000., 5600., 20000.]
 ug =  [0.,0., 0., 0., 0., 0., 0., 0.0, 0.0]
-=======
-
-zug = [  0.,  300.,  500.,  1500., 2100., 2500.,4000., 5600., 20000.]
-
-ug =  [-10., -9.46, -9.10,  -7.30, -6.22, -5.50, -2.80,  0.0,    0.0]
->>>>>>> 390ecda956c8fb0ac9d37e29161a0d2e7c3c3634
 nzug=len(zug)
 vg = np.zeros(nzug,dtype=np.float64)
 
