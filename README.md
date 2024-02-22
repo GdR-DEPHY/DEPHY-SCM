@@ -10,7 +10,7 @@ The DEPHY-SCM tool is using Python 3
   * netCDF4
   * numpy
   * scipy
-  ° xarray
+  * xarray
   * matplotlib
 
 # Using the tool
