@@ -50,13 +50,8 @@ case.extend_init_wind(height=0)
 case.extend_init_theta(height=0)
 case.extend_init_rv(height=0)
 
-# No advection
-#case.extend_theta_advection(height=0)
-#case.extend_rv_advection(height=0)
-
-
-# Extend profiles above what is described in Darbieu et al.
-hera5 = 4000 # continue with ERA5 above hera5
+# Extend profiles above what is described in Darbieu et al. (2015)
+hera5 = 4000 # continue with ERA5 above hera5 (in m)
 with nc.Dataset('../aux/ERA5/ERA5_P2OA_20110620000000-20110620230000.nc') as f:
     temp = np.average(np.squeeze(f['ta'][:,::-1]), axis=0)
     pa = f['plev'][::-1]
@@ -76,10 +71,6 @@ with nc.Dataset('../aux/ERA5/ERA5_P2OA_20110620000000-20110620230000.nc') as f:
     v = v[height0 >= hera5]
     case.extend_init_wind(u=u, v=v, height=height)
 
-# No advection
-#case.extend_theta_advection(theta_adv=0,height=3000)
-#case.extend_rv_advection(rv_adv=0,height=3000)
-
 # add a surface temperature
 with nc.Dataset('../aux/ERA5/ERA5_P2OA_20110620000000-20110620230000.nc') as f:
     dates = nc.num2date(f['time'][:], units=f['time'].units)
@@ -91,7 +82,6 @@ with nc.Dataset('../aux/ERA5/ERA5_P2OA_20110620000000-20110620230000.nc') as f:
 # Grids onto which interpolate the input data
 
 # New vertical grid, 10-m resolution from surface to 3000 m and 100-m resolution above, up to htop
-#htop = 60000
 htop = 20000
 levout = np.array(list(range(0,3000,10)) + list(range(3100,int(htop)+1,100)),dtype=np.float64)
 
@@ -100,11 +90,6 @@ timeout = np.array(range(0,46800+1,1800),dtype=np.float64)
 
 # conversion
 newcase = case.convert2SCM(time=timeout,lev=levout,levtype='altitude')
-
-# add a surface temperature. To be improved...
-#ts = timeout*0. + 310 # same shape as timeout
-
-#newcase.add_variable('ts',ts,time=timeout,timeid='time')
 
 # update some attributes
 newcase.set_title("Forcing and initial conditions for BLLAST case - SCM-enabled version")

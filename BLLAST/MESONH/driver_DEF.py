@@ -46,7 +46,7 @@ case = Case('BLLAST/MESONH',
 case.set_title("Forcing and initial conditions for BLLAST case - Meso-NH definition")
 case.set_reference("Darbieu et al. (2015, ACP)")
 case.set_author("F. Couvreux, R. Fernandes")
-case.set_script("DEPHY-SCM/BLLAST/MESONH/driver_REF.py")
+case.set_script("DEPHY-SCM/BLLAST/MESONH/driver_DEF.py")
 
 ################################################
 # 2. Initial state
@@ -91,13 +91,12 @@ timeSfc = np.genfromtxt('Surface_flux.txt',dtype=None,skip_header=6,usecols=0)
 timeref=timeSfc[0]*3600.
 for it in range(0,timeSfc.shape[0]):
     timeSfc[it]=timeSfc[it]*3600.-timeref
-#print('timeSfc',timeSfc)
 
 shf = np.genfromtxt('Surface_flux.txt',dtype=None,skip_header=6,usecols=1)
 lhf = np.genfromtxt('Surface_flux.txt',dtype=None,skip_header=6,usecols=2)
 
+# No information on the roughness length. Take some default (similar to IHOP)
 case.add_surface_fluxes(sens=shf,lat=lhf,time=timeSfc,forc_wind='z0',z0=0.1)
-# No information about roughness length. Use IHOP value
 
 ################################################
 # 4. Writing file
