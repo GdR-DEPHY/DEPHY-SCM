@@ -33,6 +33,11 @@ from . import constants as CC
 startDate0 = datetime(1979,1,1,0,0,0)
 endDate0 = datetime(1979,1,1,0,0,0)
 
+init_vars_1D = ['ps','ts','thetas']
+forc_vars_1D = ['ps_forc','hfss','hfls','ustar',\
+                'ts_forc','thetas_forc','tskin',\
+                'orog','lat','lon','z0','z0h','z0q','beta','alb','emis']
+
 class Case:
 
     def __init__(self, caseid,
@@ -361,7 +366,7 @@ class Case:
         # Get time axis for initial state variables
         kwargs['time'] = self.t0Axis
 
-        if varid in ['ps','ts']:
+        if varid in init_vars_1D:
             # Put the expected shape of the input data
             tmp = np.reshape(vardata,(1,))
         else:
@@ -402,6 +407,17 @@ class Case:
         """
 
         self.add_init_variable('ts',vardata,**kwargs)
+
+    def add_init_thetas(self,vardata,**kwargs):
+        """Add initial state variable for surface potential temperature to a Case object.
+           
+        Required argument:
+        vardata -- input data as an integer or a float.
+
+        See add_variable function for optional arguments.
+        """
+
+        self.add_init_variable('thetas',vardata,**kwargs)
 
     def add_init_height(self,vardata,**kwargs):
         """Add initial state variable for height to a Case object.
@@ -616,7 +632,7 @@ class Case:
             kwargs['time'] = [self.tstart,self.tend]
             nt = 2
 
-        if varid in ['ps_forc','hfss','hfls','ustar','ts_forc','tskin','orog','lat','lon','z0','z0h','z0q','beta','alb','emis']:
+        if varid in forc_vars_1D:
             # Put the expected shape of the input data
             if lconstant: 
                 tmp = np.zeros((nt),dtype=np.float32)
@@ -1349,9 +1365,34 @@ class Case:
         if z0 is not None:
             self.set_attribute('surface_forcing_wind','z0')
             self.add_forcing_variable('z0',z0)
-        
 
-    def add_surface_fluxes(self,sens=None,lat=None,time_sens=None,time_lat=None,forc_wind=None,z0=None,time_z0=None,ustar=None,time_ustar=None,**kwargs):
+    def add_forcing_thetas(self,data,z0=None,**kwargs):
+        """Add a surface potential temperature forcing to a Case object.
+        
+        This function sets a surface temperature forcing as the case surface forcing.
+        In case the initial surface temperature is not defined, add it.
+
+        Required argument:
+        data -- input data as a list or a numpy array.
+
+        If time is not provided, forcing is assumed constant in time.
+        """
+
+        self.set_attribute('surface_forcing_temp','thetas')
+        self.add_forcing_variable('thetas_forc',data,**kwargs)
+
+        if 'thetas' not in self.var_init_list:
+            if isinstance(data,float):
+                self.add_init_thetas(data,**kwargs)
+            else:
+                self.add_init_thetas(data[0],**kwargs)
+
+        if z0 is not None:
+            self.set_attribute('surface_forcing_wind','z0')
+            self.add_forcing_variable('z0',z0)
+
+    def add_surface_fluxes(self,sens=None,lat=None,time_sens=None,time_lat=None,\
+                           forc_wind=None,z0=None,time_z0=None,ustar=None,time_ustar=None,**kwargs):
         """Add a surface flux forcing to a Case object.
 
         Required argument:
@@ -2355,6 +2396,17 @@ class Case:
         if var not in self.var_forcing_list:
             tmp = np.zeros((nt,),dtype=np.float64) + self.variables['ps'].data[0]
             self.add_variable(var, tmp, time=time)
+
+        #---- Surface temperature an potential temperature forcing
+        att = 'surface_forcing_temp'
+        if att in self.attlist and self.attributes[att] in ['thetas','ts']:
+            if 'ts_forc' not in self.var_forcing_list and 'thetas_forc' in self.var_forcing_list:
+                tmp = thermo.theta2t(p=self.variables['ps_forc'].data, theta=self.variables['thetas_forc'].data)
+                self.add_variable('ts_forc', tmp, time=time)
+            elif 'ts_forc' in self.var_forcing_list and 'thetas_forc' not in self.var_forcing_list:
+                tmp = thermo.t2theta(p=self.variables['ps_forc'].data, temp=self.variables['ts_forc'].data)
+                self.add_variable('thetas_forc', tmp, time=time)
+            self.attributes[att] = 'ts' # Assume this is default, even though ts and thetas are available
 
         #---- Height/pressure
         if height is None and pressure is None:

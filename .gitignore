@@ -8,6 +8,9 @@
 **/.DS_Store
 # Jupyter checkpoints
 **/.ipynb_checkpoints/
+# Romain temporary work
+BLLAST/B2024
+# Fleur's additions ??
 AMMA/REF/ferret.jnl
 ASTEX/MESONH/ASTEX_EXSEG1.nam
 ASTEX/MESONH/ASTEX_PRE_IDEA1.nam
