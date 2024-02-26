@@ -1341,7 +1341,7 @@ class Case:
 
         self.add_forcing_variable('tskin',data,**kwargs)
 
-    def add_forcing_ts(self,data,z0=None,**kwargs):
+    def add_forcing_ts(self,data,z0=None,z0h=None,z0q=None,**kwargs):
         """Add a surface temperature forcing to a Case object.
         
         This function sets a surface temperature forcing as the case surface forcing.
@@ -1365,8 +1365,12 @@ class Case:
         if z0 is not None:
             self.set_attribute('surface_forcing_wind','z0')
             self.add_forcing_variable('z0',z0)
+            if z0h is not None:
+                self.add_forcing_variable('z0h',z0h)
+            if z0q is not None:
+                self.add_forcing_variable('z0q',z0q)
 
-    def add_forcing_thetas(self,data,z0=None,**kwargs):
+    def add_forcing_thetas(self,data,z0=None,z0h=None,z0q=None,**kwargs):
         """Add a surface potential temperature forcing to a Case object.
         
         This function sets a surface temperature forcing as the case surface forcing.
@@ -1390,6 +1394,10 @@ class Case:
         if z0 is not None:
             self.set_attribute('surface_forcing_wind','z0')
             self.add_forcing_variable('z0',z0)
+            if z0h is not None:
+                self.add_forcing_variable('z0h',z0h)
+            if z0q is not None:
+                self.add_forcing_variable('z0q',z0q)
 
     def add_surface_fluxes(self,sens=None,lat=None,time_sens=None,time_lat=None,\
                            forc_wind=None,z0=None,time_z0=None,ustar=None,time_ustar=None,**kwargs):

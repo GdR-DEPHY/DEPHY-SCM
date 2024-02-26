@@ -111,7 +111,7 @@ case.add_geostrophic_wind(ug=ug,vg=vg,lev=z,levtype='altitude')
 thetas=[265., 264.75, 264.5, 264.25, 264., 263.75, 263.5, 263.25, 263.0, 262.75]
 time_thetas=[0., 3600., 7200., 10800., 14400., 18000., 21600., 25200., 28800., 32400.]
 
-case.add_forcing_thetas(thetas,time=time_thetas,z0=0.1)
+case.add_forcing_thetas(thetas,time=time_thetas,z0=0.1,z0h=0.1)
 
 # The following flux-gradient relations are recommended
 # du/dz= ∂v=dz u*/(Kz)*(1.+Bm(z/L))
