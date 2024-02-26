@@ -2411,9 +2411,11 @@ class Case:
             if 'ts_forc' not in self.var_forcing_list and 'thetas_forc' in self.var_forcing_list:
                 tmp = thermo.theta2t(p=self.variables['ps_forc'].data, theta=self.variables['thetas_forc'].data)
                 self.add_variable('ts_forc', tmp, time=time)
+                self.add_init_ts(tmp[0])
             elif 'ts_forc' in self.var_forcing_list and 'thetas_forc' not in self.var_forcing_list:
                 tmp = thermo.t2theta(p=self.variables['ps_forc'].data, temp=self.variables['ts_forc'].data)
                 self.add_variable('thetas_forc', tmp, time=time)
+                self.add_init_thetas(tmp[0])
             self.attributes[att] = 'ts' # Assume this is default, even though ts and thetas are available
 
         #---- Height/pressure
