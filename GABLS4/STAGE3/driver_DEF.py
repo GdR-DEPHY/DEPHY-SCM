@@ -8,7 +8,7 @@ Created on 09 June 2020
 Modification
   2020/11/12, E. Vignon:  bugfix for ps + land->landice + no evaporation option
   2021/01/03, R. Roehrig: update for improved case definition interface.
-  2024/02/27, R. Reorhig: make the case more consistent with Couvreux et al. (2020) wrt first level (z=0)
+  2024/02/27, R. Roehrig: make the case more consistent with Couvreux et al. (2020) wrt first level (z=0)
 """
 
 ## GABLS4/STAGE3 original case definition
