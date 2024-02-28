@@ -9,6 +9,7 @@ Modification
 """
 
 ## ARPEGE/SODANKYLA_2018031512 case definition
+## No large-scale forcing
 
 CASE = 'ARPEGE'
 SUBCASE = 'SODANKYLA_2018031512_NOFORC'
@@ -37,14 +38,13 @@ lverbose = False # print information about variables and case
 case = Case(f'{CASE}/{SUBCASE}',
         startDate="20180315120000",
         endDate=  "20180318180000",
-        surfaceType="land",
-        zorog=0.)
+        surfaceType="land")
 
 case.set_title(f"Forcing and initial conditions for {CASE}/{SUBCASE} case")
 case.set_reference("")
 case.set_author("R. Roehrig")
 case.set_script(f"DEPHY-SCM/{CASE}/{SUBCASE}/driver_DEF.py")
-case.set_comment("Case implemented from an ARPEGE forecast")
+case.set_comment("Case implemented from an ARPEGE forecast. No large-scale forcing")
 
 ################################################
 # 2. Input netCDF file
@@ -113,30 +113,8 @@ case.add_latitude(lat,time=timeForc,timeid='time')
 case.add_longitude(lon,time=timeForc,timeid='time')
 
 # Surface pressure
-#ps_forc = fin['ps'][:nt]
-ps_forc = fin['ps'][:nt]*0 + fin['ps'][0]
+ps_forc = fin['ps'][:nt]*0 + fin['ps'][0] # Constant surface pressure
 case.add_surface_pressure_forcing(ps_forc,time=timeForc,timeid='time')
-
-# Forcing pressure level
-#pressure_forc = fin['pressure_f'][:nt,:]
-#case.add_pressure_forcing(pressure_forc,time=timeForc,timeid='time',lev=levForc,levtype='pressure',levid='lev')
-
-# Forcing height
-#height_forc = fin['height_f'][:nt,:]
-#case.add_height_forcing(height_forc,time=timeForc,timeid='time',lev=levForc,levtype='pressure',levid='lev')
-
-# Temperature advection
-#tadv = fin['tadv'][:nt,:]*-1. # from advective tendency to advective forcing
-#case.add_temp_advection(tadv,time=timeForc,timeid='time',lev=levForc,levtype='pressure',levid='lev')
-
-# Specific humidity advection
-#qvadv = fin['qadv'][:nt,:]*-1. # from advective tendency to advective forcing
-#case.add_qv_advection(qvadv,time=timeForc,timeid='time',lev=levForc,levtype='pressure',levid='lev')
-
-# Wind nudging
-#unudg = fin['u'][:nt,:]
-#vnudg = fin['v'][:nt,:]
-#case.add_wind_nudging(unudg=unudg,vnudg=vnudg,timescale=3600.,p_nudging=110000.,time=timeForc,timeid='time',lev=levForc,levtype='pressure',levid='lev')
 
 # Surface forcing
 sens = fin['sfc_sens_flx'][:nt]*-1
@@ -149,19 +127,19 @@ ts = fin['t_soil'][:nt,0]
 case.add_surface_skin_temp(ts,time=timeForc,timeid='time')
 
 # Activate radiation
-case.deactivate_radiation()
+case.activate_radiation()
 
-#alb = fin['albedo'][:nt]
-#case.add_forcing_variable('alb',alb,time=timeForc[:-1],timeid='timef')
+alb = fin['albedo'][:nt]
+case.add_forcing_variable('alb',alb,time=timeForc[:-1],timeid='timef')
 
-#rlds = fin['LWd'][:nt]
-#rlns = fin['LWn'][:nt]
-#rlus = rlds-rlns
-#emis = (rlus-rlds)/(CC.sigma*ts[:-1]**4-rlds)
+rlds = fin['LWd'][:nt]
+rlns = fin['LWn'][:nt]
+rlus = rlds-rlns
+emis = (rlus-rlds)/(CC.sigma*ts[:-1]**4-rlds)
 # Not fully satisfying, but possibly issue with provided data...
-#emis = np.where(emis < 0, 1, emis)
-#emis = np.where(emis > 1, 1, emis)
-#case.add_forcing_variable('emis',emis,time=timeForc[:-1],timeid='timef')
+emis = np.where(emis < 0, 1, emis)
+emis = np.where(emis > 1, 1, emis)
+case.add_forcing_variable('emis',emis,time=timeForc[:-1],timeid='timef')
 
 fin.close()
 

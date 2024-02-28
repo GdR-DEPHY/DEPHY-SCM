@@ -17,7 +17,7 @@ from dephycf.Case import Case
 ################################################
 
 case_name = 'ARPEGE'
-subcase_name = 'SODANKYLA_2018031512_NOFORC_RAD'
+subcase_name = 'SODANKYLA_2018031512_NOFORC_NORAD'
 title = f"Forcing and initial conditions for {case_name}/{subcase_name} - SCM-enabled version"
 
 lplot = True     # plot the new version of the case

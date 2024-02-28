@@ -9,6 +9,7 @@ Modification
 """
 
 ## ARPEGE/SODANKYLA_2018031512 case definition
+## No wind nudging
 
 CASE = 'ARPEGE'
 SUBCASE = 'SODANKYLA_2018031512_NONUD'
@@ -37,14 +38,13 @@ lverbose = False # print information about variables and case
 case = Case(f'{CASE}/{SUBCASE}',
         startDate="20180315120000",
         endDate=  "20180318180000",
-        surfaceType="land",
-        zorog=0.)
+        surfaceType="land")
 
 case.set_title(f"Forcing and initial conditions for {CASE}/{SUBCASE} case")
 case.set_reference("")
 case.set_author("R. Roehrig")
 case.set_script(f"DEPHY-SCM/{CASE}/{SUBCASE}/driver_DEF.py")
-case.set_comment("Case implemented from an ARPEGE forecast")
+case.set_comment("Case implemented from an ARPEGE forecast. No wind nudging")
 
 ################################################
 # 2. Input netCDF file
@@ -114,7 +114,6 @@ case.add_longitude(lon,time=timeForc,timeid='time')
 
 # Surface pressure
 ps_forc = fin['ps'][:nt]
-#ps_forc = fin['ps'][:nt]*0 + fin['ps'][0]
 case.add_surface_pressure_forcing(ps_forc,time=timeForc,timeid='time')
 
 # Forcing pressure level
@@ -126,17 +125,12 @@ height_forc = fin['height_f'][:nt,:]
 case.add_height_forcing(height_forc,time=timeForc,timeid='time',lev=levForc,levtype='pressure',levid='lev')
 
 # Temperature advection
-tadv = fin['tadv'][:nt,:]*-1. # from advective tendency to advective forcing
+tadv = fin['tadv'][:nt,:] # from advective tendency to advective forcing
 case.add_temp_advection(tadv,time=timeForc,timeid='time',lev=levForc,levtype='pressure',levid='lev')
 
 # Specific humidity advection
-qvadv = fin['qadv'][:nt,:]*-1. # from advective tendency to advective forcing
+qvadv = fin['qadv'][:nt,:] # from advective tendency to advective forcing
 case.add_qv_advection(qvadv,time=timeForc,timeid='time',lev=levForc,levtype='pressure',levid='lev')
-
-# Wind nudging
-#unudg = fin['u'][:nt,:]
-#vnudg = fin['v'][:nt,:]
-#case.add_wind_nudging(unudg=unudg,vnudg=vnudg,timescale=3600.,p_nudging=110000.,time=timeForc,timeid='time',lev=levForc,levtype='pressure',levid='lev')
 
 # Surface forcing
 sens = fin['sfc_sens_flx'][:nt]*-1
