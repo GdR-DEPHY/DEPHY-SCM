@@ -156,7 +156,7 @@ class Case:
         self.lon = lon
 
         self.add_latitude(lat)
-        self.add_latitude(lon)
+        self.add_longitude(lon)
 
     def set_attribute(self,attid,attvalue):
 
