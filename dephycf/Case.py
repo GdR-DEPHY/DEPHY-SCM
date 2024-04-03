@@ -2472,8 +2472,9 @@ class Case:
             elif var in ['rl','ri','ql','qi','tke']:
                 self.add_init_variable(var, self.variables['ua'].data*0, lev=levAxis, height=height, pressure=pressure)
             elif var in ['hur']:
-                hur = self.compute_hur()
-                self.add_init_variable(var, hur, lev=levAxis, height=height, pressure=pressure)
+                if lhur:
+                    hur = self.compute_hur()
+                    self.add_init_variable(var, hur, lev=levAxis, height=height, pressure=pressure)
             else:
                 logger.error('Case unexpected: variable {0} have to be defined'.format(var))
                 raise ValueError('Case unexpected: variable {0} have to be defined'.format(var))
