@@ -13,7 +13,7 @@ Modifications:
 GABLS1 original case definition
 From Kosovic and Curry 2000; Cuxart et al 2006; Beare et al 2006
 From Kosovic and Curry 2000: The initial conditions,surface cooling rate, and the inversion strength for these simulations were based on the measurements made during BASE on 1 October 1994 from flight number 7
-In  the  baseline  simulation,  the  latitude  was 73.8N, the geostrophic wind was set to 8 m s-1, thesurface cooling rate was 0.25 K h-1, the overlying inversion strength was 0.01 K m-1, and the surface roughness was 0.1 m. The baseline case roughness length is higher than the typical roughness length over sea ice in the Arctic ocean. However, due to the limitations of LES resolution, using a significantly lower roughness length would  result  in an underresolved surface layer.
+In  the  baseline  simulation,  the  latitude  was 73.8N, the geostrophic wind was set to 8 m s-1, the surface cooling rate was 0.25 K h-1, the overlying inversion strength was 0.01 K m-1, and the surface roughness was 0.1 m. The baseline case roughness length is higher than the typical roughness length over sea ice in the Arctic ocean. However, due to the limitations of LES resolution, using a significantly lower roughness length would  result  in an underresolved surface layer.
 """
 
 import os
@@ -108,10 +108,10 @@ case.add_geostrophic_wind(ug=ug,vg=vg,lev=z,levtype='altitude')
 # Surface Forcing
 # constant cooling rate 0.25K/hr from 265 K
 
-ts=[265., 264.75, 264.5, 264.25, 264., 263.75, 263.5, 263.25, 263.0, 262.75]
-timets=[0., 3600., 7200., 10800., 14400., 18000., 21600., 25200., 28800., 32400.]
+thetas=[265., 264.75, 264.5, 264.25, 264., 263.75, 263.5, 263.25, 263.0, 262.75]
+time_thetas=[0., 3600., 7200., 10800., 14400., 18000., 21600., 25200., 28800., 32400.]
 
-case.add_forcing_ts(ts,time=timets,z0=0.1)
+case.add_forcing_thetas(thetas,time=time_thetas,z0=0.1,z0h=0.1)
 
 # The following flux-gradient relations are recommended
 # du/dz= ∂v=dz u*/(Kz)*(1.+Bm(z/L))

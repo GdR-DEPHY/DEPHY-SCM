@@ -8,6 +8,7 @@ Created on 09 June 2020
 Modification
   2020/11/12, E. Vignon:  bugfix for ps + land->landice + no evaporation option
   2021/01/03, R. Roehrig: update for improved case definition interface.
+  2024/02/27, R. Roehrig: make the case more consistent with Couvreux et al. (2020) wrt first level (z=0)
 """
 
 ## GABLS4/STAGE3 original case definition
@@ -76,17 +77,18 @@ case.add_init_pressure(pressure,lev=height,levtype='altitude')
 # Zonal and meridional wind (same value for the first two levels)
 u = np.zeros(nlev+1,dtype=np.float64)
 u[1:]  = fin['u'][::-1]
-u[0] = u[1]
+u[0] = 0 # from Couvreux et al. (2020), Table 5
 
 v = np.zeros(nlev+1,dtype=np.float64)
 v[1:] = fin['v'][::-1]
-v[0] = v[1] 
+v[0] = 0 # from Couvreux et al. (2020), Table 5
 
 case.add_init_wind(u=u,v=v, lev=height, levtype='altitude')
 
 # Potential temperature
 theta = np.zeros(nlev+1,dtype=np.float64)
-theta[0] = thermo.t2theta(p=ps,temp=fin['Tg'][0])
+#theta[0] = thermo.t2theta(p=ps,temp=fin['Tg'][0])
+theta[0] = 271.3 # from Couvreux et al. (2020), Table 5
 theta[1:] = fin['theta'][::-1]
 
 case.add_init_theta(theta, lev=height, levtype='altitude')
@@ -116,15 +118,15 @@ ug = np.zeros((nt,nlev+1),dtype=np.float64)
 vg = np.zeros((nt,nlev+1),dtype=np.float64)
 ug[:,1:] = fin['Ug'][:,::-1]
 vg[:,1:] = fin['Vg'][:,::-1]
-ug[:,0] = ug[:,1]
-vg[:,0] = vg[:,1]
+ug[:,0] = 0 # from Couvreux et al. (2020), Table 5
+vg[:,0] = 0 # from Couvreux et al. (2020), Table 5
 
 case.add_geostrophic_wind(ug=ug,vg=vg,time=timeForc,lev=height,levtype='altitude')
 
 # Surface temperature
 ts = fin['Tg'][:]
 
-case.add_forcing_ts(ts,time=timeForc,z0=0.001) # The last version in Couvreux et al. (2020) recommend 0.001
+case.add_forcing_ts(ts,time=timeForc,z0=0.001,z0h=1.e-4) # The last version in Couvreux et al. (2020) recommend 0.001
 
 # No surface evaporation (in fact no moisture at all)
 case.deactivate_surface_evaporation()

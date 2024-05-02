@@ -5,7 +5,7 @@ attributes = OrderedDict([
         # Initial variables
         ###########################
         ('ps',       {'name': 'surface_air_pressure',                       'units': 'Pa', 'plotcoef': 0.01,  'plotunits': 'hPa'}),
-        ('zh',       {'name': 'height',                                     'units': 'm',  'plotcoef': 0.001, 'plotunits': 'km'}),
+        ('zh',       {'name': 'height_above_surface',                       'units': 'm',  'plotcoef': 0.001, 'plotunits': 'km'}),
         ('pa',       {'name': 'air_pressure',                               'units': 'Pa', 'plotcoef': 0.01,  'plotunits': 'hPa'}),
         ('ua',       {'name': 'eastward_wind',                              'units': 'm s-1'}),
         ('va',       {'name': 'northward_wind',                             'units': 'm s-1'}),
@@ -13,7 +13,7 @@ attributes = OrderedDict([
         ('theta',    {'name': 'air_potential_temperature',                  'units': 'K'}),
         ('thetav',   {'name': 'air_virtual_potential_temperature',          'units': 'K'}),
         ('thetal',   {'name': 'air_liquid_potential_temperature',           'units': 'K'}),
-        ('thetas',   {'name': 'air_conservative_potential_temperature',     'units': 'K'}),
+        ('hur',      {'name': 'relative_humidity',                          'units': '1', 'plotcoef':  100., 'plotunits': '%'}),
         ('qv',       {'name': 'specific_humidity',                          'units': '1', 'plotcoef': 1000., 'plotunits': 'g kg-1'}),
         ('qt',       {'name': 'mass_fraction_of_water_in_air',              'units': '1', 'plotcoef': 1000., 'plotunits': 'g kg-1'}),
         ('ql',       {'name': 'mass_fraction_of_cloud_liquid_water_in_air', 'units': '1', 'plotcoef': 1000., 'plotunits': 'g kg-1'}),
@@ -26,6 +26,7 @@ attributes = OrderedDict([
         ('hur',      {'name': 'relative_humidity',                          'units': '%'}),
         # Surface
         ('ts',    {'name': 'surface_temperature',                  'units': 'K'}),
+        ('thetas',{'name': 'surface_potential_temperature',        'units': 'K'}),
         ('mrsos', {'name': 'mass_content_of_water_in_soil_layer',  'units': 'kg m-2'}),
         ###########################
         # Forcing
@@ -34,7 +35,7 @@ attributes = OrderedDict([
         ('lat',     {'name': 'latitude',                     'units': 'degrees_north'}),
         ('lon',     {'name': 'longitude',                    'units': 'degrees_east'}),
         ('ps_forc', {'name': 'forcing_surface_air_pressure', 'units': 'Pa', 'plotcoef': 0.01,  'plotunits': 'hPa'}),
-        ('zh_forc', {'name': 'forcing_height',               'units': 'm',  'plotcoef': 0.001, 'plotunits': 'km'}),
+        ('zh_forc', {'name': 'forcing_height_above_surface', 'units': 'm',  'plotcoef': 0.001, 'plotunits': 'km'}),
         ('pa_forc', {'name': 'forcing_air_pressure',         'units': 'Pa', 'plotcoef': 0.01,  'plotunits': 'hPa'}),
         # Geostrophic forcings
         ('ug', {'name': 'geostrophic_eastward_wind',  'units': 'm s-1'}),
@@ -85,6 +86,7 @@ attributes = OrderedDict([
         ('wprvp_s',    {'name': 'surface_upward_humidity_mixing_ratio_flux',    'units': 'm s-1'}),
         ('wprtp_s',    {'name': 'surface_upward_water_mixing_ratio_flux',       'units': 'm s-1'}),
         ('ts_forc',    {'name': 'forcing_surface_temperature',                  'units': 'K'}),
+        ('thetas_forc',{'name': 'forcing_surface_potential_temperature',        'units': 'K'}),
         ('tskin',      {'name': 'surface_skin_temperature',                     'units': 'K'}),
         ('ustar',      {'name': 'surface_friction_velocity',                    'units': 'm s-1'}),
         ('z0',         {'name': 'surface_roughness_length_for_momentum_in_air', 'units': 'm'}),

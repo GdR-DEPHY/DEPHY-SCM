@@ -206,7 +206,7 @@ class Variable:
             if levunits is None:
                 levs = self.level.data
                 levunits = self.level.units
-                zlabel = 'Altitude [{0}]'.format(levunits)
+                zlabel = 'Altitude above the surface [{0}]'.format(levunits)
             elif levunits == 'hPa' and self.level.units == 'Pa':
                 levs = self.level.data/100.
                 zlabel = 'Pressure [{0}]'.format(levunits)
@@ -215,10 +215,10 @@ class Variable:
                 zlabel = 'Pressure [{0}]'.format(levunits)
             elif levunits == 'km' and self.level.units == 'm':
                 levs = self.level.data/1000.
-                zlabel = 'Altitude [{0}]'.format(levunits)
+                zlabel = 'Altitude above the surface [{0}]'.format(levunits)
             elif (levunits == 'km' and self.level.units == 'km') or (levunits == 'm' and self.level.units == 'm'):
                 levs = self.level.data
-                zlabel = 'Altitude [{0}]'.format(levunits)
+                zlabel = 'Altitude above the surface [{0}]'.format(levunits)
             else:
                 logger.error("Unexpected case for levunits: {0} {1}".format(levunits, self.level.units))
                 raise ValueError("Unexpected case for levunits: {0} {1}".format(levunits, self.level.units))

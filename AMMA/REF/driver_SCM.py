@@ -62,7 +62,7 @@ newcase = case.convert2SCM(time=timeout,lev=levout,levtype='altitude')
 #newcase.add_surface_temp(ts,time=timeout,timeid='time')
 
 # update some attributes
-newcase.set_title("Forcing and initial conditions for AMMA-Cumulus case - SCM-enabled version")
+newcase.set_title("Forcing and initial conditions for AMMA case - SCM-enabled version")
 newcase.set_script("DEPHY-SCM/AMMA/REF/driver_SCM.py")
 
 # display some information about the new version of the case

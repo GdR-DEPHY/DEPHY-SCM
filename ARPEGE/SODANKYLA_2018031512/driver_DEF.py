@@ -37,8 +37,7 @@ lverbose = False # print information about variables and case
 case = Case(f'{CASE}/{SUBCASE}',
         startDate="20180315120000",
         endDate=  "20180318180000",
-        surfaceType="ocean",
-        zorog=0.)
+        surfaceType="land")
 
 case.set_title(f"Forcing and initial conditions for {CASE}/{SUBCASE} case")
 case.set_reference("")
@@ -125,11 +124,11 @@ height_forc = fin['height_f'][:nt,:]
 case.add_height_forcing(height_forc,time=timeForc,timeid='time',lev=levForc,levtype='pressure',levid='lev')
 
 # Temperature advection
-tadv = fin['tadv'][:nt,:]*-1. # from advective tendency to advective forcing
+tadv = fin['tadv'][:nt,:] # from advective tendency to advective forcing
 case.add_temp_advection(tadv,time=timeForc,timeid='time',lev=levForc,levtype='pressure',levid='lev')
 
 # Specific humidity advection
-qvadv = fin['qadv'][:nt,:]*-1. # from advective tendency to advective forcing
+qvadv = fin['qadv'][:nt,:] # from advective tendency to advective forcing
 case.add_qv_advection(qvadv,time=timeForc,timeid='time',lev=levForc,levtype='pressure',levid='lev')
 
 # Wind nudging
@@ -138,8 +137,8 @@ vnudg = fin['v'][:nt,:]
 case.add_wind_nudging(unudg=unudg,vnudg=vnudg,timescale=3600.,p_nudging=110000.,time=timeForc,timeid='time',lev=levForc,levtype='pressure',levid='lev')
 
 # Surface forcing
-sens = fin['sfc_sens_flx'][:nt]
-lat = fin['sfc_lat_flx'][:nt]
+sens = fin['sfc_sens_flx'][:nt]*-1
+lat = fin['sfc_lat_flx'][:nt]*-1
 z0 = fin['mom_rough'][:nt]
 case.add_surface_fluxes(sens=sens,lat=lat,time=timeForc[:-1],timeid='timef',forc_wind='z0',z0=z0,time_z0=timeForc[:-1])
 

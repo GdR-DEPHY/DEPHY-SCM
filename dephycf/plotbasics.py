@@ -9,6 +9,7 @@ Created on 27 November 2019
 
 import numpy as np
 import matplotlib.pyplot as plt
+plt.set_loglevel('error')
 
 def plot(x,y,x2=None,y2=None,xlim=None,ylim=None,xlabel=None,ylabel=None,title=None,rep_images=None,name=None,label="",label2="",yunits=None):
     plt.plot(x,y,'k',label=label)
