@@ -65,8 +65,9 @@ print('P=',P)
 th = np.genfromtxt('init_thrv.txt',dtype=None,skip_header=0,usecols=1)
 rv = np.genfromtxt('init_thrv.txt',dtype=None,skip_header=0,usecols=2)
 
-case.add_init_theta(th, lev=P, levtype='pressure',levid='lev')
-case.add_init_rv(rv, lev=P, levtype='pressure',levid='lev')
+case.add_init_theta(th, lev=P, levtype='pressure')
+case.add_init_rv(rv, lev=P, levtype='pressure')
+print('Psize',P.shape,'thsize',th.shape)
 # Altitude above the ground
 Pu= np.genfromtxt('init_uv.txt',dtype=None,skip_header=1,usecols=0)
 
@@ -74,7 +75,7 @@ Pu= np.genfromtxt('init_uv.txt',dtype=None,skip_header=1,usecols=0)
 u = np.genfromtxt('init_uv.txt',dtype=None,skip_header=1,usecols=1)
 v = np.genfromtxt('init_uv.txt',dtype=None,skip_header=1,usecols=2)
 
-case.add_init_wind(u=u,v=v, lev=Pu, levtype='pressure',levid='lev')
+case.add_init_wind(u=u,v=v, lev=Pu, levtype='pressure')
 
 
 ################################################
@@ -112,7 +113,7 @@ Pfrck = np.array(Pfrck,dtype=np.float64)
 Pfrck = np.reshape(Pfrck, (33,nk))
 Pfrck = Pfrck.transpose()
 Pfrck1D=Pfrck[:,0]
-print(Pfrck1D.shape)
+print('Pfrc 1D=',Pfrck1D.shape,'nk=',nk)
 ufrck=np.genfromtxt('Forc_Tq.txt',dtype=None,skip_header=0, usecols=1)
 ufrck = np.array(ufrck,dtype=np.float64)
 ufrck = np.reshape(ufrck, (33,nk))
