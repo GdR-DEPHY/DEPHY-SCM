@@ -54,7 +54,7 @@ case = Case('MOSAI/%s'%scase,
         startDate=start_date,
         endDate=end_date,
         surfaceType='land',
-        zorog=588.)
+        zorog=635.)
 
 case.set_title("Forcing and initial conditions for MOSAI case - %s case"%scase)
 case.set_reference("MOSAI campaign")
