@@ -39,6 +39,7 @@ lverbose = False # print information about variables and case
 
 start_date = "20230819050000"
 end_date  =  "20230820180000"
+Zorog = 594.
 
 cover = args.c
 scase = cover+args.n
@@ -54,7 +55,7 @@ case = Case('MOSAI/%s'%scase,
         startDate=start_date,
         endDate=end_date,
         surfaceType='land',
-        zorog=635.)
+        zorog=Zorog)
 
 case.set_title("Forcing and initial conditions for MOSAI case - %s case"%scase)
 case.set_reference("MOSAI campaign")
@@ -76,7 +77,10 @@ ds = nc.Dataset("input.nc", "r")
 # utility functions to read netCDF variables, smooth the soundings and keep
 # only the ascending part of the profiles
 def getvar(var):
-  return ds.variables[var][:]
+  if (var == "height"):
+    return ds.variables[var][:] - Zorog
+  else:
+    return ds.variables[var][:]
 def smoothvar(var, npts=40):
   return kernel_mean_gauss(getvar(var)[imin:imax],z,npts)
 
