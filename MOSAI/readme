@@ -1,0 +1,31 @@
+30/05/2024
+@DEPHY team atelier cas 1D
+
+===============
+
+REF/ contains the generic drivers (python scripts)
+
+input_files/ contains the netCDF files with the soundings
+
+forcing_files/ contains 
+- the ascii files with the surface forcings for different covers (MAIZE, DECIDUOUS)
+- the netCDF files with the atmospheric tendencies from ARPEGE oper simulations
+
+Each other repertory contains a bash script that copies the inputs and forcing
+files and runs the REF/driver* scripts with command line argument corresponding
+to the setting of the repo. The available command line arguments can be listed
+with
+$ cd REF/
+$ python driver_DEF.py -h
+
+usage: driver_DEF.py [-h] -c cover [-n name_config] [-s thresh_sensib] [-a]
+
+options:
+  -h, --help        show this help message and exit
+  -c cover          cover type: MAIZE|DECIDUOUS
+  -n name_config    name of subcase variant
+  -s thresh_sensib  sensible heat flux threshold
+  -a                flag to activate advection tendencies
+
+to create a new subcase,
+copy one of the existing subcases (e.g. MAIZE/) and adapt make_cas.sh

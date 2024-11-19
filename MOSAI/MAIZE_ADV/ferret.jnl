@@ -1,0 +1,10 @@
+ ! NOAA/PMEL TMAP
+ ! FERRET v7.6 (optimized)
+ ! Linux 4.15.0-162-generic - 11/23/21
+ !  7-Jun-24 18:18     
+
+use MOSAI_MAIZE_ADV_DEF_driver.nc
+sh da
+shade/x=1:1000 tnta_adv
+shade/x=1:1000/tr tnta_adv
+exit

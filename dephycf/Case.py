@@ -3076,7 +3076,7 @@ class Case:
     def extend_temperature_advection(self, temp_adv=None, **kwargs):
         """Vertically extend the temperature large-scale advection"""
 
-        self.extend_variable('tnt_adv', data=temp_adv, **kwargs)
+        self.extend_variable('tnta_adv', data=temp_adv, **kwargs)
 
     def extend_theta_advection(self, theta_adv=None, **kwargs):
         """Vertically extend the potential temperature large-scale advection"""
