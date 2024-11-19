@@ -69,11 +69,11 @@ case.add_init_theta(th, lev=P, levtype='pressure')
 case.add_init_rv(rv, lev=P, levtype='pressure')
 print('Psize',P.shape,'thsize',th.shape)
 # Altitude above the ground
-Pu= np.genfromtxt('init_uv.txt',dtype=None,skip_header=1,usecols=0)
+Pu= np.genfromtxt('init_uv.txt',dtype=None,skip_header=0,usecols=0)
 
 # Zonal and meridional wind
-u = np.genfromtxt('init_uv.txt',dtype=None,skip_header=1,usecols=1)
-v = np.genfromtxt('init_uv.txt',dtype=None,skip_header=1,usecols=2)
+u = np.genfromtxt('init_uv.txt',dtype=None,skip_header=0,usecols=1)
+v = np.genfromtxt('init_uv.txt',dtype=None,skip_header=0,usecols=2)
 
 case.add_init_wind(u=u,v=v, lev=Pu, levtype='pressure')
 
@@ -292,7 +292,9 @@ lateSfc = np.genfromtxt('sfceforcing_fluxlat.txt',dtype=None,skip_header=0,useco
 tsSfc = np.genfromtxt('sfceforcing_ts.txt',dtype=None,skip_header=0,usecols=0)
 
 case.add_surface_fluxes(sens=sensSfc,lat=lateSfc,time=timeSfc,forc_wind='z0',z0=0.15)
-case.add_forcing_ts(tsSfc,time=timeSfc,z0=0.15)
+#case.add_forcing_ts(tsSfc,time=timeSfc,z0=0.15)
+case.add_rad_ts(tsSfc,time=timeSfc)
+
 #besoin de rajouter definition de Emissivite=0.994 et Albedo=0.17
 alb=0.17
 emis=0.994
