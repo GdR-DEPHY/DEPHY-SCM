@@ -2,6 +2,7 @@
 *.swp
 *.swo
 *~
+*ferret*
 # Compiled python files
 *.pyc
 # Mac specific files
