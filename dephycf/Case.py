@@ -1370,6 +1370,20 @@ class Case:
 
         self.add_forcing_variable('tskin',data,**kwargs)
 
+    def add_rad_ts(self,data,**kwargs):
+        """Add a surface temperature for radiation to a Case object.
+        
+        This function sets a surface temperature for the radiation scheme.
+
+        Required argument:
+        data -- input data as a list or a numpy array.
+
+        If time is not provided, temperature is assumed constant in time.
+        """
+
+        self.set_attribute('surface_radiation_temp','ts')
+        self.add_forcing_variable('ts_forc',data,**kwargs)
+
     def add_forcing_ts(self,data,z0=None,z0h=None,z0q=None,**kwargs):
         """Add a surface temperature forcing to a Case object.
         
