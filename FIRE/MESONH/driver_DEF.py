@@ -100,7 +100,7 @@ case. add_forcing_ts(ts)
 # 4. Writing file
 ################################################
 
-case.write('FIRE_REF_DEF_driver.nc')
+case.write('FIRE_MESONH_DEF_driver.nc')
 
 if lverbose:
     case.info()
