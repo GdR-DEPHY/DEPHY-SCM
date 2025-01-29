@@ -27,7 +27,7 @@ lverbose = False # print information about variables and case
 ################################################
 
 tmin = datetime(1987, 7, 14, 8)
-tmax = tmin + timedelta(hours=37)
+tmax = tmin + timedelta(hours=120)
 
 case = Case('FIRE/REF',
         lat=33.3,

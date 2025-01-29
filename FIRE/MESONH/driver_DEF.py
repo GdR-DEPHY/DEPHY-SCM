@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on 21 Septembre 2021
+Created on ??
 
-@author: Romain Roehrig
+@author: Fleur Couvreux
 
 """
 
@@ -31,11 +31,11 @@ case = Case('FIRE/MESONH',
         lat=33.3,
         lon=-119.5,
         startDate="19870714080000",
-        endDate="19870715210000",
+        endDate="19870719080000",
         surfaceType="ocean",
         zorog=0.)
 
-case.set_title("Forcing and initial conditions for FIRE Reference case - Original definition")
+case.set_title("Forcing and initial conditions for FIRE case, MESONH-LES forcings")
 case.set_reference("Dyunkerke et al. (2004, QJRMS) Brient et al (2019,GRL) modifié en haut")
 case.set_author("F. Couvreux")
 case.set_script("DEPHY-SCM/FIRE/MESONH/driver_DEF.py")

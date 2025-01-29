@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on 21 September 2021
+Created on ??
 
-@author: Romain Roehrig
+@author: Fleur Couvreux
 """
 
 ## FIRE Reference case SCM-enabled definition
@@ -49,9 +49,15 @@ case.extend_init_wind(height=htop)
 
 # First extend thetal up to 2500m with the same thetal vertical gradient 
 # (and limit discontinuity with ERA5 profile)
-zthetal = [  0., 595., 605., 650., 800., 1000., 1200.,2500.]
-thetal  = [ 287.5, 287.5, 299.57, 299.91, 301.03, 302.54, 304.04,313.79]
+def f_thetal(z):
+    if z <= 595:
+        return 287.5
+    elif z <= 605:
+        return 287.5+12.*(z-595.)/(605.-595.)
+    else:
+        return 287.5+12 + 0.0075*(z-605)
 
+case.extend_init_thetal(thetal=f_thetal(2500.), height=2500.)
 # Then use ERA5 above
 with nc.Dataset('../aux/ERA5/ERA5_FIRE_19870714000000-19870715230000.nc') as f:
     temp = np.average(f['ta'][:,::-1,0,0], axis=0) # time average over the two days
@@ -61,9 +67,15 @@ with nc.Dataset('../aux/ERA5/ERA5_FIRE_19870714000000-19870715230000.nc') as f:
     case.extend_init_thetal(thetal=thetal, height=height)
 
 # First extend qt up to 2800m with the same qt vertical gradient
-zqt = [  0., 595., 605., 650., 800., 1000., 1200.,2800.]
-qt  = [  9.6e-3, 9.6e-3, 6.57e-3, 6.43e-3, 5.99e-3, 5.39e-3, 4.79e-3,0.e-3]
+def f_qt(z):
+    if z <= 595:
+        return 9.6
+    elif z <= 605:
+        return 9.6-3.0*(z-595.)/(605.-595.)
+    else:
+        return max(9.6-3.0 - 0.003*(z-605), 0.)
 
+case.extend_init_qt(qt=f_qt(2800.)/1000., height=2800.)
 # Then put it to zero above
 case.extend_init_qt(qt=[0,0], height=[3000,htop])
 
@@ -89,7 +101,7 @@ timeout = np.arange(0.,(37+1)*3600.,3600.)
 newcase = case.convert2SCM(time=timeout,lev=levout,levtype='altitude')
 
 # update some attributes
-newcase.set_title("Forcing and initial conditions for FIRE Reference case - SCM-enabled version")
+newcase.set_title("Forcing and initial conditions for FIRE case, MESONH-LES forcings")
 newcase.set_script("DEPHY-SCM/FIRE/MESONH/driver_SCM.py")
 
 # display some information about the new version of the case
