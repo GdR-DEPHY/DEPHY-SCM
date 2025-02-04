@@ -40,7 +40,7 @@ case = Case('ARMCU/MNHRAD',
 
 case.set_title("Forcing and initial conditions for ARM-Cumulus case - Meso-NH definition")
 case.set_reference("http://projects.knmi.nl/eurocs/ARM/case_ARM_html ; Brown et al. (2002, QJRMS)")
-case.set_author("R. Roehrig, F. Couvreux")
+case.set_author("R. Roehrig, F. Couvreux, N. Villefranque")
 case.set_script("DEPHY-SCM/ARMCU/MNHRAD/driver_DEF.py")
 
 ################################################
