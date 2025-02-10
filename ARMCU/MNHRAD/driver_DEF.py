@@ -243,6 +243,7 @@ case.add_surface_fluxes(sens=XSFTH[1:],lat=XSFTQ[1:]*constants.Lv,time=XTIMEF[1:
 time_ts_rad = [0, 3600*8, 3600*15]
 ts_rad = [295, 312.5, 300]
 ts_rad = [295, 305, 295]
+ts_rad = [297, 302.5, 304]
 case.add_rad_ts(ts_rad, time=time_ts_rad)
 
 ################################################
