@@ -94,7 +94,7 @@ case.add_qt_advection(qt_adv,lev=zqt_adv,levtype='altitude') # converted in kg k
 
 # Surface Forcing. Constant sea surface temperature
 ts = 289.
-case. add_forcing_ts(ts)
+case.add_forcing_ts(ts)
 
 ################################################
 # 4. Writing file
