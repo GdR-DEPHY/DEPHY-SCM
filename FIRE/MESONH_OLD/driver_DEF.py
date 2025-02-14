@@ -27,7 +27,7 @@ lverbose = False # print information about variables and case
 # 1. General information about the case
 ################################################
 
-case = Case('FIRE/MESONH',
+case = Case('FIRE/MESONH_OLD',
         lat=33.3,
         lon=-119.5,
         startDate="19870714080000",
@@ -38,7 +38,7 @@ case = Case('FIRE/MESONH',
 case.set_title("Forcing and initial conditions for FIRE Reference case - Original definition")
 case.set_reference("Dyunkerke et al. (2004, QJRMS) Brient et al (2019,GRL) modifié en haut")
 case.set_author("F. Couvreux")
-case.set_script("DEPHY-SCM/FIRE/MESONH/driver_DEF.py")
+case.set_script("DEPHY-SCM/FIRE/MESONH_OLD/driver_DEF.py")
 
 ################################################
 # 2. Initial state
@@ -100,7 +100,7 @@ case. add_forcing_ts(ts)
 # 4. Writing file
 ################################################
 
-case.write('FIRE_MESONH_DEF_driver.nc')
+case.write('FIRE_MESONH_OLD_DEF_driver.nc')
 
 if lverbose:
     case.info()

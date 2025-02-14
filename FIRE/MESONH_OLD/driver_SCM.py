@@ -27,10 +27,10 @@ lverbose = False # print information on variables and case
 ################################################
 
 # initialize the case structure for the original version
-case = Case('FIRE/MESONH')
+case = Case('FIRE/MESONH_OLD')
 
 # read case information in file
-case.read('FIRE_MESONH_DEF_driver.nc')
+case.read('FIRE_MESONH_OLD_DEF_driver.nc')
 
 # display some information about the case
 if lverbose:
@@ -90,7 +90,7 @@ newcase = case.convert2SCM(time=timeout,lev=levout,levtype='altitude')
 
 # update some attributes
 newcase.set_title("Forcing and initial conditions for FIRE Reference case - SCM-enabled version")
-newcase.set_script("DEPHY-SCM/FIRE/MESONH/driver_SCM.py")
+newcase.set_script("DEPHY-SCM/FIRE/MESONH_OLD/driver_SCM.py")
 
 # display some information about the new version of the case
 if lverbose:
@@ -101,7 +101,7 @@ if lverbose:
 ################################################
 
 # save the new version of the case in netcdf file 
-newcase.write('FIRE_MESONH_SCM_driver.nc')
+newcase.write('FIRE_MESONH_OLD_SCM_driver.nc')
 
 ################################################
 # 4. Plots if asked
