@@ -76,19 +76,19 @@ case.add_geostrophic_wind(ug=u,uglev=zwind,vg=v,vglev=zwind,levtype='altitude')
 
 # Large-scale velocity - constant
 zw = [0., 100., 300., 500., 595., 605., 650., 800., 900., 1050., 1100., 1200.]
-w  = [0., -0.001, -0.003, -0.005, -0.00595, -0.00605, -0.0065, -0.008, -0.009, -0.0105, -0.011,0.]
+w  = [0., -0.001, -0.003, -0.005, -0.00595, -0.00605, -0.0065, -0.008, -0.009, -0.0020, 0.,0.]
 
 case.add_vertical_velocity(w=w,lev=zw,levtype='altitude')
 
 # Large-scale advection of potential temperature  
 zthetal_adv = [0., 500., 595., 605., 650., 800., 900., 1050., 1100., 1200.]
-thetal_adv  = [-3.75e-5, -3.75e-5, -4.462e-5, -4.537e-5, -4.875e-5, -6.e-5, -6.75e-5, -7.875e-5,-8.25e-5,0.]
+thetal_adv  = [-3.75e-5, -3.75e-5, -4.462e-5, -4.537e-5, -4.875e-5, -6.e-5, -6.75e-5, -1.5e-5,0.,0.]
 
 case.add_thetal_advection(thetal_adv,lev=zthetal_adv,levtype='altitude')
 
 # Large-scale advection of specific humidity - constant
 zqt_adv = [0., 500., 595., 605., 650., 800., 900., 1050., 1100., 1200.]
-qt_adv  = [1.5e-8, 1.5e-8, 1.785e-8, 1.815e-8, 1.95e-8, 2.4e-8, 2.7e-8, 3.15e-8,3.3e-8,0.]
+qt_adv  = [1.5e-8, 1.5e-8, 1.785e-8, 1.815e-8, 1.95e-8, 2.4e-8, 2.7e-8, 0.6e-8,0.,0.]
 
 case.add_qt_advection(qt_adv,lev=zqt_adv,levtype='altitude') # converted in kg kg-1 s-1 (array type required)
 
