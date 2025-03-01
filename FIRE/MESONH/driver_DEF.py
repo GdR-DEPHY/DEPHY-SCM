@@ -5,6 +5,9 @@ Created on 21 Septembre 2021
 
 @author: Romain Roehrig
 
+Modifs :
+  01/03/2025 - Najda Villefranque - 3 days instead of 37h
+
 """
 
 ## EUROCS FIRE straotumulus case original case definition
@@ -31,7 +34,7 @@ case = Case('FIRE/MESONH',
         lat=33.3,
         lon=-119.5,
         startDate="19870714080000",
-        endDate="19870715210000",
+        endDate="19870717080000",
         surfaceType="ocean",
         zorog=0.)
 
