@@ -4,15 +4,19 @@ Botany project
 
 ===============
 
-REF/ contains the generic drivers (python scripts)
-SHORT/ same but just the first day
+gen_REF/ contains the generic drivers (python scripts)
+gen_SHORT/ same but just the first day
+
+REFXXX/   nc forcing files for case XXX using python drivers gen_REF/
+SHORTXXX/ nc forcing files for case XXX using python drivers gen_SHORT/
 
 input_files/ contains the txt files with the initial profiles and tendencies
+  e.g. profiles_member_006.txt = initial profiles for botany member XXX=006
 
 make_cases.sh [configure "sim" parameter inside the script]
-  makes RUN-XXX repos with corresponding inputs and forcings and runs
-  $sim/driver_DEF.py
+  makes ${sim}XXX repos with corresponding inputs and forcings 
+  and runs gen_$sim/driver_DEF.py and gen_$sim/driver_SCM.py
 
 To create a new subcase:
 - case initialization or forcings: add profiles_member_XXX.txt in input_files/
-- model configuration: copy REF/ to new repo and adapt driver_DEF.py
+- model configuration: copy gen_REF/ to new repo and adapt driver_*.py files
