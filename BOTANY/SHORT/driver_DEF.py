@@ -38,7 +38,7 @@ lverbose = args.v
 ################################################
 
 start_date = "20200201000000"
-end_date  =  "20200203120000"
+end_date  =  "20200202000000"
 Zorog = 0
 
 
@@ -53,7 +53,7 @@ case = Case('BOTANY/%s'%scase,
         surfaceType='ocean',
         zorog=Zorog)
 
-case.set_title("Forcing and initial conditions for BOTANY case - %s case"%scase)
+case.set_title("Forcing and initial conditions for BOTANY case - %s case ; one day only"%scase)
 case.set_reference("Cloud Botany, Jansson et al. 2023, https://doi.org/10.1029/2023MS003796")
 case.set_author("N Villefranque")
 case.set_script("DEPHY-SCM/BOTANY/%s/driver_DEF.py"%scase)

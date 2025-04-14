@@ -5,15 +5,14 @@ Botany project
 ===============
 
 REF/ contains the generic drivers (python scripts)
+SHORT/ same but just the first day
 
 input_files/ contains the txt files with the initial profiles and tendencies
 
-Each other repertory contains a bash script that copies the inputs and forcing
-files and runs the REF/driver* scripts with command line argument corresponding
-to the setting of the repo. The available command line arguments can be listed
-with
-$ cd REF/
-$ python driver_DEF.py -h
+make_cases.sh [configure "sim" parameter inside the script]
+  makes RUN-XXX repos with corresponding inputs and forcings and runs
+  $sim/driver_DEF.py
 
-To create a new subcase,
-copy one of the existing subcases (e.g. RUN006/) and adapt make_cas.sh
+To create a new subcase:
+- case initialization or forcings: add profiles_member_XXX.txt in input_files/
+- model configuration: copy REF/ to new repo and adapt driver_DEF.py
