@@ -1,8 +1,8 @@
 set -e
 mkdir -p logs
 
-sim=SHORT
 sim=REF
+sim=SHORT
 
 cd .. && source setenv && cd - > /dev/null 2>&1
 

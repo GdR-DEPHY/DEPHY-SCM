@@ -54,8 +54,8 @@ if lverbose:
 ################################################
 
 htop = 30000
-ext_height=[7000, htop]
-case.extend_init_wind(u=[0,0], v=[0,0], height=ext_height)
+hmid = 12000
+ext_height=[hmid, htop]
 
 def get_thl_(z):
   thl=case.variables['thetal'].data[0,-2:]
@@ -65,8 +65,9 @@ def get_thl_(z):
 
 thl = [get_thl_(z) for z in ext_height]
 case.extend_init_thetal(thetal=thl, height=ext_height)
-case.extend_init_qt(qt=[0,0], height=ext_height)
-case.extend_vertical_velocity([0,0], height=[15000, htop])
+case.extend_init_wind(u=[0,0], v=[0,0], height=ext_height)
+case.extend_init_qt(qt=[0,0], height=[hmid, htop])
+case.extend_vertical_velocity([0,0], height=[hmid, htop])
 
 ####
 
