@@ -21,7 +21,7 @@ from dephycf.Case import Case
 # 0. General configuration of the present script
 ################################################
 
-case_duration=60
+case_duration=24
 
 parser.add_argument("-n", help="name of subcase variant", metavar="name_config", default="")
 parser.add_argument("-p", help="plot all variables",      action="store_true")
@@ -66,8 +66,14 @@ def get_thl_(z):
 thl = [get_thl_(z) for z in ext_height]
 case.extend_init_thetal(thetal=thl, height=ext_height)
 case.extend_init_wind(u=[0,0], v=[0,0], height=ext_height)
-case.extend_init_qt(qt=[0,0], height=[hmid, htop])
-case.extend_vertical_velocity([0,0], height=[hmid, htop])
+case.extend_init_qt(qt=[0,0], height=ext_height)
+case.extend_vertical_velocity([0,0], height=ext_height)
+
+# extend nudging forcings
+var='thetal'
+case.extend_variable(var+'_nud', data=thl, height=ext_height)
+for var in ['ua', 'va', 'qt']:
+  case.extend_variable(var+'_nud', data=[0,0], height=ext_height)
 
 ####
 

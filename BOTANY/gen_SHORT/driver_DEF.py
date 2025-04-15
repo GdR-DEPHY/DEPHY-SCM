@@ -32,10 +32,14 @@ lverbose = args.v
 # 1. General information about the case
 ################################################
 
+# 24h
 start_date = "20200201000000"
 end_date  =  "20200202000000"
 Zorog = 0
 
+# these will be written in *nudg* attributes
+nudging_timescale=6    # hours
+nudging_minheight=4000 # nudging only above this height
 
 from datetime import datetime
 timeref = datetime.strptime(start_date, "%Y%m%d%H%M%S")
@@ -48,7 +52,7 @@ case = Case('BOTANY/%s'%scase,
         surfaceType='ocean',
         zorog=Zorog)
 
-case.set_title("Forcing and initial conditions for BOTANY case - %s case ; one day only"%scase)
+case.set_title("Forcing and initial conditions for BOTANY case - %s case ; 24h only"%scase)
 case.set_reference("Cloud Botany, Jansson et al. 2023, https://doi.org/10.1029/2023MS003796")
 case.set_author("N Villefranque")
 case.set_script("DEPHY-SCM/BOTANY/%s/driver_DEF.py"%scase)
@@ -87,21 +91,33 @@ file="profiles_tendencies.txt"
 z, thl_adv, qt_adv, tau_s = np.genfromtxt(file,dtype=float,skip_header=0,usecols=[0,1,2,3]).transpose()
 
 # Temperature advection
-case.add_thetal_advection(thl_adv,lev=z,levtype='altitude')
+case.add_thetal_advection(thl_adv, lev=z, levtype='altitude')
+# Temperature nudging
+case.add_thetal_nudging(thl, lev=z, levtype='altitude',
+        timescale=3600*nudging_timescale, z_nudging=nudging_minheight)
 
 # Total water mixing ratio advection
-case.add_qt_advection(qt_adv,lev=z,levtype='altitude')
+case.add_qt_advection(qt_adv, lev=z, levtype='altitude')
+# Total water mixing ratio nudging
+case.add_qt_nudging(qt, lev=z, levtype='altitude',
+        timescale=3600*nudging_timescale, z_nudging=nudging_minheight)
 
 # Wind forcing
-case.add_geostrophic_wind(ug=u,vg=0*u,lev=z,levtype='altitude')
+case.add_wind_nudging(unudg=u,vnudg=0*u, lev=z, levtype='altitude',
+        timescale=3600*nudging_timescale, z_nudging=nudging_minheight)
 
 # Vertical velocity forcing
-case.add_vertical_velocity(w=w_ls,lev=z,levtype='altitude')
+case.add_vertical_velocity(w=w_ls, lev=z, levtype='altitude')
 
 # Surface Forcings
 # Constant sea surface temperature, 1.25 warmer than first level
+albedo = 0.065
+emissi = 0.96
+z0 = 0.001
 ts = thl[0]+1.25
-case. add_forcing_ts(ts)
+case.add_forcing_ts(ts, z0=z0)
+case.add_forcing_variable('alb',albedo)
+case.add_forcing_variable('emis',emissi)
 
 ################################################
 # 4. Writing file
