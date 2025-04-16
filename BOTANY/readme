@@ -7,17 +7,23 @@ Botany project
 gen_REF/ contains the generic drivers (python scripts)
 gen_SHORT/ same but just the first day
 gen_NONUDGING/ without nudging nor surface parameters
-gen_RADFRC/ no radiation => prescribed tendencies (not tested)
+gen_RADFRC/ no radiation => prescribed tendencies
+gen_SFCFRC/ no surface flux scheme => prescribed latent and sensible fluxes
+gen_ALLFRC/ no surface flux scheme and no radiation
 
 REFXXX/   nc forcing files for case XXX using python drivers gen_REF/
+idem for other subcases
 
 input_files/ contains the txt files with the initial profiles and tendencies
-  e.g. profiles_member_006.txt = initial profiles for botany member XXX=006
+  e.g. profiles_tendencies.txt  = large scale advection tendencies (same for all members)
+       profiles_member_006.txt  = initial profiles for botany member XXX=006
+       profiles_radtend_006.txt = radiative tendencies from botany LES output XXX=006
+       surface_fluxes_006.txt = radiative tendencies from botany LES output XXX=006
 
-make_cases.sh [configure "sim" parameter inside the script]
+make_cases.sh [change "sim" parameter inside the script]
   makes ${sim}XXX repos with corresponding inputs and forcings 
   and runs gen_$sim/driver_DEF.py and gen_$sim/driver_SCM.py
 
 To create a new subcase:
-- case initialization or forcings: add profiles_member_XXX.txt in input_files/
-- model configuration: copy gen_REF/ to new repo and adapt driver_*.py files
+- change case initialization or forcings: add profiles_member_XXX.txt in input_files/
+- change model configuration: copy gen_REF/ to new repo and adapt driver_*.py files
