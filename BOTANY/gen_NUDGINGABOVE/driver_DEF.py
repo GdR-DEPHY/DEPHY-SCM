@@ -105,6 +105,7 @@ case.add_qt_nudging(qt, lev=z, levtype='altitude',
         timescale=3600*nudging_timescale, z_nudging=nudging_minheight)
 
 # Wind forcing
+case.add_geostrophic_wind(ug=u,vg=u*0,lev=z,levtype='altitude')
 case.add_wind_nudging(unudg=u,vnudg=0*u, lev=z, levtype='altitude',
         timescale=3600*nudging_timescale, z_nudging=nudging_minheight)
 

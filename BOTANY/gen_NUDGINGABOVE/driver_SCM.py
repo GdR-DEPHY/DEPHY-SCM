@@ -21,7 +21,7 @@ from dephycf.Case import Case
 # 0. General configuration of the present script
 ################################################
 
-case_duration=24
+case_duration=60
 
 parser.add_argument("-n", help="name of subcase variant", metavar="name_config", default="")
 parser.add_argument("-p", help="plot all variables",      action="store_true")
@@ -53,7 +53,7 @@ if lverbose:
 #    and add new variables if needed
 ################################################
 
-htop = 30000
+htop = 24000
 hmid = 12000
 ext_height=[hmid, htop]
 

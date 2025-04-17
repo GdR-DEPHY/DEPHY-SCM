@@ -53,7 +53,7 @@ if lverbose:
 #    and add new variables if needed
 ################################################
 
-htop = 30000
+htop = 24000
 hmid = 12000
 ext_height=[hmid, htop]
 

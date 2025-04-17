@@ -93,7 +93,6 @@ case.add_thetal_advection(thl_adv, lev=z, levtype='altitude')
 # Total water mixing ratio advection
 case.add_qt_advection(qt_adv, lev=z, levtype='altitude')
 
-# Rappel vers le vent geostrophique ???
 case.add_geostrophic_wind(ug=u,vg=u*0,lev=z,levtype='altitude')
 
 # Vertical velocity forcing

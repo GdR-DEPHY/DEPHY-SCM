@@ -102,7 +102,8 @@ case.add_qt_advection(qt_adv, lev=z, levtype='altitude')
 case.add_qt_nudging(qt, lev=z, levtype='altitude',
         nudging_coefficient=nudging_coefficient, lev_coef=z)
 
-# Wind forcing
+# Wind forcings
+case.add_geostrophic_wind(ug=u,vg=u*0,lev=z,levtype='altitude')
 case.add_wind_nudging(unudg=u,vnudg=0*u, lev=z, levtype='altitude',
         nudging_coefficient=nudging_coefficient, lev_coef=z)
 

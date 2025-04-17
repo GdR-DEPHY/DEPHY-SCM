@@ -33,9 +33,9 @@ lverbose = args.v
 # 1. General information about the case
 ################################################
 
-# 24h
+# 60h
 start_date = "20200201000000"
-end_date  =  "20200202000000"
+end_date  =  "20200203120000"
 Zorog = 0
 
 from datetime import datetime
@@ -112,6 +112,7 @@ case.add_qt_nudging(qt, lev=z, levtype='altitude',
         nudging_coefficient=nudging_coefficient, lev_coef=z)
 
 # Wind forcing
+case.add_geostrophic_wind(ug=u,vg=u*0,lev=z,levtype='altitude')
 case.add_wind_nudging(unudg=u,vnudg=0*u, lev=z, levtype='altitude',
         nudging_coefficient=nudging_coefficient, lev_coef=z)
 
