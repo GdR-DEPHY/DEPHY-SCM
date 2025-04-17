@@ -10,6 +10,7 @@ sim=REF
 
 list_sim="SFCFRC NONUDGING"
 list_sim="REF SHORT RADFRC ALLFRC SFCFRC NONUDGING"
+list_sim="NUDGINGABOVE"
 
 cd .. && source setenv && cd - > /dev/null 2>&1
 
