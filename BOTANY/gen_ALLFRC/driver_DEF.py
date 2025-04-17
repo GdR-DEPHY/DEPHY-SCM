@@ -37,10 +37,6 @@ start_date = "20200201000000"
 end_date  =  "20200203120000"
 Zorog = 0
 
-# these will be written in *nudg* attributes
-nudging_timescale=6    # hours
-nudging_minheight=4000 # nudging only above this height
-
 from datetime import datetime
 timeref = datetime.strptime(start_date, "%Y%m%d%H%M%S")
 
@@ -88,7 +84,10 @@ case.add_init_qt(qt, lev=z, levtype='altitude')
 file="profiles_tendencies.txt"
 
 # Altitude, theta_l, qt
-z, thl_adv, qt_adv, tau_s = np.genfromtxt(file,dtype=float,skip_header=0,usecols=[0,1,2,3]).transpose()
+z, thl_adv, qt_adv, tau_h = np.genfromtxt(file,dtype=float,skip_header=0,usecols=[0,1,2,3]).transpose()
+
+tau_s = tau_h*3600
+nudging_coefficient = 1/tau_s
 
 # radiative tendencies
 file="profiles_radtend.txt"
@@ -103,17 +102,17 @@ thl_frc = thl_rad+thl_adv
 case.add_thetal_advection(thl_frc, lev=zz, time=tt, levtype='altitude', include_rad=True)
 # Temperature nudging
 case.add_thetal_nudging(thl, lev=z, levtype='altitude',
-        timescale=3600*nudging_timescale, z_nudging=nudging_minheight)
+        nudging_coefficient=nudging_coefficient, lev_coef=z)
 
 # Total water mixing ratio advection
 case.add_qt_advection(qt_adv, lev=z, levtype='altitude')
 # Total water mixing ratio nudging
 case.add_qt_nudging(qt, lev=z, levtype='altitude',
-        timescale=3600*nudging_timescale, z_nudging=nudging_minheight)
+        nudging_coefficient=nudging_coefficient, lev_coef=z)
 
 # Wind forcing
 case.add_wind_nudging(unudg=u,vnudg=0*u, lev=z, levtype='altitude',
-        timescale=3600*nudging_timescale, z_nudging=nudging_minheight)
+        nudging_coefficient=nudging_coefficient, lev_coef=z)
 
 # Vertical velocity forcing
 case.add_vertical_velocity(w=w_ls, lev=z, levtype='altitude')

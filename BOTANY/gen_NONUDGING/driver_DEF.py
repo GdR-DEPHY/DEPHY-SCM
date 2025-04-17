@@ -14,6 +14,7 @@ import argparse
 parser=argparse.ArgumentParser()
 
 from dephycf.Case import Case
+from dephycf.thermo import theta2t
 
 ################################################
 # 0. General configuration of the present script
@@ -32,10 +33,10 @@ lverbose = args.v
 # 1. General information about the case
 ################################################
 
+# 60h
 start_date = "20200201000000"
 end_date  =  "20200203120000"
 Zorog = 0
-
 
 from datetime import datetime
 timeref = datetime.strptime(start_date, "%Y%m%d%H%M%S")
@@ -48,7 +49,7 @@ case = Case('BOTANY/%s'%scase,
         surfaceType='ocean',
         zorog=Zorog)
 
-case.set_title("Forcing and initial conditions for BOTANY case - %s case ; no nudging"%scase)
+case.set_title("Forcing and initial conditions for BOTANY case - %s case ; no thlqt nudging"%scase)
 case.set_reference("Cloud Botany, Jansson et al. 2023, https://doi.org/10.1029/2023MS003796")
 case.set_author("N Villefranque")
 case.set_script("DEPHY-SCM/BOTANY/%s/driver_DEF.py"%scase)
@@ -92,16 +93,22 @@ case.add_thetal_advection(thl_adv, lev=z, levtype='altitude')
 # Total water mixing ratio advection
 case.add_qt_advection(qt_adv, lev=z, levtype='altitude')
 
-# Wind forcing
-case.add_geostrophic_wind(ug=u, vg=0*u, lev=z, levtype='altitude')
+# Rappel vers le vent geostrophique ???
+case.add_geostrophic_wind(ug=u,vg=u*0,lev=z,levtype='altitude')
 
 # Vertical velocity forcing
 case.add_vertical_velocity(w=w_ls, lev=z, levtype='altitude')
 
 # Surface Forcings
 # Constant sea surface temperature, 1.25 warmer than first level
-ts = thl[0]+1.25
-case.add_forcing_ts(ts)
+albedo = 0.065
+emissi = 0.96
+z0 = 0.001
+ths = thl[0]+1.25
+ts = theta2t(p=ps, theta=ths)
+case.add_forcing_ts(ts, z0=z0)
+case.add_forcing_variable('alb',albedo)
+case.add_forcing_variable('emis',emissi)
 
 ################################################
 # 4. Writing file
