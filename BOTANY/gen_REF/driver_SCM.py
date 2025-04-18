@@ -16,6 +16,7 @@ import argparse
 parser=argparse.ArgumentParser()
 
 from dephycf.Case import Case
+from dephycf.thermo import t2theta
 
 ################################################
 # 0. General configuration of the present script
@@ -54,16 +55,19 @@ if lverbose:
 ################################################
 
 htop = 24000
-hmid = 12000
+hmid = 9000
 ext_height=[hmid, htop]
 
 def get_thl_(z):
   thl=case.variables['thetal'].data[0,-2:]
   hei=case.variables['thetal'].height.data[0,-2:]
   gam = (thl[1]-thl[0])/(hei[1]-hei[0])
-  return thl[1] + gam*(z-hei[1])
+  return thl[1] + gam*(z-hei[1])*.8
 
 thl = [get_thl_(z) for z in ext_height]
+#z_thl_extend = [15000., 17500., 20000., 60000.]
+#thl_extend = [t2theta(t) for t in [203.,   194.,  206.,   270.]]
+#case.extend_init_thetal(thetal=thl_extend, height=z_thl_extend)
 case.extend_init_thetal(thetal=thl, height=ext_height)
 case.extend_init_wind(u=[0,0], v=[0,0], height=ext_height)
 case.extend_init_qt(qt=[0,0], height=ext_height)
@@ -71,6 +75,7 @@ case.extend_vertical_velocity([0,0], height=ext_height)
 
 # extend nudging forcings
 var='thetal'
+#case.extend_variable(var+'_nud', data=thl_extend, height=z_thl_extend)
 case.extend_variable(var+'_nud', data=thl, height=ext_height)
 for var in ['ua', 'va', 'qt']:
   case.extend_variable(var+'_nud', data=[0,0], height=ext_height)

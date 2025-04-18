@@ -4,12 +4,12 @@ Botany project
 
 ===============
 
-gen_REF/ contains the generic drivers (python scripts)
+gen_REF/ contains the generic drivers (python scripts) of ref case
 gen_SHORT/ same but just the first day
-gen_NONUDGING/ without nudging nor surface parameters
 gen_RADFRC/ no radiation => prescribed tendencies
 gen_SFCFRC/ no surface flux scheme => prescribed latent and sensible fluxes
 gen_ALLFRC/ no surface flux scheme and no radiation
+gen_MNH/ no nudging of thl, qt (ztop should be ~ 4km)
 
 REFXXX/   nc forcing files for case XXX using python drivers gen_REF/
 idem for other subcases
