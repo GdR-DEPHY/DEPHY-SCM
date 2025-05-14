@@ -8,7 +8,9 @@
 **/.DS_Store
 # Jupyter checkpoints
 **/.ipynb_checkpoints/
-AMMA/REF/ferret.jnl
+# ferret files
+**/ferret.jnl
+# Other files
 ASTEX/MESONH/ASTEX_EXSEG1.nam
 ASTEX/MESONH/ASTEX_PRE_IDEA1.nam
 ASTEX/MESONH/ASTEX_PRE_IDEA1.nam_RSOU
@@ -20,7 +22,6 @@ ASTEX/MESONH/README.md
 ASTEX/MESONH/astex_input_v5.nc
 ASTEX/MESONH/driver_DEF.py
 ASTEX/MESONH/driver_SCM.py
-ASTEX/MESONH/ferret.jnl
 ASTEX/MESONH/prep_nam_from_MNH_to_FFCOM_pour_DEPHY_SCM.py
 ASTEX/REF/ASTEX_REF_DEF_driver.nc
 ASTEX/REF/EXSEG1.nam_ASTEX_BIG07
@@ -30,11 +31,6 @@ ASTEX/REF/README.md
 ASTEX/REF/astex_input_v5.nc
 ASTEX/REF/driver_DEF.py
 ASTEX/REF/driver_SCM.py
-ASTEX/REF/ferret.jnl
-BLLAST/MESONH/ferret.jnl
-BLLAST/MESONH/images/driver_SCM/ferret.jnl
-DYNAMO/LBA/
-KB2006/MESONH/ferret.jnl
 LBA/MESONH/LBA_REF_DEF_driver.nc
 LBA/MESONH/LBA_formatcommun_ZFR_1
 LBA/MESONH/LBA_formatcommun_ZFR_2
@@ -54,3 +50,16 @@ LBA/REF/u_GCSS.txt
 LBA/REF/v_GCSS.txt
 LBA/REF/z_GCSS.txt
 EUROCS/OLD/
+# Romain
+BLLAST/B2024/BLLAST_B2024_DEF_driver.nc.20240306
+BLLAST/B2024/BLLAST_B2024_SCM_driver.nc.20240306
+BLLAST/B2024/fig2_part1.py
+BLLAST/B2024/fig2_part2.py
+BLLAST/B2024/images/radiosounding_iter05_all.png
+BLLAST/B2024/images/radiosounding_iter05_bl.png
+BLLAST/B2024/images/radiosounding_iter05_low.png
+BLLAST/B2024/images/radiosounding_iter05_low2.png
+BLLAST/B2024/images/radiosounding_iter05_mid.png
+BLLAST/B2024/images_fig2.20250306/
+BLLAST/B2024/images_fig2.save/
+BLLAST/B2024/images_fig2/

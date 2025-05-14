@@ -52,21 +52,25 @@ if lverbose:
 # Extend profiles above what 17500 m
 hera5 = 18000 # continue with ERA5 above hera5 (in m)
 with nc.Dataset('../aux/ERA5/ERA5_P2OA_20110620000000-20110620230000.nc') as f:
-    temp = np.average(np.squeeze(f['ta'][:,::-1]), axis=0)
+    dates = nc.num2date(f['time'][:], f['time'].units, calendar=f['time'].calendar)
+    ind = [d.hour == 5 for d in dates]
+    temp = np.squeeze(f['ta'][ind,::-1])
     pa = f['plev'][::-1]
     theta = thermo.t2theta(p=pa, temp=temp)
-    height0 = np.average(np.squeeze(f['zg'][:,::-1]), axis=0)
+    height0 = np.squeeze(f['zg'][ind,::-1])-588
+    #height0 = height0 - height0[0] + case.variables['orog'].data[0]
     theta = theta[height0 >= hera5]
     height = height0[height0 >= hera5]
+    #case.extend_init_temp(temp=temp[height0 >= hera5], height=height)
     case.extend_init_theta(theta=theta, height=height)
 
-    hur = np.average(np.squeeze(f['qv'][:,::-1]), axis=0)*0
+    hur = np.squeeze(f['qv'][ind,::-1])*0.
     hur = hur[height0 >= hera5]
     case.extend_init_hur(hur=hur, height=height)
 
-    u = np.average(np.squeeze(f['ua'][:,::-1]), axis=0)
+    u = np.squeeze(f['ua'][ind,::-1])
     u = u[height0 >= hera5]
-    v = np.average(np.squeeze(f['va'][:,::-1]), axis=0)
+    v = np.squeeze(f['va'][ind,::-1])
     v = v[height0 >= hera5]
     case.extend_init_wind(u=u, v=v, height=height)
 

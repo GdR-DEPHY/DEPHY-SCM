@@ -18,15 +18,17 @@ def ideal_theta(z):
     #dataI['theta']    =    np.array([20, 21, 23.5,  24,  25.5,  32,   35,   42,    62])
 
     theta = z*0. + np.nan
-    theta = np.where(z < 17500., 66   + (z-11000)/(17500-11000)*(155-66), theta)
+    theta = np.where(z < 17500.,140   + (z-16500)/(17500-16500)*(165-140), theta)
+    theta = np.where(z < 16500., 66   + (z-11000)/(16500-11000)*(140-66), theta)
     theta = np.where(z < 11000., 42   + (z-4000)/(11000-4000)*(66-42), theta)
     theta = np.where(z <  4000., 35   + (z-2500)/(4000-2500)*(42-35), theta)
     theta = np.where(z <  2500., 32   + (z-1500)/(2500-1500)*(35-32), theta)
     theta = np.where(z <  1500., 25.5 + (z-500)/(1500-500)*(32-25.5), theta)
     theta = np.where(z <   500., 24   + (z-150)/(500-150)*(25.5-24), theta)
     theta = np.where(z <   150., 23.5 + (z-85)/(150-85)*(24-23.5), theta)
-    theta = np.where(z <    85., 21   + (z-65.)/(85.-65.)*(23.5-21.), theta)
-    theta = np.where(z <    65., 20   + (z-0.)/(65.-0.)*(21.-20.), theta)
+    theta = np.where(z <    85., 22   + (z-60.)/(85.-60.)*(23.5-22.), theta)
+    theta = np.where(z <    60., 21   + (z-45.)/(60.-45.)*(22-21.), theta)
+    theta = np.where(z <    45., 20.1   + (z-0.)/(45.-0.)*(21.-20.1), theta)
     
     return theta
 
@@ -40,9 +42,11 @@ def ideal_hur(z):
     hur = np.where(z <  6000., 50, hur)
     hur = np.where(z <   550., 58 + (z-150)/(550-150)*(50-58), hur)
     #hur = np.where(z <   150., 64 + (z-60)/(150-60)*(58-64), hur)
-    hur = np.where(z <   150., 62 + (z-85)/(150-85)*(58-62), hur)
+    #hur = np.where(z <   150., 62 + (z-85)/(150-85)*(58-62), hur)
+    hur = np.where(z <   150., 64.7 + (z-60)/(150-60)*(58-64.7), hur)
     #hur = np.where(z <    60., 72 + (z-45.)/(60.-45.)*(64-72.), hur)
-    hur = np.where(z <    85., 72 + (z-45.)/(85.-45.)*(62-72.), hur)
+    #hur = np.where(z <    85., 64 + (z-60.)/(85.-60.)*(62-64.), hur)
+    hur = np.where(z <    60., 72 + (z-45.)/(60.-45.)*(64.7-72.), hur)
     hur = np.where(z <    45., 78 + (z-0.)/(45.-0.)*(72.-78.), hur)
     
     return hur
@@ -52,8 +56,12 @@ def ideal_ua(z):
     ua = z*0. + np.nan
     ua = np.where(z < 17500., 18 + (z-14000)/(17500-14000)*(5-18.), ua)
     ua = np.where(z < 14000., 18, ua)
-    ua = np.where(z <  5000., 15 + (z-3500)/(5000-3500)*(18-15.), ua)
-    ua = np.where(z <  3500., 0 + (z-0)/(3500-0)*(15-0.), ua)
+    ua = np.where(z <  5000., 16 + (z-3500)/(5000-3500)*(18-16.), ua)
+    ua = np.where(z <  3500., 7 + (z-1000)/(3500-1000)*(16-7.), ua)
+    ua = np.where(z <  1000., 1 + (z-200)/(1000-200)*(7-1.), ua)
+    ua = np.where(z <   200., 1.5 + (z-100)/(200-100)*(1-1.5), ua)
+    ua = np.where(z <   100., 0 + (z-60)/(100-60)*(1.5-0), ua)
+    ua = np.where(z <    60., 0, ua)
     
     return ua
 
@@ -61,9 +69,13 @@ def ideal_va(z):
 
     va = z*0. + np.nan
     va = np.where(z < 17500.,  0, va)
-    va = np.where(z <  5000., -4 + (z-4000)/(5000-4000)*(0+4), va)
-    va = np.where(z <  4000., 0 + (z-400)/(4000-400)*(-4-0), va)
-    va = np.where(z <   400., 0.5 + (z-0)/(400-0)*(0-0.5), va)
+    va = np.where(z <  5000., -3 + (z-4500)/(5000-4500)*(0+3), va)
+    va = np.where(z <  4500., 0 + (z-900)/(4500-900)*(-3-0), va)
+    va = np.where(z <   900., -1.6 + (z-750)/(900-750)*(0+1.6), va)
+    va = np.where(z <   750., -0.7 + (z-400)/(750-400)*(-1.6+0.7), va)
+    va = np.where(z <   400., 2.85 + (z-60)/(400-60)*(-0.7-2.85), va)
+    #va = np.where(z <    60., 2.2 + (z-0.)/(60-0.)*(2.85-2.2), va)
+    va = np.where(z <    60., 0 + (z-0.)/(60-0.)*(2.85-0), va)
     
     return va
 
@@ -186,6 +198,7 @@ header = ['year' ,'month' ,'day' ,'h30' ,'mm30' ,'offsetc' ,'gainc' ,'offsetq' ,
 tmp = np.array([2011,6,20,5,15,0,1,0,1,0.05,np.nan,np.nan,16.273,75.025,15.685,76.133,15.788,73.885,16.197,72.264,17.197,64.721,9.2226,9.0252,8.8503,8.8999,8.5017,np.nan,512.02,-0.042409,15.038,15.984,950.36,945,1.1374,-6.989,0,1,0.26057,1.1965,2.2675,2.2586,2.9016,184.37,190.65,176.96,177.88,190.63,-29.937,-30.233,-32.414,0])
 dataM = {}
 dataM['zh'] = [2, 15, 30, 45, 60]
+dataM['pa'] = np.array([950., 948.3, 946.5, 945., 943.3]) # Estimated from radiosounding first levels (starting from 950 hPa at ground level, thus keeping same delta).
 for var in ['temp','huc','r','FF','DD']:
     dataM[var] = []
     for height in dataM['zh']:
@@ -198,7 +211,8 @@ for var in ['temp','huc','r','FF','DD']:
 
     dataM[var] = np.array(dataM[var])
 
-dataM['ta'] = dataM['temp']
+dataM['ta'] = np.array(dataM['temp'])
+dataM['theta'] = (dataM['ta']+273.15)*(1000/dataM['pa'])**(2./7.)-273.15
 dataM['hur'] = dataM['huc']
 dataM['rv'] = dataM['r']
 dataM['qv'] = dataM['rv']/(1+dataM['rv']/1000.)
@@ -277,10 +291,10 @@ dataI['va'] = ideal_va(dataI['zh'])
 #dataI['hur']    = np.array([78, 72, 64,  58,  50,   50,     0])
 
 dataI['qv'] = dataI['theta']*0.
-niter = 20
+niter = 5 #20
 for i in range(niter):
     print('iteration #',i)
-    dataI['pa'] = thermo.z2p(theta=dataI['theta'], z=dataI['zh'],ps=95000, qv=dataI['qv'])
+    dataI['pa'] = thermo.z2p(theta=dataI['theta'], z=dataI['zh'], ps=95000, qv=dataI['qv'])
     dataI['ta'] = thermo.theta2t(theta=dataI['theta'],p=dataI['pa'])
 
     p_loc = dataI['pa']*units.Pa
@@ -324,12 +338,12 @@ for config in ['low','low2','bl','mid','all']:
 
     if config == 'low':
         hmax = 200.
-        ta_range = (10,20)
-        theta_range = (15,25)
+        ta_range = (14,20)
+        theta_range = (18,25)
         rv_range = (7,11)
         hur_range = (50,90)
-        ua_range = (-10,10)
-        va_range = (-10,10)
+        ua_range = (-5,5)
+        va_range = (-5,5)
     if config == 'low2':
         hmax = 1000.
         ta_range = (10,20)
@@ -357,7 +371,8 @@ for config in ['low','low2','bl','mid','all']:
     elif config == 'all':
         hmax = 20000.
         ta_range = (-80,20)
-        theta_range = (15,160)
+        #theta_range = (15,160)
+        theta_range = (15,200)
         rv_range = (0,11)
         hur_range = (0,110)
         ua_range = (-10,30)
@@ -372,15 +387,17 @@ for config in ['low','low2','bl','mid','all']:
         va_range = (-10,10)
 
 
-    fig, axs = plt.subplots(nrows=1, ncols=6, sharey=True, figsize=(20,4))
+    fig, axs = plt.subplots(nrows=1, ncols=6, sharey=True, figsize=(20,10))
 
     for ivar,var in enumerate(['ta', 'theta', 'rv', 'hur', 'ua', 'va']):
         axs[ivar].plot(data[var], data['zh']-data['zh'][0], color='lightgrey', label='raw')
         axs[ivar].plot(data_fil[var], data_fil['zh']-data_fil['zh'][0], color='k', label='filtered')
-        axs[ivar].plot(dataERA5[var], dataERA5['zh']-data_fil['zh'][0], color='k', linestyle='--', label='ERA5')
+        #axs[ivar].plot(dataERA5[var], dataERA5['zh']-data_fil['zh'][0], color='k', linestyle='--', label='ERA5')
+        axs[ivar].plot(dataERA5[var], dataERA5['zh']-588, color='k', linestyle='--', label='ERA5')
+        #axs[ivar].plot(dataERA5[var], dataERA5['zh']-588, color='k', linestyle='--', label='ERA5')
         #axs[ivar].plot(data2[var], data['zh']-data['zh'][0], color='b', label='filtered')
         
-        if var in ['ta','rv','hur','ua','va']:
+        if var in ['ta','theta','rv','hur','ua','va']:
             axs[ivar].plot(dataM[var], dataM['zh']-data4['zh'][0], color='salmon', label='60-m Mast')
         for site in sites:
             axs[ivar].plot(dataS[site][var], 2, color = colors[site], marker='o', linestyle='None', label=site)

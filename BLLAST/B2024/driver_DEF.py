@@ -57,22 +57,22 @@ case.add_init_ps(ps)
 
 # Wind initial profiles
 # Altitude above the ground
-zu = [0., 3500., 5000., 14000., 17500.]
-u =  [0.,   15.,   18.,    18.,     5.]
-zv = [0.,  400., 4000., 5000., 17500.]
-v =  [0.5,   0.,   -4.,    0.,     0.]
+zu = [0.,   45., 100., 200., 1000., 3500., 5000., 14000., 17500.]
+u =  [0.,    0.,  1.5,   1.,    7.,   16.,   18.,    18.,     5.]
+zv = [0.,   60., 400.,  750.,  900., 4500., 5000., 17500.]
+v =  [0., 2.85, -0.7,  -1.6,    0.,   -3.,    0.,     0.]
 
 case.add_init_wind(u=u, v=v, ulev=zu, vlev=zv, levtype='altitude')
 
 # Potential temperature initial profile
-ztheta = [ 0., 65.,  85., 150., 500.,  1500., 2500., 4000., 11000., 17500.]
-theta =  [20., 21., 23.5,  24.,  25.5,   32.,   35.,   42.,    66.,   155.] # in degrees Celcius
+ztheta = [  0.,  45.,  60.,  85., 150., 500.,  1500., 2500., 4000., 11000., 16500., 17500.]
+theta =  [19.7, 20.9, 22.1, 23.5,  24.,  25.5,   32.,   35.,   42.,    66.,   140.,   165.] # in degrees Celcius
 theta = [x+273.15 for x in theta]
 case.add_init_theta(theta, lev=ztheta, levtype='altitude')
 
 # Relative humidity
-zhur = [ 0., 45., 85., 150., 550., 6000., 12000., 17500.]
-hur =  [78., 72., 62.,  58.,  50.,   50.,     0.,     0.] 
+zhur = [ 0., 45.,   60., 150., 550., 6000., 12000., 17500.]
+hur =  [78., 72.2, 64.7,  58.,  50.,   50.,     0.,     0.] 
 hur = [x/100. for x in hur]
 
 case.add_init_hur(hur, lev=zhur, levtype='altitude')

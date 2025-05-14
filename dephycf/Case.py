@@ -46,12 +46,13 @@ endDate0 = datetime(1979,1,1,0,0,0)
 init_vars_1D = ['ps','ts','thetas']
 forc_vars_1D = ['ps_forc','hfss','hfls','ustar',\
                 'ts_forc','thetas_forc','tskin',\
-                'orog','lat','lon','z0','z0h','z0q','beta','alb','emis']
+                'orog','lat','lon','z0','z0h','z0q','beta','alb','emis','i0','sza']
 
 class Case:
 
     def __init__(self, caseid,
             lat=None, lon=None,
+            case_type="standard",
             startDate=startDate0, endDate=endDate0,
             surfaceType='ocean', zorog=0.,
             forcing_scale=-1):
@@ -63,6 +64,9 @@ class Case:
         # Latitude (degrees_noth) and Longitude (degrees_east)
         self.lat = lat
         self.lon = lon
+
+        # case type
+        self.case_type = case_type
 
         # Surface type
         self.surface_type = surfaceType
@@ -77,6 +81,7 @@ class Case:
 
         # Attributes
         self.attlist = ['case','title','reference','author','version','format_version','modifications','script','comment',
+                'case_type',
                 'start_date','end_date',
                 'forcing_scale',
                 'radiation',
@@ -92,6 +97,7 @@ class Case:
                 'modifications': "",
                 'script': "",
                 'comment': "",
+                'case_type': self.case_type,
                 'start_date': self.start_date.strftime('%Y-%m-%d %H:%M:%S'),
                 'end_date': self.end_date.strftime('%Y-%m-%d %H:%M:%S'),
                 'forcing_scale': self.forcing_scale,
@@ -191,6 +197,10 @@ class Case:
     def set_script(self,script):
 
         self.attributes['script'] = script
+
+    def set_case_type(self,case_type):
+
+        self.attributes['case_type'] = case_type
 
 ###################################################################################################
 #                  Generic removal/addition of a variable
@@ -563,6 +573,7 @@ class Case:
 
         See add_variable function for optional arguments.
         Note that:
+        - hur has no units
         - a level axis is required (lev optional argument).
         - a levtype is required (levtype optional argument).
         """
@@ -570,6 +581,11 @@ class Case:
             logger.error('Metpy library is not available')
             logger.error('Relative humidity cannot be used as an initial variable')
             raise NotImplementedError
+
+        if np.max(vardata) > 1:
+            logger.error('The given relative humidity has values greater than 1: ' + str(np.max(vardata)))
+            logger.error('Relative humidity should be given with no units, not in %')
+            raise ValueError
 
         self.set_attribute('ini_hur',1)
         self.add_init_variable('hur',vardata,**kwargs)
@@ -1386,7 +1402,7 @@ class Case:
         self.add_forcing_variable('ts_forc',data,**kwargs)
 
         if 'ts' not in self.var_init_list:
-            if isinstance(data,float):
+            if isinstance(data,float) or isinstance(data,int):
                 self.add_init_ts(data,**kwargs)
             else:
                 self.add_init_ts(data[0],**kwargs)
@@ -1853,7 +1869,7 @@ class Case:
             logger.error('Either qv, qt or rv should be defined to compute hur')
             raise ValueError('Either qv, qt or rv should be defined to compute hur')
 
-        return rt
+        return hur
 
     def compute_tnta_adv(self):
 
@@ -3009,6 +3025,10 @@ class Case:
                 logger.error('shape unexpected for data : {0}'.format(data.shape))
                 raise ValueError
 
+    def extend_init_pressure(self, pa=None, **kwargs):
+        """Vertically extend the pressure"""
+
+        self.extend_variable('pa', data=pa, **kwargs)
 
     def extend_init_wind(self, u=None, v=None, **kwargs):
         """Vertically extend the two wind initial components"""

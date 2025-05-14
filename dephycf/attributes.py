@@ -7,6 +7,7 @@ Created on 27 November 2019
 """
 known_attributes = [
             'case','title','reference','author','version','format_version','modifications','script','comment',
+            'case_type',
             'start_date','end_date',
             'forcing_scale',
             'ini_ta','ini_theta','ini_thetal',
@@ -32,6 +33,7 @@ known_attributes = [
 
 required_attributes = [
             'case','title','reference','author','version','format_version','modifications','script','comment',
+            'case_type',
             'start_date','end_date',
             'forcing_scale',
             'ini_ta','ini_theta','ini_thetal',

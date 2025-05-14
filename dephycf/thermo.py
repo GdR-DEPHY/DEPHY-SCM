@@ -35,6 +35,8 @@ plev2zlev(plev, z, p)
     Compute the altitude of a given pressure level (interpolation)
 rh2qv(rh,temp,pres)
     Compute the specific humidity knowing the relative humidity
+td2qv(td,pres)
+    Compute the specific humidity knowing the dew-point temperature
 
 Created on 27 November 2019
 @author: Romain Roehrig
@@ -210,7 +212,7 @@ def qt2hur(qt, pressure, temp, units='kg kg-1'):
     if units == 'kg kg-1':
         rv_loc = qt/(1.-qt)
     elif units == 'g kg-1':
-        rv_loc = qt/1000./(1.+rv/1000.)
+        rv_loc = qt/1000./(1.-qt/1000.)
     else:
         logger.error('units unknown: {0}'.forma(units))
         raise ValueError('units unknown: {0}'.forma(units))
@@ -219,7 +221,7 @@ def qt2hur(qt, pressure, temp, units='kg kg-1'):
         hur = float(relative_humidity_from_mixing_ratio(p_loc, temp_loc, rv_loc))
     else:
         nlev, = qt.shape
-        hur = np.array([mixing_ratio_from_relative_humidity(p_loc[i], temp_loc[i], rv_loc[i]) for i in range(nlev)])
+        hur = np.array([relative_humidity_from_mixing_ratio(p_loc[i], temp_loc[i], rv_loc[i]) for i in range(nlev)])
 
     return hur
 
@@ -259,7 +261,7 @@ def rt2hur(rt, pressure, temp, units='kg kg-1'):
         hur = float(relative_humidity_from_mixing_ratio(p_loc, temp_loc, rv_loc))
     else:
         nlev, =rt.shape
-        hur = np.array([mixing_ratio_from_relative_humidity(p_loc[i], temp_loc[i], rv_loc[i]) for i in range(nlev)])
+        hur = np.array([relative_humidity_from_mixing_ratio(p_loc[i], temp_loc[i], rv_loc[i]) for i in range(nlev)])
 
     return hur
 
@@ -650,3 +652,39 @@ def rh2qv_GG(rh,temp,pres):
 
     # specific humidity in kg kg-1
     return (rh/100.0)*ws
+
+#############################
+def td2qv(td, pres, units='kg kg-1'):
+    """Compute specific humidity water knowing dew-point temperature
+
+    Parameters
+    ----------
+    td : float, array
+        Dew-point temperature (K)
+    pressure : float, array
+        Air pressure (Pa)
+    units : str, optional
+        Specific humidity units (default is kg kg-1)
+
+    Returns
+    -------
+    float, array
+        Specific humidity (in units)
+    """
+
+    p_loc = pressure * Munits.Pa
+    td_loc = td * Munits.kelvin
+    
+    if isinstance(td,float):
+        rv = float(specific_humidity_from_dewpoint(p_loc, td_loc))
+    else:
+        nlev, = td.shape
+        qv = np.array([specific_humidity_from_dewpoint(p_loc[i], td_loc[i]) for i in range(nlev)])
+
+    if units == 'kg kg-1':
+        return qv
+    elif units == 'g kg-1':
+        return qv*1000.
+    else:
+        logger.error('units unknown: {0}'.forma(units))
+        raise ValueError('units unknown: {0}'.forma(units))
