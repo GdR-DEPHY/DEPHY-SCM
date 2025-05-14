@@ -5,6 +5,9 @@ Created on 21 Septembre 2021
 
 @author: Romain Roehrig
 
+Modifs :
+  01/03/2025 - Najda Villefranque - 3 days instead of 37h
+
 """
 
 ## EUROCS FIRE straotumulus case original case definition
@@ -31,7 +34,7 @@ case = Case('FIRE/MESONH',
         lat=33.3,
         lon=-119.5,
         startDate="19870714080000",
-        endDate="19870715210000",
+        endDate="19870717080000",
         surfaceType="ocean",
         zorog=0.)
 
@@ -76,31 +79,31 @@ case.add_geostrophic_wind(ug=u,uglev=zwind,vg=v,vglev=zwind,levtype='altitude')
 
 # Large-scale velocity - constant
 zw = [0., 100., 300., 500., 595., 605., 650., 800., 900., 1050., 1100., 1200.]
-w  = [0., -0.001, -0.003, -0.005, -0.00595, -0.00605, -0.0065, -0.008, -0.009, -0.0105, -0.011,0.]
+w  = [0., -0.001, -0.003, -0.005, -0.00595, -0.00605, -0.0065, -0.008, -0.009, -0.0020, 0.,0.]
 
 case.add_vertical_velocity(w=w,lev=zw,levtype='altitude')
 
 # Large-scale advection of potential temperature  
 zthetal_adv = [0., 500., 595., 605., 650., 800., 900., 1050., 1100., 1200.]
-thetal_adv  = [-3.75e-5, -3.75e-5, -4.462e-5, -4.537e-5, -4.875e-5, -6.e-5, -6.75e-5, -7.875e-5,-8.25e-5,0.]
+thetal_adv  = [-3.75e-5, -3.75e-5, -4.462e-5, -4.537e-5, -4.875e-5, -6.e-5, -6.75e-5, -1.5e-5,0.,0.]
 
 case.add_thetal_advection(thetal_adv,lev=zthetal_adv,levtype='altitude')
 
 # Large-scale advection of specific humidity - constant
 zqt_adv = [0., 500., 595., 605., 650., 800., 900., 1050., 1100., 1200.]
-qt_adv  = [1.5e-8, 1.5e-8, 1.785e-8, 1.815e-8, 1.95e-8, 2.4e-8, 2.7e-8, 3.15e-8,3.3e-8,0.]
+qt_adv  = [1.5e-8, 1.5e-8, 1.785e-8, 1.815e-8, 1.95e-8, 2.4e-8, 2.7e-8, 0.6e-8,0.,0.]
 
 case.add_qt_advection(qt_adv,lev=zqt_adv,levtype='altitude') # converted in kg kg-1 s-1 (array type required)
 
 # Surface Forcing. Constant sea surface temperature
 ts = 289.
-case. add_forcing_ts(ts)
+case.add_forcing_ts(ts)
 
 ################################################
 # 4. Writing file
 ################################################
 
-case.write('FIRE_REF_DEF_driver.nc')
+case.write('FIRE_MESONH_DEF_driver.nc')
 
 if lverbose:
     case.info()

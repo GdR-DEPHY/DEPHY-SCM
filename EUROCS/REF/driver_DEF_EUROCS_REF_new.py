@@ -69,11 +69,11 @@ case.add_init_theta(th, lev=P, levtype='pressure')
 case.add_init_rv(rv, lev=P, levtype='pressure')
 print('Psize',P.shape,'thsize',th.shape)
 # Altitude above the ground
-Pu= np.genfromtxt('init_uv.txt',dtype=None,skip_header=1,usecols=0)
+Pu= np.genfromtxt('init_uv.txt',dtype=None,skip_header=0,usecols=0)
 
 # Zonal and meridional wind
-u = np.genfromtxt('init_uv.txt',dtype=None,skip_header=1,usecols=1)
-v = np.genfromtxt('init_uv.txt',dtype=None,skip_header=1,usecols=2)
+u = np.genfromtxt('init_uv.txt',dtype=None,skip_header=0,usecols=1)
+v = np.genfromtxt('init_uv.txt',dtype=None,skip_header=0,usecols=2)
 
 case.add_init_wind(u=u,v=v, lev=Pu, levtype='pressure')
 
@@ -108,39 +108,31 @@ psforc=np.genfromtxt('Forc_Tq_sfc.txt',dtype=None,skip_header=0, usecols=5)
 thsforc=np.genfromtxt('Forc_Tq_sfc.txt',dtype=None,skip_header=0, usecols=6)
 rvsforc=np.genfromtxt('Forc_Tq_sfc.txt',dtype=None,skip_header=0, usecols=7)
 
+ntimes=len(Timeforc)
+
 Pfrck=np.genfromtxt('Forc_Tq.txt',dtype=None,skip_header=0, usecols=0)
 Pfrck = np.array(Pfrck,dtype=np.float64)
-Pfrck = np.reshape(Pfrck, (33,nk))
-Pfrck = Pfrck.transpose()
-Pfrck1D=Pfrck[:,0]
+Pfrck = np.reshape(Pfrck, (ntimes,nk))
+Pfrck1D=Pfrck[0,:]
 print('Pfrc 1D=',Pfrck1D.shape,'nk=',nk)
 ufrck=np.genfromtxt('Forc_Tq.txt',dtype=None,skip_header=0, usecols=1)
 ufrck = np.array(ufrck,dtype=np.float64)
-ufrck = np.reshape(ufrck, (33,nk))
-ufrck = ufrck.transpose()
+ufrck = np.reshape(ufrck, (ntimes,nk))
 vfrck=np.genfromtxt('Forc_Tq.txt',dtype=None,skip_header=0, usecols=2)
 vfrck = np.array(vfrck,dtype=np.float64)
-vfrck = np.reshape(vfrck, (33,nk))
-vfrck = vfrck.transpose()
+vfrck = np.reshape(vfrck, (ntimes,nk))
 thfrck=np.genfromtxt('Forc_Tq.txt',dtype=None,skip_header=0, usecols=3)
 thfrck = np.array(thfrck,dtype=np.float64)
-thfrck = np.reshape(thfrck, (33,nk))
-thfrck = thfrck.transpose()
+thfrck = np.reshape(thfrck, (ntimes,nk))
 rvfrck=np.genfromtxt('Forc_Tq.txt',dtype=None,skip_header=0, usecols=4)
 rvfrck = np.array(rvfrck,dtype=np.float64)
-rvfrck = np.reshape(rvfrck, (33,nk))
-rvfrck = rvfrck.transpose()
-dthdtfrck=np.genfromtxt('Forc_Tq.txt',dtype=None,skip_header=0, usecols=5)
+rvfrck = np.reshape(rvfrck, (ntimes,nk))
+dthdtfrck=np.genfromtxt('Forc_Tq.txt',dtype=None,skip_header=0, usecols=6)
 dthdtfrck = np.array(dthdtfrck,dtype=np.float64)
-dthdtfrck = np.reshape(dthdtfrck, (33,nk))
-dthdtfrck = dthdtfrck.transpose()
-drvdtfrck=np.genfromtxt('Forc_Tq.txt',dtype=None,skip_header=0, usecols=6)
+dthdtfrck = np.reshape(dthdtfrck, (ntimes,nk))
+drvdtfrck=np.genfromtxt('Forc_Tq.txt',dtype=None,skip_header=0, usecols=7)
 drvdtfrck = np.array(drvdtfrck,dtype=np.float64)
-drvdtfrck = np.reshape(drvdtfrck, (33,nk))
-drvdtfrck = drvdtfrck.transpose()
-print('Pfrck t=1',Pfrck[:,0],'ufrck t=1',ufrck[:,1],'thfrck t=1',thfrck[:,0])
-print('Pfrck t=2',Pfrck[:,1],'ufrck t=2',ufrck[:,1],'thfrck t=2',thfrck[:,1])
-print('Pfrck size',Pfrck.shape,Timeforc.shape,dthdtfrck.shape)
+drvdtfrck = np.reshape(drvdtfrck, (ntimes,nk))
 
 ##################################################################################
 #ATTENTION POUR L INSTANT POUR ARCHIVE ON A GARDE l INFO SUR LA tENDANCE RADIATIVE
@@ -300,7 +292,9 @@ lateSfc = np.genfromtxt('sfceforcing_fluxlat.txt',dtype=None,skip_header=0,useco
 tsSfc = np.genfromtxt('sfceforcing_ts.txt',dtype=None,skip_header=0,usecols=0)
 
 case.add_surface_fluxes(sens=sensSfc,lat=lateSfc,time=timeSfc,forc_wind='z0',z0=0.15)
-case.add_forcing_ts(tsSfc,time=timeSfc,z0=0.15)
+#case.add_forcing_ts(tsSfc,time=timeSfc,z0=0.15)
+case.add_rad_ts(tsSfc,time=timeSfc)
+
 #besoin de rajouter definition de Emissivite=0.994 et Albedo=0.17
 alb=0.17
 emis=0.994

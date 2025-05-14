@@ -459,7 +459,10 @@ def z2p(thetal=None, theta=None, ta=None,
             dz = z[ilev]- z[ilev-1]    
             integ = integ + (g/(R[ilev-1]*theta[ilev-1])+g/(R[ilev]*theta[ilev]))/2*dz
             tmp = ps**kappa-p0**kappa*kappa*integ
-            p[ilev] = math.exp(math.log(tmp)/kappa)
+            try: p[ilev] = math.exp(math.log(tmp)/kappa)
+            except:
+                print(ilev, z[ilev-1], z[ilev], theta[ilev-1], theta[ilev], R[ilev-1], R[ilev], integ, tmp)
+                raise
     else: # Use ta instead
         nlev, = ta.shape
 

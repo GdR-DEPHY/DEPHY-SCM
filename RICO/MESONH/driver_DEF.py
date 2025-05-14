@@ -30,7 +30,7 @@ case = Case('RICO/MESONH',
         lat=18,
         lon=-61.5,
         startDate="20041227000000",
-        endDate="20041228000000",
+        endDate="20041230000000",
         surfaceType="ocean",
         zorog=0.)
 

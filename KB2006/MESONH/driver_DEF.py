@@ -62,14 +62,14 @@ v  = [ 0.,     0.,    0.,    0.,     0. ]
 case.add_init_wind(u=u,v=v, ulev=zu, vlev=zv, levtype='altitude')
 
 # Potential Temperature
-zthetal = [  0.,     520.,  1480.,  2000., 3000., 4000., 15000., 20000.]
-thetal  = [298.7,   298.7, 302.4,  308.2, 311.85, 316.93, 362.95, 383.87]
+zthetal = [  0.,     520.,  1480.,  2000., 3000., 4000., 15000., 17500., 20000.]
+thetal  = [298.7,   298.7, 302.4,  308.2, 311.85, 316.93, 362.95, 392.25, 470.56]
 
 case.add_init_thetal(thetal, lev=zthetal, levtype='altitude')
 
 # Specific humidity
-zrt =[ 0.,  520., 1480., 2000., 3000., 4000., 15000., 20000.] 
-rt = [17.293998,  16.57,  10.82, 4.22, 3.01, 0., 0., 0.] # in g kg-1
+zrt =[ 0.,  520., 1480., 2000., 3000., 4000., 15000., 17500., 20000.] 
+rt = [17.293998,  16.57,  10.82, 4.22, 3.01, 0., 0., 0., 0.] # in g kg-1
 
 case.add_init_rt(np.array(rt)/1000., lev=zrt, levtype='altitude') # converted in kg kg-1
 

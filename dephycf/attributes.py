@@ -27,7 +27,7 @@ known_attributes = [
             'zh_nudging_ua','zh_nudging_va',
             'zh_nudging_ta','zh_nudging_theta','zh_nudging_thetal',
             'zh_nudging_qv','zh_nudging_qt','zh_nudging_rv','zh_nudging_rt',
-            'surface_type',
+            'surface_type', 'surface_radiation_temp',
             'surface_forcing_temp','surface_forcing_moisture','surface_forcing_wind'
             ]
 

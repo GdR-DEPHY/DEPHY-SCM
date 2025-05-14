@@ -2,6 +2,7 @@
 *.swp
 *.swo
 *~
+*ferret*
 # Compiled python files
 *.pyc
 # Mac specific files
@@ -50,6 +51,7 @@ LBA/REF/u_GCSS.txt
 LBA/REF/v_GCSS.txt
 LBA/REF/z_GCSS.txt
 EUROCS/OLD/
+poub/
 # Romain
 BLLAST/B2024/BLLAST_B2024_DEF_driver.nc.20240306
 BLLAST/B2024/BLLAST_B2024_SCM_driver.nc.20240306
