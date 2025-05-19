@@ -1709,8 +1709,8 @@ class Case:
                 logger.error('Pressure should be None to theta from ta')
                 raise ValueError('Pressure should be None to theta from ta')
             else:
-                 logger.info('Compute potential temperature from pressure and temperature')
-                 theta = thermo.t2theta(p=pressure.data[0,:], temp=self.variables['ta'].data[0,:])
+                logger.info('Compute potential temperature from pressure and temperature')
+                theta = thermo.t2theta(p=pressure.data[0,:], temp=self.variables['ta'].data[0,:])
         elif 'thetal' in self.var_init_list:
             logger.info('Assume theta=thetal')
             theta = self.variables['thetal'].data[0,:]
@@ -2718,6 +2718,28 @@ class Case:
                     lev=level, time=time,
                     height=height, pressure=pressure)
                 self.set_attribute('adv_rt',1)
+
+        #---- Large-scale wind advection
+        atts = ['adv_ua', 'adv_va']
+        flag = False
+        for att in atts:
+            if att in self.attlist and self.attributes[att] == 1:
+                flag = True
+
+        if flag:
+            # large-scale advection of humidity is active. All humidity variables are added, if needed.
+            if 'tnua_adv' not in self.var_forcing_list:
+                uaadv = self.variables['tnua_adv'].data
+                self.add_variable('tnua_adv', uaadv,
+                                  lev=level, time=time,
+                                  height=height, pressure=pressure)
+                self.set_attribute('adv_ua', 1)
+            if 'tnva_adv' not in self.var_forcing_list:
+                vaadv = self.variables['tnva_adv'].data
+                self.add_variable('tnva_adv', vaadv,
+                                  lev=level, time=time,
+                                  height=height, pressure=pressure)
+                self.set_attribute('adv_va', 1)
 
         #---- Wind nudging
 
