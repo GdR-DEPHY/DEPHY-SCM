@@ -224,7 +224,8 @@ class Case:
 
     def add_variable(self, varid, vardata, name=None, units=None,
             lev=None, levtype=None, levid=None,
-            height=None, pressure=None,
+            height=None, height_id=None, height_units=None,
+            pressure=None, pressure_id=None, pressure_units=None,
             time=None, timeid=None):
         """Add a variable to a Case object.
             
@@ -302,12 +303,6 @@ class Case:
                 levAxis = Axis('lev_{0}'.format(varid),lev,name=lev_name,units=levunits)
             else:
                 levAxis = Axis(levid,lev,name='{0}'.format(levtype),units=levunits)
-
-        height_id = None
-        height_units = None
-
-        pressure_id = None
-        pressure_units = None
 
         if levAxis is not None:
             if levtype == 'altitude':
@@ -1043,6 +1038,29 @@ class Case:
         self.set_attribute('adv_qv',1)
 
         self.add_forcing_variable('tnqv_adv',data,**kwargs)
+
+    def add_wind_advection(self,ua_adv=None, va_adv=None,**kwargs):
+        """ 
+        Add a wind advection to a Case object.
+        
+        Required argument:
+        data -- input data as a list or a numpy array.
+
+        See add_variable function for optional arguments.
+        Note that:
+        - a level axis is required (lev optional argument).
+        - a levtype is required (levtype optional argument).
+
+        If time is not provided, forcing is assumed constant in time.
+        """
+        
+        if ua_adv is not None:
+            self.add_forcing_variable('tnua_adv', ua_adv, **kwargs)
+        if va_adv is not None:
+            self.add_forcing_variable('tnva_adv', va_adv, **kwargs)
+
+        self.set_attribute('adv_ua',1)
+        self.set_attribute('adv_va',1)
 
     def add_qt_advection(self,data,**kwargs):
         """Add a total water advection to a Case object.
@@ -3136,6 +3154,12 @@ class Case:
         """Vertically extend the water vapor mixing ratio large-scale advection"""
 
         self.extend_variable('tnrv_adv', data=rv_adv, **kwargs)
+
+    def extend_wind_advection(self, ua_adv=None, va_adv=None, **kwargs):
+        """Vertically extend the two wind initial components"""
+
+        self.extend_variable('tnua_adv', data=ua_adv, **kwargs)
+        self.extend_variable('tnva_adv', data=va_adv, **kwargs)
 
     def extend_rt_advection(self, rt_adv=None, **kwargs):
         """Vertically extend the total water mixing ratio large-scale advection"""

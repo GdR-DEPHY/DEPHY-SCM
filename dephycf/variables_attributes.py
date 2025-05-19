@@ -23,6 +23,7 @@ attributes = OrderedDict([
         ('rl',       {'name': 'cloud_liquid_water_mixing_ratio',            'units': '1', 'plotcoef': 1000., 'plotunits': 'g kg-1'}),
         ('ri',       {'name': 'cloud_ice_water_mixing_ratio',               'units': '1', 'plotcoef': 1000., 'plotunits': 'g kg-1'}),        
         ('tke',      {'name': 'specific_turbulent_kinetic_energy',          'units': 'm2 s-2'}),
+        ('hur',      {'name': 'relative_humidity',                          'units': '%'}),
         # Surface
         ('ts',    {'name': 'surface_temperature',                  'units': 'K'}),
         ('thetas',{'name': 'surface_potential_temperature',        'units': 'K'}),
