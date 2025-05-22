@@ -29,7 +29,7 @@ lverbose = False # print information about variables and case
 ################################################
 
 dmin = datetime(1979, 1, 1, 0, 0, 0)
-dmax = dmin + timedelta(days=100)
+dmax = dmin + timedelta(days=50)
 
 case = Case(f'RCEMIP/SST{SST}',
         lat=0,
