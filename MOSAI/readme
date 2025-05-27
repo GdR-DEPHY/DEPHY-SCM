@@ -18,14 +18,26 @@ with
 $ cd REF/
 $ python driver_DEF.py -h
 
-usage: driver_DEF.py [-h] -c cover [-n name_config] [-s thresh_sensib] [-a]
+usage: driver_DEF.py [-h] [--advTq [ADVTQ]] [--advuv [ADVUV]] [--geo [GEO]] [--rad [RAD]] [--ffx [FFX]] [--fts [FTS]] [-s thresh_sensib]
+                     cover initpf adv_from smooth_adv max_alt_adv smooth_geos_wind max_alt_geos_wind
 
-options:
-  -h, --help        show this help message and exit
-  -c cover          cover type: MAIZE|DECIDUOUS
-  -n name_config    name of subcase variant
-  -s thresh_sensib  sensible heat flux threshold
-  -a                flag to activate advection tendencies
+positional arguments:
+  cover              cover type: MAIZE|DECIDUOUS
+  initpf             initial profile: rs_smooth|rs_idea
+  adv_from           advection from: ARPEGEoper|ERA5
+  smooth_adv         smooth advection tendencies
+  max_alt_adv        maximum altitude of advection tendencies
+  smooth_geos_wind   smooth geostrophic wind
+  max_alt_geos_wind  maximum altitude of geostrophic wind
 
-to create a new subcase,
-copy one of the existing subcases (e.g. MAIZE/) and adapt make_cas.sh
+optional arguments:
+  -h, --help         show this help message and exit
+  --advTq [ADVTQ]    flag to activate advection tendencies of temperature and humidity
+  --advuv [ADVUV]    flag to activate advection tendencies of horizontal wind
+  --geo [GEO]        flag to activate geostrophic wind
+  --rad [RAD]        flag to activate radiation
+  --ffx [FFX]        flag to activate surface flux forcing
+  --fts [FTS]        flag to activate surface temperature forcing
+  -s thresh_sensib   sensible heat flux threshold
+
+to create a new subcase, copy one of the existing subcases (e.g. MAIZE/) and adapt make_cas.sh

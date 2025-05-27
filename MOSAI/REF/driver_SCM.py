@@ -6,6 +6,7 @@ Created on 29 May 2024
 @author: DEPHY team atelier cas 1D
 
 Modifications:
+27/05/2025 Alice Maison : various options added, including geostrophic wind, wind advection and forcing smoothing
 """
 
 ## MOSAI/REF SCM-enabled case definition
@@ -18,13 +19,25 @@ parser=argparse.ArgumentParser()
 
 from dephycf.Case import Case
 from dephycf import thermo
+from driver_DEF import str2bool
 
 ################################################
 # 0. General configuration of the present script
 ################################################
-
-parser.add_argument("-c", help="cover type: MAIZE|DECIDUOUS", metavar="cover", required=True)
-parser.add_argument("-n", help="name of subcase variant", metavar="name_config", default="")
+parser.add_argument("cover", type=str, metavar="cover", choices=['MAIZE','DECIDUOUS'], help="cover type: MAIZE|DECIDUOUS")
+parser.add_argument("initpf", type=str, metavar="initpf", choices=['rs_smooth','rs_idea'], help="initial profile: rs_smooth|rs_idea")
+parser.add_argument("--advTq", type=str2bool, nargs='?', const=True, default=False, help="flag to activate advection tendencies of temperature and humidity")
+parser.add_argument("--advuv", type=str2bool, nargs='?', const=True, default=False, help="flag to activate advection tendencies of horizontal wind")
+parser.add_argument("fadv", type=str, metavar="adv_from", choices=['ARPEGEoper','ERA5'], help="advection from: ARPEGEoper|ERA5")
+parser.add_argument("sadv", type=float, default=0., metavar="smooth_adv", help="smooth advection tendencies")
+parser.add_argument("zadv", type=float, default=50000., metavar="max_alt_adv", help="maximum altitude of advection tendencies")
+parser.add_argument("--geo", type=str2bool, nargs='?', const=True, default=False, help="flag to activate geostrophic wind")
+parser.add_argument("sgeo", type=float, default=0., metavar="smooth_geos_wind", help="smooth geostrophic wind")
+parser.add_argument("zgeo", type=float, default=16000., metavar="max_alt_geos_wind", help="maximum altitude of geostrophic wind")
+parser.add_argument("--rad", type=str2bool, nargs='?', const=True, default=False, help="flag to activate radiation")
+parser.add_argument("--ffx", type=str2bool, nargs='?', const=True, default=False, help="flag to activate surface flux forcing")
+parser.add_argument("--fts", type=str2bool, nargs='?', const=True, default=False, help="flag to activate surface temperature forcing")
+parser.add_argument("-s", type=float, default=-9999, metavar="thresh_sensib", help="sensible heat flux threshold")
 args=parser.parse_args()
 
 lplot = True     # plot the new version of the case
@@ -36,8 +49,22 @@ lverbose = False # print information on variables and case
 ################################################
 
 # initialize the case structure for the original version
-cover = args.c
-scase = cover+args.n
+cover = args.cover
+initial_profile = args.initpf
+advTq = args.advTq
+advuv = args.advuv
+adv_from = args.fadv
+zmax_adv = args.zadv
+geoswd = args.geo
+
+# name of the case
+add_nam = ''
+if ((advTq) | (advuv)):
+  if (advTq): add_nam = add_nam+'_advTq'
+  if (advuv): add_nam = add_nam+'_advuv'
+  add_nam = add_nam+'_'+adv_from[0:3]
+if (geoswd): add_nam = add_nam+'_geo'
+scase = cover+'_'+args.initpf+add_nam
 case = Case('MOSAI/%s'%scase)
 
 # read case information in file
@@ -58,18 +85,18 @@ case.extend_init_temp(height=0)
 case.extend_init_rt(height=0)
 case.extend_init_hur(height=0)
 
-#case.extend_theta_advection(theta_adv=0, height=0)
-#case.extend_rt_advection(rt_adv=0, height=0)
-#case.extend_temperature_advection(height=0)
-#case.extend_qv_advection(height=0)
-
-####
-
 
 # Grids onto which interpolate the input data
-
 # New vertical grid, 10-m resolution from surface to 3000 m and 100-m resolution above, up to htop
 htop = 50000
+
+# set advection profiles to 0 towards the top of the domain
+if (advTq):
+  case.extend_temperature_advection(temp_adv=[0.,0.],height=[zmax_adv,htop])
+  case.extend_qv_advection(qv_adv=[0.,0.],height=[zmax_adv,htop])
+if (advuv):
+  case.extend_wind_advection(ua_adv=[0.,0.],va_adv=[0.,0.],height=[zmax_adv,htop])
+
 levout = np.array(list(range(0,3000,10)) + list(range(3100,int(htop)+1,100)),dtype=np.float64)
 
 #  New temporal grid, from 05:00 UTC to 18:00 UTC, 20 June 2011, 30-min timestep
