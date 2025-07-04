@@ -6,14 +6,15 @@ initpf=rs_idea      # rs_idea (idealised profile from radiosoundings and surface
                     # or rs_smooth (profile from smoothed radiosoundings)
 
 # large scale advection (taken for ARPEGE-oper or ERA5)
-advTq=True
-advuv=True
-adv_from=ARPEGEoper # advection from ARPEGEoper or ERA5
+advTq=True          # advection of temperature and humidity
+advuv=True          # advection of horizontal wind speed
+vertvel=False       # vertical velocity
+adv_from=ARPEGEoper # advection and vertical velocity from ARPEGEoper or ERA5
 smooth_adv=0.5      # zero means no smooth
 zmax_adv=5000.      # advection is imposed up to this altitude (m)
 
 # geostrophic wind
-geo=True            # geostrophic wind taken from VHF radar in P2OA
+geo=False           # geostrophic wind taken from VHF radar in P2OA
 smooth_geo=0.5      # zero means no smooth
 zmax_geo=5000.      # geostrophic wind is imposed up to this altitude (m)
 
@@ -36,7 +37,7 @@ then
 fi
 
 # large scale advection
-if [ $advTq == 'True' ] || [ $advuv == 'True' ]
+if [ $advTq == 'True' ] || [ $advuv == 'True' ] || [ $vertvel == 'True' ]
 then
   if [ $adv_from == 'ARPEGEoper' ]
   then
@@ -60,5 +61,5 @@ then
 fi
 
 # run scripts to generate nc files
-python ../REF/driver_DEF.py $cover $initpf --advTq $advTq --advuv $advuv $adv_from $smooth_adv $zmax_adv --geo $geo $smooth_geo $zmax_geo --rad $rad --ffx $forc_flux --fts $forc_ts
-python ../REF/driver_SCM.py $cover $initpf --advTq $advTq --advuv $advuv $adv_from $smooth_adv $zmax_adv --geo $geo $smooth_geo $zmax_geo --rad $rad --ffx $forc_flux --fts $forc_ts
+python ../REF/driver_DEF.py $cover $initpf --advTq $advTq --advuv $advuv --vertvel $vertvel $adv_from $smooth_adv $zmax_adv --geo $geo $smooth_geo $zmax_geo --rad $rad --ffx $forc_flux --fts $forc_ts
+python ../REF/driver_SCM.py $cover $initpf --advTq $advTq --advuv $advuv --vertvel $vertvel $adv_from $smooth_adv $zmax_adv --geo $geo $smooth_geo $zmax_geo --rad $rad --ffx $forc_flux --fts $forc_ts

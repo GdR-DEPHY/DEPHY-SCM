@@ -28,6 +28,7 @@ parser.add_argument("cover", type=str, metavar="cover", choices=['MAIZE','DECIDU
 parser.add_argument("initpf", type=str, metavar="initpf", choices=['rs_smooth','rs_idea'], help="initial profile: rs_smooth|rs_idea")
 parser.add_argument("--advTq", type=str2bool, nargs='?', const=True, default=False, help="flag to activate advection tendencies of temperature and humidity")
 parser.add_argument("--advuv", type=str2bool, nargs='?', const=True, default=False, help="flag to activate advection tendencies of horizontal wind")
+parser.add_argument("--vertvel", type=str2bool, nargs='?', const=True, default=False, help="flag to add vertical velocity")
 parser.add_argument("fadv", type=str, metavar="adv_from", choices=['ARPEGEoper','ERA5'], help="advection from: ARPEGEoper|ERA5")
 parser.add_argument("sadv", type=float, default=0., metavar="smooth_adv", help="smooth advection tendencies")
 parser.add_argument("zadv", type=float, default=50000., metavar="max_alt_adv", help="maximum altitude of advection tendencies")
@@ -53,6 +54,7 @@ cover = args.cover
 initial_profile = args.initpf
 advTq = args.advTq
 advuv = args.advuv
+vertvel = args.vertvel
 adv_from = args.fadv
 zmax_adv = args.zadv
 geoswd = args.geo
@@ -62,6 +64,7 @@ add_nam = ''
 if ((advTq) | (advuv)):
   if (advTq): add_nam = add_nam+'_advTq'
   if (advuv): add_nam = add_nam+'_advuv'
+  if (vertvel): add_nam = add_nam+'_w'
   add_nam = add_nam+'_'+adv_from[0:3]
 if (geoswd): add_nam = add_nam+'_geo'
 scase = cover+'_'+args.initpf+add_nam
@@ -96,6 +99,11 @@ if (advTq):
   case.extend_qv_advection(qv_adv=[0.,0.],height=[zmax_adv,htop])
 if (advuv):
   case.extend_wind_advection(ua_adv=[0.,0.],va_adv=[0.,0.],height=[zmax_adv,htop])
+if (vertvel):
+  if (adv_from == 'ARPEGEoper'):
+    case.extend_vertical_velocity(omega=[0.,0.],height=[zmax_adv,htop])
+  elif (adv_from == 'ERA5'):
+    case.extend_vertical_velocity(w=[0.,0.],height=[zmax_adv,htop])
 
 levout = np.array(list(range(0,3000,10)) + list(range(3100,int(htop)+1,100)),dtype=np.float64)
 

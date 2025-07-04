@@ -42,6 +42,7 @@ parser.add_argument("cover", type=str, metavar="cover", choices=['MAIZE','DECIDU
 parser.add_argument("initpf", type=str, metavar="initpf", choices=['rs_smooth','rs_idea'], help="initial profile: rs_smooth|rs_idea")
 parser.add_argument("--advTq", type=str2bool, nargs='?', const=True, default=False, help="flag to activate advection tendencies of temperature and humidity")
 parser.add_argument("--advuv", type=str2bool, nargs='?', const=True, default=False, help="flag to activate advection tendencies of horizontal wind")
+parser.add_argument("--vertvel", type=str2bool, nargs='?', const=True, default=False, help="flag to add vertical velocity")
 parser.add_argument("fadv", type=str, metavar="adv_from", choices=['ARPEGEoper','ERA5'], help="advection from: ARPEGEoper|ERA5")
 parser.add_argument("sadv", type=float, default=0., metavar="smooth_adv", help="smooth advection tendencies")
 parser.add_argument("zadv", type=float, default=50000., metavar="max_alt_adv", help="maximum altitude of advection tendencies")
@@ -69,6 +70,7 @@ cover = args.cover
 initial_profile = args.initpf
 advTq = args.advTq
 advuv = args.advuv
+vertvel = args.vertvel
 adv_from = args.fadv
 smooth_adv = args.sadv
 zmax_adv = args.zadv
@@ -82,9 +84,10 @@ sensib_thresh = args.s
 
 # name of the case
 add_nam = ''
-if ((advTq) | (advuv)):
+if ((advTq) | (advuv) | (vertvel)):
   if (advTq): add_nam = add_nam+'_advTq'
   if (advuv): add_nam = add_nam+'_advuv'
+  if (vertvel): add_nam = add_nam+'_w'
   add_nam = add_nam+'_'+adv_from[0:3]
 if (geoswd): add_nam = add_nam+'_geo'
 scase = cover+'_'+args.initpf+add_nam
@@ -94,6 +97,7 @@ print('initial profiles:', initial_profile)
 print('case:', scase)
 print('advection of temperature and humidity:', advTq)
 print('advection of horizontal wind:', advuv)
+print('vertical velocity:', vertvel)
 print('from:', adv_from)
 print('smooth adv:', smooth_adv)
 print('Zmax adv:', zmax_adv)
@@ -246,7 +250,7 @@ if geoswd:
   case.add_geostrophic_wind(ug=u_vhf,vg=v_vhf,time=time_vhf,lev=z_vhf,levtype='altitude')
 
 # Advection
-if advTq | advuv :
+if advTq | advuv | vertvel :
 
   # Advection tendencies from ARPEGE oper files
   # reverse altitude dimension to get height-increasing variables
@@ -264,6 +268,8 @@ if advTq | advuv :
     if advuv:
       uadv = fin['uadv'][:,::-1]
       vadv = fin['vadv'][:,::-1]
+    if vertvel:
+      vtvl = fin['omega'][:,::-1]
 
   # Advection tendencies from ERA5 reanalysis
   elif (adv_from == 'ERA5'):
@@ -278,6 +284,8 @@ if advTq | advuv :
     if advuv:
       uadv = fin['uadv'][:,:]
       vadv = fin['vadv'][:,:]
+    if vertvel:
+      vtvl = fin['w'][:,:]
 
   else:
     print('Please choose between ARPEGEoper and ERA5 for fadv')
@@ -305,6 +313,14 @@ if advTq | advuv :
     uadv2 = uadv[:,levForc<=zmax_adv]
     vadv2 = vadv[:,levForc<=zmax_adv]
     case.add_wind_advection(ua_adv=uadv2, va_adv=vadv2,time=timeForc,timeid='time',lev=levForc2,levtype='altitude')
+
+  if vertvel:
+    vtvl = sp.ndimage.filters.gaussian_filter(vtvl, sigma, mode='constant')
+    vtvl2 = vtvl[:,levForc<=zmax_adv]
+    if (adv_from == 'ARPEGEoper'):
+      case.add_vertical_velocity(omega=vtvl2,time=timeForc,lev=levForc2,levtype='altitude')
+    elif (adv_from == 'ERA5'):
+      case.add_vertical_velocity(w=vtvl2,time=timeForc,lev=levForc2,levtype='altitude')
 
 else:
   # No advection forcing => set to 0
