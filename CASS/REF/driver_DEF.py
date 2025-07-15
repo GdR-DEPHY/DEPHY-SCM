@@ -32,7 +32,7 @@ case = Case('CASS/REF',
         lat=36.56,
         lon=-100.61,
         startDate="20010514120000",
-        endDate="20010514235959",
+        endDate="20010515030000",
         surfaceType='land',
         zorog=0.)
 
