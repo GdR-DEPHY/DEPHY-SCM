@@ -90,7 +90,7 @@ zqt = [  0., 595., 605., 650., 800., 1000., 1200., hint]
 qt  = [  9.6e-3, 9.6e-3, 6.57e-3, 6.43e-3, 5.99e-3, 5.39e-3, 4.79e-3, 6.6e-3-0.003e-3*(hint-595)]
 
 case.add_init_qt(qt,lev=zqt,levtype='altitude')
-indz = zstd > 5000
+indz = zstd > hint
 case.extend_init_qt(qt=qtstd[indz], height=zstd[indz])
 
 ################################################
