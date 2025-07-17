@@ -2358,8 +2358,29 @@ class Case:
             elif levtype == 'pressure':
 
                 levout = Axis('lev', lev, name='air_pressure', units='Pa')
-                logger.error('Pressure level type is not coded yet for interpolation')
-                raise NotImplementedError('Pressure level type is not coded yet for interpolation')
+                for var in self.var_init_list:
+                    VV = dataout[var]
+                    dataout[var] = VV.interpol_vert(pressure=lev)
+                    if dataout[var].level is not None:
+                        dataout[var].set_level(lev=levout)
+                        dataout[var].pressure.set_level(lev=levout)
+                        dataout[var].pressure.id = 'pa'
+                        dataout[var].pressure.name = 'pressure'
+                        dataout[var].set_coordinates('t0','pa','lat','lon')
+                        dataout[var].pressure.set_coordinates('t0','pa','lat','lon')
+
+                for var in self.var_forcing_list:
+                    VV = dataout[var]
+                    dataout[var] = VV.interpol_vert(pressure=lev)
+                    if dataout[var].level is not None:
+                        dataout[var].set_level(lev=levout)
+                        dataout[var].pressure.set_level(lev=levout)
+                        dataout[var].pressure.id = 'pa_forc'
+                        dataout[var].pressure.name = 'pressure_forcing'
+                        dataout[var].set_coordinates('time','pa_forc','lat','lon')
+                        dataout[var].pressure.set_coordinates('time','pa_forc','lat','lon')
+                #logger.error('Pressure level type is not coded yet for interpolation')
+                #raise NotImplementedError('Pressure level type is not coded yet for interpolation')
 
             else:
 

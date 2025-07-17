@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Created on 29 November 2019
@@ -7,17 +7,16 @@ Created on 29 November 2019
 
 Modification
   2020/11/11, R. Roehrig: update for improved case definition interface.
+  2021/07/05, R. Roehrig: update tskin
 """
 
 ## ARM-Cumulus SCM-enabled case definition
 
-import sys
-sys.path = ['../../utils/',] + sys.path
-
 import netCDF4 as nc
 import numpy as np
 
-from Case import Case
+from dephycf.Case import Case
+from dephycf import thermo
 
 ################################################
 # 0. General configuration of the present script
@@ -50,15 +49,11 @@ if lverbose:
 
 # grid onto which interpolate the input data
 
-# New vertical grid, 10-m resolution from surface to 6000 m (above the surface)
-#levout = np.array(range(0,6001,10),dtype=np.float64) 
-#levout = np.array(fin['lev_wap'][:])
+levout = np.array(fin['lev_theta'][:])
 # New temporal grid, from 11:30 UTC, 21 June 1997 to 02:00 UTC, 22 June 1997, 30-min timestep
-#timeout = np.array(range(0,86400+2*3600+1-41400,1800),dtype=np.float64) 
 timeout = np.array(fin['time_hfss'][:])
 # conversion
-#newcase = case.convert2SCM(time=timeout,lev=levout,levtype='pressure')
-newcase = case.convert2SCM(time=timeout)
+newcase = case.convert2SCM(time=timeout, lev=levout, levtype='pressure')
 # add a surface temperature. To be improved...
 #ts = timeout*0. + 300 # same shape as timeout
 
