@@ -78,6 +78,11 @@ rhostd = np.genfromtxt(file_std,dtype=float,skip_header=1,usecols=3)
 rhovstd = np.genfromtxt(file_std,dtype=float,skip_header=1,usecols=4)
 
 rvstd = rhovstd/rhostd
+#profile used in the radiation for MNH is quite moist at 3000m => very important to use a top at least of 3000m
+#for i in range(len(rvstd)):
+#  print('i=',zstd[i],'rvstd',rvstd[i])
+# so we devide the rvstd/3
+rvstd=rvstd/3.
 
 thetastd = thermo.t2theta(p=pstd, temp=tstd)
 qtstd = thermo.rt2qt(rvstd)
