@@ -1,0 +1,676 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Physical Constants &#8212; DEPHY-SCM 1.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=f2a433a1"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/constants';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Axis" href="axis.html" />
+    <link rel="prev" title="API Reference" href="index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">DEPHY-SCM</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    API Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    API Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Physical Constants</a></li>
+<li class="toctree-l1"><a class="reference internal" href="axis.html">Axis</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">API Reference</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Physical Constants</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="module-dephycf.constants">
+<span id="physical-constants"></span><h1>Physical Constants<a class="headerlink" href="#module-dephycf.constants" title="Link to this heading">#</a></h1>
+<p>Physical constants for atmospheric science.</p>
+<p>This module defines a collection of widely used physical constants
+for thermodynamics and atmospheric physics. Each constant is exposed
+as a simple Python variable, documented with its value, units and
+scientific meaning.
+All constants are of <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> type.</p>
+<p class="rubric">Example</p>
+<p>You can import and use the constants directly:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">dephycf</span> <span class="kn">import</span> <span class="n">constants</span> <span class="k">as</span> <span class="n">cc</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cc</span><span class="o">.</span><span class="n">g</span>
+<span class="go">9.80665</span>
+</pre></div>
+</div>
+<p>Here are the main constants defined in <a class="reference internal" href="#module-dephycf.constants" title="dephycf.constants"><code class="xref py py-mod docutils literal notranslate"><span class="pre">dephycf.constants</span></code></a>:</p>
+<section id="fundamental-constants">
+<h2>Fundamental constants<a class="headerlink" href="#fundamental-constants" title="Link to this heading">#</a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="dephycf.constants.g">
+<span class="sig-name descname"><span class="pre">g</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">9.80665</span></em><a class="headerlink" href="#dephycf.constants.g" title="Link to this definition">#</a></dt>
+<dd><p>Standard gravity acceleration (m s-2).</p>
+<div class="math notranslate nohighlight">
+\[g = 9.80665 \; \text{m s}^{-2}\]</div>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="dephycf.constants.boltzman">
+<span class="sig-name descname"><span class="pre">boltzman</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1.380658e-23</span></em><a class="headerlink" href="#dephycf.constants.boltzman" title="Link to this definition">#</a></dt>
+<dd><p>Boltzmann constant (J K-1).</p>
+<div class="math notranslate nohighlight">
+\[k_B = 1.380658 \times 10^{-23} \; \text{J K}^{-1}\]</div>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="dephycf.constants.avogadro">
+<span class="sig-name descname"><span class="pre">avogadro</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">6.0221367e+23</span></em><a class="headerlink" href="#dephycf.constants.avogadro" title="Link to this definition">#</a></dt>
+<dd><p>Avogadro’s number (mol-1).</p>
+<div class="math notranslate nohighlight">
+\[N_A = 6.0221367 \times 10^{23} \; \text{mol}^{-1}\]</div>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="dephycf.constants.R">
+<span class="sig-name descname"><span class="pre">R</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">8.3145112119486</span></em><a class="headerlink" href="#dephycf.constants.R" title="Link to this definition">#</a></dt>
+<dd><p>Universal gas constant (J mol-1 K-1).</p>
+<div class="math notranslate nohighlight">
+\[R = N_A \times k_B \approx 8.31451 \; \text{J mol}^{-1} \text{ K}^{-1}\]</div>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="dephycf.constants.sigma">
+<span class="sig-name descname"><span class="pre">sigma</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">5.67e-08</span></em><a class="headerlink" href="#dephycf.constants.sigma" title="Link to this definition">#</a></dt>
+<dd><p>Stefan–Boltzmann constant (W m-2 K-4).</p>
+<div class="math notranslate nohighlight">
+\[\sigma = 5.67 \times 10^{-8} \; \text{W m}^{-2} \text{ K}^{-4}\]</div>
+</dd></dl>
+
+</section>
+<section id="molecular-masses">
+<h2>Molecular masses<a class="headerlink" href="#molecular-masses" title="Link to this heading">#</a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="dephycf.constants.Md">
+<span class="sig-name descname"><span class="pre">Md</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">28.9644</span></em><a class="headerlink" href="#dephycf.constants.Md" title="Link to this definition">#</a></dt>
+<dd><p>Dry air molar mass (g mol-1).</p>
+<div class="math notranslate nohighlight">
+\[M_d = 28.9644 \; \text{g mol}^{-1}\]</div>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="dephycf.constants.Mv">
+<span class="sig-name descname"><span class="pre">Mv</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">18.0153</span></em><a class="headerlink" href="#dephycf.constants.Mv" title="Link to this definition">#</a></dt>
+<dd><p>Water vapor molar mass (g mol-1).</p>
+<div class="math notranslate nohighlight">
+\[M_v = 18.0153 \; \text{g mol}^{-1}\]</div>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="dephycf.constants.Mo3">
+<span class="sig-name descname"><span class="pre">Mo3</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">47.9982</span></em><a class="headerlink" href="#dephycf.constants.Mo3" title="Link to this definition">#</a></dt>
+<dd><p>Ozone molar mass (g mol-1).</p>
+<div class="math notranslate nohighlight">
+\[M_{O_3} = 47.9982 \; \text{g mol}^{-1}\]</div>
+</dd></dl>
+
+</section>
+<section id="gas-constants-and-heats">
+<h2>Gas constants and heats<a class="headerlink" href="#gas-constants-and-heats" title="Link to this heading">#</a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="dephycf.constants.Rd">
+<span class="sig-name descname"><span class="pre">Rd</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">287.0596736665907</span></em><a class="headerlink" href="#dephycf.constants.Rd" title="Link to this definition">#</a></dt>
+<dd><p>Gas constant for dry air (J kg-1 K-1).</p>
+<div class="math notranslate nohighlight">
+\[R_d = 1000. \times \frac{R}{M_d} \approx 287.1 \; \text{g mol}^{-1} \text{ K}^{-1}\]</div>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="dephycf.constants.Rv">
+<span class="sig-name descname"><span class="pre">Rv</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">461.5249933083879</span></em><a class="headerlink" href="#dephycf.constants.Rv" title="Link to this definition">#</a></dt>
+<dd><p>Gas constant for water vapor (J kg-1 K-1).</p>
+<div class="math notranslate nohighlight">
+\[R_v = 1000. \times \frac{R}{M_v} \approx 461.5 \; \text{g mol}^{-1} \text{ K}^{-1}\]</div>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="dephycf.constants.Cpd">
+<span class="sig-name descname"><span class="pre">Cpd</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1004.7088578330674</span></em><a class="headerlink" href="#dephycf.constants.Cpd" title="Link to this definition">#</a></dt>
+<dd><p>Dry air specific heat at constant pressure (J kg-1 K-1).</p>
+<div class="math notranslate nohighlight">
+\[C_{pd} = 3.5 \times R_d \approx 1004.7 \; \text{J kg}^{-1} \text{ K}^{-1}\]</div>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="dephycf.constants.Cpv">
+<span class="sig-name descname"><span class="pre">Cpv</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1846.0999732335515</span></em><a class="headerlink" href="#dephycf.constants.Cpv" title="Link to this definition">#</a></dt>
+<dd><p>Water vapor specific heat at constant pressure (J kg-1 K-1).</p>
+<div class="math notranslate nohighlight">
+\[C_{pv} = 4 \times R_v \approx 1846.1 \; \text{J kg}^{-1} \text{ K}^{-1}\]</div>
+</dd></dl>
+
+</section>
+<section id="latent-heats-at-0c">
+<h2>Latent heats at 0°C<a class="headerlink" href="#latent-heats-at-0c" title="Link to this heading">#</a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="dephycf.constants.Lv">
+<span class="sig-name descname"><span class="pre">Lv</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2500800.0</span></em><a class="headerlink" href="#dephycf.constants.Lv" title="Link to this definition">#</a></dt>
+<dd><p>Latent heat of water vaporization (J kg-1).</p>
+<div class="math notranslate nohighlight">
+\[L_v = 2.5008 \times 10^6 \; \text{J kg}^{-1}\]</div>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="dephycf.constants.Ls">
+<span class="sig-name descname"><span class="pre">Ls</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2834500.0</span></em><a class="headerlink" href="#dephycf.constants.Ls" title="Link to this definition">#</a></dt>
+<dd><p>Latent heat of water sublimation (J kg-1).</p>
+<div class="math notranslate nohighlight">
+\[L_s = 2.8345 \times 10^6 \; \text{J kg}^{-1}\]</div>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="dephycf.constants.Lf">
+<span class="sig-name descname"><span class="pre">Lf</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">333700.0</span></em><a class="headerlink" href="#dephycf.constants.Lf" title="Link to this definition">#</a></dt>
+<dd><p>Latent heat of water fusion (J kg-1).</p>
+<div class="math notranslate nohighlight">
+\[L_f = L_s - L_v = 0.3337 \times 10^6 \; \text{J kg}^{-1}\]</div>
+</dd></dl>
+
+</section>
+<section id="derived-gas-constants">
+<h2>Derived gas constants<a class="headerlink" href="#derived-gas-constants" title="Link to this heading">#</a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="dephycf.constants.kappa">
+<span class="sig-name descname"><span class="pre">kappa</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.2857142857142857</span></em><a class="headerlink" href="#dephycf.constants.kappa" title="Link to this definition">#</a></dt>
+<dd><p>Adiabatic dry air constant (dimensionless).</p>
+<div class="math notranslate nohighlight">
+\[\kappa = \frac{R_d}{C_{pd}} \approx 0.286\]</div>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="dephycf.constants.eps">
+<span class="sig-name descname"><span class="pre">eps</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.6219807764013754</span></em><a class="headerlink" href="#dephycf.constants.eps" title="Link to this definition">#</a></dt>
+<dd><p>Ratio between dry air and water vapor gas constants (dimensionless).</p>
+<div class="math notranslate nohighlight">
+\[\epsilon = \frac{R_d}{R_v} \approx 0.622\]</div>
+</dd></dl>
+
+</section>
+<section id="reference-values">
+<h2>Reference values<a class="headerlink" href="#reference-values" title="Link to this heading">#</a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="dephycf.constants.p0">
+<span class="sig-name descname"><span class="pre">p0</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">100000.0</span></em><a class="headerlink" href="#dephycf.constants.p0" title="Link to this definition">#</a></dt>
+<dd><p>Reference pressure (Pa).</p>
+<div class="math notranslate nohighlight">
+\[p_0 = 1000 \; \text{hPa}\]</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="index.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">API Reference</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="axis.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Axis</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#fundamental-constants">Fundamental constants</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.constants.g"><code class="docutils literal notranslate"><span class="pre">g</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.constants.boltzman"><code class="docutils literal notranslate"><span class="pre">boltzman</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.constants.avogadro"><code class="docutils literal notranslate"><span class="pre">avogadro</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.constants.R"><code class="docutils literal notranslate"><span class="pre">R</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.constants.sigma"><code class="docutils literal notranslate"><span class="pre">sigma</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#molecular-masses">Molecular masses</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.constants.Md"><code class="docutils literal notranslate"><span class="pre">Md</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.constants.Mv"><code class="docutils literal notranslate"><span class="pre">Mv</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.constants.Mo3"><code class="docutils literal notranslate"><span class="pre">Mo3</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gas-constants-and-heats">Gas constants and heats</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.constants.Rd"><code class="docutils literal notranslate"><span class="pre">Rd</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.constants.Rv"><code class="docutils literal notranslate"><span class="pre">Rv</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.constants.Cpd"><code class="docutils literal notranslate"><span class="pre">Cpd</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.constants.Cpv"><code class="docutils literal notranslate"><span class="pre">Cpv</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#latent-heats-at-0c">Latent heats at 0°C</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.constants.Lv"><code class="docutils literal notranslate"><span class="pre">Lv</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.constants.Ls"><code class="docutils literal notranslate"><span class="pre">Ls</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.constants.Lf"><code class="docutils literal notranslate"><span class="pre">Lf</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#derived-gas-constants">Derived gas constants</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.constants.kappa"><code class="docutils literal notranslate"><span class="pre">kappa</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.constants.eps"><code class="docutils literal notranslate"><span class="pre">eps</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reference-values">Reference values</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.constants.p0"><code class="docutils literal notranslate"><span class="pre">p0</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/api/constants.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, DEPHY.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.4.7.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
