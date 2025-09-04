@@ -1,54 +1,71 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on 27 November 2019
+Definition of known and required case attributes for DEPHY-CF experiments.
 
-@author: Romain Roehrig
+This module provides two lists:
+
+- ``known_attributes`` : the full set of attributes that may be present in a case.
+- ``required_attributes`` : the subset of attributes that are mandatory for a valid case.
+
+These attributes are typically used in the metadata of input/output files
+and in case descriptions.
 """
-known_attributes = [
-            'case','title','reference','author','version','format_version','modifications','script','comment',
-            'case_type',
-            'start_date','end_date',
-            'forcing_scale',
-            'ini_ta','ini_theta','ini_thetal',
-            'ini_qv','ini_qt','ini_rv','ini_rt','ini_hur',
-            'adv_ta','adv_theta','adv_thetal',
-            'radiation',
-            'adv_qv','adv_qt','adv_rv','adv_rt',
-            'adv_ua','adv_va',
-            'forc_zh','forc_pa',
-            'forc_wa','forc_wap',
-            'forc_geo',
-            'nudging_ua','nudging_va',
-            'nudging_ta','nudging_theta','nudging_thetal',
-            'nudging_qv','nudging_qt','nudging_rv','nudging_rt',
-            'pa_nudging_ua','pa_nudging_va',
-            'pa_nudging_ta','pa_nudging_theta','pa_nudging_thetal',
-            'pa_nudging_qv','pa_nudging_qt','pa_nudging_rv','pa_nudging_rt',
-            'zh_nudging_ua','zh_nudging_va',
-            'zh_nudging_ta','zh_nudging_theta','zh_nudging_thetal',
-            'zh_nudging_qv','zh_nudging_qt','zh_nudging_rv','zh_nudging_rt',
-            'surface_type', 'surface_radiation_temp',
-            'surface_forcing_temp','surface_forcing_moisture','surface_forcing_wind'
-            ]
 
+__all__ = ["known_attributes", "required_attributes"]
+
+# List of all recognized attributes for case metadata.
+known_attributes = [
+    "case", "title", "reference", "author", "version",
+    "format_version", "modifications", "script", "comment",
+    "case_type",
+    "start_date", "end_date",
+    "forcing_scale",
+    "ini_ta", "ini_theta", "ini_thetal",
+    "ini_qv", "ini_qt", "ini_rv", "ini_rt", "ini_hur",
+    "adv_ta", "adv_theta", "adv_thetal",
+    "radiation",
+    "adv_qv", "adv_qt", "adv_rv", "adv_rt",
+    "adv_ua", "adv_va",
+    "forc_zh", "forc_pa",
+    "forc_wa", "forc_wap",
+    "forc_geo",
+    "nudging_ua", "nudging_va",
+    "nudging_ta", "nudging_theta", "nudging_thetal",
+    "nudging_qv", "nudging_qt", "nudging_rv", "nudging_rt",
+    "pa_nudging_ua", "pa_nudging_va",
+    "pa_nudging_ta", "pa_nudging_theta", "pa_nudging_thetal",
+    "pa_nudging_qv", "pa_nudging_qt", "pa_nudging_rv", "pa_nudging_rt",
+    "zh_nudging_ua", "zh_nudging_va",
+    "zh_nudging_ta", "zh_nudging_theta", "zh_nudging_thetal",
+    "zh_nudging_qv", "zh_nudging_qt", "zh_nudging_rv", "zh_nudging_rt",
+    "surface_type", "surface_radiation_temp",
+    "surface_forcing_temp", "surface_forcing_moisture",
+    "surface_forcing_wind",
+]
+"""List of all recognized attributes for case metadata."""
+
+# List of mandatory attributes for a valid case definition.
 required_attributes = [
-            'case','title','reference','author','version','format_version','modifications','script','comment',
-            'case_type',
-            'start_date','end_date',
-            'forcing_scale',
-            'ini_ta','ini_theta','ini_thetal',
-            'ini_qv','ini_qt','ini_rv','ini_rt','ini_hur',
-            'adv_ta','adv_theta','adv_thetal',
-            'radiation',
-            'adv_qv','adv_qt','adv_rv','adv_rt',
-            'adv_ua','adv_va',
-            'forc_zh','forc_pa',
-            'forc_wa','forc_wap',
-            'forc_geo',
-            'nudging_ua','nudging_va',
-            'nudging_ta','nudging_theta','nudging_thetal',
-            'nudging_qv','nudging_qt','nudging_rv','nudging_rt',
-            'surface_type',
-            'surface_forcing_temp','surface_forcing_moisture','surface_forcing_wind'
-            ]
+    "case", "title", "reference", "author", "version",
+    "format_version", "modifications", "script", "comment",
+    "case_type",
+    "start_date", "end_date",
+    "forcing_scale",
+    "ini_ta", "ini_theta", "ini_thetal",
+    "ini_qv", "ini_qt", "ini_rv", "ini_rt", "ini_hur",
+    "adv_ta", "adv_theta", "adv_thetal",
+    "radiation",
+    "adv_qv", "adv_qt", "adv_rv", "adv_rt",
+    "adv_ua", "adv_va",
+    "forc_zh", "forc_pa",
+    "forc_wa", "forc_wap",
+    "forc_geo",
+    "nudging_ua", "nudging_va",
+    "nudging_ta", "nudging_theta", "nudging_thetal",
+    "nudging_qv", "nudging_qt", "nudging_rv", "nudging_rt",
+    "surface_type",
+    "surface_forcing_temp", "surface_forcing_moisture",
+    "surface_forcing_wind",
+]
+"""List of mandatory attributes for a valid case definition."""
