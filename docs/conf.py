@@ -27,6 +27,7 @@ extensions = [
     "sphinx.ext.autodoc",
 #    "sphinx_design",
 #    "sphinxcontrib.bibtex",
+    "matplotlib.sphinxext.plot_directive",
 ]
 
 templates_path = ['_templates']
@@ -67,4 +68,8 @@ html_static_path = ['_static']
 html_css_files = [
     "custom.css",
 ]
+
+
+# -- Options for matplotlib plots
+plot_formats = [("png", 90), "pdf"]
 

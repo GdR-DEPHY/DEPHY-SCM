@@ -6,4 +6,5 @@ API Reference
 
    constants
    attributes
+   plotbasics
    axis

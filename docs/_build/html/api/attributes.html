@@ -31,6 +31,7 @@
 <link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
   
   <!-- So that users can add custom icons -->
@@ -45,7 +46,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'api/attributes';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Axis" href="axis.html" />
+    <link rel="next" title="Plotting Utilities" href="plotbasics.html" />
     <link rel="prev" title="Physical Constants" href="constants.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -280,6 +281,7 @@
   <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="constants.html">Physical Constants</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Attributes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plotbasics.html">Plotting Utilities</a></li>
 <li class="toctree-l1"><a class="reference internal" href="axis.html">Axis</a></li>
 </ul>
 </div>
@@ -345,7 +347,22 @@
 <h1>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">#</a></h1>
 <p>This page documents the <strong>known</strong> and <strong>required</strong> metadata attributes
 used in DEPHY-CF case descriptions.</p>
-<p>It is automatically generated from the Python module <code class="docutils literal notranslate"><span class="pre">dephycf.attributes</span></code>.</p>
+<section id="known-attributes">
+<h2>Known Attributes<a class="headerlink" href="#known-attributes" title="Link to this heading">#</a></h2>
+<p>The following attributes are recognized in case metadata:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 75.0%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>Attribute</p></td>
+<td><p>Description</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
 <section id="module-dephycf.attributes">
 <span id="module-api"></span><h2>Module API<a class="headerlink" href="#module-dephycf.attributes" title="Link to this heading">#</a></h2>
 <p>Definition of known and required case attributes for DEPHY-CF experiments.</p>
@@ -368,42 +385,6 @@ and in case descriptions.</p>
 <dd><p>List of mandatory attributes for a valid case definition.</p>
 </dd></dl>
 
-<dl class="py data">
-<dt class="sig sig-object py" id="id0">
-<span class="sig-name descname"><span class="pre">known_attributes</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['case',</span> <span class="pre">'title',</span> <span class="pre">'reference',</span> <span class="pre">'author',</span> <span class="pre">'version',</span> <span class="pre">'format_version',</span> <span class="pre">'modifications',</span> <span class="pre">'script',</span> <span class="pre">'comment',</span> <span class="pre">'case_type',</span> <span class="pre">'start_date',</span> <span class="pre">'end_date',</span> <span class="pre">'forcing_scale',</span> <span class="pre">'ini_ta',</span> <span class="pre">'ini_theta',</span> <span class="pre">'ini_thetal',</span> <span class="pre">'ini_qv',</span> <span class="pre">'ini_qt',</span> <span class="pre">'ini_rv',</span> <span class="pre">'ini_rt',</span> <span class="pre">'ini_hur',</span> <span class="pre">'adv_ta',</span> <span class="pre">'adv_theta',</span> <span class="pre">'adv_thetal',</span> <span class="pre">'radiation',</span> <span class="pre">'adv_qv',</span> <span class="pre">'adv_qt',</span> <span class="pre">'adv_rv',</span> <span class="pre">'adv_rt',</span> <span class="pre">'adv_ua',</span> <span class="pre">'adv_va',</span> <span class="pre">'forc_zh',</span> <span class="pre">'forc_pa',</span> <span class="pre">'forc_wa',</span> <span class="pre">'forc_wap',</span> <span class="pre">'forc_geo',</span> <span class="pre">'nudging_ua',</span> <span class="pre">'nudging_va',</span> <span class="pre">'nudging_ta',</span> <span class="pre">'nudging_theta',</span> <span class="pre">'nudging_thetal',</span> <span class="pre">'nudging_qv',</span> <span class="pre">'nudging_qt',</span> <span class="pre">'nudging_rv',</span> <span class="pre">'nudging_rt',</span> <span class="pre">'pa_nudging_ua',</span> <span class="pre">'pa_nudging_va',</span> <span class="pre">'pa_nudging_ta',</span> <span class="pre">'pa_nudging_theta',</span> <span class="pre">'pa_nudging_thetal',</span> <span class="pre">'pa_nudging_qv',</span> <span class="pre">'pa_nudging_qt',</span> <span class="pre">'pa_nudging_rv',</span> <span class="pre">'pa_nudging_rt',</span> <span class="pre">'zh_nudging_ua',</span> <span class="pre">'zh_nudging_va',</span> <span class="pre">'zh_nudging_ta',</span> <span class="pre">'zh_nudging_theta',</span> <span class="pre">'zh_nudging_thetal',</span> <span class="pre">'zh_nudging_qv',</span> <span class="pre">'zh_nudging_qt',</span> <span class="pre">'zh_nudging_rv',</span> <span class="pre">'zh_nudging_rt',</span> <span class="pre">'surface_type',</span> <span class="pre">'surface_radiation_temp',</span> <span class="pre">'surface_forcing_temp',</span> <span class="pre">'surface_forcing_moisture',</span> <span class="pre">'surface_forcing_wind']</span></em><a class="headerlink" href="#id0" title="Link to this definition">#</a></dt>
-<dd><p>List of all recognized attributes for case metadata.</p>
-</dd></dl>
-
-<dl class="py data">
-<dt class="sig sig-object py" id="id1">
-<span class="sig-name descname"><span class="pre">required_attributes</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['case',</span> <span class="pre">'title',</span> <span class="pre">'reference',</span> <span class="pre">'author',</span> <span class="pre">'version',</span> <span class="pre">'format_version',</span> <span class="pre">'modifications',</span> <span class="pre">'script',</span> <span class="pre">'comment',</span> <span class="pre">'case_type',</span> <span class="pre">'start_date',</span> <span class="pre">'end_date',</span> <span class="pre">'forcing_scale',</span> <span class="pre">'ini_ta',</span> <span class="pre">'ini_theta',</span> <span class="pre">'ini_thetal',</span> <span class="pre">'ini_qv',</span> <span class="pre">'ini_qt',</span> <span class="pre">'ini_rv',</span> <span class="pre">'ini_rt',</span> <span class="pre">'ini_hur',</span> <span class="pre">'adv_ta',</span> <span class="pre">'adv_theta',</span> <span class="pre">'adv_thetal',</span> <span class="pre">'radiation',</span> <span class="pre">'adv_qv',</span> <span class="pre">'adv_qt',</span> <span class="pre">'adv_rv',</span> <span class="pre">'adv_rt',</span> <span class="pre">'adv_ua',</span> <span class="pre">'adv_va',</span> <span class="pre">'forc_zh',</span> <span class="pre">'forc_pa',</span> <span class="pre">'forc_wa',</span> <span class="pre">'forc_wap',</span> <span class="pre">'forc_geo',</span> <span class="pre">'nudging_ua',</span> <span class="pre">'nudging_va',</span> <span class="pre">'nudging_ta',</span> <span class="pre">'nudging_theta',</span> <span class="pre">'nudging_thetal',</span> <span class="pre">'nudging_qv',</span> <span class="pre">'nudging_qt',</span> <span class="pre">'nudging_rv',</span> <span class="pre">'nudging_rt',</span> <span class="pre">'surface_type',</span> <span class="pre">'surface_forcing_temp',</span> <span class="pre">'surface_forcing_moisture',</span> <span class="pre">'surface_forcing_wind']</span></em><a class="headerlink" href="#id1" title="Link to this definition">#</a></dt>
-<dd><p>List of mandatory attributes for a valid case definition.</p>
-</dd></dl>
-
-</section>
-<section id="known-attributes">
-<h2>Known Attributes<a class="headerlink" href="#known-attributes" title="Link to this heading">#</a></h2>
-<p>The following attributes are recognized in case metadata:</p>
-<div class="pst-scrollable-table-container"><table class="table">
-<colgroup>
-<col style="width: 25.0%" />
-<col style="width: 75.0%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p>Attribute</p></td>
-<td><p>Description</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</section>
-<section id="notes">
-<h2>Notes<a class="headerlink" href="#notes" title="Link to this heading">#</a></h2>
-<ul class="simple">
-<li><p>The <cite>known_attributes</cite> list contains all possible metadata fields.</p></li>
-<li><p>The <cite>required_attributes</cite> list is a subset of <cite>known_attributes</cite>.</p></li>
-<li><p>You can use these lists to validate your case files programmatically.</p></li>
-</ul>
 </section>
 </section>
 
@@ -427,11 +408,11 @@ and in case descriptions.</p>
       </div>
     </a>
     <a class="right-next"
-       href="axis.html"
+       href="plotbasics.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Axis</p>
+        <p class="prev-next-title">Plotting Utilities</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -454,15 +435,12 @@ and in case descriptions.</p>
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#known-attributes">Known Attributes</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-dephycf.attributes">Module API</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.attributes.known_attributes"><code class="docutils literal notranslate"><span class="pre">known_attributes</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.attributes.required_attributes"><code class="docutils literal notranslate"><span class="pre">required_attributes</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id0"><code class="docutils literal notranslate"><span class="pre">known_attributes</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1"><code class="docutils literal notranslate"><span class="pre">required_attributes</span></code></a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#known-attributes">Known Attributes</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#notes">Notes</a></li>
 </ul>
   </nav></div>
 
