@@ -1,5 +1,6 @@
-Plotting Utilities
-==================
+**********************************************
+Plotting Utilities (:mod:`dephycf.plotbasics`)
+**********************************************
 
 This page documents the plotting utilities provided in
 ``dephycf.plotbasics``.

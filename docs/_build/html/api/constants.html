@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Physical Constants &#8212; DEPHY-SCM 1.0 documentation</title>
+    <title>Physical Constants (dephycf.constants) &#8212; DEPHY-SCM 1.0 documentation</title>
   
   
   
@@ -47,7 +47,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'api/constants';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Attributes" href="attributes.html" />
+    <link rel="next" title="Attributes (attributes)" href="attributes.html" />
     <link rel="prev" title="API Reference" href="index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -280,10 +280,10 @@
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Physical Constants</a></li>
-<li class="toctree-l1"><a class="reference internal" href="attributes.html">Attributes</a></li>
-<li class="toctree-l1"><a class="reference internal" href="plotbasics.html">Plotting Utilities</a></li>
-<li class="toctree-l1"><a class="reference internal" href="axis.html">Axis</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Physical Constants (<code class="xref py py-mod docutils literal notranslate"><span class="pre">dephycf.constants</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="attributes.html">Attributes (<code class="xref py py-mod docutils literal notranslate"><span class="pre">attributes</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plotbasics.html">Plotting Utilities (<code class="xref py py-mod docutils literal notranslate"><span class="pre">dephycf.plotbasics</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="axis.html">Axis (<code class="xref py py-mod docutils literal notranslate"><span class="pre">dephycf.Axis</span></code>)</a></li>
 </ul>
 </div>
 </nav></div>
@@ -327,7 +327,7 @@
     
     <li class="breadcrumb-item"><a href="index.html" class="nav-link">API Reference</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Physical Constants</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Physical Constants (<code class="xref py py-mod docutils literal notranslate"><span class="pre">dephycf.constants</span></code>)</span></li>
   </ul>
 </nav>
 </div>
@@ -345,21 +345,23 @@
                 <article class="bd-article">
                   
   <section id="module-dephycf.constants">
-<span id="physical-constants"></span><h1>Physical Constants<a class="headerlink" href="#module-dephycf.constants" title="Link to this heading">#</a></h1>
+<span id="physical-constants-dephycf-constants"></span><h1>Physical Constants (<a class="reference internal" href="#module-dephycf.constants" title="dephycf.constants"><code class="xref py py-mod docutils literal notranslate"><span class="pre">dephycf.constants</span></code></a>)<a class="headerlink" href="#module-dephycf.constants" title="Link to this heading">#</a></h1>
 <p>Physical constants for atmospheric science.</p>
 <p>This module defines a collection of widely used physical constants
 for thermodynamics and atmospheric physics. Each constant is exposed
 as a simple Python variable, documented with its value, units and
 scientific meaning.
 All constants are of <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> type.</p>
-<p class="rubric">Example</p>
+<section id="example">
+<h2>Example<a class="headerlink" href="#example" title="Link to this heading">#</a></h2>
 <p>You can import and use the constants directly:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">dephycf</span> <span class="kn">import</span> <span class="n">constants</span> <span class="k">as</span> <span class="n">cc</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cc</span><span class="o">.</span><span class="n">g</span>
-<span class="go">9.80665</span>
+<span class="go">  9.80665</span>
 </pre></div>
 </div>
-<p>Here are the main constants defined in <a class="reference internal" href="#module-dephycf.constants" title="dephycf.constants"><code class="xref py py-mod docutils literal notranslate"><span class="pre">dephycf.constants</span></code></a>:</p>
+<p>Here follow the constants defined in <a class="reference internal" href="#module-dephycf.constants" title="dephycf.constants"><code class="xref py py-mod docutils literal notranslate"><span class="pre">dephycf.constants</span></code></a>:</p>
+</section>
 <section id="fundamental-constants">
 <h2>Fundamental constants<a class="headerlink" href="#fundamental-constants" title="Link to this heading">#</a></h2>
 <dl class="py data">
@@ -548,7 +550,7 @@ All constants are of <code class="xref py py-class docutils literal notranslate"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Attributes</p>
+        <p class="prev-next-title">Attributes (<code class="xref py py-mod docutils literal notranslate"><span class="pre">attributes</span></code>)</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -571,6 +573,7 @@ All constants are of <code class="xref py py-class docutils literal notranslate"
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example">Example</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#fundamental-constants">Fundamental constants</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.constants.g"><code class="docutils literal notranslate"><span class="pre">g</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.constants.boltzman"><code class="docutils literal notranslate"><span class="pre">boltzman</span></code></a></li>

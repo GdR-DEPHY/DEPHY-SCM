@@ -5,21 +5,6 @@ Axis handling module.
 
 This module defines the :class:`Axis` class, representing a one-dimensional
 numeric axis typically used in scientific datasets (e.g., NetCDF files).
-
-Example
--------
->>> import numpy as np
->>> from netCDF4 import Dataset
->>> from axis import Axis
->>> time_axis = Axis("time", np.arange(0, 24),
-...                  name="Time", units="hours since 2000-01-01 00:00:00")
->>> time_axis.info()
----------- axis id: time
----------- name: Time
----------- units: hours since 2000-01-01 00:00:00
----------- length: 24
->>> with Dataset("example.nc", "w") as nc:
-...     axis.write(nc)
 """
 
 import numpy as np

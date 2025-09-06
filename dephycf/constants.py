@@ -8,14 +8,6 @@ for thermodynamics and atmospheric physics. Each constant is exposed
 as a simple Python variable, documented with its value, units and
 scientific meaning.
 All constants are of :class:`float` type.
-
-Example
---------
-You can import and use the constants directly:
-
->>> from dephycf import constants as cc
->>> cc.g
-9.80665
 """
 
 # =============================================================================

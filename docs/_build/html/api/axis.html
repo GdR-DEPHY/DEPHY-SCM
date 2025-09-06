@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Axis &#8212; DEPHY-SCM 1.0 documentation</title>
+    <title>Axis (dephycf.Axis) &#8212; DEPHY-SCM 1.0 documentation</title>
   
   
   
@@ -46,7 +46,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'api/axis';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="prev" title="Plotting Utilities" href="plotbasics.html" />
+    <link rel="prev" title="Plotting Utilities (dephycf.plotbasics)" href="plotbasics.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -278,10 +278,10 @@
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="constants.html">Physical Constants</a></li>
-<li class="toctree-l1"><a class="reference internal" href="attributes.html">Attributes</a></li>
-<li class="toctree-l1"><a class="reference internal" href="plotbasics.html">Plotting Utilities</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Axis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="constants.html">Physical Constants (<code class="xref py py-mod docutils literal notranslate"><span class="pre">dephycf.constants</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="attributes.html">Attributes (<code class="xref py py-mod docutils literal notranslate"><span class="pre">attributes</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plotbasics.html">Plotting Utilities (<code class="xref py py-mod docutils literal notranslate"><span class="pre">dephycf.plotbasics</span></code>)</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Axis (<code class="xref py py-mod docutils literal notranslate"><span class="pre">dephycf.Axis</span></code>)</a></li>
 </ul>
 </div>
 </nav></div>
@@ -325,7 +325,7 @@
     
     <li class="breadcrumb-item"><a href="index.html" class="nav-link">API Reference</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Axis</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Axis (<code class="xref py py-mod docutils literal notranslate"><span class="pre">dephycf.Axis</span></code>)</span></li>
   </ul>
 </nav>
 </div>
@@ -342,17 +342,15 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="module-dephycf.Axis">
-<span id="axis"></span><h1>Axis<a class="headerlink" href="#module-dephycf.Axis" title="Link to this heading">#</a></h1>
-<p>Axis handling module.</p>
-<p>This module defines the <a class="reference internal" href="#dephycf.Axis.Axis" title="dephycf.Axis.Axis"><code class="xref py py-class docutils literal notranslate"><span class="pre">Axis</span></code></a> class, representing a one-dimensional
-numeric axis typically used in scientific datasets (e.g., NetCDF files).</p>
-<p class="rubric">Example</p>
+  <section id="axis-dephycf-axis">
+<h1>Axis (<a class="reference internal" href="#module-dephycf.Axis" title="dephycf.Axis"><code class="xref py py-mod docutils literal notranslate"><span class="pre">dephycf.Axis</span></code></a>)<a class="headerlink" href="#axis-dephycf-axis" title="Link to this heading">#</a></h1>
+<section id="example">
+<h2>Example<a class="headerlink" href="#example" title="Link to this heading">#</a></h2>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">netCDF4</span> <span class="kn">import</span> <span class="n">Dataset</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">axis</span> <span class="kn">import</span> <span class="n">Axis</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">time_axis</span> <span class="o">=</span> <span class="n">Axis</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">24</span><span class="p">),</span>
-<span class="gp">... </span>                 <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Time&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;hours since 2000-01-01 00:00:00&quot;</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Time&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;hours since 2000-01-01 00:00:00&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">time_axis</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
 <span class="go">---------- axis id: time</span>
 <span class="go">---------- name: Time</span>
@@ -362,6 +360,12 @@ numeric axis typically used in scientific datasets (e.g., NetCDF files).</p>
 <span class="gp">... </span>    <span class="n">axis</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">nc</span><span class="p">)</span>
 </pre></div>
 </div>
+</section>
+<section id="module-dephycf.Axis">
+<span id="api-reference"></span><h2>API Reference<a class="headerlink" href="#module-dephycf.Axis" title="Link to this heading">#</a></h2>
+<p>Axis handling module.</p>
+<p>This module defines the <a class="reference internal" href="#dephycf.Axis.Axis" title="dephycf.Axis.Axis"><code class="xref py py-class docutils literal notranslate"><span class="pre">Axis</span></code></a> class, representing a one-dimensional
+numeric axis typically used in scientific datasets (e.g., NetCDF files).</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="dephycf.Axis.Axis">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Axis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axis_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">units</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dephycf/Axis.html#Axis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dephycf.Axis.Axis" title="Link to this definition">#</a></dt>
@@ -431,6 +435,7 @@ Default is False.</p>
 </dd></dl>
 
 </section>
+</section>
 
 
                 </article>
@@ -448,7 +453,7 @@ Default is False.</p>
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Plotting Utilities</p>
+        <p class="prev-next-title">Plotting Utilities (<code class="xref py py-mod docutils literal notranslate"><span class="pre">dephycf.plotbasics</span></code>)</p>
       </div>
     </a>
 </div>
@@ -470,9 +475,13 @@ Default is False.</p>
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.Axis.Axis"><code class="docutils literal notranslate"><span class="pre">Axis</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.Axis.Axis.info"><code class="docutils literal notranslate"><span class="pre">Axis.info()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.Axis.Axis.write"><code class="docutils literal notranslate"><span class="pre">Axis.write()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example">Example</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-dephycf.Axis">API Reference</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.Axis.Axis"><code class="docutils literal notranslate"><span class="pre">Axis</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.Axis.Axis.info"><code class="docutils literal notranslate"><span class="pre">Axis.info()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.Axis.Axis.write"><code class="docutils literal notranslate"><span class="pre">Axis.write()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
