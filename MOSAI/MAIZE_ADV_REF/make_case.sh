@@ -6,16 +6,17 @@ initpf=rs_idea      # rs_idea (idealised profile from radiosoundings and surface
                     # or rs_smooth (profile from smoothed radiosoundings)
 
 # large scale advection (taken for ARPEGE-oper or ERA5)
-advTq=True          # advection of temperature and humidity
-advuv=True          # advection of horizontal wind speed
+advTq=True
+advuv=True
 vertvel=False       # vertical velocity
-adv_from=ARPEGEoper # advection and vertical velocity from ARPEGEoper or ERA5
-smooth_adv=0.5      # zero means no smooth
-zmax_adv=5000.      # advection is imposed up to this altitude (m)
+adv_from=ARPEGEoper # advection from AROME, ARPEGEoper or ERA5
+pt_AROME=21
+smooth_adv=0.0      # zero means no smooth
+zmax_adv=10000.     # advection is imposed up to this altitude (m)
 
 # geostrophic wind
 geo=False           # geostrophic wind taken from VHF radar in P2OA
-smooth_geo=0.5      # zero means no smooth
+smooth_geo=0.0      # zero means no smooth
 zmax_geo=5000.      # geostrophic wind is imposed up to this altitude (m)
 
 # radiation
@@ -41,17 +42,22 @@ if [ $advTq == 'True' ] || [ $advuv == 'True' ] || [ $vertvel == 'True' ]
 then
   if [ $adv_from == 'ARPEGEoper' ]
   then
-    cp ../forcing_files/Arpege-oper-L105_Lannemezan_202308190500-202308201800.nc tendencies.nc
+    cp ../forcing_files/Arpege-oper-L105_Lannemezan_202308190000-202308202300.nc tendencies.nc
+
+  elif [ $adv_from == 'AROME' ]
+  then
+    cp ../forcing_files/AROME-L90_2023081900_2023082100.nc tendencies.nc
+
   elif [ $adv_from == 'ERA5' ]
   then
-    cp ../forcing_files/advection_ERA5.nc tendencies.nc
+    cp ../forcing_files/hadvections_ERA5.nc tendencies.nc
   fi
 fi
 
 # geostrophic wind
 if [ $geo == 'True' ]
 then
-  cp ../forcing_files/P2OA-CRA-Lannemezan_VHF-RADAR_L2B_2023-08-19-20.nc geostrophic_wind.nc
+  cp ../forcing_files/P2OA-CRA-Lannemezan_VHF-RADAR_L2B_202308190000-202308202300_hourly.nc geostrophic_wind.nc
 fi
 
 # surface forcing
@@ -61,5 +67,5 @@ then
 fi
 
 # run scripts to generate nc files
-python ../REF/driver_DEF.py $cover $initpf --advTq $advTq --advuv $advuv --vertvel $vertvel $adv_from $smooth_adv $zmax_adv --geo $geo $smooth_geo $zmax_geo --rad $rad --ffx $forc_flux --fts $forc_ts
-python ../REF/driver_SCM.py $cover $initpf --advTq $advTq --advuv $advuv --vertvel $vertvel $adv_from $smooth_adv $zmax_adv --geo $geo $smooth_geo $zmax_geo --rad $rad --ffx $forc_flux --fts $forc_ts
+python ../REF/driver_DEF.py $cover $initpf --advTq $advTq --advuv $advuv --vertvel $vertvel $adv_from $pt_AROME $smooth_adv $zmax_adv --geo $geo $smooth_geo $zmax_geo --rad $rad --ffx $forc_flux --fts $forc_ts
+python ../REF/driver_SCM.py $cover $initpf --advTq $advTq --advuv $advuv --vertvel $vertvel $adv_from $pt_AROME $smooth_adv $zmax_adv --geo $geo $smooth_geo $zmax_geo --rad $rad --ffx $forc_flux --fts $forc_ts
