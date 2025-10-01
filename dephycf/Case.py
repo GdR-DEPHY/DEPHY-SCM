@@ -58,6 +58,9 @@ class Case:
             forcing_scale=-1):
 
         self.id = caseid
+        tmp = caseid.split('/')
+        self._case = tmp[0]
+        self._subcase = tmp[1]
 
         self.set_dates(startDate,endDate)
 
