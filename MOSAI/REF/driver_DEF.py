@@ -43,7 +43,8 @@ parser.add_argument("initpf", type=str, metavar="initpf", choices=['rs_smooth','
 parser.add_argument("--advTq", type=str2bool, nargs='?', const=True, default=False, help="flag to activate advection tendencies of temperature and humidity")
 parser.add_argument("--advuv", type=str2bool, nargs='?', const=True, default=False, help="flag to activate advection tendencies of horizontal wind")
 parser.add_argument("--vertvel", type=str2bool, nargs='?', const=True, default=False, help="flag to add vertical velocity")
-parser.add_argument("fadv", type=str, metavar="adv_from", choices=['ARPEGEoper','ERA5'], help="advection from: ARPEGEoper|ERA5")
+parser.add_argument("fadv", type=str, metavar="adv_from", choices=['AROME','ARPEGEoper','ERA5'], help="advection from: AROME|ARPEGEoper|ERA5")
+parser.add_argument("pt_AROME", type=int, default=0, metavar="AROME_pt_nb", help="miniAROME point number")
 parser.add_argument("sadv", type=float, default=0., metavar="smooth_adv", help="smooth advection tendencies")
 parser.add_argument("zadv", type=float, default=50000., metavar="max_alt_adv", help="maximum altitude of advection tendencies")
 parser.add_argument("--geo", type=str2bool, nargs='?', const=True, default=False, help="flag to activate geostrophic wind")
@@ -72,6 +73,7 @@ advTq = args.advTq
 advuv = args.advuv
 vertvel = args.vertvel
 adv_from = args.fadv
+pt = args.pt_AROME
 smooth_adv = args.sadv
 zmax_adv = args.zadv
 geoswd = args.geo
@@ -85,8 +87,9 @@ sensib_thresh = args.s
 # name of the case
 add_nam = ''
 if ((advTq) | (advuv) | (vertvel)):
-  if (advTq): add_nam = add_nam+'_advTq'
-  if (advuv): add_nam = add_nam+'_advuv'
+  if ((advTq) | (advuv)): add_nam = add_nam+'_adv'
+  if (advTq): add_nam = add_nam+'Tq'
+  if (advuv): add_nam = add_nam+'uv'
   if (vertvel): add_nam = add_nam+'_w'
   add_nam = add_nam+'_'+adv_from[0:3]
 if (geoswd): add_nam = add_nam+'_geo'
@@ -99,6 +102,7 @@ print('advection of temperature and humidity:', advTq)
 print('advection of horizontal wind:', advuv)
 print('vertical velocity:', vertvel)
 print('from:', adv_from)
+if (adv_from == 'AROME'): print('AROME point number:', pt)
 print('smooth adv:', smooth_adv)
 print('Zmax adv:', zmax_adv)
 print('geostrophic wind:', geoswd)
@@ -112,6 +116,7 @@ print('sensible heat flux threshold:', sensib_thresh)
 from datetime import datetime, timedelta
 timeref = datetime.strptime(start_date, "%Y%m%d%H%M%S")
 timeend = datetime.strptime(end_date, "%Y%m%d%H%M%S")
+
 
 case = Case('MOSAI/%s'%scase,
         lat=43.1,
@@ -217,12 +222,16 @@ if geoswd:
   time_start_vhf = datetime(2023,8,1,0,0,0)
   Nt_vhf = time_counter_vhf.shape[0]
   time_vhf_ = np.array([time_start_vhf + timedelta(seconds = int(time_counter_vhf[t])) for t in range(Nt_vhf)])
-  mask = np.array(np.where((time_vhf_ >= timeref) & (time_vhf_ <= timeend))).squeeze()
-  sec = 800
-  tmin = np.array(np.where((time_vhf_ >= timeref - timedelta(seconds = sec)) & (time_vhf_ <= timeref + timedelta(seconds = sec)))).min()
-  tmax = np.array(np.where((time_vhf_ >= timeend - timedelta(seconds = sec)) & (time_vhf_ <= timeend + timedelta(seconds = sec)))).max()
 
-  time_vhf = time_counter_vhf[tmin:tmax]
+  # shift time (use of hourly data)
+  time_counter_vhf_mod = np.arange(0, 48*3600, 3600)
+  time_vhf_mod = np.array([datetime(2023,8,19,0,0,0) + timedelta(seconds = int(time_counter_vhf_mod[t])) for t in range(time_counter_vhf_mod.shape[0])])
+  # select time in simulation range
+  sec = 3600 #800
+  tmin = np.array(np.where((time_vhf_mod > timeref - timedelta(seconds = sec)) & (time_vhf_mod <= timeref + timedelta(seconds = sec)))).min()
+  tmax = np.array(np.where((time_vhf_mod > timeend - timedelta(seconds = sec)) & (time_vhf_mod <= timeend + timedelta(seconds = sec)))).max()
+
+  time_vhf = time_counter_vhf_mod[tmin:tmax]
   time_vhf = time_vhf - time_vhf.min()
   u_vhf = u_vhf[tmin:tmax,:]
   v_vhf = v_vhf[tmin:tmax,:]
@@ -250,76 +259,146 @@ if geoswd:
   case.add_geostrophic_wind(ug=u_vhf,vg=v_vhf,time=time_vhf,lev=z_vhf,levtype='altitude')
 
 # Advection
-if advTq | advuv | vertvel :
+# files start at 00:00 on 19th
 
+timebegadv = datetime(2023,8,19,0,0,0)
+deltabegadv = (timeref - timebegadv).total_seconds()
+deltaendadv = (timeend - timebegadv).total_seconds()
+
+if advTq | advuv | vertvel :
   # Advection tendencies from ARPEGE oper files
   # reverse altitude dimension to get height-increasing variables
   if (adv_from == 'ARPEGEoper'):
     fin = nc.Dataset("tendencies.nc", "r")
-    timeForc= fin['time'][:]-fin['time'][0]
-    levForc = fin['height_f'][0,::-1]
-    levForc_h = fin['height_h'][0,::-1]
+    tstp = np.diff(fin['time'][:])[0]
+    timin = int(deltabegadv/tstp)
+    timax = int(deltaendadv/tstp+1)
+    timeForc = fin['time'][timin:timax]-fin['time'][timin]
+    levForc = fin['height_f'][timin:timax,::-1].mean(axis=0)
+    levForc_h = fin['height_h'][timin:timax,::-1].mean(axis=0)
     #Compute and subtract orography altitude
     Zorog_adv = levForc_h[0] - (levForc[0] - levForc_h[0])
     levForc = levForc - Zorog_adv
     if advTq:
-      tadv = fin['tadv'][:,::-1]
-      qadv = fin['qadv'][:,::-1]
+      tadv = fin['tadv'][timin:timax,::-1]
+      qadv = fin['qadv'][timin:timax,::-1]
     if advuv:
-      uadv = fin['uadv'][:,::-1]
-      vadv = fin['vadv'][:,::-1]
+      uadv = fin['uadv'][timin:timax,::-1]
+      vadv = fin['vadv'][timin:timax,::-1]
     if vertvel:
-      vtvl = fin['omega'][:,::-1]
+      vtvl = fin['omega'][timin:timax,::-1]
+
+  elif (adv_from == 'AROME'):
+    ###
+    if   (pt == 17): nj, ni = 0, 0
+    elif (pt == 18): nj, ni = 0, 1
+    elif (pt == 19): nj, ni = 0, 2
+    elif (pt == 20): nj, ni = 0, 3
+    elif (pt == 21): nj, ni = 1, 0
+    elif (pt == 22): nj, ni = 1, 1
+    elif (pt == 23): nj, ni = 1, 2
+    elif (pt == 24): nj, ni = 1, 3
+    elif (pt == 25): nj, ni = 2, 0
+    elif (pt == 26): nj, ni = 2, 1
+    elif (pt == 27): nj, ni = 2, 2
+    elif (pt == 28): nj, ni = 2, 3
+    elif (pt == 29): nj, ni = 3, 0
+    elif (pt == 30): nj, ni = 3, 1
+    elif (pt == 31): nj, ni = 3, 2
+    elif (pt == 32): nj, ni = 3, 3
+    else: print("Wrong AROME point number, please choose between 17 and 32.")
+
+    ###
+    fin = nc.Dataset("tendencies.nc", "r")
+    lon = fin['lons'][nj,ni]
+    lat = fin['lats'][nj,ni]
+    print('AROME point lat lon: ', lat, ', ', lon)
+    tstp = np.diff(fin['time'][:])[0]
+    timin = int(deltabegadv/tstp)
+    timax = int(deltaendadv/tstp+1)
+    timeForc = fin['time'][timin:timax]-fin['time'][timin]
+    levForc = fin['height_f'][timin:timax,::-1,nj,ni].mean(axis=0)
+    levForc_h = fin['height_h'][timin:timax,::-1,nj,ni].mean(axis=0)
+    #Compute and subtract orography altitude
+    Zorog_adv = levForc_h[0] - (levForc[0] - levForc_h[0])
+    levForc = levForc - Zorog_adv
+    if advTq:
+      tadv = fin['tadvresi'][timin:timax,::-1,nj,ni]
+      qadv = fin['qadvresi'][timin:timax,::-1,nj,ni]
+    if advuv:
+      uadv = fin['uadvresi'][timin:timax,::-1,nj,ni]
+      vadv = fin['vadvresi'][timin:timax,::-1,nj,ni]
+    if vertvel:
+      vtvl = fin['ww'][timin:timax,::-1,nj,ni]
 
   # Advection tendencies from ERA5 reanalysis
   elif (adv_from == 'ERA5'):
     fin = nc.Dataset("tendencies.nc", "r")
-    timeForc = fin['time'][:]
-    levForc = fin['z'][:,:]
+    timeForc_tmp = fin['time'][:]
+    timeForc = (timeForc_tmp - timeForc_tmp[0])/1E9
+    tstp = np.diff(timeForc)[0]
+    timin = int(deltabegadv/tstp)
+    timax = int(deltaendadv/tstp+1)
+    timeForc = timeForc[timin:timax] - timeForc[timin]
+    levForc = fin['z'][timin:timax,:,1,1]
     levForc = levForc.mean(axis=0)
     levForc = levForc - levForc[0]
     if advTq:
-      tadv = fin['tadv'][:,:]
-      qadv = fin['qadv'][:,:]
+      tadv = fin['tadv'][timin:timax,:,1,1]
+      qadv = fin['qadv'][timin:timax,:,1,1]
     if advuv:
-      uadv = fin['uadv'][:,:]
-      vadv = fin['vadv'][:,:]
+      uadv = fin['uadv'][timin:timax,:,1,1]
+      vadv = fin['vadv'][timin:timax,:,1,1]
     if vertvel:
-      vtvl = fin['w'][:,:]
+      vtvl = fin['w'][timin:timax,:,1,1]
 
   else:
-    print('Please choose between ARPEGEoper and ERA5 for fadv')
+    print('Please choose between AROME, ARPEGEoper or ERA5 for fadv')
     exit()
 
   # Smooth advection
   sigma_x = smooth_adv
   sigma_y = smooth_adv
   sigma = [sigma_y, sigma_x]
-  # Remove tendencies above this altitude
+  # Remove tendencies above this altitude and add 0 level
   levForc2 = levForc[levForc<=zmax_adv]
- 
+  zero = np.zeros(timeForc.shape)
+  levForc2 = np.insert(levForc2, 0, 0.)
+
   # Temperature and humidity advection
   if advTq:
     tadv = sp.ndimage.filters.gaussian_filter(tadv, sigma, mode='constant')
     qadv = sp.ndimage.filters.gaussian_filter(qadv, sigma, mode='constant')
     tadv2 = tadv[:,levForc<=zmax_adv]
     qadv2 = qadv[:,levForc<=zmax_adv]
+    tadv2 = np.column_stack((zero,tadv2))
+    qadv2 = np.column_stack((zero,qadv2))
     case.add_temp_advection(tadv2,time=timeForc,timeid='time',lev=levForc2,levtype='altitude')
     case.add_qv_advection(qadv2,time=timeForc,timeid='time',lev=levForc2,levtype='altitude')
+  else:
+    z_tend_adv = [0,15000]
+    tadv = [0,0]
+    qadv = [0,0]
+    case.add_temp_advection(tadv, lev=z_tend_adv, levtype="altitude")
+    case.add_qv_advection(qadv, lev=z_tend_adv, levtype="altitude")
 
   if advuv:
     uadv = sp.ndimage.filters.gaussian_filter(uadv, sigma, mode='constant')
     vadv = sp.ndimage.filters.gaussian_filter(vadv, sigma, mode='constant')
     uadv2 = uadv[:,levForc<=zmax_adv]
     vadv2 = vadv[:,levForc<=zmax_adv]
+    uadv2 = np.column_stack((zero,uadv2))
+    vadv2 = np.column_stack((zero,vadv2))
+
     case.add_wind_advection(ua_adv=uadv2, va_adv=vadv2,time=timeForc,timeid='time',lev=levForc2,levtype='altitude')
 
   if vertvel:
     vtvl = sp.ndimage.filters.gaussian_filter(vtvl, sigma, mode='constant')
     vtvl2 = vtvl[:,levForc<=zmax_adv]
-    if (adv_from == 'ARPEGEoper'):
+    vtvl2 = np.column_stack((zero,vtvl2))
+    if ((adv_from == 'ARPEGEoper') | (adv_from == 'ERA5')):
       case.add_vertical_velocity(omega=vtvl2,time=timeForc,lev=levForc2,levtype='altitude')
-    elif (adv_from == 'ERA5'):
+    elif (adv_from == 'AROME'):
       case.add_vertical_velocity(w=vtvl2,time=timeForc,lev=levForc2,levtype='altitude')
 
 else:
