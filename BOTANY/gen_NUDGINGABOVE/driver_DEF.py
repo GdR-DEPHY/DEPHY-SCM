@@ -6,6 +6,7 @@ Created on 11 Avril 2025
 @author: Najda Villefranque
 
 Modifications
+  03/11/2025 - NV - nudging above 4500 m
 """
 
 import numpy as np
@@ -31,7 +32,7 @@ lverbose = args.v
 
 # these will be written in *nudg* attributes
 nudging_timescale=6    # hours
-nudging_minheight=3000 # nudging only above this height
+nudging_minheight=4500 # nudging only above this height
 
 
 ################################################
@@ -54,7 +55,7 @@ case = Case('BOTANY/%s'%scase,
         surfaceType='ocean',
         zorog=Zorog)
 
-case.set_title("Forcing and initial conditions for BOTANY case - %s case ; nudging only > 3 km"%scase)
+case.set_title("Forcing and initial conditions for BOTANY case - %s case ; nudging only > 4500 m"%scase)
 case.set_reference("Cloud Botany, Jansson et al. 2023, https://doi.org/10.1029/2023MS003796")
 case.set_author("N Villefranque")
 case.set_script("DEPHY-SCM/BOTANY/%s/driver_DEF.py"%scase)
@@ -106,8 +107,6 @@ case.add_qt_nudging(qt, lev=z, levtype='altitude',
 
 # Wind forcing
 case.add_geostrophic_wind(ug=u,vg=u*0,lev=z,levtype='altitude')
-case.add_wind_nudging(unudg=u,vnudg=0*u, lev=z, levtype='altitude',
-        timescale=3600*nudging_timescale, z_nudging=nudging_minheight)
 
 # Vertical velocity forcing
 case.add_vertical_velocity(w=w_ls, lev=z, levtype='altitude')

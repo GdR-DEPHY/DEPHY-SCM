@@ -94,8 +94,8 @@ case.extend_qt_advection(qt_adv=[0,0], height=[1205.,htop])
 # New vertical grid, 10-m resolution from surface to 60000 m (above the surface)
 levout = np.array(list(range(0,2001,5)) + list(range(2100,int(htop)+1,100)),dtype=np.float64) 
 
-# New temporal grid, from 00:00 UTC, 16 December 2004 to 00:00 UTC 19 December 2004, 1-hour timestep
-timeout = np.arange(0.,(37+1)*3600.,3600.)
+# New temporal grid, 3 days, 1-hour timestep
+timeout = np.arange(0.,(72+1)*3600.,3600.)
 
 # conversion
 newcase = case.convert2SCM(time=timeout,lev=levout,levtype='altitude')

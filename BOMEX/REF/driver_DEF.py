@@ -124,12 +124,6 @@ qt_adv  = [-1.2e-8, -1.2e-8,   0.] # in kg kg-1 s-1
 case.add_qt_advection(qt_adv, lev=zqt_adv, levtype='altitude') 
 
 # Surface Forcing
-#            t(s)    H (W m-2)     LE (W m-2)  ustar (m s-1)
-sfcForc = [    0., 8e-3*cc.Cpd,   5.2e-5*cc.Lv,  0.28,\
-           86400., 8e-3*cc.Cpd,   5.3e-5*cc.Lv,  0.28]
-
-timeSfc = sfcForc[0::3]
-
 case.add_surface_fluxes(sens=8e-3*cc.Cpd, lat=5.2e-5*cc.Lv, 
         forc_wind='ustar', ustar=0.28)
 

@@ -26,11 +26,17 @@ lverbose = False # print information about variables and case
 # 1. General information about the case
 ################################################
 
+# RICO is a composite case from observations acquired during the RICO campaign
+# between 2004/12/16 and 2005/01/08
+
+tmin = datetime(2004, 12, 23, 00)
+tmax = tmin + timedelta(hours=72)
+
 case = Case('RICO/MESONH',
         lat=18,
         lon=-61.5,
-        startDate="20041227000000",
-        endDate="20041230000000",
+        startDate=tmin,
+        endDate=tmax,
         surfaceType="ocean",
         zorog=0.)
 
