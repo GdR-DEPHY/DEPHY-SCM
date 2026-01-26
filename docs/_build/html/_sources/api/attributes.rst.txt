@@ -1,6 +1,6 @@
-******************************
-Attributes (:mod:`attributes`)
-******************************
+**************************************
+Attributes (:mod:`dephycf.attributes`)
+**************************************
 
 This page documents the **known** and **required** metadata attributes
 used in DEPHY-CF case descriptions.

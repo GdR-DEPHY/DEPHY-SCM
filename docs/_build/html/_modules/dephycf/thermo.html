@@ -1,0 +1,1243 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>dephycf.thermo &#8212; DEPHY-SCM 1.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css?v=7f9a90b1" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=f2a433a1"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/dephycf/thermo';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">DEPHY-SCM</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/index.html">
+    API Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/index.html">
+    API Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">dephycf.thermo</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for dephycf.thermo</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Thermodynamical functions and other utilities.</span>
+
+<span class="sd">This module provides conversions between water variables</span>
+<span class="sd">(mixing ratio :math:`r_t`, specific humidity :math:`q_t`, relative humidity :math:`\\mathcal{H}`),</span>
+<span class="sd">temperature variables (:math:`T`, :math:`\\theta`), and hydrostatic conversions (:math:`p` &lt;-&gt; :math:`z`).</span>
+
+<span class="sd">Simple hypotheses are used and might be updated in the future.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">constants</span> <span class="k">as</span> <span class="n">cc</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">constants</span> <span class="k">as</span> <span class="nn">cc</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="c1"># =============================================================================</span>
+<span class="c1"># Optional dependency: MetPy</span>
+<span class="c1"># =============================================================================</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">metpy.calc</span> <span class="kn">import</span> <span class="p">(</span>
+        <span class="n">mixing_ratio_from_relative_humidity</span><span class="p">,</span>
+        <span class="n">relative_humidity_from_mixing_ratio</span><span class="p">,</span>
+        <span class="n">specific_humidity_from_dewpoint</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="kn">from</span> <span class="nn">metpy.units</span> <span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">Munits</span>
+
+    <span class="n">HAS_METPY</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">HAS_METPY</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;MetPy not available: RH-based functions disabled&quot;</span><span class="p">)</span>
+
+
+<span class="c1"># =============================================================================</span>
+<span class="c1"># Helpers</span>
+<span class="c1"># =============================================================================</span>
+<span class="k">def</span> <span class="nf">_check_units</span><span class="p">(</span><span class="n">units</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">allowed</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate unit string.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">units</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">allowed</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown units &#39;</span><span class="si">{</span><span class="n">units</span><span class="si">}</span><span class="s2">&#39;, expected one of </span><span class="si">{</span><span class="n">allowed</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_asarray</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert input to numpy array (float64).&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_init_temp</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">T0</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">lapse_rate</span><span class="o">=-</span><span class="mf">6.5e-3</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Initialize a temperature profile starting à T0 (300 K by default) at the surface</span>
+<span class="sd">    and using a given lapse rate (-6.5 K km-1 by default)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="n">T0</span> <span class="o">+</span> <span class="n">lapse_rate</span> <span class="o">*</span> <span class="n">z</span>
+
+<span class="k">def</span> <span class="nf">_init_qv</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">qv0</span><span class="o">=</span><span class="mf">0.010</span><span class="p">,</span> <span class="n">Hq</span><span class="o">=</span><span class="mf">2000.0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Initialize a specific humidity profile starting à qv0 (10 g kg-1 by default) at the surface</span>
+<span class="sd">    and exponentially decreasing with a length scale Hq (2 km by default)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="n">qv0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">z</span> <span class="o">/</span> <span class="n">Hq</span><span class="p">)</span>
+
+
+<span class="c1"># =============================================================================</span>
+<span class="c1"># Conversion specific mass of total water / total water mixing ratio</span>
+<span class="c1"># =============================================================================</span>
+<div class="viewcode-block" id="rt2qt">
+<a class="viewcode-back" href="../../api/thermo.html#dephycf.thermo.rt2qt">[docs]</a>
+<span class="k">def</span> <span class="nf">rt2qt</span><span class="p">(</span><span class="n">rt</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;kg kg-1&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert total water mixing ratio to specific mass of total water.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    rt : :class:`float` or array-like</span>
+<span class="sd">        Total water mixing ratio.</span>
+<span class="sd">    units : :class:`str`, optional</span>
+<span class="sd">        Units for total water mixing ratio.</span>
+<span class="sd">        Should be &#39;kg kg-1&#39; (default) or &#39;g kg-1&#39;.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    :class:`float` or :class:`ndarray`</span>
+<span class="sd">        Specific mass of total water (in **units**).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_check_units</span><span class="p">(</span><span class="n">units</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;kg kg-1&quot;</span><span class="p">,</span> <span class="s2">&quot;g kg-1&quot;</span><span class="p">))</span>
+    <span class="n">rt</span> <span class="o">=</span> <span class="n">_asarray</span><span class="p">(</span><span class="n">rt</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">units</span> <span class="o">==</span> <span class="s2">&quot;kg kg-1&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">rt</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">rt</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">rt</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">rt</span><span class="o">/</span><span class="mf">1000.</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="qt2rt">
+<a class="viewcode-back" href="../../api/thermo.html#dephycf.thermo.qt2rt">[docs]</a>
+<span class="k">def</span> <span class="nf">qt2rt</span><span class="p">(</span><span class="n">qt</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;kg kg-1&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert specific mass of total water to total water mixing ratio.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    qt : :class:`float` or array-like</span>
+<span class="sd">        Specific mass of total water.</span>
+<span class="sd">    units : :class:`str`, optional</span>
+<span class="sd">        Units for total water mixing ratio.</span>
+<span class="sd">        Should be &#39;kg kg-1&#39; (default) or &#39;g kg-1&#39;.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    :class:`float` or :class:`ndarray`</span>
+<span class="sd">        Total water mixing ratio (in **units**).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_check_units</span><span class="p">(</span><span class="n">units</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;kg kg-1&quot;</span><span class="p">,</span> <span class="s2">&quot;g kg-1&quot;</span><span class="p">))</span>
+    <span class="n">qt</span> <span class="o">=</span> <span class="n">_asarray</span><span class="p">(</span><span class="n">qt</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">units</span> <span class="o">==</span> <span class="s2">&quot;kg kg-1&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">qt</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">qt</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">qt</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">qt</span><span class="o">/</span><span class="mf">1000.</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># ====================================================================================</span>
+<span class="c1"># Conversion between relative humidity and specific mass / mixing ratio of total water</span>
+<span class="c1"># (MetPy required)</span>
+<span class="c1"># ====================================================================================</span>
+<div class="viewcode-block" id="hur2rt">
+<a class="viewcode-back" href="../../api/thermo.html#dephycf.thermo.hur2rt">[docs]</a>
+<span class="k">def</span> <span class="nf">hur2rt</span><span class="p">(</span><span class="n">hur</span><span class="p">,</span> <span class="n">pressure</span><span class="p">,</span> <span class="n">temp</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;kg kg-1&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert relative humidity to total water mixing ratio.</span>
+<span class="sd">    Requires the MetPy module.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    hur : :class:`float` or array-like</span>
+<span class="sd">        Relative humidity (0–1).</span>
+<span class="sd">    pressure : :class:`float` or array-like</span>
+<span class="sd">        Pressure (Pa).</span>
+<span class="sd">    temp : :class:`float` or array-like</span>
+<span class="sd">        Temperature (K).</span>
+<span class="sd">    units : :class:`str`, optional</span>
+<span class="sd">        Units for total water mixing ratio.</span>
+<span class="sd">        Should be &#39;kg kg-1&#39; (default) or &#39;g kg-1&#39;.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    :class:`float` or :class:`ndarray`</span>
+<span class="sd">        Total water mixing ratio.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">HAS_METPY</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;MetPy is required for RH-based conversions&quot;</span><span class="p">)</span>
+
+    <span class="n">_check_units</span><span class="p">(</span><span class="n">units</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;kg kg-1&quot;</span><span class="p">,</span> <span class="s2">&quot;g kg-1&quot;</span><span class="p">))</span>
+
+    <span class="n">hur</span> <span class="o">=</span> <span class="n">_asarray</span><span class="p">(</span><span class="n">hur</span><span class="p">)</span>
+    <span class="n">pressure</span> <span class="o">=</span> <span class="n">_asarray</span><span class="p">(</span><span class="n">pressure</span><span class="p">)</span> <span class="o">*</span> <span class="n">Munits</span><span class="o">.</span><span class="n">Pa</span>
+    <span class="n">temp</span> <span class="o">=</span> <span class="n">_asarray</span><span class="p">(</span><span class="n">temp</span><span class="p">)</span> <span class="o">*</span> <span class="n">Munits</span><span class="o">.</span><span class="n">kelvin</span>
+
+    <span class="n">rv</span> <span class="o">=</span> <span class="n">mixing_ratio_from_relative_humidity</span><span class="p">(</span>
+        <span class="n">pressure</span><span class="p">,</span> <span class="n">temp</span><span class="p">,</span> <span class="n">hur</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">magnitude</span>
+
+    <span class="k">if</span> <span class="n">units</span> <span class="o">==</span> <span class="s2">&quot;kg kg-1&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">rv</span>
+
+    <span class="k">return</span> <span class="n">rv</span> <span class="o">*</span> <span class="mf">1000.0</span></div>
+
+
+
+<div class="viewcode-block" id="hur2qt">
+<a class="viewcode-back" href="../../api/thermo.html#dephycf.thermo.hur2qt">[docs]</a>
+<span class="k">def</span> <span class="nf">hur2qt</span><span class="p">(</span><span class="n">hur</span><span class="p">,</span> <span class="n">pressure</span><span class="p">,</span> <span class="n">temp</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;kg kg-1&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert relative humidity to specific mass of total water.</span>
+<span class="sd">    Requires the MetPy module.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    hur : :class:`float` or array-like</span>
+<span class="sd">        Relative humidity (0–1).</span>
+<span class="sd">    pressure : :class:`float` or array-like</span>
+<span class="sd">        Pressure (Pa).</span>
+<span class="sd">    temp : :class:`float` or array-like</span>
+<span class="sd">        Temperature (K).</span>
+<span class="sd">    units : :class:`str`, optional</span>
+<span class="sd">        Units for the specific mass of total water.</span>
+<span class="sd">        Should be &#39;kg kg-1&#39; (default) or &#39;g kg-1&#39;.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    :class:`float` or :class:`ndarray`</span>
+<span class="sd">        Specific mass of total water.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">HAS_METPY</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;MetPy is required for RH-based conversions&quot;</span><span class="p">)</span>
+
+    <span class="n">_check_units</span><span class="p">(</span><span class="n">units</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;kg kg-1&quot;</span><span class="p">,</span> <span class="s2">&quot;g kg-1&quot;</span><span class="p">))</span>
+
+    <span class="n">rt</span> <span class="o">=</span> <span class="n">hur2rt</span><span class="p">(</span><span class="n">hur</span><span class="p">,</span> <span class="n">pressure</span><span class="p">,</span> <span class="n">temp</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="n">units</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">units</span> <span class="o">==</span> <span class="s2">&quot;kg kg-1&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">rt</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">rt</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="n">rt</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1000.0</span> <span class="o">+</span> <span class="n">rt</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="rt2hur">
+<a class="viewcode-back" href="../../api/thermo.html#dephycf.thermo.rt2hur">[docs]</a>
+<span class="k">def</span> <span class="nf">rt2hur</span><span class="p">(</span><span class="n">rt</span><span class="p">,</span> <span class="n">pressure</span><span class="p">,</span> <span class="n">temp</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;kg kg-1&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert total water mixing ratio to relative humidity.</span>
+<span class="sd">    Require the MetPy module.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    rt : :class:`float` or array-like</span>
+<span class="sd">        Total water mixing ratio.</span>
+<span class="sd">    pressure : :class:`float` or array-like</span>
+<span class="sd">        Pressure (Pa).</span>
+<span class="sd">    temp : :class:`float` or array-like</span>
+<span class="sd">        Temperature (K).</span>
+<span class="sd">    units : :class:`str`, optional</span>
+<span class="sd">        Units for the total water mixing ratio.</span>
+<span class="sd">        Should be &#39;kg kg-1&#39; (default) or &#39;g kg-1&#39;.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    :class:`float` or :class:`ndarray`</span>
+<span class="sd">        Relative humidity (0-1).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">HAS_METPY</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;MetPy is required for RH-based conversions&quot;</span><span class="p">)</span>
+
+    <span class="n">_check_units</span><span class="p">(</span><span class="n">units</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;kg kg-1&quot;</span><span class="p">,</span> <span class="s2">&quot;g kg-1&quot;</span><span class="p">))</span>
+
+    <span class="n">rt</span> <span class="o">=</span> <span class="n">_asarray</span><span class="p">(</span><span class="n">rt</span><span class="p">)</span>
+    <span class="n">pressure</span> <span class="o">=</span> <span class="n">_asarray</span><span class="p">(</span><span class="n">pressure</span><span class="p">)</span> <span class="o">*</span> <span class="n">Munits</span><span class="o">.</span><span class="n">Pa</span>
+    <span class="n">temp</span> <span class="o">=</span> <span class="n">_asarray</span><span class="p">(</span><span class="n">temp</span><span class="p">)</span> <span class="o">*</span> <span class="n">Munits</span><span class="o">.</span><span class="n">kelvin</span>
+
+    <span class="n">rv</span> <span class="o">=</span> <span class="n">rt</span> <span class="k">if</span> <span class="n">units</span> <span class="o">==</span> <span class="s2">&quot;kg kg-1&quot;</span> <span class="k">else</span> <span class="n">rt</span> <span class="o">/</span> <span class="mf">1000.0</span>
+
+    <span class="k">return</span> <span class="n">relative_humidity_from_mixing_ratio</span><span class="p">(</span>
+        <span class="n">pressure</span><span class="p">,</span> <span class="n">temp</span><span class="p">,</span> <span class="n">rv</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">magnitude</span></div>
+
+
+
+<div class="viewcode-block" id="qt2hur">
+<a class="viewcode-back" href="../../api/thermo.html#dephycf.thermo.qt2hur">[docs]</a>
+<span class="k">def</span> <span class="nf">qt2hur</span><span class="p">(</span><span class="n">qt</span><span class="p">,</span> <span class="n">pressure</span><span class="p">,</span> <span class="n">temp</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;kg kg-1&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert specific mass of total water to relative humidity.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    qt : :class:`float` or array-like</span>
+<span class="sd">        Specific mass of total water.</span>
+<span class="sd">    pressure : :class:`float` or array-like</span>
+<span class="sd">        Pressure (Pa).</span>
+<span class="sd">    temp : :class:`float` or array-like</span>
+<span class="sd">        Temperature (K).</span>
+<span class="sd">    units : :class:`str`, optional</span>
+<span class="sd">        Units for the specific mass of total water.</span>
+<span class="sd">        Should be &#39;kg kg-1&#39; (default) or &#39;g kg-1&#39;.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    :class:`float` or :class:`ndarray`</span>
+<span class="sd">        Relative humidity (0-1).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">HAS_METPY</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;MetPy is required for RH-based conversions&quot;</span><span class="p">)</span>
+
+    <span class="n">_check_units</span><span class="p">(</span><span class="n">units</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;kg kg-1&quot;</span><span class="p">,</span> <span class="s2">&quot;g kg-1&quot;</span><span class="p">))</span>
+
+    <span class="n">qt</span> <span class="o">=</span> <span class="n">_asarray</span><span class="p">(</span><span class="n">qt</span><span class="p">)</span>
+    <span class="n">qt</span> <span class="o">=</span> <span class="n">qt</span> <span class="k">if</span> <span class="n">units</span> <span class="o">==</span> <span class="s2">&quot;kg kg-1&quot;</span> <span class="k">else</span> <span class="n">qt</span> <span class="o">/</span> <span class="mf">1000.0</span>
+    <span class="n">rt</span> <span class="o">=</span> <span class="n">qt</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">qt</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">rt2hur</span><span class="p">(</span><span class="n">rt</span><span class="p">,</span> <span class="n">pressure</span><span class="p">,</span> <span class="n">temp</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;kg kg-1&quot;</span><span class="p">)</span></div>
+
+    
+<span class="c1"># =============================================================================</span>
+<span class="c1"># Advection conversions</span>
+<span class="c1"># =============================================================================</span>
+<div class="viewcode-block" id="advrt2advqt">
+<a class="viewcode-back" href="../../api/thermo.html#dephycf.thermo.advrt2advqt">[docs]</a>
+<span class="k">def</span> <span class="nf">advrt2advqt</span><span class="p">(</span><span class="n">rt</span><span class="p">,</span> <span class="n">advrt</span><span class="p">,</span> <span class="n">rt_units</span><span class="o">=</span><span class="s2">&quot;kg kg-1&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert advection of the total water mixing ratio</span>
+<span class="sd">    to the advection of the specific mass of total water.</span>
+
+<span class="sd">    .. math:: \\left.\\frac{\\partial q_t}{\\partial t}\\right|_\\textrm{adv}</span>
+<span class="sd">              = \\frac{1}{(1+r_t)^2} \\times </span>
+<span class="sd">              \\left.\\frac{\\partial r_t}{\\partial t}\\right|_\\textrm{adv}</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    rt : :class:`float` or array-like</span>
+<span class="sd">        Total water mixing ratio (in **rt_units**).</span>
+<span class="sd">    advrt : :class:`float` or array-like</span>
+<span class="sd">        Advection of total water mixing ratio (kg kg-1 s-1).</span>
+<span class="sd">    rt_units : :class:`str`, optional</span>
+<span class="sd">        Units for the total water mixing ratio.</span>
+<span class="sd">        Should be &#39;kg kg-1&#39; (default) or &#39;g kg-1&#39;.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    :class:`float` or :class:`ndarray`</span>
+<span class="sd">        Advection of the specific mass of total water (kg kg-1 s-1).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_check_units</span><span class="p">(</span><span class="n">rt_units</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;kg kg-1&quot;</span><span class="p">,</span> <span class="s2">&quot;g kg-1&quot;</span><span class="p">))</span>
+
+    <span class="n">rt</span> <span class="o">=</span> <span class="n">_asarray</span><span class="p">(</span><span class="n">rt</span><span class="p">)</span>
+    <span class="n">advrt</span> <span class="o">=</span> <span class="n">_asarray</span><span class="p">(</span><span class="n">advrt</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">rt_units</span> <span class="o">==</span> <span class="s2">&quot;kg kg-1&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">advrt</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">rt</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+
+    <span class="k">return</span> <span class="n">advrt</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">rt</span> <span class="o">/</span> <span class="mf">1000.0</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span></div>
+
+
+
+<div class="viewcode-block" id="advqt2advrt">
+<a class="viewcode-back" href="../../api/thermo.html#dephycf.thermo.advqt2advrt">[docs]</a>
+<span class="k">def</span> <span class="nf">advqt2advrt</span><span class="p">(</span><span class="n">qt</span><span class="p">,</span> <span class="n">advqt</span><span class="p">,</span> <span class="n">qt_units</span><span class="o">=</span><span class="s2">&quot;kg kg-1&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert advection of the specific mass of total water</span>
+<span class="sd">    to the advection of the total water mixing ratio, following:</span>
+
+<span class="sd">    .. math:: \\left.\\frac{\\partial r_t}{\\partial t}\\right|_\\textrm{adv}</span>
+<span class="sd">              = \\frac{1}{(1-q_t)^2} \\times </span>
+<span class="sd">              \\left.\\frac{\\partial q_t}{\\partial t}\\right|_\\textrm{adv}</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    qt : :class:`float` or array-like</span>
+<span class="sd">        Specific mass of total water (in **qt_units**).</span>
+<span class="sd">    advqt : :class:`float` or array-like</span>
+<span class="sd">        Advection of the specific mass of total water (kg kg-1 s-1).</span>
+<span class="sd">    qt_units : :class:`str`, optional</span>
+<span class="sd">        Units for the specific mass of total water.</span>
+<span class="sd">        Should be &#39;kg kg-1&#39; (default) or &#39;g kg-1&#39;.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    :class:`float` or :class:`ndarray`</span>
+<span class="sd">        Advection of the specific mass of total water (kg kg-1 s-1).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_check_units</span><span class="p">(</span><span class="n">qt_units</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;kg kg-1&quot;</span><span class="p">,</span> <span class="s2">&quot;g kg-1&quot;</span><span class="p">))</span>
+
+    <span class="n">qt</span> <span class="o">=</span> <span class="n">_asarray</span><span class="p">(</span><span class="n">qt</span><span class="p">)</span>
+    <span class="n">advqt</span> <span class="o">=</span> <span class="n">_asarray</span><span class="p">(</span><span class="n">advqt</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">qt_units</span> <span class="o">==</span> <span class="s2">&quot;kg kg-1&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">advqt</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">qt</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+
+    <span class="k">return</span> <span class="n">advqt</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">qt</span> <span class="o">/</span> <span class="mf">1000.0</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span></div>
+
+
+
+<span class="c1"># =============================================================================</span>
+<span class="c1"># Temperature / potential temperature</span>
+<span class="c1"># =============================================================================</span>
+<div class="viewcode-block" id="theta2t">
+<a class="viewcode-back" href="../../api/thermo.html#dephycf.thermo.theta2t">[docs]</a>
+<span class="k">def</span> <span class="nf">theta2t</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">p0</span><span class="o">=</span><span class="n">cc</span><span class="o">.</span><span class="n">p0</span><span class="p">,</span> <span class="n">kappa</span><span class="o">=</span><span class="n">cc</span><span class="o">.</span><span class="n">kappa</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert potential temperature to temperature</span>
+<span class="sd">    using air pressure according to:</span>
+
+<span class="sd">    .. math:: T = \\theta \\left( \\frac{p}{p_0}  \\right)^\\kappa</span>
+
+<span class="sd">    Default values for :math:`p_0` and :math:`\\kappa` comes from :mod:`.constants`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    p : :class:`float` or array-like</span>
+<span class="sd">        Air pressure :math:`p` (Pa).</span>
+<span class="sd">    theta : :class:`float` or array-like</span>
+<span class="sd">        Potential temperature :math:`\\theta` (K).</span>
+<span class="sd">    p0 : :class:`float`, optional</span>
+<span class="sd">        Reference pressure :math:`p_0` (Pa). Value from :data:`.constants.p0`</span>
+<span class="sd">    kappa : :class:`float`, optional</span>
+<span class="sd">        Ratio :math:`\\kappa` of the gas constant to the gas heat capacity (no units).</span>
+<span class="sd">        Default is for dry air taken from :data:`.constants.kappa`.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    :class:`float` or :class:`ndarray`</span>
+<span class="sd">        Temperature :math:`T` (K).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">_asarray</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+    <span class="n">theta</span> <span class="o">=</span> <span class="n">_asarray</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">theta</span> <span class="o">*</span> <span class="p">(</span><span class="n">p</span> <span class="o">/</span> <span class="n">p0</span><span class="p">)</span> <span class="o">**</span> <span class="n">kappa</span></div>
+
+
+
+<div class="viewcode-block" id="t2theta">
+<a class="viewcode-back" href="../../api/thermo.html#dephycf.thermo.t2theta">[docs]</a>
+<span class="k">def</span> <span class="nf">t2theta</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">temp</span><span class="p">,</span> <span class="n">p0</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">cc</span><span class="o">.</span><span class="n">p0</span><span class="p">,</span> <span class="n">kappa</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">cc</span><span class="o">.</span><span class="n">kappa</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert temperature to potential temperature</span>
+<span class="sd">    using air pressure according to:</span>
+
+<span class="sd">    .. math:: \\theta = T \\left( \\frac{p_0}{p}  \\right)^\\kappa</span>
+
+<span class="sd">    Default values for :math:`p_0` and :math:`\\kappa` comes from :mod:`.constants`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    p : :class:`float` or array-like</span>
+<span class="sd">        Air pressure :math:`p` (Pa).</span>
+<span class="sd">    temp : :class:`float` or array-like</span>
+<span class="sd">        Temperature :math:`T` (K).</span>
+<span class="sd">    p0 : :class:`float`, optional</span>
+<span class="sd">        Reference pressure :math:`p_0` (Pa). Value from :data:`.constants.p0`</span>
+<span class="sd">    kappa : :class:`float`, optional</span>
+<span class="sd">        Ratio :math:`\\kappa` of the gas constant to the gas heat capacity (no units).</span>
+<span class="sd">        Default is for dry air taken from :data:`.constants.kappa`.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    :class:`float` or :class:`ndarray`</span>
+<span class="sd">        Potential temperature :math:`\\theta` (K).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">p</span> <span class="o">=</span> <span class="n">_asarray</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+    <span class="n">temp</span> <span class="o">=</span> <span class="n">_asarray</span><span class="p">(</span><span class="n">temp</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">temp</span> <span class="o">*</span> <span class="p">(</span><span class="n">p0</span> <span class="o">/</span> <span class="n">p</span><span class="p">)</span> <span class="o">**</span> <span class="n">kappa</span></div>
+
+
+
+<span class="c1"># =============================================================================</span>
+<span class="c1"># Hydrostatic conversions</span>
+<span class="c1"># =============================================================================</span>
+<div class="viewcode-block" id="z2p">
+<a class="viewcode-back" href="../../api/thermo.html#dephycf.thermo.z2p">[docs]</a>
+<span class="k">def</span> <span class="nf">z2p</span><span class="p">(</span>
+    <span class="n">z</span><span class="p">,</span>
+    <span class="n">ps</span><span class="p">,</span>
+    <span class="n">theta</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ta</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">thetal</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">qv</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">g</span><span class="o">=</span><span class="n">cc</span><span class="o">.</span><span class="n">g</span><span class="p">,</span> <span class="n">Rd</span><span class="o">=</span><span class="n">cc</span><span class="o">.</span><span class="n">Rd</span><span class="p">,</span> <span class="n">Rv</span><span class="o">=</span><span class="n">cc</span><span class="o">.</span><span class="n">Rv</span><span class="p">,</span> <span class="n">p0</span><span class="o">=</span><span class="n">cc</span><span class="o">.</span><span class="n">p0</span><span class="p">,</span> <span class="n">kappa</span><span class="o">=</span><span class="n">cc</span><span class="o">.</span><span class="n">kappa</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the pressure of a set of given altitudes using the hydrostatic balance.</span>
+<span class="sd">    At least one temperature in ta (:math:`T`), theta (:math:`\\theta`),</span>
+<span class="sd">    or thetal (:math:`\\theta_l`) should be given.</span>
+<span class="sd">    If :math:`\\theta_l` is given, one simply assumes that :math:`\\theta = \\theta_l`. </span>
+<span class="sd">    If :math:`\\theta` is given, it is first converted to temperature :math:`T` </span>
+<span class="sd">    using :func:`.thermo.theta2t`.</span>
+<span class="sd">    </span>
+<span class="sd">    Basically, in case temperature :math:`T` is provided, at level :math:`k`, one uses:</span>
+
+<span class="sd">    .. math:: \\ln\\frac{p_k}{p_{k-1}} = -\\int_{z_k-1}^{z_{k}} \\frac{g}{R T} dz</span>
+<span class="sd">    .. math:: \\ln\\frac{p_k}{p_{k-1}} \\approx -0.5 g\\times</span>
+<span class="sd">                                               \\left(\\frac{1}{R_k T_k} </span>
+<span class="sd">                                               + \\frac{1}{R_{k-1}T_{k-1}}\\right)</span>
+<span class="sd">                                                 \\times (z_k - z_{k-1})</span>
+<span class="sd">    </span>
+<span class="sd">    In case potential temperature :math:`\\theta` is provided, at level :math:`k`, one uses:</span>
+
+<span class="sd">    .. math:: To be completed</span>
+
+<span class="sd">    In case both temperature and potential temperature are provided, potential temperature is</span>
+<span class="sd">    use as a priority.</span>
+
+<span class="sd">    If specific humidity :math:`q_v` is given, :math:`R = R_d + q_v(R_v-R_d)`,</span>
+<span class="sd">    otherwise :math:`R = R_d`.</span>
+<span class="sd">    </span>
+<span class="sd">    Default values for :math:`g`, :math:`R_d`, :math:`R_v`, :math:`p_0` and :math:`\\kappa`</span>
+<span class="sd">    are set in :mod:`.constants`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    z : array-like of size N</span>
+<span class="sd">        Altitude :math:`z` (m).</span>
+<span class="sd">    ps : :class:`float`</span>
+<span class="sd">        Surface pressure (Pa).</span>
+<span class="sd">    ta : array-like of size N, optional</span>
+<span class="sd">        Temperature :math:`T` (K).</span>
+<span class="sd">    theta : array-like of size N, optional</span>
+<span class="sd">        Potential temperature :math:`\\theta` (K).</span>
+<span class="sd">    thetal : array-like of size N, optional</span>
+<span class="sd">        Liquid water potential temperature :math:`\\theta_l` (K).</span>
+<span class="sd">    qv : array-like of size N, optional</span>
+<span class="sd">        Specific humidity (kg kg-1). If given, the weight of water vapor is accounted for.</span>
+<span class="sd">    g : :class:`float`, optional</span>
+<span class="sd">        Gravity acceleration :math:`g` (m s-2). Value from :data:`.constants.g`</span>
+<span class="sd">    Rd : :class:`float`, optional</span>
+<span class="sd">        Dry air gas constant :math:`R_d` (J kg-1 K-1). Value from :data:`.constants.Rd`</span>
+<span class="sd">    Rv : :class:`float`, optional</span>
+<span class="sd">        Water vapor gas constant :math:`R_v` (J kg-1 K-1). Value from :data:`.constants.Rv`</span>
+<span class="sd">    p0 : :class:`float`, optional</span>
+<span class="sd">        Reference pressure :math:`p_0` (Pa). Value from :data:`.constants.p0`</span>
+<span class="sd">    kappa : :class:`float`, optional</span>
+<span class="sd">        Ratio :math:`\\kappa` of the gas constant to the gas heat capacity (no units).</span>
+<span class="sd">        Default is for dry air taken from :data:`.constants.kappa`.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    :class:`ndarray` of size N</span>
+<span class="sd">        Air pressure :math:`p` (Pa).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">theta</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">ta</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">thetal</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;theta, thetal or ta must be provided&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">theta</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">thetal</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Using thetal as theta (approximation)&quot;</span><span class="p">)</span>
+        <span class="n">theta</span> <span class="o">=</span> <span class="n">thetal</span>
+
+    <span class="n">z</span> <span class="o">=</span> <span class="n">_asarray</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+    <span class="n">nlev</span><span class="p">,</span> <span class="o">=</span> <span class="n">z</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">ps</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">ps</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">qv</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">z</span><span class="p">)</span> <span class="o">+</span> <span class="n">Rd</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">R</span> <span class="o">=</span> <span class="n">Rd</span> <span class="o">+</span> <span class="n">_asarray</span><span class="p">(</span><span class="n">qv</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">Rv</span> <span class="o">-</span> <span class="n">Rd</span><span class="p">)</span>
+
+    <span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">ps</span>
+
+    <span class="k">if</span> <span class="n">theta</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> <span class="c1"># use theta as a priority</span>
+        <span class="n">theta</span> <span class="o">=</span> <span class="n">_asarray</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+        <span class="n">integ</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">nlev</span><span class="p">):</span>
+            <span class="n">dz</span> <span class="o">=</span> <span class="n">z</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">-</span> <span class="n">z</span><span class="p">[</span><span class="n">k</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="n">integ</span> <span class="o">=</span> <span class="n">integ</span> <span class="o">+</span> <span class="p">(</span><span class="n">g</span><span class="o">/</span><span class="p">(</span><span class="n">R</span><span class="p">[</span><span class="n">k</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">theta</span><span class="p">[</span><span class="n">k</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">+</span><span class="n">g</span><span class="o">/</span><span class="p">(</span><span class="n">R</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">*</span><span class="n">theta</span><span class="p">[</span><span class="n">k</span><span class="p">]))</span><span class="o">/</span><span class="mi">2</span><span class="o">*</span><span class="n">dz</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="n">ps</span><span class="o">**</span><span class="n">kappa</span><span class="o">-</span><span class="n">p0</span><span class="o">**</span><span class="n">kappa</span><span class="o">*</span><span class="n">kappa</span><span class="o">*</span><span class="n">integ</span>
+            <span class="k">try</span><span class="p">:</span> <span class="n">p</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span><span class="o">/</span><span class="n">kappa</span><span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">z</span><span class="p">[</span><span class="n">k</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">z</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">theta</span><span class="p">[</span><span class="n">k</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">theta</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">R</span><span class="p">[</span><span class="n">k</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">R</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">integ</span><span class="p">,</span> <span class="n">tmp</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">tmp</span><span class="p">),</span> <span class="n">kappa</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Error in z2p vertical integration under theta case&#39;</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span> <span class="c1"># use ta instead</span>
+        <span class="n">ta</span> <span class="o">=</span> <span class="n">_asarray</span><span class="p">(</span><span class="n">ta</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">nlev</span><span class="p">):</span>
+            <span class="n">dz</span> <span class="o">=</span> <span class="n">z</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">-</span> <span class="n">z</span><span class="p">[</span><span class="n">k</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="n">p</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="n">k</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span>
+                <span class="o">-</span><span class="p">(</span><span class="n">g</span><span class="o">/</span><span class="p">(</span><span class="n">R</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">*</span><span class="n">ta</span><span class="p">[</span><span class="n">k</span><span class="p">])</span> <span class="o">+</span> <span class="n">g</span><span class="o">/</span><span class="p">(</span><span class="n">R</span><span class="p">[</span><span class="n">k</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">ta</span><span class="p">[</span><span class="n">k</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]))</span><span class="o">*</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">dz</span>
+            <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">p</span></div>
+
+
+
+<div class="viewcode-block" id="p2z">
+<a class="viewcode-back" href="../../api/thermo.html#dephycf.thermo.p2z">[docs]</a>
+<span class="k">def</span> <span class="nf">p2z</span><span class="p">(</span>
+    <span class="n">p</span><span class="p">,</span>
+    <span class="n">zs</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+    <span class="n">theta</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ta</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">thetal</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">qv</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">g</span><span class="o">=</span><span class="n">cc</span><span class="o">.</span><span class="n">g</span><span class="p">,</span> <span class="n">Rd</span><span class="o">=</span><span class="n">cc</span><span class="o">.</span><span class="n">Rd</span><span class="p">,</span> <span class="n">Rv</span><span class="o">=</span><span class="n">cc</span><span class="o">.</span><span class="n">Rv</span><span class="p">,</span> <span class="n">p0</span><span class="o">=</span><span class="n">cc</span><span class="o">.</span><span class="n">p0</span><span class="p">,</span> <span class="n">kappa</span><span class="o">=</span><span class="n">cc</span><span class="o">.</span><span class="n">kappa</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the altitude of a set of given pressure levels using the hydrostatic balance.</span>
+<span class="sd">    At least one temperature in ta (:math:`T`), theta (:math:`\\theta`),</span>
+<span class="sd">    or thetal (:math:`\\theta_l`) should be given.</span>
+<span class="sd">    If :math:`\\theta_l` is given, one simply assumes that :math:`\\theta = \\theta_l`. </span>
+<span class="sd">    If :math:`\\theta` is given, it is first converted to temperature :math:`T` </span>
+<span class="sd">    using :func:`.thermo.theta2t`.</span>
+<span class="sd">    </span>
+<span class="sd">    Basically, at level :math:`k`, one uses:</span>
+
+<span class="sd">    .. math:: z_k - z_{k-1} = -\\int_{p_k-1}^{p_{k}} \\frac{R T}{g} d\\ln p</span>
+<span class="sd">    .. math:: z_k - z_{k-1}  \\approx -\\frac{0.5\\times(R_k T_k+R_{k-1}T_{k-1})}{g}</span>
+<span class="sd">                                                 \\times\\ln\\frac{p_k}{p_{k-1}}</span>
+<span class="sd">    </span>
+<span class="sd">    If specific humidity :math:`q_v` is given, :math:`R = R_d + q_v(R_v-R_d)`,</span>
+<span class="sd">    otherwise :math:`R = R_d`.</span>
+<span class="sd">    Default values for :math:`g`, :math:`R_d`, :math:`R_v`, :math:`p_0` and :math:`\\kappa`</span>
+<span class="sd">    are set in :mod:`.constants`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    p : array-like of size N</span>
+<span class="sd">        Air pressure :math:`p` (m).</span>
+<span class="sd">    zs : :class:`float`, optional</span>
+<span class="sd">        Surface altitude (m). Default is 0.</span>
+<span class="sd">    ta : array-like of size N, optional</span>
+<span class="sd">        Temperature :math:`T` (K).</span>
+<span class="sd">    theta : array-like of size N, optional</span>
+<span class="sd">        Potential temperature :math:`\\theta` (K).</span>
+<span class="sd">    thetal : array-like of size N, optional</span>
+<span class="sd">        Liquid water potential temperature :math:`\\theta_l` (K).</span>
+<span class="sd">    qv : array-like of size N, optional</span>
+<span class="sd">        Specific humidity (kg kg-1). If given, the weight of water vapor is accounted for.</span>
+<span class="sd">    g : :class:`float`, optional</span>
+<span class="sd">        Gravity acceleration :math:`g` (m s-2). Value from :data:`.constants.g`</span>
+<span class="sd">    Rd : :class:`float`, optional</span>
+<span class="sd">        Dry air gas constant :math:`R_d` (J kg-1 K-1). Value from :data:`.constants.Rd`</span>
+<span class="sd">    Rv : :class:`float`, optional</span>
+<span class="sd">        Water vapor gas constant :math:`R_v` (J kg-1 K-1). Value from :data:`.constants.Rv`</span>
+<span class="sd">    p0 : :class:`float`, optional</span>
+<span class="sd">        Reference pressure :math:`p_0` (Pa). Value from :data:`.constants.p0`</span>
+<span class="sd">    kappa : :class:`float`, optional</span>
+<span class="sd">        Ratio :math:`\\kappa` of the gas constant to the gas heat capacity (no units).</span>
+<span class="sd">        Default is for dry air taken from :data:`.constants.kappa`.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    :class:`ndarray` of size N</span>
+<span class="sd">        Altitude :math:`z` (m).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">theta</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">ta</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">thetal</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;theta, thetal or ta must be provided&quot;</span><span class="p">)</span>
+
+    <span class="n">p</span> <span class="o">=</span> <span class="n">_asarray</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">ta</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">theta</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Using thetal as theta (approximation)&quot;</span><span class="p">)</span>
+            <span class="n">theta</span> <span class="o">=</span> <span class="n">thetal</span>
+        <span class="n">ta</span> <span class="o">=</span> <span class="n">theta2t</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">p0</span><span class="o">=</span><span class="n">p0</span><span class="p">,</span> <span class="n">kappa</span><span class="o">=</span><span class="n">kappa</span><span class="p">)</span>
+
+    <span class="n">ta</span> <span class="o">=</span> <span class="n">_asarray</span><span class="p">(</span><span class="n">ta</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">qv</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">+</span> <span class="n">Rd</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">R</span> <span class="o">=</span> <span class="n">Rd</span> <span class="o">+</span> <span class="n">_asarray</span><span class="p">(</span><span class="n">qv</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">Rv</span> <span class="o">-</span> <span class="n">Rd</span><span class="p">)</span>
+
+    <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+    <span class="n">z</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">zs</span>
+
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)):</span>
+        <span class="n">z</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">z</span><span class="p">[</span><span class="n">k</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span>
+            <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">R</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">*</span><span class="n">ta</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">+</span> <span class="n">R</span><span class="p">[</span><span class="n">k</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">ta</span><span class="p">[</span><span class="n">k</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="n">g</span>
+        <span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="n">k</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="n">p</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">z</span></div>
+
+
+
+<span class="c1"># =============================================================================</span>
+<span class="c1"># Interpolation utilities</span>
+<span class="c1"># =============================================================================</span>
+<div class="viewcode-block" id="zlev2plev">
+<a class="viewcode-back" href="../../api/thermo.html#dephycf.thermo.zlev2plev">[docs]</a>
+<span class="k">def</span> <span class="nf">zlev2plev</span><span class="p">(</span><span class="n">zlev</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Linear interpolation of pressure at a given altitude</span>
+<span class="sd">    The function :func:`numpy.interp` is used.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    zlev : :class:`float`</span>
+<span class="sd">        Altitude at which one wants to interpolate pressure (m).</span>
+<span class="sd">    z : array-like of size N</span>
+<span class="sd">        Altitudes at which pressure is known (m).</span>
+<span class="sd">    p : array-like of size N</span>
+<span class="sd">        Air pressure at levels **z** (Pa).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    :class:`float`</span>
+<span class="sd">        Air pressure at level **zlev** (Pa).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">zlev</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="plev2zlev">
+<a class="viewcode-back" href="../../api/thermo.html#dephycf.thermo.plev2zlev">[docs]</a>
+<span class="k">def</span> <span class="nf">plev2zlev</span><span class="p">(</span><span class="n">plev</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Linear interpolation of altitude at a given pressure level.</span>
+<span class="sd">    The function :func:`numpy.interp` is used.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    plev : :class:`float`</span>
+<span class="sd">        Pressure level at which one wants to interpolate altitude (Pa).</span>
+<span class="sd">    z : array-like of size N</span>
+<span class="sd">        Altitudes at which pressure is known (m).</span>
+<span class="sd">    p : array-like of size N</span>
+<span class="sd">        Air pressure at levels **z** (Pa).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    :class:`float`</span>
+<span class="sd">        Altitude of the pressure **plev** (m).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">plev</span><span class="p">,</span> <span class="n">p</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">z</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span></div>
+
+
+
+<span class="c1"># =============================================================================</span>
+<span class="c1"># Humidity from dew-point / Goff–Gratch</span>
+<span class="c1"># =============================================================================</span>
+<div class="viewcode-block" id="rh2qv_GG">
+<a class="viewcode-back" href="../../api/thermo.html#dephycf.thermo.rh2qv_GG">[docs]</a>
+<span class="k">def</span> <span class="nf">rh2qv_GG</span><span class="p">(</span><span class="n">hur</span><span class="p">,</span> <span class="n">pressure</span><span class="p">,</span> <span class="n">temp</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert relative humidity to specific humidity</span>
+<span class="sd">    using the Goff-Gratch formulation.</span>
+<span class="sd">    Adapted from http://climatologie.u-bourgogne.fr/data/matlab/goff_gratch.m</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    hur : :class:`float` or array-like</span>
+<span class="sd">        Relative humidity (%).</span>
+<span class="sd">    pressure : :class:`float` or array-like</span>
+<span class="sd">        Pressure (Pa).</span>
+<span class="sd">    temp : :class:`float` or array-like</span>
+<span class="sd">        Temperature (K).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    :class:`float` or :class:`ndarray`</span>
+<span class="sd">        Specific humidity.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">hur</span> <span class="o">=</span> <span class="n">_asarray</span><span class="p">(</span><span class="n">hur</span><span class="p">)</span>
+    <span class="n">temp</span> <span class="o">=</span> <span class="n">_asarray</span><span class="p">(</span><span class="n">temp</span><span class="p">)</span>
+    <span class="n">pressure</span> <span class="o">=</span> <span class="n">_asarray</span><span class="p">(</span><span class="n">pressure</span><span class="p">)</span>
+
+    <span class="n">es_ice</span> <span class="o">=</span> <span class="mf">6.1071</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span>
+        <span class="p">(</span><span class="o">-</span><span class="mf">9.09718</span> <span class="o">*</span> <span class="p">(</span><span class="mf">273.16</span> <span class="o">/</span> <span class="n">temp</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+         <span class="o">-</span> <span class="mf">3.5654</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="mf">273.16</span> <span class="o">/</span> <span class="n">temp</span><span class="p">)</span>
+         <span class="o">+</span> <span class="mf">0.876793</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">temp</span> <span class="o">/</span> <span class="mf">273.16</span><span class="p">))</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="n">es_water</span> <span class="o">=</span> <span class="mf">1013.246</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span>
+        <span class="p">(</span><span class="o">-</span><span class="mf">7.90298</span> <span class="o">*</span> <span class="p">(</span><span class="mf">373.16</span> <span class="o">/</span> <span class="n">temp</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+         <span class="o">+</span> <span class="mf">5.02808</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="mf">373.16</span> <span class="o">/</span> <span class="n">temp</span><span class="p">))</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="n">es</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">temp</span> <span class="o">&lt;</span> <span class="mf">273.15</span><span class="p">,</span> <span class="n">es_ice</span><span class="p">,</span> <span class="n">es_water</span><span class="p">)</span>
+    <span class="n">ws</span> <span class="o">=</span> <span class="mf">0.62197</span> <span class="o">*</span> <span class="n">es</span> <span class="o">/</span> <span class="p">(</span><span class="n">pressure</span> <span class="o">/</span> <span class="mf">100.0</span> <span class="o">-</span> <span class="mf">0.378</span> <span class="o">*</span> <span class="n">es</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="n">hur</span> <span class="o">/</span> <span class="mf">100.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">ws</span></div>
+
+
+
+<div class="viewcode-block" id="td2qv">
+<a class="viewcode-back" href="../../api/thermo.html#dephycf.thermo.td2qv">[docs]</a>
+<span class="k">def</span> <span class="nf">td2qv</span><span class="p">(</span><span class="n">td</span><span class="p">,</span> <span class="n">pressure</span><span class="p">,</span> <span class="n">units</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;kg kg-1&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert dew-point temperature to specific humidity.</span>
+<span class="sd">    Requires the MetPy module.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    td : :class:`float` or array-like</span>
+<span class="sd">        Dew-point temperature (K)</span>
+<span class="sd">    pressure : :class:`float` or array-like</span>
+<span class="sd">        Pressure (Pa).</span>
+<span class="sd">    units : :class:`str`, optional</span>
+<span class="sd">        Units for the specific humidity.</span>
+<span class="sd">        Should be &#39;kg kg-1&#39; (default) or &#39;g kg-1&#39;.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    :class:`float` or :class:`ndarray`</span>
+<span class="sd">        Specific humidity.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">HAS_METPY</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;MetPy is required for td2qv&quot;</span><span class="p">)</span>
+
+    <span class="n">_check_units</span><span class="p">(</span><span class="n">units</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;kg kg-1&quot;</span><span class="p">,</span> <span class="s2">&quot;g kg-1&quot;</span><span class="p">))</span>
+
+    <span class="n">td</span> <span class="o">=</span> <span class="n">_asarray</span><span class="p">(</span><span class="n">td</span><span class="p">)</span>
+    <span class="n">pressure</span> <span class="o">=</span> <span class="n">_asarray</span><span class="p">(</span><span class="n">pressure</span><span class="p">)</span> <span class="o">*</span> <span class="n">Munits</span><span class="o">.</span><span class="n">Pa</span>
+    <span class="n">td</span> <span class="o">=</span> <span class="n">td</span> <span class="o">*</span> <span class="n">Munits</span><span class="o">.</span><span class="n">kelvin</span>
+
+    <span class="n">qv</span> <span class="o">=</span> <span class="n">specific_humidity_from_dewpoint</span><span class="p">(</span><span class="n">pressure</span><span class="p">,</span> <span class="n">td</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span>
+
+    <span class="k">if</span> <span class="n">units</span> <span class="o">==</span> <span class="s2">&quot;kg kg-1&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">qv</span>
+
+    <span class="k">return</span> <span class="n">qv</span> <span class="o">*</span> <span class="mf">1000.0</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Running basic self-tests for thermo.py&quot;</span><span class="p">)</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># Realistic atmospheric profile</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">12001.0</span><span class="p">,</span> <span class="mf">500.0</span><span class="p">)</span>  <span class="c1"># m</span>
+
+    <span class="c1"># Temperature profile</span>
+    <span class="n">T0</span> <span class="o">=</span> <span class="mf">288.15</span>       <span class="c1"># K</span>
+    <span class="n">lapse_rate</span> <span class="o">=</span> <span class="o">-</span><span class="mf">6.5e-3</span>  <span class="c1"># K/m</span>
+    <span class="n">temp</span> <span class="o">=</span> <span class="n">_init_temp</span><span class="p">(</span><span class="n">z</span><span class="p">)</span><span class="c1">#, T0, lapse_rate)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Temperature&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">temp</span><span class="p">)</span>
+
+    <span class="c1"># Specific humidity profile</span>
+    <span class="n">qv0</span> <span class="o">=</span> <span class="mf">0.010</span>       <span class="c1"># kg/kg</span>
+    <span class="n">Hq</span> <span class="o">=</span> <span class="mf">2000.0</span>       <span class="c1"># m</span>
+    <span class="n">qv</span> <span class="o">=</span> <span class="n">_init_qv</span><span class="p">(</span><span class="n">z</span><span class="p">)</span><span class="c1">#, qv0, Hq=Hq)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Specific humidity&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">qv</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Water vapor mixing ratio&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">qt2rt</span><span class="p">(</span><span class="n">qv</span><span class="p">))</span>
+
+    <span class="c1"># Surface pressure</span>
+    <span class="n">ps</span> <span class="o">=</span> <span class="mf">100000.0</span> <span class="c1"># Pa</span>
+
+
+    <span class="n">pressure</span> <span class="o">=</span> <span class="n">z2p</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">ps</span><span class="p">,</span> <span class="n">ta</span><span class="o">=</span><span class="n">temp</span><span class="p">,</span> <span class="n">qv</span><span class="o">=</span><span class="n">qv</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Pressure&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">pressure</span><span class="p">)</span>
+
+    <span class="n">z2</span> <span class="o">=</span> <span class="n">p2z</span><span class="p">(</span><span class="n">pressure</span><span class="p">,</span> <span class="n">ta</span><span class="o">=</span><span class="n">temp</span><span class="p">,</span> <span class="n">qv</span><span class="o">=</span><span class="n">qv</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Recomputed altitude&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">z2</span><span class="p">)</span>
+
+    <span class="n">theta</span> <span class="o">=</span> <span class="n">t2theta</span><span class="p">(</span><span class="n">pressure</span><span class="p">,</span> <span class="n">temp</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Potential temperature&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+    
+    <span class="n">z2</span> <span class="o">=</span> <span class="n">p2z</span><span class="p">(</span><span class="n">pressure</span><span class="p">,</span> <span class="n">theta</span><span class="o">=</span><span class="n">theta</span><span class="p">,</span> <span class="n">qv</span><span class="o">=</span><span class="n">qv</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Recomputed altitude using theta&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">z2</span><span class="p">)</span>
+
+    <span class="n">p2</span> <span class="o">=</span> <span class="n">z2p</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">ps</span><span class="p">,</span> <span class="n">theta</span><span class="o">=</span><span class="n">theta</span><span class="p">,</span> <span class="n">qv</span><span class="o">=</span><span class="n">qv</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Recomputed pressure using theta&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">p2</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Relative humidity&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">qt2hur</span><span class="p">(</span><span class="n">qv</span><span class="p">,</span> <span class="n">pressure</span><span class="p">,</span> <span class="n">temp</span><span class="p">))</span>
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, DEPHY.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.4.7.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

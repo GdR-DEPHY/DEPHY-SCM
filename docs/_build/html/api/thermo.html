@@ -1,0 +1,983 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Thermodyanmical functions and other utilities (dephycf.thermo) &#8212; DEPHY-SCM 1.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css?v=7f9a90b1" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=f2a433a1"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/thermo';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Attributes (dephycf.attributes)" href="attributes.html" />
+    <link rel="prev" title="Physical Constants (dephycf.constants)" href="constants.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">DEPHY-SCM</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    API Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    API Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="constants.html">Physical Constants (<code class="xref py py-mod docutils literal notranslate"><span class="pre">dephycf.constants</span></code>)</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Thermodyanmical functions and other utilities (<code class="xref py py-mod docutils literal notranslate"><span class="pre">dephycf.thermo</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="attributes.html">Attributes (<code class="xref py py-mod docutils literal notranslate"><span class="pre">dephycf.attributes</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plotbasics.html">Plotting Utilities (<code class="xref py py-mod docutils literal notranslate"><span class="pre">dephycf.plotbasics</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="axis.html">Axis (<code class="xref py py-mod docutils literal notranslate"><span class="pre">dephycf.Axis</span></code>)</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">API Reference</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Thermodyanmical functions and other utilities (<code class="xref py py-mod docutils literal notranslate"><span class="pre">dephycf.thermo</span></code>)</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="thermodyanmical-functions-and-other-utilities-dephycf-thermo">
+<h1>Thermodyanmical functions and other utilities (<a class="reference internal" href="#module-dephycf.thermo" title="dephycf.thermo"><code class="xref py py-mod docutils literal notranslate"><span class="pre">dephycf.thermo</span></code></a>)<a class="headerlink" href="#thermodyanmical-functions-and-other-utilities-dephycf-thermo" title="Link to this heading">#</a></h1>
+<section id="example">
+<h2>Example<a class="headerlink" href="#example" title="Link to this heading">#</a></h2>
+<p>You can import and use the <a class="reference internal" href="#module-dephycf.thermo" title="dephycf.thermo"><code class="xref py py-mod docutils literal notranslate"><span class="pre">dephycf.thermo</span></code></a> module directly:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">dephycf</span> <span class="kn">import</span> <span class="n">thermo</span>
+</pre></div>
+</div>
+<p>You may start by initializing a vertical coordinate</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">12001.0</span><span class="p">,</span> <span class="mf">500.0</span><span class="p">)</span>  <span class="c1"># m</span>
+</pre></div>
+</div>
+<p>and then using it to further initialize a temperature vertical profile starting à 300 K at the surface and decreasing with a lapse rate of 6.5 K km-1</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">temp</span> <span class="o">=</span> <span class="n">thermo</span><span class="o">.</span><span class="n">_init_temp</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">temp</span><span class="p">)</span>
+<span class="go">[300.   296.75 293.5  290.25 287.   283.75 280.5  277.25 274.   270.75</span>
+<span class="go"> 267.5  264.25 261.   257.75 254.5  251.25 248.   244.75 241.5  238.25</span>
+<span class="go"> 235.   231.75 228.5  225.25 222.  ]</span>
+</pre></div>
+</div>
+<p>You may also initialize a vertical profile of specific humidity:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">qv</span> <span class="o">=</span> <span class="n">thermo</span><span class="o">.</span><span class="n">_init_qv</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">qv</span><span class="p">)</span>
+<span class="go">[1.00000000e-02 7.78800783e-03 6.06530660e-03 4.72366553e-03</span>
+<span class="go"> 3.67879441e-03 2.86504797e-03 2.23130160e-03 1.73773943e-03</span>
+<span class="go"> 1.35335283e-03 1.05399225e-03 8.20849986e-04 6.39278612e-04</span>
+<span class="go"> 4.97870684e-04 3.87742078e-04 3.01973834e-04 2.35177459e-04</span>
+<span class="go"> 1.83156389e-04 1.42642339e-04 1.11089965e-04 8.65169520e-05</span>
+<span class="go"> 6.73794700e-05 5.24751840e-05 4.08677144e-05 3.18278080e-05</span>
+<span class="go"> 2.47875218e-05]</span>
+</pre></div>
+</div>
+<p>Introducing a surface pressure, you can then compute the pressure levels:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ps</span> <span class="o">=</span> <span class="mf">100000.0</span> <span class="c1"># Pa</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pressure</span> <span class="o">=</span> <span class="n">thermo</span><span class="o">.</span><span class="n">z2p</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">ps</span><span class="p">,</span> <span class="n">ta</span><span class="o">=</span><span class="n">temp</span><span class="p">,</span> <span class="n">qv</span><span class="o">=</span><span class="n">qv</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">pressure</span><span class="p">)</span>
+<span class="go">[100000.          94464.9259531   89174.17250373  84121.18329611</span>
+<span class="go"> 79299.02674886  74700.54043306  70318.43955459  66145.39805999</span>
+<span class="go"> 62174.10895315  58397.32887947  54807.9108365   51398.82794401</span>
+<span class="go"> 48163.19049423  45094.2579596   42185.44722181  39430.33797296</span>
+<span class="go"> 36822.67600293  34356.37490862  32025.51662654  29824.35108947</span>
+<span class="go"> 27747.29523191  25788.93151266  23944.00607998  22207.42667342</span>
+<span class="go"> 20574.26033205]</span>
+</pre></div>
+</div>
+<p>It can be used to compute the potential temperature profile:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">theta</span> <span class="o">=</span> <span class="n">thermo</span><span class="o">.</span><span class="n">t2theta</span><span class="p">(</span><span class="n">pressure</span><span class="p">,</span> <span class="n">temp</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+<span class="go">[300.         301.61731794 303.26724712 304.94943714 306.66379723</span>
+<span class="go"> 308.41045089 310.18970005 312.00199686 313.84792172 315.72816636</span>
+<span class="go"> 317.64352085 319.59486402 321.58315636 323.60943516 325.67481133</span>
+<span class="go"> 327.78046767 329.92765834 332.1177093  334.35201971 336.63206395</span>
+<span class="go"> 338.95939443 341.335645   343.76253495 346.24187358 348.77556536]</span>
+</pre></div>
+</div>
+<p>Here follows the thermodynmical functions and utilities defined in <a class="reference internal" href="#module-dephycf.thermo" title="dephycf.thermo"><code class="xref py py-mod docutils literal notranslate"><span class="pre">dephycf.thermo</span></code></a>.</p>
+</section>
+<section id="module-dephycf.thermo">
+<span id="api-reference"></span><h2>API Reference<a class="headerlink" href="#module-dephycf.thermo" title="Link to this heading">#</a></h2>
+<p>Thermodynamical functions and other utilities.</p>
+<p>This module provides conversions between water variables
+(mixing ratio <span class="math notranslate nohighlight">\(r_t\)</span>, specific humidity <span class="math notranslate nohighlight">\(q_t\)</span>, relative humidity <span class="math notranslate nohighlight">\(\mathcal{H}\)</span>),
+temperature variables (<span class="math notranslate nohighlight">\(T\)</span>, <span class="math notranslate nohighlight">\(\theta\)</span>), and hydrostatic conversions (<span class="math notranslate nohighlight">\(p\)</span> &lt;-&gt; <span class="math notranslate nohighlight">\(z\)</span>).</p>
+<p>Simple hypotheses are used and might be updated in the future.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="dephycf.thermo.rt2qt">
+<span class="sig-name descname"><span class="pre">rt2qt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">units</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'kg</span> <span class="pre">kg-1'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dephycf/thermo.html#rt2qt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dephycf.thermo.rt2qt" title="Link to this definition">#</a></dt>
+<dd><p>Convert total water mixing ratio to specific mass of total water.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rt</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> or array-like) – Total water mixing ratio.</p></li>
+<li><p><strong>units</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, optional) – Units for total water mixing ratio.
+Should be ‘kg kg-1’ (default) or ‘g kg-1’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Specific mass of total water (in <strong>units</strong>).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dephycf.thermo.qt2rt">
+<span class="sig-name descname"><span class="pre">qt2rt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">units</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'kg</span> <span class="pre">kg-1'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dephycf/thermo.html#qt2rt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dephycf.thermo.qt2rt" title="Link to this definition">#</a></dt>
+<dd><p>Convert specific mass of total water to total water mixing ratio.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>qt</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> or array-like) – Specific mass of total water.</p></li>
+<li><p><strong>units</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, optional) – Units for total water mixing ratio.
+Should be ‘kg kg-1’ (default) or ‘g kg-1’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Total water mixing ratio (in <strong>units</strong>).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dephycf.thermo.hur2rt">
+<span class="sig-name descname"><span class="pre">hur2rt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hur</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pressure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">units</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'kg</span> <span class="pre">kg-1'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dephycf/thermo.html#hur2rt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dephycf.thermo.hur2rt" title="Link to this definition">#</a></dt>
+<dd><p>Convert relative humidity to total water mixing ratio.
+Requires the MetPy module.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>hur</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> or array-like) – Relative humidity (0–1).</p></li>
+<li><p><strong>pressure</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> or array-like) – Pressure (Pa).</p></li>
+<li><p><strong>temp</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> or array-like) – Temperature (K).</p></li>
+<li><p><strong>units</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, optional) – Units for total water mixing ratio.
+Should be ‘kg kg-1’ (default) or ‘g kg-1’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Total water mixing ratio.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dephycf.thermo.hur2qt">
+<span class="sig-name descname"><span class="pre">hur2qt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hur</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pressure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">units</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'kg</span> <span class="pre">kg-1'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dephycf/thermo.html#hur2qt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dephycf.thermo.hur2qt" title="Link to this definition">#</a></dt>
+<dd><p>Convert relative humidity to specific mass of total water.
+Requires the MetPy module.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>hur</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> or array-like) – Relative humidity (0–1).</p></li>
+<li><p><strong>pressure</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> or array-like) – Pressure (Pa).</p></li>
+<li><p><strong>temp</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> or array-like) – Temperature (K).</p></li>
+<li><p><strong>units</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, optional) – Units for the specific mass of total water.
+Should be ‘kg kg-1’ (default) or ‘g kg-1’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Specific mass of total water.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dephycf.thermo.rt2hur">
+<span class="sig-name descname"><span class="pre">rt2hur</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pressure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">units</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'kg</span> <span class="pre">kg-1'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dephycf/thermo.html#rt2hur"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dephycf.thermo.rt2hur" title="Link to this definition">#</a></dt>
+<dd><p>Convert total water mixing ratio to relative humidity.
+Require the MetPy module.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rt</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> or array-like) – Total water mixing ratio.</p></li>
+<li><p><strong>pressure</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> or array-like) – Pressure (Pa).</p></li>
+<li><p><strong>temp</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> or array-like) – Temperature (K).</p></li>
+<li><p><strong>units</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, optional) – Units for the total water mixing ratio.
+Should be ‘kg kg-1’ (default) or ‘g kg-1’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Relative humidity (0-1).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dephycf.thermo.qt2hur">
+<span class="sig-name descname"><span class="pre">qt2hur</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pressure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">units</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'kg</span> <span class="pre">kg-1'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dephycf/thermo.html#qt2hur"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dephycf.thermo.qt2hur" title="Link to this definition">#</a></dt>
+<dd><p>Convert specific mass of total water to relative humidity.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>qt</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> or array-like) – Specific mass of total water.</p></li>
+<li><p><strong>pressure</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> or array-like) – Pressure (Pa).</p></li>
+<li><p><strong>temp</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> or array-like) – Temperature (K).</p></li>
+<li><p><strong>units</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, optional) – Units for the specific mass of total water.
+Should be ‘kg kg-1’ (default) or ‘g kg-1’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Relative humidity (0-1).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dephycf.thermo.advrt2advqt">
+<span class="sig-name descname"><span class="pre">advrt2advqt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">advrt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rt_units</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'kg</span> <span class="pre">kg-1'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dephycf/thermo.html#advrt2advqt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dephycf.thermo.advrt2advqt" title="Link to this definition">#</a></dt>
+<dd><p>Convert advection of the total water mixing ratio
+to the advection of the specific mass of total water.</p>
+<div class="math notranslate nohighlight">
+\[\left.\frac{\partial q_t}{\partial t}\right|_\textrm{adv}
+= \frac{1}{(1+r_t)^2} \times
+\left.\frac{\partial r_t}{\partial t}\right|_\textrm{adv}\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rt</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> or array-like) – Total water mixing ratio (in <strong>rt_units</strong>).</p></li>
+<li><p><strong>advrt</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> or array-like) – Advection of total water mixing ratio (kg kg-1 s-1).</p></li>
+<li><p><strong>rt_units</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, optional) – Units for the total water mixing ratio.
+Should be ‘kg kg-1’ (default) or ‘g kg-1’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Advection of the specific mass of total water (kg kg-1 s-1).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dephycf.thermo.advqt2advrt">
+<span class="sig-name descname"><span class="pre">advqt2advrt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">advqt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qt_units</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'kg</span> <span class="pre">kg-1'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dephycf/thermo.html#advqt2advrt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dephycf.thermo.advqt2advrt" title="Link to this definition">#</a></dt>
+<dd><p>Convert advection of the specific mass of total water
+to the advection of the total water mixing ratio, following:</p>
+<div class="math notranslate nohighlight">
+\[\left.\frac{\partial r_t}{\partial t}\right|_\textrm{adv}
+= \frac{1}{(1-q_t)^2} \times
+\left.\frac{\partial q_t}{\partial t}\right|_\textrm{adv}\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>qt</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> or array-like) – Specific mass of total water (in <strong>qt_units</strong>).</p></li>
+<li><p><strong>advqt</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> or array-like) – Advection of the specific mass of total water (kg kg-1 s-1).</p></li>
+<li><p><strong>qt_units</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, optional) – Units for the specific mass of total water.
+Should be ‘kg kg-1’ (default) or ‘g kg-1’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Advection of the specific mass of total water (kg kg-1 s-1).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dephycf.thermo.theta2t">
+<span class="sig-name descname"><span class="pre">theta2t</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kappa</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2857142857142857</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dephycf/thermo.html#theta2t"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dephycf.thermo.theta2t" title="Link to this definition">#</a></dt>
+<dd><p>Convert potential temperature to temperature
+using air pressure according to:</p>
+<div class="math notranslate nohighlight">
+\[T = \theta \left( \frac{p}{p_0}  \right)^\kappa\]</div>
+<p>Default values for <span class="math notranslate nohighlight">\(p_0\)</span> and <span class="math notranslate nohighlight">\(\kappa\)</span> comes from <a class="reference internal" href="constants.html#module-dephycf.constants" title="dephycf.constants"><code class="xref py py-mod docutils literal notranslate"><span class="pre">constants</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>p</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> or array-like) – Air pressure <span class="math notranslate nohighlight">\(p\)</span> (Pa).</p></li>
+<li><p><strong>theta</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> or array-like) – Potential temperature <span class="math notranslate nohighlight">\(\theta\)</span> (K).</p></li>
+<li><p><strong>p0</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, optional) – Reference pressure <span class="math notranslate nohighlight">\(p_0\)</span> (Pa). Value from <a class="reference internal" href="constants.html#dephycf.constants.p0" title="dephycf.constants.p0"><code class="xref py py-data docutils literal notranslate"><span class="pre">constants.p0</span></code></a></p></li>
+<li><p><strong>kappa</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, optional) – Ratio <span class="math notranslate nohighlight">\(\kappa\)</span> of the gas constant to the gas heat capacity (no units).
+Default is for dry air taken from <a class="reference internal" href="constants.html#dephycf.constants.kappa" title="dephycf.constants.kappa"><code class="xref py py-data docutils literal notranslate"><span class="pre">constants.kappa</span></code></a>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Temperature <span class="math notranslate nohighlight">\(T\)</span> (K).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dephycf.thermo.t2theta">
+<span class="sig-name descname"><span class="pre">t2theta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kappa</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2857142857142857</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dephycf/thermo.html#t2theta"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dephycf.thermo.t2theta" title="Link to this definition">#</a></dt>
+<dd><p>Convert temperature to potential temperature
+using air pressure according to:</p>
+<div class="math notranslate nohighlight">
+\[\theta = T \left( \frac{p_0}{p}  \right)^\kappa\]</div>
+<p>Default values for <span class="math notranslate nohighlight">\(p_0\)</span> and <span class="math notranslate nohighlight">\(\kappa\)</span> comes from <a class="reference internal" href="constants.html#module-dephycf.constants" title="dephycf.constants"><code class="xref py py-mod docutils literal notranslate"><span class="pre">constants</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>p</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> or array-like) – Air pressure <span class="math notranslate nohighlight">\(p\)</span> (Pa).</p></li>
+<li><p><strong>temp</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> or array-like) – Temperature <span class="math notranslate nohighlight">\(T\)</span> (K).</p></li>
+<li><p><strong>p0</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, optional) – Reference pressure <span class="math notranslate nohighlight">\(p_0\)</span> (Pa). Value from <a class="reference internal" href="constants.html#dephycf.constants.p0" title="dephycf.constants.p0"><code class="xref py py-data docutils literal notranslate"><span class="pre">constants.p0</span></code></a></p></li>
+<li><p><strong>kappa</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, optional) – Ratio <span class="math notranslate nohighlight">\(\kappa\)</span> of the gas constant to the gas heat capacity (no units).
+Default is for dry air taken from <a class="reference internal" href="constants.html#dephycf.constants.kappa" title="dephycf.constants.kappa"><code class="xref py py-data docutils literal notranslate"><span class="pre">constants.kappa</span></code></a>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Potential temperature <span class="math notranslate nohighlight">\(\theta\)</span> (K).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dephycf.thermo.z2p">
+<span class="sig-name descname"><span class="pre">z2p</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thetal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9.80665</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Rd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">287.0596736665907</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Rv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">461.5249933083879</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kappa</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2857142857142857</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dephycf/thermo.html#z2p"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dephycf.thermo.z2p" title="Link to this definition">#</a></dt>
+<dd><p>Compute the pressure of a set of given altitudes using the hydrostatic balance.
+At least one temperature in ta (<span class="math notranslate nohighlight">\(T\)</span>), theta (<span class="math notranslate nohighlight">\(\theta\)</span>),
+or thetal (<span class="math notranslate nohighlight">\(\theta_l\)</span>) should be given.
+If <span class="math notranslate nohighlight">\(\theta_l\)</span> is given, one simply assumes that <span class="math notranslate nohighlight">\(\theta = \theta_l\)</span>.
+If <span class="math notranslate nohighlight">\(\theta\)</span> is given, it is first converted to temperature <span class="math notranslate nohighlight">\(T\)</span>
+using <a class="reference internal" href="#dephycf.thermo.theta2t" title="dephycf.thermo.theta2t"><code class="xref py py-func docutils literal notranslate"><span class="pre">thermo.theta2t()</span></code></a>.</p>
+<p>Basically, in case temperature <span class="math notranslate nohighlight">\(T\)</span> is provided, at level <span class="math notranslate nohighlight">\(k\)</span>, one uses:</p>
+<div class="math notranslate nohighlight">
+\[\ln\frac{p_k}{p_{k-1}} = -\int_{z_k-1}^{z_{k}} \frac{g}{R T} dz\]</div>
+<div class="math notranslate nohighlight">
+\[\ln\frac{p_k}{p_{k-1}} \approx -0.5 g\times
+\left(\frac{1}{R_k T_k}
++ \frac{1}{R_{k-1}T_{k-1}}\right)
+  \times (z_k - z_{k-1})\]</div>
+<p>In case potential temperature <span class="math notranslate nohighlight">\(\theta\)</span> is provided, at level <span class="math notranslate nohighlight">\(k\)</span>, one uses:</p>
+<div class="math notranslate nohighlight">
+\[To be completed\]</div>
+<p>In case both temperature and potential temperature are provided, potential temperature is
+use as a priority.</p>
+<p>If specific humidity <span class="math notranslate nohighlight">\(q_v\)</span> is given, <span class="math notranslate nohighlight">\(R = R_d + q_v(R_v-R_d)\)</span>,
+otherwise <span class="math notranslate nohighlight">\(R = R_d\)</span>.</p>
+<p>Default values for <span class="math notranslate nohighlight">\(g\)</span>, <span class="math notranslate nohighlight">\(R_d\)</span>, <span class="math notranslate nohighlight">\(R_v\)</span>, <span class="math notranslate nohighlight">\(p_0\)</span> and <span class="math notranslate nohighlight">\(\kappa\)</span>
+are set in <a class="reference internal" href="constants.html#module-dephycf.constants" title="dephycf.constants"><code class="xref py py-mod docutils literal notranslate"><span class="pre">constants</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>z</strong> (<em>array-like</em><em> of </em><em>size N</em>) – Altitude <span class="math notranslate nohighlight">\(z\)</span> (m).</p></li>
+<li><p><strong>ps</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Surface pressure (Pa).</p></li>
+<li><p><strong>ta</strong> (<em>array-like</em><em> of </em><em>size N</em><em>, </em><em>optional</em>) – Temperature <span class="math notranslate nohighlight">\(T\)</span> (K).</p></li>
+<li><p><strong>theta</strong> (<em>array-like</em><em> of </em><em>size N</em><em>, </em><em>optional</em>) – Potential temperature <span class="math notranslate nohighlight">\(\theta\)</span> (K).</p></li>
+<li><p><strong>thetal</strong> (<em>array-like</em><em> of </em><em>size N</em><em>, </em><em>optional</em>) – Liquid water potential temperature <span class="math notranslate nohighlight">\(\theta_l\)</span> (K).</p></li>
+<li><p><strong>qv</strong> (<em>array-like</em><em> of </em><em>size N</em><em>, </em><em>optional</em>) – Specific humidity (kg kg-1). If given, the weight of water vapor is accounted for.</p></li>
+<li><p><strong>g</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, optional) – Gravity acceleration <span class="math notranslate nohighlight">\(g\)</span> (m s-2). Value from <a class="reference internal" href="constants.html#dephycf.constants.g" title="dephycf.constants.g"><code class="xref py py-data docutils literal notranslate"><span class="pre">constants.g</span></code></a></p></li>
+<li><p><strong>Rd</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, optional) – Dry air gas constant <span class="math notranslate nohighlight">\(R_d\)</span> (J kg-1 K-1). Value from <a class="reference internal" href="constants.html#dephycf.constants.Rd" title="dephycf.constants.Rd"><code class="xref py py-data docutils literal notranslate"><span class="pre">constants.Rd</span></code></a></p></li>
+<li><p><strong>Rv</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, optional) – Water vapor gas constant <span class="math notranslate nohighlight">\(R_v\)</span> (J kg-1 K-1). Value from <a class="reference internal" href="constants.html#dephycf.constants.Rv" title="dephycf.constants.Rv"><code class="xref py py-data docutils literal notranslate"><span class="pre">constants.Rv</span></code></a></p></li>
+<li><p><strong>p0</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, optional) – Reference pressure <span class="math notranslate nohighlight">\(p_0\)</span> (Pa). Value from <a class="reference internal" href="constants.html#dephycf.constants.p0" title="dephycf.constants.p0"><code class="xref py py-data docutils literal notranslate"><span class="pre">constants.p0</span></code></a></p></li>
+<li><p><strong>kappa</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, optional) – Ratio <span class="math notranslate nohighlight">\(\kappa\)</span> of the gas constant to the gas heat capacity (no units).
+Default is for dry air taken from <a class="reference internal" href="constants.html#dephycf.constants.kappa" title="dephycf.constants.kappa"><code class="xref py py-data docutils literal notranslate"><span class="pre">constants.kappa</span></code></a>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Air pressure <span class="math notranslate nohighlight">\(p\)</span> (Pa).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code> of size N</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dephycf.thermo.p2z">
+<span class="sig-name descname"><span class="pre">p2z</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thetal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9.80665</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Rd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">287.0596736665907</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Rv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">461.5249933083879</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kappa</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2857142857142857</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dephycf/thermo.html#p2z"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dephycf.thermo.p2z" title="Link to this definition">#</a></dt>
+<dd><p>Compute the altitude of a set of given pressure levels using the hydrostatic balance.
+At least one temperature in ta (<span class="math notranslate nohighlight">\(T\)</span>), theta (<span class="math notranslate nohighlight">\(\theta\)</span>),
+or thetal (<span class="math notranslate nohighlight">\(\theta_l\)</span>) should be given.
+If <span class="math notranslate nohighlight">\(\theta_l\)</span> is given, one simply assumes that <span class="math notranslate nohighlight">\(\theta = \theta_l\)</span>.
+If <span class="math notranslate nohighlight">\(\theta\)</span> is given, it is first converted to temperature <span class="math notranslate nohighlight">\(T\)</span>
+using <a class="reference internal" href="#dephycf.thermo.theta2t" title="dephycf.thermo.theta2t"><code class="xref py py-func docutils literal notranslate"><span class="pre">thermo.theta2t()</span></code></a>.</p>
+<p>Basically, at level <span class="math notranslate nohighlight">\(k\)</span>, one uses:</p>
+<div class="math notranslate nohighlight">
+\[z_k - z_{k-1} = -\int_{p_k-1}^{p_{k}} \frac{R T}{g} d\ln p\]</div>
+<div class="math notranslate nohighlight">
+\[z_k - z_{k-1}  \approx -\frac{0.5\times(R_k T_k+R_{k-1}T_{k-1})}{g}
+\times\ln\frac{p_k}{p_{k-1}}\]</div>
+<p>If specific humidity <span class="math notranslate nohighlight">\(q_v\)</span> is given, <span class="math notranslate nohighlight">\(R = R_d + q_v(R_v-R_d)\)</span>,
+otherwise <span class="math notranslate nohighlight">\(R = R_d\)</span>.
+Default values for <span class="math notranslate nohighlight">\(g\)</span>, <span class="math notranslate nohighlight">\(R_d\)</span>, <span class="math notranslate nohighlight">\(R_v\)</span>, <span class="math notranslate nohighlight">\(p_0\)</span> and <span class="math notranslate nohighlight">\(\kappa\)</span>
+are set in <a class="reference internal" href="constants.html#module-dephycf.constants" title="dephycf.constants"><code class="xref py py-mod docutils literal notranslate"><span class="pre">constants</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>p</strong> (<em>array-like</em><em> of </em><em>size N</em>) – Air pressure <span class="math notranslate nohighlight">\(p\)</span> (m).</p></li>
+<li><p><strong>zs</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, optional) – Surface altitude (m). Default is 0.</p></li>
+<li><p><strong>ta</strong> (<em>array-like</em><em> of </em><em>size N</em><em>, </em><em>optional</em>) – Temperature <span class="math notranslate nohighlight">\(T\)</span> (K).</p></li>
+<li><p><strong>theta</strong> (<em>array-like</em><em> of </em><em>size N</em><em>, </em><em>optional</em>) – Potential temperature <span class="math notranslate nohighlight">\(\theta\)</span> (K).</p></li>
+<li><p><strong>thetal</strong> (<em>array-like</em><em> of </em><em>size N</em><em>, </em><em>optional</em>) – Liquid water potential temperature <span class="math notranslate nohighlight">\(\theta_l\)</span> (K).</p></li>
+<li><p><strong>qv</strong> (<em>array-like</em><em> of </em><em>size N</em><em>, </em><em>optional</em>) – Specific humidity (kg kg-1). If given, the weight of water vapor is accounted for.</p></li>
+<li><p><strong>g</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, optional) – Gravity acceleration <span class="math notranslate nohighlight">\(g\)</span> (m s-2). Value from <a class="reference internal" href="constants.html#dephycf.constants.g" title="dephycf.constants.g"><code class="xref py py-data docutils literal notranslate"><span class="pre">constants.g</span></code></a></p></li>
+<li><p><strong>Rd</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, optional) – Dry air gas constant <span class="math notranslate nohighlight">\(R_d\)</span> (J kg-1 K-1). Value from <a class="reference internal" href="constants.html#dephycf.constants.Rd" title="dephycf.constants.Rd"><code class="xref py py-data docutils literal notranslate"><span class="pre">constants.Rd</span></code></a></p></li>
+<li><p><strong>Rv</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, optional) – Water vapor gas constant <span class="math notranslate nohighlight">\(R_v\)</span> (J kg-1 K-1). Value from <a class="reference internal" href="constants.html#dephycf.constants.Rv" title="dephycf.constants.Rv"><code class="xref py py-data docutils literal notranslate"><span class="pre">constants.Rv</span></code></a></p></li>
+<li><p><strong>p0</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, optional) – Reference pressure <span class="math notranslate nohighlight">\(p_0\)</span> (Pa). Value from <a class="reference internal" href="constants.html#dephycf.constants.p0" title="dephycf.constants.p0"><code class="xref py py-data docutils literal notranslate"><span class="pre">constants.p0</span></code></a></p></li>
+<li><p><strong>kappa</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, optional) – Ratio <span class="math notranslate nohighlight">\(\kappa\)</span> of the gas constant to the gas heat capacity (no units).
+Default is for dry air taken from <a class="reference internal" href="constants.html#dephycf.constants.kappa" title="dephycf.constants.kappa"><code class="xref py py-data docutils literal notranslate"><span class="pre">constants.kappa</span></code></a>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Altitude <span class="math notranslate nohighlight">\(z\)</span> (m).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code> of size N</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dephycf.thermo.zlev2plev">
+<span class="sig-name descname"><span class="pre">zlev2plev</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">zlev</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dephycf/thermo.html#zlev2plev"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dephycf.thermo.zlev2plev" title="Link to this definition">#</a></dt>
+<dd><p>Linear interpolation of pressure at a given altitude
+The function <code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.interp()</span></code> is used.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>zlev</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Altitude at which one wants to interpolate pressure (m).</p></li>
+<li><p><strong>z</strong> (<em>array-like</em><em> of </em><em>size N</em>) – Altitudes at which pressure is known (m).</p></li>
+<li><p><strong>p</strong> (<em>array-like</em><em> of </em><em>size N</em>) – Air pressure at levels <strong>z</strong> (Pa).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Air pressure at level <strong>zlev</strong> (Pa).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dephycf.thermo.plev2zlev">
+<span class="sig-name descname"><span class="pre">plev2zlev</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plev</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dephycf/thermo.html#plev2zlev"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dephycf.thermo.plev2zlev" title="Link to this definition">#</a></dt>
+<dd><p>Linear interpolation of altitude at a given pressure level.
+The function <code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.interp()</span></code> is used.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>plev</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Pressure level at which one wants to interpolate altitude (Pa).</p></li>
+<li><p><strong>z</strong> (<em>array-like</em><em> of </em><em>size N</em>) – Altitudes at which pressure is known (m).</p></li>
+<li><p><strong>p</strong> (<em>array-like</em><em> of </em><em>size N</em>) – Air pressure at levels <strong>z</strong> (Pa).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Altitude of the pressure <strong>plev</strong> (m).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dephycf.thermo.rh2qv_GG">
+<span class="sig-name descname"><span class="pre">rh2qv_GG</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hur</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pressure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temp</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dephycf/thermo.html#rh2qv_GG"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dephycf.thermo.rh2qv_GG" title="Link to this definition">#</a></dt>
+<dd><p>Convert relative humidity to specific humidity
+using the Goff-Gratch formulation.
+Adapted from <a class="reference external" href="http://climatologie.u-bourgogne.fr/data/matlab/goff_gratch.m">http://climatologie.u-bourgogne.fr/data/matlab/goff_gratch.m</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>hur</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> or array-like) – Relative humidity (%).</p></li>
+<li><p><strong>pressure</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> or array-like) – Pressure (Pa).</p></li>
+<li><p><strong>temp</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> or array-like) – Temperature (K).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Specific humidity.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dephycf.thermo.td2qv">
+<span class="sig-name descname"><span class="pre">td2qv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">td</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pressure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">units</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'kg</span> <span class="pre">kg-1'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dephycf/thermo.html#td2qv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dephycf.thermo.td2qv" title="Link to this definition">#</a></dt>
+<dd><p>Convert dew-point temperature to specific humidity.
+Requires the MetPy module.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>td</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> or array-like) – Dew-point temperature (K)</p></li>
+<li><p><strong>pressure</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> or array-like) – Pressure (Pa).</p></li>
+<li><p><strong>units</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, optional) – Units for the specific humidity.
+Should be ‘kg kg-1’ (default) or ‘g kg-1’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Specific humidity.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="constants.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Physical Constants (<code class="xref py py-mod docutils literal notranslate"><span class="pre">dephycf.constants</span></code>)</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="attributes.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Attributes (<code class="xref py py-mod docutils literal notranslate"><span class="pre">dephycf.attributes</span></code>)</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example">Example</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-dephycf.thermo">API Reference</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.thermo.rt2qt"><code class="docutils literal notranslate"><span class="pre">rt2qt()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.thermo.qt2rt"><code class="docutils literal notranslate"><span class="pre">qt2rt()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.thermo.hur2rt"><code class="docutils literal notranslate"><span class="pre">hur2rt()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.thermo.hur2qt"><code class="docutils literal notranslate"><span class="pre">hur2qt()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.thermo.rt2hur"><code class="docutils literal notranslate"><span class="pre">rt2hur()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.thermo.qt2hur"><code class="docutils literal notranslate"><span class="pre">qt2hur()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.thermo.advrt2advqt"><code class="docutils literal notranslate"><span class="pre">advrt2advqt()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.thermo.advqt2advrt"><code class="docutils literal notranslate"><span class="pre">advqt2advrt()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.thermo.theta2t"><code class="docutils literal notranslate"><span class="pre">theta2t()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.thermo.t2theta"><code class="docutils literal notranslate"><span class="pre">t2theta()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.thermo.z2p"><code class="docutils literal notranslate"><span class="pre">z2p()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.thermo.p2z"><code class="docutils literal notranslate"><span class="pre">p2z()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.thermo.zlev2plev"><code class="docutils literal notranslate"><span class="pre">zlev2plev()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.thermo.plev2zlev"><code class="docutils literal notranslate"><span class="pre">plev2zlev()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.thermo.rh2qv_GG"><code class="docutils literal notranslate"><span class="pre">rh2qv_GG()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.thermo.td2qv"><code class="docutils literal notranslate"><span class="pre">td2qv()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/api/thermo.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, DEPHY.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.4.7.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

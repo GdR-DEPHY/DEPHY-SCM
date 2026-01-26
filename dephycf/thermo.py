@@ -1,693 +1,795 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Provide a set of useful thermodynamical functions
+Thermodynamical functions and other utilities.
 
-Functions
----------
-rt2qt(rt, units='kg kg-1')
-    Compute total water knowing total water mixing ratio
-qt2rt(qt, units='kg kg-1')
-    Compute total water mixing ratio knowing total water
-hur2qt(hur, pressure, temp, units='kg kg-1')
-    Compute total water knowing relative humidity
-hur2rt(hur, pressure, temp, units='kg kg-1')
-    Compute total water mixing ratio knowing relative humidity
-qt2hur(qt, pressure, temp, units='kg kg-1')
-    Compute relative humidity knowin total water
-rt2hur(rt, pressure, temp, units='kg kg-1')
-    Compute relative humidity knowing total water mixing ratio
-advrt2advqt(rt=None, advrt=None, rt_units='kg kg-1')
-    Compute total water advection knowing total water mixing ratio advection
-advqt2advrt(qt=None, advqt=None, qt_units='kg kg-1')
-    Compute total water mixing ratio advection knowing total water advection
-theta2t(p=None, theta=None, p0=cc.p0, kappa=cc.kappa)
-    Compute temperature knowing potential temperature
-t2theta(p=None, temp=None, p0=cc.p0, kappa=cc.kappa)
-    Compute potential temperature knowing temperature
-z2p(thetal=None, theta=None, ta=None, z=None, ps=None, qv=None, g=cc.g, Rd=cc.Rd, Rv=cc.Rv, p0=cc.p0, kappa=cc.kappa)
-    Compute the pressure of a set of given altitudes
-p2z(thetal=None, theta=None, ta=None, p=None, zs=0., qv=None, g=cc.g, Rd=cc.Rd, Rv=cc.Rv, p0=cc.p0, kappa=cc.kappa)
-    Compute the altitude of a given set of pressure levels
-zlev2plev(zlev, z, p)
-    Compute the pressure of a given altitude (interpolation)
-plev2zlev(plev, z, p)
-    Compute the altitude of a given pressure level (interpolation)
-rh2qv(rh,temp,pres)
-    Compute the specific humidity knowing the relative humidity
-td2qv(td,pres)
-    Compute the specific humidity knowing the dew-point temperature
+This module provides conversions between water variables
+(mixing ratio :math:`r_t`, specific humidity :math:`q_t`, relative humidity :math:`\\mathcal{H}`),
+temperature variables (:math:`T`, :math:`\\theta`), and hydrostatic conversions (:math:`p` <-> :math:`z`).
 
-Created on 27 November 2019
-@author: Romain Roehrig
+Simple hypotheses are used and might be updated in the future.
 """
 
 import logging
-logger = logging.getLogger(__name__)
-
 import math
 import numpy as np
 
 try:
-    from metpy.calc import mixing_ratio_from_relative_humidity, relative_humidity_from_mixing_ratio
-    from metpy.units import units as Munits
+    from . import constants as cc
 except ImportError:
-    logger.debug('Cannot load metpy library')
-    logger.debug('Using relative humidity is not yet possible without this library')
-except:
-    raise
+    import constants as cc
 
-from . import constants as cc
+logger = logging.getLogger(__name__)
 
-#############################
-def rt2qt(rt, units='kg kg-1'):
-    """Compute total water knowing total water mixing ratio
+# =============================================================================
+# Optional dependency: MetPy
+# =============================================================================
+try:
+    from metpy.calc import (
+        mixing_ratio_from_relative_humidity,
+        relative_humidity_from_mixing_ratio,
+        specific_humidity_from_dewpoint,
+    )
+    from metpy.units import units as Munits
+
+    HAS_METPY = True
+except ImportError:
+    HAS_METPY = False
+    logger.debug("MetPy not available: RH-based functions disabled")
+
+
+# =============================================================================
+# Helpers
+# =============================================================================
+def _check_units(units: str, allowed: tuple[str, ...]) -> None:
+    """Validate unit string."""
+    if units not in allowed:
+        raise ValueError(f"Unknown units '{units}', expected one of {allowed}")
+
+
+def _asarray(x, dtype=np.float64):
+    """Convert input to numpy array (float64)."""
+    return np.asarray(x, dtype=dtype)
+
+
+def _init_temp(z, T0=300, lapse_rate=-6.5e-3):
+    """
+    Initialize a temperature profile starting à T0 (300 K by default) at the surface
+    and using a given lapse rate (-6.5 K km-1 by default)
+    """
+
+    return T0 + lapse_rate * z
+
+def _init_qv(z, qv0=0.010, Hq=2000.0):
+    """
+    Initialize a specific humidity profile starting à qv0 (10 g kg-1 by default) at the surface
+    and exponentially decreasing with a length scale Hq (2 km by default)
+    """
+
+    return qv0 * np.exp(-z / Hq)
+
+
+# =============================================================================
+# Conversion specific mass of total water / total water mixing ratio
+# =============================================================================
+def rt2qt(rt, units="kg kg-1"):
+    """
+    Convert total water mixing ratio to specific mass of total water.
 
     Parameters
     ----------
-    rt : float, array
-        Total water mixing ratio
-    units : str, optional
-        Total water mixing ratio units (default is kg kg-1)
+    rt : :class:`float` or array-like
+        Total water mixing ratio.
+    units : :class:`str`, optional
+        Units for total water mixing ratio.
+        Should be 'kg kg-1' (default) or 'g kg-1'.
 
     Returns
     -------
-    float, array
-        Total water (in units)
+    :class:`float` or :class:`ndarray`
+        Specific mass of total water (in **units**).
     """
+    _check_units(units, ("kg kg-1", "g kg-1"))
+    rt = _asarray(rt)
 
-    if units == 'kg kg-1':
-        return rt/(1+rt)
-    elif units == 'g kg-1':
-        return rt/(1.+rt/1000.)
-    else:
-        logger.error('units unknown: {0}'.forma(units))
-        raise ValueError('units unknown: {0}'.forma(units))
+    if units == "kg kg-1":
+        return rt / (1.0 + rt)
 
-#############################
-def qt2rt(qt, units='kg kg-1'):
-    """Compute total water mixing ratio knowing total water
+    return rt / (1.0 + rt/1000.)
+
+
+def qt2rt(qt, units="kg kg-1"):
+    """
+    Convert specific mass of total water to total water mixing ratio.
 
     Parameters
     ----------
-    qt : float, array
-        Total water
-    units : str, optional
-        Total water units (default is kg kg-1)
+    qt : :class:`float` or array-like
+        Specific mass of total water.
+    units : :class:`str`, optional
+        Units for total water mixing ratio.
+        Should be 'kg kg-1' (default) or 'g kg-1'.
 
     Returns
     -------
-    float, array
-        Total water mixing ratio (in units)
+    :class:`float` or :class:`ndarray`
+        Total water mixing ratio (in **units**).
     """
+    _check_units(units, ("kg kg-1", "g kg-1"))
+    qt = _asarray(qt)
 
-    if units == 'kg kg-1':
-        return qt/(1-qt)
-    elif units == 'g kg-1':
-        return qt/(1.-qt/1000.)
-    else:
-        logger.error('units unknown: {0}'.forma(units))
-        raise ValueError('units unknown: {0}'.forma(units))
+    if units == "kg kg-1":
+        return qt / (1.0 - qt)
 
-#############################
-def hur2qt(hur, pressure, temp, units='kg kg-1'):
-    """Compute total water knowing relative humidity
+    return qt / (1.0 - qt/1000.)
+
+
+# ====================================================================================
+# Conversion between relative humidity and specific mass / mixing ratio of total water
+# (MetPy required)
+# ====================================================================================
+def hur2rt(hur, pressure, temp, units="kg kg-1"):
+    """
+    Convert relative humidity to total water mixing ratio.
+    Requires the MetPy module.
 
     Parameters
     ----------
-    hur : float, array
-        Relative humidity (no units)
-    pressure : float, array
-        Air pressure (Pa)
-    temp : float, array
-        Air temperature (K)
-    units : str, optional
-        Total water mixing ratio units (default is kg kg-1)
+    hur : :class:`float` or array-like
+        Relative humidity (0–1).
+    pressure : :class:`float` or array-like
+        Pressure (Pa).
+    temp : :class:`float` or array-like
+        Temperature (K).
+    units : :class:`str`, optional
+        Units for total water mixing ratio.
+        Should be 'kg kg-1' (default) or 'g kg-1'.
 
     Returns
     -------
-    float, array
-        Total water (in units)
+    :class:`float` or :class:`ndarray`
+        Total water mixing ratio.
     """
+    if not HAS_METPY:
+        raise RuntimeError("MetPy is required for RH-based conversions")
 
-    p_loc = pressure * Munits.Pa
-    temp_loc = temp * Munits.kelvin
-    
-    if isinstance(hur,float):
-        rv = float(mixing_ratio_from_relative_humidity(p_loc, temp_loc, hur))
-    else:
-        nlev, = hur.shape
-        rv = np.array([mixing_ratio_from_relative_humidity(p_loc[i], temp_loc[i], hur[i]) for i in range(nlev)])
+    _check_units(units, ("kg kg-1", "g kg-1"))
 
-    if units == 'kg kg-1':
-        return rv/(1+rv)
-    elif units == 'g kg-1':
-        return rv/(1.+rv)*1000.
-    else:
-        logger.error('units unknown: {0}'.forma(units))
-        raise ValueError('units unknown: {0}'.forma(units))
+    hur = _asarray(hur)
+    pressure = _asarray(pressure) * Munits.Pa
+    temp = _asarray(temp) * Munits.kelvin
 
-#############################
-def hur2rt(hur, pressure, temp, units='kg kg-1'):
-    """Compute total water mixing ratio knowing relative humidity
+    rv = mixing_ratio_from_relative_humidity(
+        pressure, temp, hur
+    ).magnitude
 
-    Parameters
-    ----------
-    hur : float, array
-        Relative humidity (no units)
-    pressure : float, array
-        Air pressure (Pa)
-    temp : float, array
-        Air temperature (K)
-    units : str, optional
-        Total water mixing ratio units (default is kg kg-1)
-
-    Returns
-    -------
-    float, array
-        Total water mixing ratio (in units)
-    """
-
-    p_loc = pressure * Munits.Pa
-    temp_loc = temp * Munits.kelvin
-    
-    if isinstance(hur,float):
-        rv = float(mixing_ratio_from_relative_humidity(p_loc, temp_loc, hur))
-    else:
-        nlev, = hur.shape
-        rv = np.array([mixing_ratio_from_relative_humidity(p_loc[i], temp_loc[i], hur[i]) for i in range(nlev)])
-
-    if units == 'kg kg-1':
+    if units == "kg kg-1":
         return rv
-    elif units == 'g kg-1':
-        return rv*1000.
-    else:
-        logger.error('units unknown: {0}'.forma(units))
-        raise ValueError('units unknown: {0}'.forma(units))
 
-#############################
-def qt2hur(qt, pressure, temp, units='kg kg-1'):
-    """Compute relative humidity knowing total water
+    return rv * 1000.0
+
+
+def hur2qt(hur, pressure, temp, units="kg kg-1"):
+    """
+    Convert relative humidity to specific mass of total water.
+    Requires the MetPy module.
 
     Parameters
     ----------
-    qt : float, array
-        Total water (in units)
-    pressure : float, array
-        Air pressure (Pa)
-    temp : float, array
-        Air temperature (K)
-    units : str, optional
-        Total water units (default is kg kg-1)
+    hur : :class:`float` or array-like
+        Relative humidity (0–1).
+    pressure : :class:`float` or array-like
+        Pressure (Pa).
+    temp : :class:`float` or array-like
+        Temperature (K).
+    units : :class:`str`, optional
+        Units for the specific mass of total water.
+        Should be 'kg kg-1' (default) or 'g kg-1'.
 
     Returns
     -------
-    float, array
-        Relative humidityr (no units)
+    :class:`float` or :class:`ndarray`
+        Specific mass of total water.
     """
+    if not HAS_METPY:
+        raise RuntimeError("MetPy is required for RH-based conversions")
 
-    p_loc = pressure * Munits.Pa
-    temp_loc = temp * Munits.kelvin
+    _check_units(units, ("kg kg-1", "g kg-1"))
 
-    if units == 'kg kg-1':
-        rv_loc = qt/(1.-qt)
-    elif units == 'g kg-1':
-        rv_loc = qt/1000./(1.-qt/1000.)
-    else:
-        logger.error('units unknown: {0}'.forma(units))
-        raise ValueError('units unknown: {0}'.forma(units))
+    rt = hur2rt(hur, pressure, temp, units=units)
 
-    if isinstance(qt,float):
-        hur = float(relative_humidity_from_mixing_ratio(p_loc, temp_loc, rv_loc))
-    else:
-        nlev, = qt.shape
-        hur = np.array([relative_humidity_from_mixing_ratio(p_loc[i], temp_loc[i], rv_loc[i]) for i in range(nlev)])
+    if units == "kg kg-1":
+        return rt / (1.0 + rt)
 
-    return hur
+    return (rt / (1000.0 + rt))
 
-#############################
-def rt2hur(rt, pressure, temp, units='kg kg-1'):
-    """Compute relative humidity knowing total water mixing ratio
+
+def rt2hur(rt, pressure, temp, units="kg kg-1"):
+    """
+    Convert total water mixing ratio to relative humidity.
+    Require the MetPy module.
 
     Parameters
     ----------
-    rt : float, array
-        Total water mixing ratio (in units)
-    pressure : float, array
-        Air pressure (Pa)
-    temp : float, array
-        Air temperature (K)
-    units : str, optional
-        Total water mixing ratio units (default is kg kg-1)
+    rt : :class:`float` or array-like
+        Total water mixing ratio.
+    pressure : :class:`float` or array-like
+        Pressure (Pa).
+    temp : :class:`float` or array-like
+        Temperature (K).
+    units : :class:`str`, optional
+        Units for the total water mixing ratio.
+        Should be 'kg kg-1' (default) or 'g kg-1'.
 
     Returns
     -------
-    float, array
-        Relative humidityr (no units)
+    :class:`float` or :class:`ndarray`
+        Relative humidity (0-1).
     """
+    if not HAS_METPY:
+        raise RuntimeError("MetPy is required for RH-based conversions")
 
-    p_loc = pressure * Munits.Pa
-    temp_loc = temp * Munits.kelvin
+    _check_units(units, ("kg kg-1", "g kg-1"))
 
-    if units == 'kg kg-1':
-        rv_loc = rt*1.
-    elif units == 'g kg-1':
-        rv_loc = rt/1000.
-    else:
-        logger.error('units unknown: {0}'.forma(units))
-        raise ValueError('units unknown: {0}'.forma(units))
+    rt = _asarray(rt)
+    pressure = _asarray(pressure) * Munits.Pa
+    temp = _asarray(temp) * Munits.kelvin
 
-    if isinstance(qt,float):
-        hur = float(relative_humidity_from_mixing_ratio(p_loc, temp_loc, rv_loc))
-    else:
-        nlev, =rt.shape
-        hur = np.array([relative_humidity_from_mixing_ratio(p_loc[i], temp_loc[i], rv_loc[i]) for i in range(nlev)])
+    rv = rt if units == "kg kg-1" else rt / 1000.0
 
-    return hur
+    return relative_humidity_from_mixing_ratio(
+        pressure, temp, rv
+    ).magnitude
 
-#############################
-def advrt2advqt(rt=None, advrt=None, rt_units='kg kg-1'):
-    """Compute total water advection knowing total water mixing ratio advection
+
+def qt2hur(qt, pressure, temp, units="kg kg-1"):
+    """
+    Convert specific mass of total water to relative humidity.
 
     Parameters
     ----------
-    rt : float, array
-        Total water mixing ratio
-    advrt : float, array
-        Total water advection
-    rt_units : str, optional
-        Units of mixing ratio (default is kg kg-1)
+    qt : :class:`float` or array-like
+        Specific mass of total water.
+    pressure : :class:`float` or array-like
+        Pressure (Pa).
+    temp : :class:`float` or array-like
+        Temperature (K).
+    units : :class:`str`, optional
+        Units for the specific mass of total water.
+        Should be 'kg kg-1' (default) or 'g kg-1'.
 
     Returns
     -------
-    float, array
-        Total water mixing ratio advection (units is rt_units per unit of time)
+    :class:`float` or :class:`ndarray`
+        Relative humidity (0-1).
     """
+    if not HAS_METPY:
+        raise RuntimeError("MetPy is required for RH-based conversions")
 
-    if rt is None:
-        logger.error("rt is missing")
-        raise ValueError("rt is missing")
-    if advrt is None:
-        logger.error("advrt is missing")
-        raise ValueError("advrt is missing")
+    _check_units(units, ("kg kg-1", "g kg-1"))
 
-    if rt_units == 'kg kg-1':
-        return advrt/((1+rt)*(1+rt))
-    elif rt_units == 'g kg-1':
-        return advrt/((1.+rt/1000.)*(1.+rt/1000.))
-    else:
-        logger.error('units unknown for rt: {0}'.forma(units))
-        raise ValueError('units unknown for rt: {0}'.forma(units))
+    qt = _asarray(qt)
+    qt = qt if units == "kg kg-1" else qt / 1000.0
+    rt = qt / (1.0 - qt)
 
-#############################
-def advqt2advrt(qt=None, advqt=None, qt_units='kg kg-1'):
-    """Compute total water mixing ratio advection knowing total water advection
+    return rt2hur(rt, pressure, temp, units="kg kg-1")
+    
+# =============================================================================
+# Advection conversions
+# =============================================================================
+def advrt2advqt(rt, advrt, rt_units="kg kg-1"):
+    """
+    Convert advection of the total water mixing ratio
+    to the advection of the specific mass of total water.
+
+    .. math:: \\left.\\frac{\\partial q_t}{\\partial t}\\right|_\\textrm{adv}
+              = \\frac{1}{(1+r_t)^2} \\times 
+              \\left.\\frac{\\partial r_t}{\\partial t}\\right|_\\textrm{adv}
 
     Parameters
     ----------
-    qt : float, array
-        Total water
-    advqt : float, array
-        Total water advection
-    qt_units : str, optional
-        Units of total water (default is kg kg-1)
+    rt : :class:`float` or array-like
+        Total water mixing ratio (in **rt_units**).
+    advrt : :class:`float` or array-like
+        Advection of total water mixing ratio (kg kg-1 s-1).
+    rt_units : :class:`str`, optional
+        Units for the total water mixing ratio.
+        Should be 'kg kg-1' (default) or 'g kg-1'.
 
     Returns
     -------
-    float, array
-        Total water mixing ratio advection (units is qt_units per unit of time)
+    :class:`float` or :class:`ndarray`
+        Advection of the specific mass of total water (kg kg-1 s-1).
     """
 
-    if qt is None:
-        logger.error("qt is missing")
-        raise ValueError("qt is missing")
-    if advqt is None:
-        logger.error("advqt is missing")
-        raise ValueError("advqt is missing")
+    _check_units(rt_units, ("kg kg-1", "g kg-1"))
 
-    if qt_units == 'kg kg-1':
-        return advqt/((1-qt)*(1-qt))
-    elif qt_units == 'g kg-1':
-        return advqt/((1.-qt/1000.)*(1.-qt/1000.))
-    else:
-        logger.error('units unknown for qt: {0}'.forma(units))
-        raise ValueError('units unknown for qt: {0}'.forma(units))
+    rt = _asarray(rt)
+    advrt = _asarray(advrt)
 
-#############################
-def theta2t(p=None, theta=None, p0=cc.p0, kappa=cc.kappa):
-    """Compute temperature knowing potential temperature
+    if rt_units == "kg kg-1":
+        return advrt / (1.0 + rt) ** 2
+
+    return advrt / (1.0 + rt / 1000.0) ** 2
+
+
+def advqt2advrt(qt, advqt, qt_units="kg kg-1"):
+    """
+    Convert advection of the specific mass of total water
+    to the advection of the total water mixing ratio, following:
+
+    .. math:: \\left.\\frac{\\partial r_t}{\\partial t}\\right|_\\textrm{adv}
+              = \\frac{1}{(1-q_t)^2} \\times 
+              \\left.\\frac{\\partial q_t}{\\partial t}\\right|_\\textrm{adv}
 
     Parameters
     ----------
-    theta : float, array
-        Potential temperature
-    p : float, array
-        Pressure
-    p0 : float, optional
-        Reference pressure
-    kappa : float, optional
-        Rd/Cp, used to compute theta
+    qt : :class:`float` or array-like
+        Specific mass of total water (in **qt_units**).
+    advqt : :class:`float` or array-like
+        Advection of the specific mass of total water (kg kg-1 s-1).
+    qt_units : :class:`str`, optional
+        Units for the specific mass of total water.
+        Should be 'kg kg-1' (default) or 'g kg-1'.
 
     Returns
     -------
-    float, array
-        Temperature
+    :class:`float` or :class:`ndarray`
+        Advection of the specific mass of total water (kg kg-1 s-1).
     """
+    _check_units(qt_units, ("kg kg-1", "g kg-1"))
 
-    if theta is None:
-        logger.error("theta is missing")
-        raise ValueError("theta is missing")
-    if p is None:
-        logger.error("p is missing")
-        raise ValueError("p is missing")
+    qt = _asarray(qt)
+    advqt = _asarray(advqt)
 
-    temp = theta*(p/p0)**kappa
-    return temp
+    if qt_units == "kg kg-1":
+        return advqt / (1.0 - qt) ** 2
 
-#############################
-def t2theta(p=None, temp=None, p0=cc.p0, kappa=cc.kappa):
-    """Compute potential temperature knowing temperature
+    return advqt / (1.0 - qt / 1000.0) ** 2
+
+
+# =============================================================================
+# Temperature / potential temperature
+# =============================================================================
+def theta2t(p, theta, p0=cc.p0, kappa=cc.kappa):
+    """
+    Convert potential temperature to temperature
+    using air pressure according to:
+
+    .. math:: T = \\theta \\left( \\frac{p}{p_0}  \\right)^\\kappa
+
+    Default values for :math:`p_0` and :math:`\\kappa` comes from :mod:`.constants`.
 
     Parameters
     ----------
-    temp : float, array
-        Temperature
-    p : float, array
-        Pressure
-    p0 : float, optional
-        Reference pressure
-    kappa : float, optional
-        Rd/Cp, used to compute theta
+    p : :class:`float` or array-like
+        Air pressure :math:`p` (Pa).
+    theta : :class:`float` or array-like
+        Potential temperature :math:`\\theta` (K).
+    p0 : :class:`float`, optional
+        Reference pressure :math:`p_0` (Pa). Value from :data:`.constants.p0`
+    kappa : :class:`float`, optional
+        Ratio :math:`\\kappa` of the gas constant to the gas heat capacity (no units).
+        Default is for dry air taken from :data:`.constants.kappa`.
 
     Returns
     -------
-    float, array
-        Potential temperature
+    :class:`float` or :class:`ndarray`
+        Temperature :math:`T` (K).
     """
+    p = _asarray(p)
+    theta = _asarray(theta)
+    return theta * (p / p0) ** kappa
 
-    if temp is None:
-        logger.error("temp is missing")
-        raise ValueError("temp is missing")
-    if p is None:
-        logger.error("p is missing")
-        raise ValueError("p is missing")
 
-    theta = temp*(p0/p)**kappa
-    return theta
+def t2theta(p, temp, p0: float = cc.p0, kappa: float = cc.kappa):
+    """
+    Convert temperature to potential temperature
+    using air pressure according to:
 
-#############################
-def z2p(thetal=None, theta=None, ta=None,
-        z=None, ps=None, qv=None,
-        g=cc.g, Rd=cc.Rd, Rv=cc.Rv, p0=cc.p0, kappa=cc.kappa):
-    """Compute the pressure of a set of given altitudes
+    .. math:: \\theta = T \\left( \\frac{p_0}{p}  \\right)^\\kappa
+
+    Default values for :math:`p_0` and :math:`\\kappa` comes from :mod:`.constants`.
 
     Parameters
     ----------
-    thetal/theta/ta : array, optional
-        Liquid water potential temperature/potential temperature/temperature
-        At last one of these must be given
-    z : array
-        Altitude
-    ps : float
-        Surface pressure
-    qv : array
-        Specific humidity
-    g : float, optional
-        Gravity acceleration
-    Rd : float, optional
-        Gaz constant for dry air
-    Rv : float, optional
-        Gaz constant for water vapor
-    p0 : float, optional
-        Reference pressure
-    kappa : float, optional
-        Rd/Cp, used to compute theta
+    p : :class:`float` or array-like
+        Air pressure :math:`p` (Pa).
+    temp : :class:`float` or array-like
+        Temperature :math:`T` (K).
+    p0 : :class:`float`, optional
+        Reference pressure :math:`p_0` (Pa). Value from :data:`.constants.p0`
+    kappa : :class:`float`, optional
+        Ratio :math:`\\kappa` of the gas constant to the gas heat capacity (no units).
+        Default is for dry air taken from :data:`.constants.kappa`.
 
     Returns
     -------
-    array
-        Pressure of the given altitude levels
+    :class:`float` or :class:`ndarray`
+        Potential temperature :math:`\\theta` (K).
     """
 
-    if (thetal is None) and (theta is None) and (ta is None):
-        logger.error("thetal, theta and ta are missing. At least one of them should be given")
-        raise ValueError("thetal, theta and ta are missing. At least one of them should be given")
-    if z is None:
-        logger.error("z is missing")
-        raise ValueError("z is missing")
-    if ps is None:
-        logger.error("ps is missing")
-        raise ValueError("ps is missing")
+    p = _asarray(p)
+    temp = _asarray(temp)
+    return temp * (p0 / p) ** kappa
 
-    if thetal is not None and theta is None and ta is None:
+
+# =============================================================================
+# Hydrostatic conversions
+# =============================================================================
+def z2p(
+    z,
+    ps,
+    theta=None, ta=None, thetal=None,
+    qv=None,
+    g=cc.g, Rd=cc.Rd, Rv=cc.Rv, p0=cc.p0, kappa=cc.kappa,
+):
+    """
+    Compute the pressure of a set of given altitudes using the hydrostatic balance.
+    At least one temperature in ta (:math:`T`), theta (:math:`\\theta`),
+    or thetal (:math:`\\theta_l`) should be given.
+    If :math:`\\theta_l` is given, one simply assumes that :math:`\\theta = \\theta_l`. 
+    If :math:`\\theta` is given, it is first converted to temperature :math:`T` 
+    using :func:`.thermo.theta2t`.
+    
+    Basically, in case temperature :math:`T` is provided, at level :math:`k`, one uses:
+
+    .. math:: \\ln\\frac{p_k}{p_{k-1}} = -\\int_{z_k-1}^{z_{k}} \\frac{g}{R T} dz
+    .. math:: \\ln\\frac{p_k}{p_{k-1}} \\approx -0.5 g\\times
+                                               \\left(\\frac{1}{R_k T_k} 
+                                               + \\frac{1}{R_{k-1}T_{k-1}}\\right)
+                                                 \\times (z_k - z_{k-1})
+    
+    In case potential temperature :math:`\\theta` is provided, at level :math:`k`, one uses:
+
+    .. math:: To be completed
+
+    In case both temperature and potential temperature are provided, potential temperature is
+    use as a priority.
+
+    If specific humidity :math:`q_v` is given, :math:`R = R_d + q_v(R_v-R_d)`,
+    otherwise :math:`R = R_d`.
+    
+    Default values for :math:`g`, :math:`R_d`, :math:`R_v`, :math:`p_0` and :math:`\\kappa`
+    are set in :mod:`.constants`.
+
+    Parameters
+    ----------
+    z : array-like of size N
+        Altitude :math:`z` (m).
+    ps : :class:`float`
+        Surface pressure (Pa).
+    ta : array-like of size N, optional
+        Temperature :math:`T` (K).
+    theta : array-like of size N, optional
+        Potential temperature :math:`\\theta` (K).
+    thetal : array-like of size N, optional
+        Liquid water potential temperature :math:`\\theta_l` (K).
+    qv : array-like of size N, optional
+        Specific humidity (kg kg-1). If given, the weight of water vapor is accounted for.
+    g : :class:`float`, optional
+        Gravity acceleration :math:`g` (m s-2). Value from :data:`.constants.g`
+    Rd : :class:`float`, optional
+        Dry air gas constant :math:`R_d` (J kg-1 K-1). Value from :data:`.constants.Rd`
+    Rv : :class:`float`, optional
+        Water vapor gas constant :math:`R_v` (J kg-1 K-1). Value from :data:`.constants.Rv`
+    p0 : :class:`float`, optional
+        Reference pressure :math:`p_0` (Pa). Value from :data:`.constants.p0`
+    kappa : :class:`float`, optional
+        Ratio :math:`\\kappa` of the gas constant to the gas heat capacity (no units).
+        Default is for dry air taken from :data:`.constants.kappa`.
+
+    Returns
+    -------
+    :class:`ndarray` of size N
+        Air pressure :math:`p` (Pa).
+    """
+    if theta is None and ta is None and thetal is None:
+        raise ValueError("theta, thetal or ta must be provided")
+
+    if theta is None and thetal is not None:
+        logger.warning("Using thetal as theta (approximation)")
         theta = thetal
 
-    if theta is not None:
-        nlev, = theta.shape
+    z = _asarray(z)
+    nlev, = z.shape
+    ps = float(ps)
 
-        if qv is None:
-            R = theta*0.+Rd
-        else:
-            R = Rd+qv*(Rv-Rd)
+    if qv is None:
+        R = np.zeros_like(z) + Rd
+    else:
+        R = Rd + _asarray(qv) * (Rv - Rd)
 
+    p = np.zeros_like(z)
+    p[0] = ps
+
+    if theta is not None: # use theta as a priority
+        theta = _asarray(theta)
         integ = 0.
-
-        p = np.zeros((nlev,),dtype=np.float64)
-        p[0] = ps
-
-        for ilev in range(1,nlev):
-            dz = z[ilev]- z[ilev-1]    
-            integ = integ + (g/(R[ilev-1]*theta[ilev-1])+g/(R[ilev]*theta[ilev]))/2*dz
+        for k in range(1,nlev):
+            dz = z[k] - z[k - 1]
+            integ = integ + (g/(R[k-1]*theta[k-1])+g/(R[k]*theta[k]))/2*dz
             tmp = ps**kappa-p0**kappa*kappa*integ
-            try: p[ilev] = math.exp(math.log(tmp)/kappa)
+            try: p[k] = math.exp(math.log(tmp)/kappa)
             except:
-                print(ilev, z[ilev-1], z[ilev], theta[ilev-1], theta[ilev], R[ilev-1], R[ilev], integ, tmp)
-                raise
-    else: # Use ta instead
-        nlev, = ta.shape
+                print(k, z[k-1], z[k], theta[k-1], theta[k], R[k-1], R[k], integ, tmp)
+                print(math.log(tmp), kappa)
+                raise ValueError('Error in z2p vertical integration under theta case')
 
-        if qv is None:
-            R = ta*0.+Rd
-        else:
-            R = Rd+qv*(Rv-Rd)
-
-        integ = 0.
-
-        p = np.zeros((nlev,),dtype=np.float64)
-        p[0] = ps
-
-        for ilev in range(1,nlev):
-            dz = z[ilev]- z[ilev-1]    
-            integ = integ + (g/(R[ilev-1]*ta[ilev-1])+g/(R[ilev]*ta[ilev]))/2*dz
-            tmp = math.log(ps)-integ
-            p[ilev] = math.exp(tmp)
-
+    else: # use ta instead
+        ta = _asarray(ta)
+        for k in range(1, nlev):
+            dz = z[k] - z[k - 1]
+            p[k] = p[k - 1] * math.exp(
+                -(g/(R[k]*ta[k]) + g/(R[k-1]*ta[k - 1]))*0.5 * dz
+            )
 
     return p
 
-#############################
-def p2z(thetal=None, theta=None, ta=None,
-        p=None, zs=0., qv=None,
-        g=cc.g, Rd=cc.Rd, Rv=cc.Rv, p0=cc.p0, kappa=cc.kappa):
-    """Compute the altitude of a given set of pressure levels
 
-    Start from the surface
+def p2z(
+    p,
+    zs=0.0,
+    theta=None, ta=None, thetal=None,
+    qv=None,
+    g=cc.g, Rd=cc.Rd, Rv=cc.Rv, p0=cc.p0, kappa=cc.kappa
+):
+    """
+    Compute the altitude of a set of given pressure levels using the hydrostatic balance.
+    At least one temperature in ta (:math:`T`), theta (:math:`\\theta`),
+    or thetal (:math:`\\theta_l`) should be given.
+    If :math:`\\theta_l` is given, one simply assumes that :math:`\\theta = \\theta_l`. 
+    If :math:`\\theta` is given, it is first converted to temperature :math:`T` 
+    using :func:`.thermo.theta2t`.
+    
+    Basically, at level :math:`k`, one uses:
+
+    .. math:: z_k - z_{k-1} = -\\int_{p_k-1}^{p_{k}} \\frac{R T}{g} d\\ln p
+    .. math:: z_k - z_{k-1}  \\approx -\\frac{0.5\\times(R_k T_k+R_{k-1}T_{k-1})}{g}
+                                                 \\times\\ln\\frac{p_k}{p_{k-1}}
+    
+    If specific humidity :math:`q_v` is given, :math:`R = R_d + q_v(R_v-R_d)`,
+    otherwise :math:`R = R_d`.
+    Default values for :math:`g`, :math:`R_d`, :math:`R_v`, :math:`p_0` and :math:`\\kappa`
+    are set in :mod:`.constants`.
 
     Parameters
     ----------
-    thetal/theta/ta : array, optional
-        Liquid water potential temperature/potential temperature/temperature
-        At last one of these must be given
-    p : array
-        Pressure
-    zs : float, optional
-        Surface altitude (default is 0)
-    qv : array
-        Specific humidity
-    g : float, optional
-        Gravity acceleration
-    Rd : float, optional
-        Gaz constant for dry air
-    Rv : float, optional
-        Gaz constant for water vapor
-    p0 : float, optional
-        Reference pressure
-    kappa : float, optional
-        Rd/Cp, used to compute theta
+    p : array-like of size N
+        Air pressure :math:`p` (m).
+    zs : :class:`float`, optional
+        Surface altitude (m). Default is 0.
+    ta : array-like of size N, optional
+        Temperature :math:`T` (K).
+    theta : array-like of size N, optional
+        Potential temperature :math:`\\theta` (K).
+    thetal : array-like of size N, optional
+        Liquid water potential temperature :math:`\\theta_l` (K).
+    qv : array-like of size N, optional
+        Specific humidity (kg kg-1). If given, the weight of water vapor is accounted for.
+    g : :class:`float`, optional
+        Gravity acceleration :math:`g` (m s-2). Value from :data:`.constants.g`
+    Rd : :class:`float`, optional
+        Dry air gas constant :math:`R_d` (J kg-1 K-1). Value from :data:`.constants.Rd`
+    Rv : :class:`float`, optional
+        Water vapor gas constant :math:`R_v` (J kg-1 K-1). Value from :data:`.constants.Rv`
+    p0 : :class:`float`, optional
+        Reference pressure :math:`p_0` (Pa). Value from :data:`.constants.p0`
+    kappa : :class:`float`, optional
+        Ratio :math:`\\kappa` of the gas constant to the gas heat capacity (no units).
+        Default is for dry air taken from :data:`.constants.kappa`.
 
     Returns
     -------
-    array
-        Altitude of the given pressure levels
+    :class:`ndarray` of size N
+        Altitude :math:`z` (m).
     """
+    if theta is None and ta is None and thetal is None:
+        raise ValueError("theta, thetal or ta must be provided")
 
-    if (thetal is None) and (theta is None) and (ta is None):
-        logger.error("thetal, theta and ta are missing. At least one of them should be given")
-        raise ValueError("thetal, theta and ta are missing. At least one of them should be given")
-    if p is None:
-        logger.error("p is missing")
-        raise ValueError("p is missing")
+    p = _asarray(p)
 
-    if theta is not None and ta is None:
-        ta = theta2t(theta=theta,p=p)
-    if thetal is not None and ta is None:
-        # we assume thetal=theta for ta calculation
-        ta = theta2t(theta=thetal,p=p)
+    if ta is None:
+        if theta is None:
+            logger.warning("Using thetal as theta (approximation)")
+            theta = thetal
+        ta = theta2t(p, theta, p0=p0, kappa=kappa)
 
-    nlev, = ta.shape
+    ta = _asarray(ta)
 
     if qv is None:
-        R = ta*0.+Rd
+        R = np.zeros_like(p) + Rd
     else:
-        R = Rd+qv*(Rv-Rd)
+        R = Rd + _asarray(qv) * (Rv - Rd)
 
-    z = np.zeros((nlev,),dtype=np.float64)
+    z = np.zeros_like(p)
     z[0] = zs
 
-    for ilev in range(1,nlev):
-        dz = (R[ilev-1]*ta[ilev-1]+R[ilev]*ta[ilev])/(2.0*g)*(math.log(p[ilev-1])-math.log(p[ilev]))
-        z[ilev] = z[ilev-1] + dz
+    for k in range(1, len(p)):
+        z[k] = z[k - 1] + (
+            0.5 * (R[k]*ta[k] + R[k-1]*ta[k - 1]) / g
+        ) * math.log(p[k - 1]/p[k])
 
     return z
 
-#############################
+
+# =============================================================================
+# Interpolation utilities
+# =============================================================================
 def zlev2plev(zlev, z, p):
-    """Compute the pressure of a given altitude (interpolation)
+    """
+    Linear interpolation of pressure at a given altitude
+    The function :func:`numpy.interp` is used.
 
     Parameters
     ----------
-    zlev : float
-        Altitude for which the pressure is sought
-    z : array
-        Altitude
-    p : array
-        Pressure
+    zlev : :class:`float`
+        Altitude at which one wants to interpolate pressure (m).
+    z : array-like of size N
+        Altitudes at which pressure is known (m).
+    p : array-like of size N
+        Air pressure at levels **z** (Pa).
 
     Returns
     -------
-    float
-        Pressure of the given altitude
+    :class:`float`
+        Air pressure at level **zlev** (Pa).
     """
-    
-    nlev, = z.shape
-    plev = 110000
-    if z[0] < z[1]:
-        for ilev in range(0,nlev-1):
-            if z[ilev] <= zlev and z[ilev+1] > zlev:
-                plev = p[ilev] + (p[ilev+1]-p[ilev])/(z[ilev+1]-z[ilev])*(zlev-z[ilev])
-    else:
-        for ilev in range(0,nlev-1):
-            if z[ilev+1] <= zlev and z[ilev] > zlev:
-                plev = p[ilev] + (p[ilev+1]-p[ilev])/(z[ilev+1]-z[ilev])*(zlev-z[ilev])
+    return np.interp(zlev, z, p)
 
-    return plev
 
-#############################
 def plev2zlev(plev, z, p):
-    """Compute the altitude of a given pressure level (interpolation)
+    """
+    Linear interpolation of altitude at a given pressure level.
+    The function :func:`numpy.interp` is used.
 
     Parameters
     ----------
-    plev : float
-        Pressure level for which the altitude is sought
-    z : array
-        Altitude
-    p : array
-        Pressure
+    plev : :class:`float`
+        Pressure level at which one wants to interpolate altitude (Pa).
+    z : array-like of size N
+        Altitudes at which pressure is known (m).
+    p : array-like of size N
+        Air pressure at levels **z** (Pa).
 
     Returns
     -------
-    float
-        Altitude of the given pressure level
+    :class:`float`
+        Altitude of the pressure **plev** (m).
     """
+    return np.interp(plev, p[::-1], z[::-1])
 
-    nlev, = z.shape
-    zlev = 0
-    if p[0] > p[1]:
-        for ilev in range(0,nlev-1):
-            if p[ilev] >= plev and p[ilev+1] < plev:
-                zlev = z[ilev] + (z[ilev+1]-z[ilev])/(p[ilev+1]-p[ilev])*(plev-p[ilev])
-    else:
-        for ilev in range(0,nlev-1):
-            if p[ilev+1] >= plev and p[ilev] < plev:
-                zlev = z[ilev] + (z[ilev+1]-z[ilev])/(p[ilev+1]-p[ilev])*(plev-p[ilev])
 
-    return zlev
-
-#############################
-def rh2qv_GG(rh,temp,pres):
-    """Compute the specific humidity knowing the relative humidity
-
-    Based on Goff-Gratch equation
-    From http://climatologie.u-bourgogne.fr/data/matlab/goff_gratch.m
+# =============================================================================
+# Humidity from dew-point / Goff–Gratch
+# =============================================================================
+def rh2qv_GG(hur, pressure, temp):
+    """
+    Convert relative humidity to specific humidity
+    using the Goff-Gratch formulation.
+    Adapted from http://climatologie.u-bourgogne.fr/data/matlab/goff_gratch.m
 
     Parameters
     ----------
-    rh : array
-        Relative humidity in %, wrt ice if temp < 273.15, wrt liquid water if temp >= 273.15
-    temp : array
-        Temperature in K
-    pres : array
-        Pressure in Pa
+    hur : :class:`float` or array-like
+        Relative humidity (%).
+    pressure : :class:`float` or array-like
+        Pressure (Pa).
+    temp : :class:`float` or array-like
+        Temperature (K).
 
     Returns
     -------
-    float
-        Specific humidity in kg kg-1
+    :class:`float` or :class:`ndarray`
+        Specific humidity.
     """
+    hur = _asarray(hur)
+    temp = _asarray(temp)
+    pressure = _asarray(pressure)
 
-    # Saturation water vapor pressure against ice
-    eilog = -9.09718 * ((273.16/temp) -1.)
-    eilog2 = -3.5654 * np.log10(273.16/temp)
-    eilog3 = 0.876793 * (1. - (temp/273.16))
-    es1=6.1071*np.exp((eilog+eilog2+eilog3)*math.log(10.))
+    es_ice = 6.1071 * np.exp(
+        (-9.09718 * (273.16 / temp - 1)
+         - 3.5654 * np.log10(273.16 / temp)
+         + 0.876793 * (1 - temp / 273.16)) * math.log(10)
+    )
 
-    # against liquid water
-    eilog=-7.90298*((373.16/temp) - 1.)
-    eilog2=5.02808*np.log10((373.16/temp))
-    eilog3=-1.3816e-7*(np.exp((11.344*(1.-(temp/373.16)))*math.log(10.)) -1.)
-    eilog4=8.1328e-3*(np.exp((-3.49149*((373.16/temp) - 1.) )*math.log(10)) -1.)
-    es2=1013.246*np.exp((eilog+eilog2+eilog3+eilog4)*math.log(10.))
+    es_water = 1013.246 * np.exp(
+        (-7.90298 * (373.16 / temp - 1)
+         + 5.02808 * np.log10(373.16 / temp)) * math.log(10)
+    )
 
-    es = np.where(temp < 273.15, es1,es2)
+    es = np.where(temp < 273.15, es_ice, es_water)
+    ws = 0.62197 * es / (pressure / 100.0 - 0.378 * es)
 
-    ws = 0.62197* es/(pres/100. - 0.378*es) # qsat
+    return (hur / 100.0) * ws
 
-    # specific humidity in kg kg-1
-    return (rh/100.0)*ws
 
-#############################
-def td2qv(td, pres, units='kg kg-1'):
-    """Compute specific humidity water knowing dew-point temperature
+def td2qv(td, pressure, units: str = "kg kg-1"):
+    """
+    Convert dew-point temperature to specific humidity.
+    Requires the MetPy module.
 
     Parameters
     ----------
-    td : float, array
+    td : :class:`float` or array-like
         Dew-point temperature (K)
-    pressure : float, array
-        Air pressure (Pa)
-    units : str, optional
-        Specific humidity units (default is kg kg-1)
+    pressure : :class:`float` or array-like
+        Pressure (Pa).
+    units : :class:`str`, optional
+        Units for the specific humidity.
+        Should be 'kg kg-1' (default) or 'g kg-1'.
 
     Returns
     -------
-    float, array
-        Specific humidity (in units)
+    :class:`float` or :class:`ndarray`
+        Specific humidity.
     """
+    if not HAS_METPY:
+        raise RuntimeError("MetPy is required for td2qv")
 
-    p_loc = pressure * Munits.Pa
-    td_loc = td * Munits.kelvin
-    
-    if isinstance(td,float):
-        rv = float(specific_humidity_from_dewpoint(p_loc, td_loc))
-    else:
-        nlev, = td.shape
-        qv = np.array([specific_humidity_from_dewpoint(p_loc[i], td_loc[i]) for i in range(nlev)])
+    _check_units(units, ("kg kg-1", "g kg-1"))
 
-    if units == 'kg kg-1':
+    td = _asarray(td)
+    pressure = _asarray(pressure) * Munits.Pa
+    td = td * Munits.kelvin
+
+    qv = specific_humidity_from_dewpoint(pressure, td).magnitude
+
+    if units == "kg kg-1":
         return qv
-    elif units == 'g kg-1':
-        return qv*1000.
-    else:
-        logger.error('units unknown: {0}'.forma(units))
-        raise ValueError('units unknown: {0}'.forma(units))
+
+    return qv * 1000.0
+
+
+if __name__ == "__main__":
+    print("Running basic self-tests for thermo.py")
+
+    # ------------------------------------------------------------------
+    # Realistic atmospheric profile
+    # ------------------------------------------------------------------
+    z = np.arange(0.0, 12001.0, 500.0)  # m
+
+    # Temperature profile
+    T0 = 288.15       # K
+    lapse_rate = -6.5e-3  # K/m
+    temp = _init_temp(z)#, T0, lapse_rate)
+
+    print("Temperature")
+    print(temp)
+
+    # Specific humidity profile
+    qv0 = 0.010       # kg/kg
+    Hq = 2000.0       # m
+    qv = _init_qv(z)#, qv0, Hq=Hq)
+    print("Specific humidity")
+    print(qv)
+
+    print("Water vapor mixing ratio")
+    print(qt2rt(qv))
+
+    # Surface pressure
+    ps = 100000.0 # Pa
+
+
+    pressure = z2p(z, ps, ta=temp, qv=qv)
+    print("Pressure")
+    print(pressure)
+
+    z2 = p2z(pressure, ta=temp, qv=qv)
+    print("Recomputed altitude")
+    print(z2)
+
+    theta = t2theta(pressure, temp)
+    print("Potential temperature")
+    print(theta)
+    
+    z2 = p2z(pressure, theta=theta, qv=qv)
+    print("Recomputed altitude using theta")
+    print(z2)
+
+    p2 = z2p(z, ps, theta=theta, qv=qv)
+    print("Recomputed pressure using theta")
+    print(p2)
+
+    print("Relative humidity")
+    print(qt2hur(qv, pressure, temp))

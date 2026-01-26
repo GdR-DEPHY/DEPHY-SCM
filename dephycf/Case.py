@@ -1713,7 +1713,7 @@ class Case:
                 raise ValueError('Pressure should be None to theta from ta')
             else:
                 logger.info('Compute potential temperature from pressure and temperature')
-                theta = thermo.t2theta(p=pressure.data[0,:], temp=self.variables['ta'].data[0,:])
+                theta = thermo.t2theta(pressure.data[0,:], self.variables['ta'].data[0,:])
         elif 'thetal' in self.var_init_list:
             logger.info('Assume theta=thetal')
             theta = self.variables['thetal'].data[0,:]
@@ -1731,7 +1731,7 @@ class Case:
                 raise ValueError('Pressure should be None to compute thetal from ta')
             else:
                 logger.info('Compute potential temperature from pressure and temperature, assuming thetal=theta')
-                thetal = thermo.t2theta(p=pressure.data[0,:], temp=self.variables['ta'].data[0,:])
+                thetal = thermo.t2theta(pressure.data[0,:], self.variables['ta'].data[0,:])
         elif 'theta' in self.var_init_list:
             logger.info('Assume thetal=theta')
             thetal = self.variables['theta'].data[0,:]
@@ -1749,10 +1749,10 @@ class Case:
 
         if 'theta' in self.var_init_list:
             logger.info('Compute temperature from pressure and potential temperature')
-            temp = thermo.theta2t(p=pressure.data[0,:], theta=self.variables['theta'].data[0,:])
+            temp = thermo.theta2t(pressure.data[0,:], self.variables['theta'].data[0,:])
         elif 'thetal' in self.var_init_list:
             logger.info('Compute temperature from pressure and liquid potential temperature (No liquid water considered)')
-            temp = thermo.theta2t(p=pressure.data[0,:], theta=self.variables['thetal'].data[0,:])
+            temp = thermo.theta2t(pressure.data[0,:], self.variables['thetal'].data[0,:])
         else:
             logger.error('At least theta or thetal should be given')
             raise ValueError('At least theta or thetal should be given')
@@ -1913,11 +1913,11 @@ class Case:
         if 'tntheta_adv' in self.var_forcing_list:
             logger.info('Compute tnta_adv from tntheta_adv')
             thadv = self.variables['tntheta_adv'].data
-            tadv = thermo.theta2t(p=pressure,theta=thadv)
+            tadv = thermo.theta2t(pressure, thadv)
         elif 'tnthetal_adv' in self.var_forcing_list:
             logger.info('Assume tnthetal_adv=tntheta_adv and compute tnta_adv from tntheta_adv')
             thladv = self.variables['tnthetal_adv'].data
-            tadv = thermo.theta2t(p=pressure,theta=thladv)
+            tadv = thermo.theta2t(pressure, thladv)
         else:
             logger.error('To compute tnta_adv, tntheta_adv or tnthetal_adv must be known')
             raise ValueError('To compute tnta_adv, tntheta_adv or tnthetal_adv must be known')
@@ -1931,7 +1931,7 @@ class Case:
         if 'tnta_adv' in self.var_forcing_list:
             logger.info('Compute tntheta_adv from tnta_adv')
             tadv = self.variables['tnta_adv'].data
-            thadv = thermo.t2theta(p=pressure,temp=tadv)
+            thadv = thermo.t2theta(pressure, tadv)
         elif 'tnthetal_adv' in self.var_forcing_list:
             logger.info('Assume tntheta_adv=tnthetal_adv')
             thadv = self.variables['tnthetal_adv'].data
@@ -1948,7 +1948,7 @@ class Case:
         if 'tnta_adv' in self.var_forcing_list:
             logger.info('Compute tnthetal_adv from tnta_adv assuming tnthetal_adv=tntheta_adv')
             tadv = self.variables['tnta_adv'].data
-            thladv = thermo.t2theta(p=pressure,temp=tadv)
+            thladv = thermo.t2theta(pressure, tadv)
         elif 'tntheta_adv' in self.var_forcing_list:
             logger.info('Assume tnthetal_adv=tntheta_adv')
             thladv = self.variables['tntheta_adv'].data
@@ -1965,11 +1965,11 @@ class Case:
         if 'tntheta_rad' in self.var_forcing_list:
             logger.info('Compute tnta_rad from tntheta_rad')
             thrad = self.variables['tntheta_rad'].data
-            trad = thermo.theta2t(p=pressure,theta=thrad)
+            trad = thermo.theta2t(pressure, thrad)
         elif 'tnthetal_rad' in self.var_forcing_list:
             logger.info('Assume tnthetal_rad=tntheta_rad and compute tnta_rad from tntheta_rad')
             thlrad = self.variables['tnthetal_rad'].data
-            trad = thermo.theta2t(p=pressure,theta=thlrad)
+            trad = thermo.theta2t(pressure, thlrad)
         else:
             logger.error('To compute tnta_rad, tntheta_rad or tnthetal_rad must be known')
             raise ValueError('To compute tnta_rad, tntheta_rad or tnthetal_rad must be known')
@@ -1983,7 +1983,7 @@ class Case:
         if 'tnta_rad' in self.var_forcing_list:
             logger.info('Compute tntheta_rad from tnta_rad')
             trad = self.variables['tnta_rad'].data
-            thrad = thermo.t2theta(p=pressure,temp=trad)
+            thrad = thermo.t2theta(pressure, trad)
         elif 'tnthetal_rad' in self.var_forcing_list:
             logger.info('Assume tntheta_rad=tnthetal_rad')
             thrad = self.variables['tnthetal_rad'].data
@@ -2000,7 +2000,7 @@ class Case:
         if 'tnta_rad' in self.var_forcing_list:
             logger.info('Compute tnthetal_rad from tnta_rad assuming tnthetal_rad=tntheta_rad')
             trad = self.variables['tnta_rad'].data
-            thlrad = thermo.t2theta(p=pressure,temp=trad)
+            thlrad = thermo.t2theta( pressure, trad)
         elif 'tntheta_rad' in self.var_forcing_list:
             logger.info('Assume tnthetal_rad=tntheta_rad')
             thlrad = self.variables['tntheta_rad'].data
@@ -2101,11 +2101,11 @@ class Case:
         if 'theta_nud' in self.var_forcing_list:
             logger.info('Compute ta_nud from theta_nud')
             thnud = self.variables['theta_nud'].data
-            tnud = thermo.theta2t(p=pressure,theta=thnud)
+            tnud = thermo.theta2t(pressure, thnud)
         elif 'thetal_nud' in self.var_forcing_list:
             logger.info('Compute ta_nud from theta_nud assuming theta_nud=thetal_nud')
             thnud = self.variables['thetal_nud'].data
-            tnud = thermo.theta2t(p=pressure,theta=thnud)
+            tnud = thermo.theta2t(pressure, thnud)
         else:
             logger.error('To compute ta_nud, theta_nud or thetal_nud must be known')
             raise ValueError('To compute ta_nud, theta_nud or thetal_nud must be known')
@@ -2119,7 +2119,7 @@ class Case:
         if 'ta_nud' in self.var_forcing_list:
             logger.info('Compute theta_nud from ta_nud')
             tnud = self.variables['ta_nud'].data
-            thnud = thermo.t2theta(p=pressure,temp=tnud)
+            thnud = thermo.t2theta(pressure, tnud)
         elif 'thetal_nud' in self.var_forcing_list:
             logger.info('Assume theta_nud=thetal_nud')
             thnud = self.variables['thetal_nud'].data
@@ -2136,7 +2136,7 @@ class Case:
         if 'ta_nud' in self.var_forcing_list:
             logger.info('Compute thetal_nud from ta_nud assuming thetal_nud=theta_nud')
             tnud = self.variables['ta_nud'].data
-            thlnud = thermo.t2theta(p=pressure,temp=tnud)
+            thlnud = thermo.t2theta( pressure, tnud)
         elif 'theta_nud' in self.var_forcing_list:
             logger.info('Assume thetal_nud=theta_nud')
             thlnud = self.variables['theta_nud'].data
@@ -2593,11 +2593,11 @@ class Case:
         att = 'surface_forcing_temp'
         if att in self.attlist and self.attributes[att] in ['thetas','ts']:
             if 'ts_forc' not in self.var_forcing_list and 'thetas_forc' in self.var_forcing_list:
-                tmp = thermo.theta2t(p=self.variables['ps_forc'].data, theta=self.variables['thetas_forc'].data)
+                tmp = thermo.theta2t(self.variables['ps_forc'].data, self.variables['thetas_forc'].data)
                 self.add_variable('ts_forc', tmp, time=time)
                 self.add_init_ts(tmp[0])
             elif 'ts_forc' in self.var_forcing_list and 'thetas_forc' not in self.var_forcing_list:
-                tmp = thermo.t2theta(p=self.variables['ps_forc'].data, temp=self.variables['ts_forc'].data)
+                tmp = thermo.t2theta(self.variables['ps_forc'].data, self.variables['ts_forc'].data)
                 self.add_variable('thetas_forc', tmp, time=time)
                 self.add_init_thetas(tmp[0])
             self.attributes[att] = 'ts' # Assume this is default, even though ts and thetas are available

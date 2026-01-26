@@ -26,7 +26,7 @@ class Axis:
         :class:`numpy.ndarray` with dtype ``float64``.
     name : :class:`str`, optional
         Human-readable name for the axis.
-    units : class:`str`, optional
+    units : :class:`str`, optional
         Units associated with the axis values.
     \**kwargs : :class:`dict`, optional
         Additional arbitrary metadata. Each key/value pair is added as

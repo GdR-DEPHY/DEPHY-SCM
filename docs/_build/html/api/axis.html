@@ -31,7 +31,7 @@
 <link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
-    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css?v=7f9a90b1" />
     <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
   
   <!-- So that users can add custom icons -->
@@ -279,6 +279,7 @@
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="constants.html">Physical Constants (<code class="xref py py-mod docutils literal notranslate"><span class="pre">dephycf.constants</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="thermo.html">Thermodyanmical functions and other utilities (<code class="xref py py-mod docutils literal notranslate"><span class="pre">dephycf.thermo</span></code>)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="attributes.html">Attributes (<code class="xref py py-mod docutils literal notranslate"><span class="pre">attributes</span></code>)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="plotbasics.html">Plotting Utilities (<code class="xref py py-mod docutils literal notranslate"><span class="pre">dephycf.plotbasics</span></code>)</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Axis (<code class="xref py py-mod docutils literal notranslate"><span class="pre">dephycf.Axis</span></code>)</a></li>
@@ -379,7 +380,7 @@ numeric axis typically used in scientific datasets (e.g., NetCDF files).</p>
 <li><p><strong>data</strong> (array-like of <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Sequence of numeric values for the axis. Will be converted to
 <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code> with dtype <code class="docutils literal notranslate"><span class="pre">float64</span></code>.</p></li>
 <li><p><strong>name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, optional) – Human-readable name for the axis.</p></li>
-<li><p><strong>units</strong> (class:<cite>str</cite>, optional) – Units associated with the axis values.</p></li>
+<li><p><strong>units</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, optional) – Units associated with the axis values.</p></li>
 <li><p><strong>**kwargs</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>, optional) – <p>Additional arbitrary metadata. Each key/value pair is added as
 an attribute of the object and written to NetCDF as a variable
 attribute. For example:</p>
