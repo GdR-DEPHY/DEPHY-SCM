@@ -1,28 +1,29 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on 11 December 2019
+Created on 16 November 2020
 
-@author: Romain Roehrig
+@author: Catherine Rio
 
 Modification
-  2020/11/12, R. Roehrig: update for improved case definition interface.
-  2020/11/16, C. Rio: AMMA case
   2024/01/26, F Couvreux: modification du cas car il a été défini en th/rv et comme tous les champs sont disponibles dans le fichier AMMA j'ai choisi de l'écrire en th & rv
+  2026/05/07, N. Villefranque: clean for publication
 """
 
 ## AMMA/REF original case definition
+## From https://rmets.onlinelibrary.wiley.com/doi/full/10.1002/qj.903
 
 import netCDF4 as nc
 import numpy as np
 
+from datetime import datetime, timedelta
 from dephycf.Case import Case
 
 ################################################
 # 0. General configuration of the present script
 ################################################
 
-lplot = True # plot all the variables
+lplot = True     # plot all the variables
 lverbose = False # print information about variables and case
 
 ################################################
@@ -30,24 +31,24 @@ lverbose = False # print information about variables and case
 ################################################
 
 
+duration=18
+tmin = datetime(2006, 7, 10, 6, 0)
+tmax = tmin + timedelta(hours=duration)
+
 case = Case('AMMA/REF',
         lat=13.47,
         lon=2.18,
-        startDate="20060710060000",
-        endDate="20060711000000",
+        startDate=tmin,
+        endDate=tmax,
         surfaceType='land',
         zorog=0.)
 
 
 case.set_title("Forcing and initial conditions for AMMA case - Original definition")
-case.set_reference(" https://rmets.onlinelibrary.wiley.com/doi/full/10.1002/qj.903; Couvreux et al. (2012, QJRMS)")
+case.set_reference("Couvreux et al. (2012, QJRMS)")
 case.set_author("C. Rio")
 case.set_script("DEPHY-SCM/AMMA/REF/driver_DEF.py")
 case.set_comment("Use of file amma.nc")
-
-# time units are expected to be seconds since startDate
-#t0 = 0 # 18:00 UTC, 15 July 2006
-#t1 = 72*3600 # 72-hour long simulation
 
 ################################################
 # 2. Input netCDF file
@@ -65,9 +66,6 @@ case.add_init_ps(ps)
 
 # Height
 height = fin['zz'][:]
-# Modify first surface level value - Seems more consistent
-height[0] = 0
-
 case.add_init_height(height,lev=height,levtype='altitude')
 
 # Pressure
@@ -79,16 +77,11 @@ u  = fin['u'][:]
 v  = fin['v'][:]
 case.add_init_wind(u=u,v=v,lev=height,levtype='altitude')
 
-# potential temperature
-temp = fin['temp'][:]
-case.add_init_temp(temp,lev=height,levtype='altitude')
-# potential temperature
+# Potential temperature
 theta = fin['theta'][:]
 case.add_init_theta(theta,lev=height,levtype='altitude')
 
 # Vapor water content
-qv = fin['qv'][:]
-case.add_init_qv(qv,lev=height,levtype='altitude')
 rv = fin['rv'][:]
 case.add_init_rv(rv,lev=height,levtype='altitude')
 
@@ -96,8 +89,8 @@ case.add_init_rv(rv,lev=height,levtype='altitude')
 # 3. Forcing
 ################################################
 
-
 # Forcing time axis
+# convert to hours from the beginning of simulation
 timeForc = fin['time'][:]*86400-6.*3600.
 
 # large-scale velocity
@@ -105,18 +98,10 @@ w = fin['dw'][:,:]
 case.add_vertical_velocity(w=w,lev=height,levtype='altitude',time=timeForc)
 
 #Moisture advection
-hq = fin['dq'][:,:]
-case.add_qv_advection(hq,time=timeForc,lev=height,levtype='altitude')
-#Moisture advection
 hrv = fin['drv'][:,:]
 case.add_rv_advection(hrv,time=timeForc,lev=height,levtype='altitude')
 
-
-
-#temperature advection and radiation
-#hT = fin['dt'][:,:]
-#case.add_theta_advection(hT,include_rad=True,lev=height,levtype='altitude',time=timeForc)
-#temperature advection and radiation
+# Potential temperature advection and radiation
 hth = fin['dth'][:,:]
 case.add_theta_advection(hth,include_rad=True,lev=height,levtype='altitude',time=timeForc)
 

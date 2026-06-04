@@ -13,8 +13,6 @@ Modification
 ## ARM-Cumulus original case definition
 ## From http://projects.knmi.nl/eurocs/ARM/case_ARM_html/ [dead link]
 
-import os
-
 import netCDF4 as nc
 import numpy as np
 
@@ -178,7 +176,7 @@ if lverbose:
     case.info()
 
 ################################################
-# 6. Ploting, if asked
+# 5. Ploting, if asked
 ################################################
 
 if lplot:
