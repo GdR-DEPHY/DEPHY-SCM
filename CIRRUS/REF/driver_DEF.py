@@ -88,6 +88,9 @@ case.add_theta_advection([0]*len(zw), lev=zw, levtype="altitude", include_rad=Fa
 # Surface Forcing
 case.add_surface_fluxes(sens=0,lat=0,forc_wind='z0',z0=0.01)
 
+tskin = 280
+case.add_surface_skin_temp(tskin)
+
 ################################################
 # 4. Writing file
 ################################################
