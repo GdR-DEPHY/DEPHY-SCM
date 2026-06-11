@@ -107,8 +107,8 @@ case.add_init_ps(ps)
 htop = 12000
 
 # Zonal and meridional wind
-zu = zv = [0, 600, 2700, 7500, htop]
-u  = [0, 0, 0, 0, 0]
+zu = zv = [0, 600, 4000, 6000, 10000, htop]
+u  = [0, 10, 15, 20, 30, 20]
 v  = [0]*len(u)
 
 case.add_init_wind(u=np.array(u),ulev=np.array(zu),v=np.array(v),vlev=np.array(zv),levtype='altitude')
@@ -120,8 +120,8 @@ case.add_init_temp(ttemp,lev=ztemp,levtype='altitude')
 
 # qv
 qvprof=np.array(qv)
-rhi_issr=120.0
-rhi_below=50.0
+rhi_issr=105.0
+rhi_below=60.0
 rhi_above=100.0
 h1=9500.
 h2=10000.
