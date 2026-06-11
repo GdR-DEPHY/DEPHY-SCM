@@ -61,6 +61,11 @@ fin = nc.Dataset('MPACE_forcing_dephy.nc','r')
 # Surface pressure
 ps  =  fin['Ps'][0,0,0]
 case.add_init_ps(ps)
+# Surface temperature
+ts  =  fin['Tg'][0,0,0]
+case.add_init_ts(ts)
+
+
 
 # Pressure
 pressure  = fin['lev'][-1:0:-1]
