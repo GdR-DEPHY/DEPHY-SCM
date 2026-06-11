@@ -7,18 +7,19 @@ Created on 27 November 2019
 
 Modification
   2020/01/03, R. Roehrig: update for improved case definition interface.
+  2025/01/26, N. Villefranque: merge with MESONH and clean for publication.
 """
 
 ## BOMEX original case definition
-## From ?? 
 
 import os
 
 import netCDF4 as nc
 import numpy as np
 
+from datetime import datetime, timedelta
 from dephycf.Case import Case
-from dephycf import constants as cc
+from dephycf import constants
 
 ################################################
 # 0. General configuration of the present script
@@ -31,11 +32,15 @@ lverbose = False # print information about variables and case
 # 1. General information about the case
 ################################################
 
+duration=24
+tmin = datetime(1969, 6, 24, 00, 00)
+tmax = tmin + timedelta(hours=duration)
+
 case = Case('BOMEX/REF',
         lat=15,
         lon=-56.5,
-        startDate="19690624000000",
-        endDate="19690625000000",
+        startDate=tmin,
+        endDate=tmax,
         surfaceType='ocean',
         zorog=0.)
 
@@ -43,6 +48,7 @@ case.set_title("Forcing and initial conditions for BOMEX case - Original definit
 case.set_reference("Siebesma and Cuijpers (JAS, 1995) and Grant and Brown (QJ, 1999)")
 case.set_author("MP. Lefebvre")
 case.set_script("DEPHY-SCM/BOMEX/REF/driver_DEF.py")
+case.set_comment("LES is initialized with white noise and TKE=0")
 
 ################################################
 # 2. Initial state
@@ -53,11 +59,9 @@ ps = 101500.
 case.add_init_ps(ps)
 
 # Zonal and meridional wind
-zu = [  0.,    700.,  3000.  ]
-u  = [ -8.75,   -8.75,  -4.61]
-
-zv = [ 0.,   700., 3000. ]
-v  = [ 0.,    0.,  0.]
+zu = zv = [  0.,    700.,  3000.  ]
+u  = [ -8.75, -8.75, -4.61]
+v  = [  0.,    0.,    0.  ]
 
 case.add_init_wind(u=u,v=v, ulev=zu, vlev=zv, levtype='altitude')
 
@@ -97,7 +101,6 @@ zug = [0.,300.,500., 1500., 2100.,3000.]
 nzug = len(zug)
 ug = np.zeros(nzug,dtype=np.float64)
 for iz in range(0,nzug):
-    ug[iz] = -10.+1.8e-3**zug[iz]
     ug[iz] = -10.+1.8e-3*zug[iz]
 
 vg = np.zeros(nzug,dtype=np.float64)
@@ -114,8 +117,8 @@ case.add_vertical_velocity(w=w,lev=zw,levtype='altitude')
 zthetal_rad = [ 0.,  1500.,  3000.]
 thetal_rad  = [-2.0,   -2.0,    0.] # in K day-1
 
-case.add_thetal_radiation_tendency(np.array(thetal_rad)/86400.,
-        lev=zthetal_rad, levtype='altitude') # converted in K s-1
+case.add_thetal_radiation_tendency(np.array(thetal_rad)/86400., # converted in K s-1
+        lev=zthetal_rad, levtype='altitude')
 
 # Constant large-scale advection of specific humidity
 zqt_adv = [ 0.,    300.,     500.]
@@ -124,8 +127,12 @@ qt_adv  = [-1.2e-8, -1.2e-8,   0.] # in kg kg-1 s-1
 case.add_qt_advection(qt_adv, lev=zqt_adv, levtype='altitude') 
 
 # Surface Forcing
-case.add_surface_fluxes(sens=8e-3*cc.Cpd, lat=5.2e-5*cc.Lv, 
-        forc_wind='ustar', ustar=0.28)
+sensib = 8e-3*constants.Cpd
+latent = 5.2e-5*constants.Lv
+ustar  = 0.28
+
+case.add_surface_fluxes(sens=sensib, lat=latent, 
+                        forc_wind='ustar', ustar=ustar)
 
 case.add_surface_skin_temp(300.4)
 

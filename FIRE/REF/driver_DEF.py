@@ -5,14 +5,15 @@ Created on 21 Septembre 2021
 
 @author: Romain Roehrig
 
+Modification
+  2025/04/03, N. Villefranque: clean for publication.
 """
 
 ## EUROCS FIRE straotumulus case original case definition
 
-from datetime import datetime, timedelta
-
 import numpy as np
 
+from datetime import datetime, timedelta
 from dephycf.Case import Case
 
 ################################################
@@ -26,8 +27,9 @@ lverbose = False # print information about variables and case
 # 1. General information about the case
 ################################################
 
+duration = 72 # hours
 tmin = datetime(1987, 7, 14, 8)
-tmax = tmin + timedelta(hours=72)
+tmax = tmin + timedelta(hours=duration)
 
 case = Case('FIRE/REF',
         lat=33.3,
@@ -83,7 +85,7 @@ def f_qt(z):
     else:
         return 9.6-3.0 - 0.003*(z-605)
 
-qt = [f_qt(z)/1000. for z in zqt] # in kg kg-1
+qt = [max(0,f_qt(z)/1000.) for z in zqt] # in kg kg-1
 
 case.add_init_qt(qt,lev=zqt,levtype='altitude')
 

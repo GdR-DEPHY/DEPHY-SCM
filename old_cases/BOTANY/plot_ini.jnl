@@ -1,0 +1,59 @@
+ ! NOAA/PMEL TMAP
+ ! FERRET v7.6 (optimized)
+ ! Linux 5.4.0-173-generic - 04/08/24
+ ! 13-Oct-25 09:32     
+
+
+use MNH045/BOTANY_MNH045_DEF_driver.nc
+use MNH066/BOTANY_MNH066_DEF_driver.nc
+
+set window/asp=.7:ax	
+set viewport left
+let var=thetal
+plot/x=0:4000/tr/thick/title="Init theta (K)" var[d=1],var[d=2]
+go unlabel 1
+go unlabel 2
+go unlabel 3
+ppl ylab "Height (m)"
+ppl plot
+go white
+plot/x=0:4000/tr/thick/ov/col=black/title="RUN 045"/d=1 var
+plot/x=0:4000/tr/thick/ov/col=red/title="RUN 066"/d=2 var
+
+set viewport right
+let var=qt/(1-qt)*1000
+plot/x=0:4000/tr/thick/title="Init rv (g/kg)" var[d=1],var[d=2]
+go unlabel 1
+go unlabel 2
+go unlabel 3
+ppl ylab "Height (m)"
+ppl plot
+plot/x=0:4000/tr/thick/ov/col=black/title="RUN 045"/d=1 var
+plot/x=0:4000/tr/thick/ov/col=red/title="RUN 066"/d=2 var
+frame/file="th_rt.gif"
+
+! 2nd figure, winds
+set viewport left
+let var=ua
+plot/x=0:4000/tr/thick/title="Init u (m/s)" var[d=1],var[d=2]
+go unlabel 1
+go unlabel 2
+go unlabel 3
+ppl ylab "Height (m)"
+ppl plot
+plot/x=0:4000/tr/thick/ov/col=black/title="RUN 045"/d=1 var
+plot/x=0:4000/tr/thick/ov/col=red/title="RUN 066"/d=2 var
+
+set viewport right
+let var=wa[l=1]*100
+plot/x=0:4000/tr/thick/title="Large scale w (cm/s)" var[d=1],var[d=2]
+go unlabel 1
+go unlabel 2
+go unlabel 3
+ppl ylab "Height (m)"
+ppl plot
+plot/x=0:4000/tr/thick/ov/col=black/title="RUN 045"/d=1 var
+plot/x=0:4000/tr/thick/ov/col=red/title="RUN 066"/d=2 var
+frame/file="winds.gif"
+
+exit

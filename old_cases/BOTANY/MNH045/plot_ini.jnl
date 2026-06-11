@@ -1,0 +1,33 @@
+ ! NOAA/PMEL TMAP
+ ! FERRET v7.6 (optimized)
+ ! Linux 5.4.0-173-generic - 04/08/24
+ ! 13-Oct-25 09:32     
+
+use BOTANY_MNH045_DEF_driver.nc
+sh da
+plot theta[z=0:4000]
+plot thetal[z=0:4000]
+plot/tr thetal[z=0:4000]
+plot/tr thetal[l=1:100]
+plot/tr thetal[i=1:100]
+go white
+plot/tr thetal[i=1:100]
+plot/tr/thick thetal[i=1:100]
+plot/tr/thick thetal[i=1:130]
+plot/tr/thick thetal[i=1:140]
+plot/tr/thick thetal[i=1:130]
+plot/tr/thick thetal[i=1:131]
+plot/tr/thick thetal[x=0:4000]
+plot/tr/thick/title="theta initial" thetal[x=0:4000]
+set viewport left
+plot/tr/thick/title="theta initial" thetal[x=0:4000]
+set viewport right
+plot/tr/thick/title="rv initial" qt/(1-qt)[x=0:4000]
+plot/tr/thick/title="rv initial"/x=0:4000 qt/(1-qt)
+plot/tr/thick/x=0:4000/ov/title="RUN 045" qt/(1-qt)
+plot/tr/thick/title="rv initial"/x=0:4000 qt/(1-qt)
+plot/tr/thick/x=0:4000/ov/title="RUN 045"/col=black qt/(1-qt)
+plot/tr/thick/x=0:4000/ov/title="RUN 045"/col=green qt/(1-qt)
+plot/tr/thick/x=0:4000/ov/title="RUN 045"/col=brown qt/(1-qt)
+plot/tr/thick/x=0:4000/ov/title="RUN 045"/col=black qt/(1-qt)
+exit

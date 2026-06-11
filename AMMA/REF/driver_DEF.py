@@ -30,7 +30,6 @@ lverbose = False # print information about variables and case
 # 1. General information about the case
 ################################################
 
-
 duration=18
 tmin = datetime(2006, 7, 10, 6, 0)
 tmax = tmin + timedelta(hours=duration)
@@ -48,13 +47,13 @@ case.set_title("Forcing and initial conditions for AMMA case - Original definiti
 case.set_reference("Couvreux et al. (2012, QJRMS)")
 case.set_author("C. Rio")
 case.set_script("DEPHY-SCM/AMMA/REF/driver_DEF.py")
-case.set_comment("Use of file amma.nc")
+case.set_comment("Use of file aux/amma.nc")
 
 ################################################
 # 2. Input netCDF file
 ################################################
 
-fin = nc.Dataset('amma.nc','r')
+fin = nc.Dataset('../aux/amma.nc','r')
 
 ################################################
 # 2. Initial state
