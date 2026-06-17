@@ -68,8 +68,7 @@ case.add_init_ps(ps)
 init = [   0.0,   265.0,   0.0,       0.0,     0.0,\
            2.0,   265.0,   0.0,       8.0,     0.0,\
          100.0,   265.0,   0.0,       8.0,     0.0,\
-         400.0,   268.0,   0.0,       8.0,     0.0,\
-         700.0,   271.0,   0.0,       8.0,     0.0]
+         400.0,   268.0,   0.0,       8.0,     0.0]
 
 init = np.array(init,dtype=np.float64)
 
@@ -108,10 +107,10 @@ case.add_geostrophic_wind(ug=ug,vg=vg,lev=z,levtype='altitude')
 # Surface Forcing
 # constant cooling rate 0.25K/hr from 265 K
 
-thetas=[265., 264.75, 264.5, 264.25, 264., 263.75, 263.5, 263.25, 263.0, 262.75]
-time_thetas=[0., 3600., 7200., 10800., 14400., 18000., 21600., 25200., 28800., 32400.]
+ts=[265., 264.75, 264.5, 264.25, 264., 263.75, 263.5, 263.25, 263.0, 262.75]
+timets=[0., 3600., 7200., 10800., 14400., 18000., 21600., 25200., 28800., 32400.]
 
-case.add_forcing_thetas(thetas,time=time_thetas,z0=0.1,z0h=0.1)
+case.add_forcing_ts(ts,time=timets,z0=0.1)
 
 # The following flux-gradient relations are recommended
 # du/dz= ∂v=dz u*/(Kz)*(1.+Bm(z/L))

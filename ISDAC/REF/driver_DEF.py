@@ -53,8 +53,9 @@ case.set_comment(" ")
 ################################################
 # 2. Initial state
 ################################################
-# Surface pressure
+# Surface pressure and temperature
 ps = 102000.
+ts=267.
 
 z=np.array(np.linspace(0,5000,51),dtype=np.float64)
 thetal=z*0.
@@ -80,8 +81,14 @@ u=u-7.
 v=-2.+0.003*z
 tke = tke+0.1
 
+
 # Surface pressure
 case.add_init_ps(ps)
+
+# Surface temperature
+case.add_init_ts(ts)
+case.add_surface_skin_temp(ts)
+
 
 # height
 case.add_init_height(z,lev=z,levtype='altitude')
