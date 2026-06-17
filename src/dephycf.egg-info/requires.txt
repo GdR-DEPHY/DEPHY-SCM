@@ -1,0 +1,6 @@
+matplotlib>=3.10.9
+netcdf4>=1.7.3
+metpy
+numpy
+scipy
+xarray
