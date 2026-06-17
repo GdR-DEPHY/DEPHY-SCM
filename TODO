@@ -1,0 +1,6 @@
+# Fichiers pour lister toutes les modifications auxquelles on pense lors qu'on définit un nouveau cas:
+#############
+
+Définition du cas GOAMAZON/SINGLE
+=> permettre de prescrire un zo_scalar pour les flux scalaires autres que T & q 
+=> permettre de fournir un forcage avec une grille verticale variable dans le temps
