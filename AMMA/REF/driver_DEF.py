@@ -56,7 +56,7 @@ case.set_comment("Use of file aux/amma.nc")
 fin = nc.Dataset('../aux/amma.nc','r')
 
 ################################################
-# 2. Initial state
+# 3. Initial state
 ################################################
 
 # Surface pressure
@@ -85,7 +85,7 @@ rv = fin['rv'][:]
 case.add_init_rv(rv,lev=height,levtype='altitude')
 
 ################################################
-# 3. Forcing
+# 4. Forcing
 ################################################
 
 # Forcing time axis
@@ -110,7 +110,7 @@ flat=fin['flat'][:]
 case.add_surface_fluxes(sens,flat,time=timeForc,forc_wind='z0',z0=0.01)
 
 ################################################
-# 4. Writing file
+# 5. Writing file
 ################################################
 
 case.write('AMMA_REF_DEF_driver.nc')
