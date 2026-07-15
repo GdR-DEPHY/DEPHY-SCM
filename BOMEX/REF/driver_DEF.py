@@ -80,7 +80,7 @@ case.add_init_qt(np.array(qt)/1000., lev=zqt, levtype='altitude') # converted in
 # Turbulent Kinetic Energy
 ztke = [0, 3000.]
 nztke = len(ztke)
-tke = np.zeros(nztke,dtype=np.float64)
+tke = np.zeros(nztke,dtype=float)
 
 for iz in range(0,nztke):
     if ztke[iz] <= 3000:
@@ -99,11 +99,11 @@ case.add_init_tke(tke, lev=ztke, levtype='altitude')
 
 zug = [0.,300.,500., 1500., 2100.,3000.]
 nzug = len(zug)
-ug = np.zeros(nzug,dtype=np.float64)
+ug = np.zeros(nzug,dtype=float)
 for iz in range(0,nzug):
     ug[iz] = -10.+1.8e-3*zug[iz]
 
-vg = np.zeros(nzug,dtype=np.float64)
+vg = np.zeros(nzug,dtype=float)
 
 case.add_geostrophic_wind(ug=ug,vg=vg,lev=zug,levtype='altitude')
 

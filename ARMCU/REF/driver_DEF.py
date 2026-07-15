@@ -13,7 +13,6 @@ Modification
 ## ARM-Cumulus original case definition
 ## From http://projects.knmi.nl/eurocs/ARM/case_ARM_html/ [dead link]
 
-import netCDF4 as nc
 import numpy as np
 
 from datetime import datetime, timedelta
@@ -163,7 +162,8 @@ case.add_rt_advection(rtadv,time=tforc,lev=zforc,levtype='altitude')
 # the add_surface_fluxes function:
 
 # Surface Forcing
-XTIMEF, XSFTQ, XSFTH = np.genfromtxt('../aux/surface_flux_forcings.txt', dtype=float, skip_header=0, usecols=[0,1,2]).transpose()
+XTIMEF, XSFTQ, XSFTH = np.genfromtxt('../aux/surface_flux_forcings.txt',
+                                     dtype=float, skip_header=0).transpose()
 case.add_surface_fluxes(sens=XSFTH,lat=XSFTQ*constants.Lv,time=XTIMEF,forc_wind='z0',z0=0.035)
 
 ################################################
