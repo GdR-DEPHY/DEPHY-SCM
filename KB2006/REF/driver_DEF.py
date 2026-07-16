@@ -44,7 +44,8 @@ case.set_title("Forcing and initial conditions for Kuang-Bretherton case - Origi
 case.set_reference("Kuang and Bretherton (JAS, 2006)")
 case.set_author("F. Couvreux")
 case.set_script("DEPHY-SCM/KB2006/REF/driver_DEF.py")
-case.set_comment("Initial state as in BOMEX but no wind")
+case.set_comment("Initial state as in BOMEX")
+case.set_modifications("Wind profiles as in BOMEX instead of null as in Kuang and Bretherton, and with geostrophic forcings.\nModified initial theta profile with an inversion at tropopause.")
 
 ################################################
 # 2. Initial state
@@ -55,9 +56,9 @@ ps = 101500.
 case.add_init_ps(ps)
 
 # Zonal and meridional wind
-zu = zv = [   0,    700.,  3000., 5600. ,20000.]
-u  = [ 0.,  0.,  0.,  0.,  0.]
-v  = [ 0.,  0.,  0.,  0.,  0.]
+zu = zv = [  0.,    700.,  3000., 5600, 10000]
+u  = [ -8.75, -8.75, -4.61, 0., 0.]
+v  = [  0.,    0.,    0.,   0., 0.]
 
 case.add_init_wind(u=u,v=v, ulev=zu, vlev=zv, levtype='altitude')
 
@@ -68,13 +69,13 @@ thetal  = [298.7,   298.7, 302.4,  308.2, 311.85, 316.93, 362.95, 392.25, 470.56
 case.add_init_thetal(thetal, lev=zthetal, levtype='altitude')
 
 # Total water
-zrt =[ 0.,  520., 1480., 2000., 3000., 4000., 15000., 17500., 20000.] 
-rt = [17.293998,  16.57,  10.82, 4.22, 3.01, 0., 0., 0., 0.] # in g kg-1
+zqt =[ 0., 520., 1480., 2000., 3000., 4000., 20000.] 
+qt = [17., 16.3, 10.7,   4.2,   3.0,  0.,     0] # in g kg-1
 
-case.add_init_rt(np.array(rt)/1000., lev=zrt, levtype='altitude') # converted in kg kg-1
+case.add_init_qt(np.array(qt)/1000., lev=zqt, levtype='altitude') # converted in kg kg-1
 
 # Turbulent Kinetic Energy
-ztke = [0, 6000.]
+ztke = [0, 3000., 6000.]
 nztke = len(ztke)
 tke = np.zeros(nztke,dtype=float)
 
@@ -89,6 +90,22 @@ case.add_init_tke(tke, lev=ztke, levtype='altitude')
 ################################################
 # 3. Forcing
 ################################################
+
+# Constant geostrophic wind across the simulation
+# Siebesma et Cuijpers donnent ug=-10.+0.0018*zz  vg=0.
+# add points at z = 5600 and z = 10000 m with u = 0 m/s
+
+zug = [0., 300., 500., 1500., 2100., 3000., 5600, 10000]
+nzug = len(zug)
+ug = np.zeros(nzug,dtype=float)
+for iz in range(0,nzug):
+  ug[iz] = -10.+1.8e-3*zug[iz]
+  if zug[iz] > 5000: ug[iz] = 0.
+
+vg = np.zeros(nzug,dtype=float)
+
+case.add_geostrophic_wind(ug=ug,vg=vg,lev=zug,levtype='altitude')
+
 
 # Constant large-scale velocity - constant
 zw = [0.,  300.,    500.,     1500., 2100.]

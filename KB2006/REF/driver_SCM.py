@@ -48,10 +48,16 @@ if lverbose:
 # Grid onto which interpolate the input data
 
 # Same grid as in driver DEF
-levout = np.array(fin['lev_rt'][:])
+levout=[]
+for k in fin.variables:
+  if "lev_" in k: levout += fin[k][:].tolist()
+levout = np.unique(np.array(levout))
 
 # Same grid as in driver DEF
-timeout = np.array(fin['time_hfss'][:])
+timeout=[]
+for k in fin.variables:
+  if "time_" in k: timeout += fin[k][:].tolist()
+timeout = np.unique(np.array(timeout))
 
 # Conversion
 newcase = case.convert2SCM(time=timeout,lev=levout,levtype='altitude')

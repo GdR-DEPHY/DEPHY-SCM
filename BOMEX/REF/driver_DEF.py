@@ -101,7 +101,7 @@ zug = [0.,300.,500., 1500., 2100.,3000.]
 nzug = len(zug)
 ug = np.zeros(nzug,dtype=float)
 for iz in range(0,nzug):
-    ug[iz] = -10.+1.8e-3*zug[iz]
+  ug[iz] = -10.+1.8e-3*zug[iz]
 
 vg = np.zeros(nzug,dtype=float)
 
