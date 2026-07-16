@@ -32,7 +32,7 @@ duration=5*24
 tmin = datetime(2001, 9, 27)
 tmax = tmin + timedelta(hours=duration)
 
-case = Case('KB2006',
+case = Case('KB2006/REF',
         lat=15,
         lon=-56.5,
         startDate=tmin,
