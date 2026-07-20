@@ -12,6 +12,7 @@ list_sim="SFCFRC NONUDGING"
 list_sim="NUDGINGABOVE"
 list_sim="REF SHORT RADFRC ALLFRC SFCFRC MNH"
 list_sim="REF "
+list_sim="MNH30H "
 
 cd .. && source setenv && cd - > /dev/null 2>&1
 

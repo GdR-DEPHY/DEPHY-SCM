@@ -33,9 +33,9 @@ lverbose = args.v
 # 1. General information about the case
 ################################################
 
-# 60h
+# 30h
 start_date = "20200201000000"
-end_date  =  "20200203120000"
+end_date  =  "20200202060000"
 Zorog = 0
 
 from datetime import datetime
