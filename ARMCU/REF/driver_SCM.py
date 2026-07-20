@@ -74,11 +74,11 @@ with nc.Dataset('../aux/tskin/tskin_SGP_C1_irt10m_19970621003000-19970622233000.
 
 # grid onto which interpolate the input data
 
-# New vertical grid, 10-m resolution from surface to 6000 m (above the surface)
-levout = np.array(range(0,20001,10),dtype=np.float64) 
+# New vertical grid, 10-m resolution from surface to 20000 m (above the surface)
+levout = np.array(range(0,20001,10),dtype=float) 
 
 # New temporal grid, from 11:30 UTC, 21 June 1997 to 02:00 UTC, 22 June 1997, 30-min timestep
-timeout = np.array(range(0,86400+2*3600+1-41400,1800),dtype=np.float64) 
+timeout = np.array(range(0,86400+2*3600+1-41400,1800),dtype=float) 
 
 # conversion
 newcase = case.convert2SCM(time=timeout,lev=levout,levtype='altitude')

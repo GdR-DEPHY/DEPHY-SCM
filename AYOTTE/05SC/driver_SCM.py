@@ -38,7 +38,7 @@ if lverbose:
     case.info()
 
 ################################################
-# 2. Interpolate onto a new grid, same for all the variables
+# 2. Interpolate onto DEF grid, same for all the variables
 #    and add new variables if needed
 ################################################
 

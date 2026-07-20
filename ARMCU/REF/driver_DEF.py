@@ -79,7 +79,7 @@ case.add_init_rt(np.array(rt)/1000.,lev=zrt,levtype='altitude')
 # Turbulent Kinetic Energy
 ztke = [0, 150, 5500.]
 nztke = len(ztke)
-tke = np.zeros(nztke,dtype=np.float64)
+tke = np.zeros(nztke,dtype=float)
 
 for iz in range(0,nztke):
     if ztke[iz] < 150.:
