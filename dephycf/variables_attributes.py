@@ -1,4 +1,65 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Definition of physical and forcing variables metadata.
+
+This module defines a single ordered mapping, :data:`attributes`, which
+associates short variable identifiers (used internally and in netCDF files)
+with their corresponding physical metadata.
+
+Each entry describes:
+- a CF-compliant standard name,
+- physical units,
+- optional plotting conversion factors and display units.
+
+The ordering of variables is meaningful and reflects logical groupings such as:
+
+- Initial atmospheric state
+- Surface variables
+- Forcings (geostrophic, advective, radiative)
+- Nudging profiles
+- Surface fluxes
+- Radiation and composition variables
+
+Structure of ``attributes``
+---------------------------
+
+``attributes`` is an :class:`collections.OrderedDict` mapping:
+
+- **key** (str): short variable name (e.g. ``"ta"``, ``"qv"``, ``"ua"``) 
+used as the netCDF identifier.
+- **value** (dict): metadata dictionary with the following keys:
+
+  - ``name``: :class:`str`
+      CF standard name or descriptive variable name.
+  - ``units``: :class:`str`
+      Physical units (SI unless stated otherwise).
+  - ``plotcoef``: :class:`float`, optional
+      Multiplicative factor applied before plotting.
+  - ``plotunits``: :class:`str`, optional
+      Units used for plotting after applying ``plotcoef``.
+
+Example
+-------
+
+>>> from dephycf.attributes import attributes
+>>> attributes["ta"]
+{'name': 'air_temperature', 'units': 'K'}
+
+>>> attributes["qv"]["plotunits"]
+'g kg-1'
+
+Notes
+-----
+
+- Not all variables define ``plotcoef`` or ``plotunits``.
+- Units follow CF conventions when applicable.
+- This module contains **data only** and no functions.
+"""
+
 from collections import OrderedDict
+
+__all__ = ["attributes"]
 
 attributes = OrderedDict([
         ###########################
@@ -23,7 +84,6 @@ attributes = OrderedDict([
         ('rl',       {'name': 'cloud_liquid_water_mixing_ratio',            'units': '1', 'plotcoef': 1000., 'plotunits': 'g kg-1'}),
         ('ri',       {'name': 'cloud_ice_water_mixing_ratio',               'units': '1', 'plotcoef': 1000., 'plotunits': 'g kg-1'}),        
         ('tke',      {'name': 'specific_turbulent_kinetic_energy',          'units': 'm2 s-2'}),
-        ('hur',      {'name': 'relative_humidity',                          'units': '%'}),
         # Surface
         ('ts',    {'name': 'surface_temperature',                  'units': 'K'}),
         ('thetas',{'name': 'surface_potential_temperature',        'units': 'K'}),
@@ -102,3 +162,23 @@ attributes = OrderedDict([
         ('sza',  {'name': 'solar_zenith_angle',          'units': 'degree'}),
         ('i0',   {'name': 'solar_irradiance',            'units': 'W m-2'}),
         ])
+"""
+Ordered mapping defining metadata for all supported variables.
+
+See the module-level documentation for the full description of the structure
+and meaning of each entry.
+"""
+
+def iter_attributes():
+    """
+    Iterate over all defined attributes.
+
+    Yields
+    ------
+    key : str
+        Short variable name.
+    meta : dict
+        Metadata dictionary associated with the variable.
+    """
+    return attributes.items()
+

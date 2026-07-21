@@ -7,5 +7,6 @@ API Reference
    constants
    thermo
    attributes
+   variables_attributes
    plotbasics
    axis

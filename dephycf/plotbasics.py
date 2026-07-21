@@ -9,6 +9,8 @@ This module provides basic functions to generate simple
 
 import os
 import numpy as np
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 # Reduce matplotlib logging noise
