@@ -338,8 +338,14 @@
 <span class="sd">- physical units,</span>
 <span class="sd">- optional plotting conversion factors and display units.</span>
 
-<span class="sd">The ordering of variables is meaningful and reflects logical groupings:</span>
-<span class="sd">initial state, surface variables, forcings, nudging terms, radiation, etc.</span>
+<span class="sd">The ordering of variables is meaningful and reflects logical groupings such as:</span>
+
+<span class="sd">- Initial atmospheric state</span>
+<span class="sd">- Surface variables</span>
+<span class="sd">- Forcings (geostrophic, advective, radiative)</span>
+<span class="sd">- Nudging profiles</span>
+<span class="sd">- Surface fluxes</span>
+<span class="sd">- Radiation and composition variables</span>
 
 <span class="sd">Structure of ``attributes``</span>
 <span class="sd">---------------------------</span>
@@ -379,6 +385,8 @@
 
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;attributes&quot;</span><span class="p">]</span>
+
 <span class="n">attributes</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">([</span>
         <span class="c1">###########################</span>
         <span class="c1"># Initial variables</span>
@@ -402,7 +410,6 @@
         <span class="p">(</span><span class="s1">&#39;rl&#39;</span><span class="p">,</span>       <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;cloud_liquid_water_mixing_ratio&#39;</span><span class="p">,</span>            <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="s1">&#39;plotcoef&#39;</span><span class="p">:</span> <span class="mf">1000.</span><span class="p">,</span> <span class="s1">&#39;plotunits&#39;</span><span class="p">:</span> <span class="s1">&#39;g kg-1&#39;</span><span class="p">}),</span>
         <span class="p">(</span><span class="s1">&#39;ri&#39;</span><span class="p">,</span>       <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;cloud_ice_water_mixing_ratio&#39;</span><span class="p">,</span>               <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="s1">&#39;plotcoef&#39;</span><span class="p">:</span> <span class="mf">1000.</span><span class="p">,</span> <span class="s1">&#39;plotunits&#39;</span><span class="p">:</span> <span class="s1">&#39;g kg-1&#39;</span><span class="p">}),</span>        
         <span class="p">(</span><span class="s1">&#39;tke&#39;</span><span class="p">,</span>      <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;specific_turbulent_kinetic_energy&#39;</span><span class="p">,</span>          <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;m2 s-2&#39;</span><span class="p">}),</span>
-        <span class="p">(</span><span class="s1">&#39;hur&#39;</span><span class="p">,</span>      <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;relative_humidity&#39;</span><span class="p">,</span>                          <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;%&#39;</span><span class="p">}),</span>
         <span class="c1"># Surface</span>
         <span class="p">(</span><span class="s1">&#39;ts&#39;</span><span class="p">,</span>    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;surface_temperature&#39;</span><span class="p">,</span>                  <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;K&#39;</span><span class="p">}),</span>
         <span class="p">(</span><span class="s1">&#39;thetas&#39;</span><span class="p">,{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;surface_potential_temperature&#39;</span><span class="p">,</span>        <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;K&#39;</span><span class="p">}),</span>

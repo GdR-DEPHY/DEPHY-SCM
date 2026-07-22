@@ -1,5 +1,5 @@
 *********************************************************************
-Thermodyanmical functions and other utilities (:mod:`dephycf.thermo`)
+Thermodynamical functions and other utilities (:mod:`dephycf.thermo`)
 *********************************************************************
 
 Example
