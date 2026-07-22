@@ -1,0 +1,955 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Variable (dephycf.Variable) &#8212; DEPHY-SCM 1.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=f2a433a1"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/variable';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Axis (dephycf.Axis)" href="axis.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">DEPHY-SCM</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    API Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    API Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="constants.html">Physical Constants (<code class="xref py py-mod docutils literal notranslate"><span class="pre">dephycf.constants</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="thermo.html">Thermodynamical functions and other utilities (<code class="xref py py-mod docutils literal notranslate"><span class="pre">dephycf.thermo</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="kernel.html">Kernel smoothing (<code class="xref py py-mod docutils literal notranslate"><span class="pre">dephycf.kernel</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="attributes.html">Attributes (<code class="xref py py-mod docutils literal notranslate"><span class="pre">dephycf.attributes</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="variables_attributes.html">Attributes catalog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plotbasics.html">Plotting Utilities (<code class="xref py py-mod docutils literal notranslate"><span class="pre">dephycf.plotbasics</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="axis.html">Axis (<code class="xref py py-mod docutils literal notranslate"><span class="pre">dephycf.Axis</span></code>)</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Variable (<code class="xref py py-mod docutils literal notranslate"><span class="pre">dephycf.Variable</span></code>)</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">API Reference</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Variable (<code class="xref py py-mod docutils literal notranslate"><span class="pre">dephycf.Variable</span></code>)</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="variable-dephycf-variable">
+<h1>Variable (<a class="reference internal" href="#module-dephycf.Variable" title="dephycf.Variable"><code class="xref py py-mod docutils literal notranslate"><span class="pre">dephycf.Variable</span></code></a>)<a class="headerlink" href="#variable-dephycf-variable" title="Link to this heading">#</a></h1>
+<p>This module provides the <code class="xref py py-class docutils literal notranslate"><span class="pre">Variable</span></code> class, a container that
+associates a data array with its axes (time, level, latitude,
+longitude) and, optionally, with a companion vertical-coordinate
+variable (height and/or pressure), itself stored as an instance of
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Variable</span></code>.</p>
+<p>It also provides two module-level functions:</p>
+<ul class="simple">
+<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">read()</span></code>, to read a <code class="xref py py-class docutils literal notranslate"><span class="pre">Variable</span></code> from an already open
+netCDF file;</p></li>
+<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">interpol()</span></code>, to interpolate a <code class="xref py py-class docutils literal notranslate"><span class="pre">Variable</span></code> in time and/or
+along the vertical.</p></li>
+</ul>
+<section id="example">
+<h2>Example<a class="headerlink" href="#example" title="Link to this heading">#</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">netCDF4</span> <span class="k">as</span> <span class="nn">nc</span>
+<span class="kn">from</span> <span class="nn">dephycf</span> <span class="kn">import</span> <span class="n">Variable</span>
+
+<span class="c1"># Read a variable from a netCDF file</span>
+<span class="k">with</span> <span class="n">nc</span><span class="o">.</span><span class="n">Dataset</span><span class="p">(</span><span class="s1">&#39;example.nc&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">filein</span><span class="p">:</span>
+    <span class="n">var</span> <span class="o">=</span> <span class="n">Variable</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;ta&#39;</span><span class="p">,</span> <span class="n">filein</span><span class="p">)</span>
+    <span class="n">var</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
+
+<span class="c1"># Time interpolation</span>
+<span class="n">var_interp</span> <span class="o">=</span> <span class="n">var</span><span class="o">.</span><span class="n">interpol_time</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">new_time_axis</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="notes">
+<h2>Notes<a class="headerlink" href="#notes" title="Link to this heading">#</a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The <code class="xref py py-func docutils literal notranslate"><span class="pre">interpol()</span></code> function contains a TODO regarding the
+revision of the extrapolation strategy (see the source code).</p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><code class="xref py py-mod docutils literal notranslate"><span class="pre">Axis</span></code>, <code class="xref py py-mod docutils literal notranslate"><span class="pre">plotbasics</span></code>, <code class="xref py py-mod docutils literal notranslate"><span class="pre">variables_attributes</span></code></p>
+</div>
+</section>
+<section id="module-dephycf.Variable">
+<span id="api-reference"></span><h2>API Reference<a class="headerlink" href="#module-dephycf.Variable" title="Link to this heading">#</a></h2>
+<p>Variable module.</p>
+<p>This module defines the <a class="reference internal" href="#dephycf.Variable.Variable" title="dephycf.Variable.Variable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Variable</span></code></a> class, a container that
+associates a data array with its axes (time, level, latitude,
+longitude) and, optionally, with a companion height or pressure
+vertical coordinate (itself stored as a <a class="reference internal" href="#dephycf.Variable.Variable" title="dephycf.Variable.Variable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Variable</span></code></a>).</p>
+<p>It also provides module-level helper functions to:</p>
+<ul class="simple">
+<li><p>read a <a class="reference internal" href="#dephycf.Variable.Variable" title="dephycf.Variable.Variable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Variable</span></code></a> from an open netCDF file (<a class="reference internal" href="#dephycf.Variable.read" title="dephycf.Variable.read"><code class="xref py py-func docutils literal notranslate"><span class="pre">read()</span></code></a>);</p></li>
+<li><p>interpolate a <a class="reference internal" href="#dephycf.Variable.Variable" title="dephycf.Variable.Variable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Variable</span></code></a> in time and/or in the vertical
+(<a class="reference internal" href="#dephycf.Variable.interpol" title="dephycf.Variable.interpol"><code class="xref py py-func docutils literal notranslate"><span class="pre">interpol()</span></code></a>).</p></li>
+</ul>
+<dl class="py class">
+<dt class="sig sig-object py" id="dephycf.Variable.Variable">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Variable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">varid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">units</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height_units</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pressure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pressure_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pressure_units</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axlist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plotcoef</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plotunits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dephycf/Variable.html#Variable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dephycf.Variable.Variable" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Container for a physical variable and its associated axes.</p>
+<p>A <a class="reference internal" href="#dephycf.Variable.Variable" title="dephycf.Variable.Variable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Variable</span></code></a> bundles a data array together with the axes
+it is defined on (typically <code class="docutils literal notranslate"><span class="pre">time</span></code> and/or <code class="docutils literal notranslate"><span class="pre">level</span></code>), plus
+optional vertical-coordinate companions (<code class="docutils literal notranslate"><span class="pre">height</span></code> and/or
+<code class="docutils literal notranslate"><span class="pre">pressure</span></code>, themselves stored as <a class="reference internal" href="#dephycf.Variable.Variable" title="dephycf.Variable.Variable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Variable</span></code></a> instances).
+It also stores plotting-related metadata (<cite>plotcoef</cite>,
+<cite>plotunits</cite>) and provides methods to read/write netCDF data, plot
+the variable, and interpolate it in time and in the vertical.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dephycf.Variable.Variable.id">
+<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#dephycf.Variable.Variable.id" title="Link to this definition">#</a></dt>
+<dd><p>Variable identifier (netCDF variable name).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dephycf.Variable.Variable.name">
+<span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#dephycf.Variable.Variable.name" title="Link to this definition">#</a></dt>
+<dd><p>Standard/long name of the variable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dephycf.Variable.Variable.units">
+<span class="sig-name descname"><span class="pre">units</span></span><a class="headerlink" href="#dephycf.Variable.Variable.units" title="Link to this definition">#</a></dt>
+<dd><p>Physical units of the variable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dephycf.Variable.Variable.data">
+<span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#dephycf.Variable.Variable.data" title="Link to this definition">#</a></dt>
+<dd><p>Data array associated with the variable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dephycf.Variable.Variable.sh">
+<span class="sig-name descname"><span class="pre">sh</span></span><a class="headerlink" href="#dephycf.Variable.Variable.sh" title="Link to this definition">#</a></dt>
+<dd><p>Number of dimensions of <cite>data</cite> (only set when <cite>data</cite> is not
+None).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dephycf.Variable.Variable.axes">
+<span class="sig-name descname"><span class="pre">axes</span></span><a class="headerlink" href="#dephycf.Variable.Variable.axes" title="Link to this definition">#</a></dt>
+<dd><p>List of <code class="xref py py-class docutils literal notranslate"><span class="pre">Axis</span></code> (or <a class="reference internal" href="#dephycf.Variable.Variable" title="dephycf.Variable.Variable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Variable</span></code></a>) objects the
+variable is defined on.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dephycf.Variable.Variable.axlist">
+<span class="sig-name descname"><span class="pre">axlist</span></span><a class="headerlink" href="#dephycf.Variable.Variable.axlist" title="Link to this definition">#</a></dt>
+<dd><p>List of axis identifiers, in the same order as <cite>axes</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dephycf.Variable.Variable.time">
+<span class="sig-name descname"><span class="pre">time</span></span><a class="headerlink" href="#dephycf.Variable.Variable.time" title="Link to this definition">#</a></dt>
+<dd><p>Time axis, if any.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="axis.html#dephycf.Axis.Axis" title="dephycf.Axis.Axis">Axis</a> or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dephycf.Variable.Variable.level">
+<span class="sig-name descname"><span class="pre">level</span></span><a class="headerlink" href="#dephycf.Variable.Variable.level" title="Link to this definition">#</a></dt>
+<dd><p>Level (vertical) axis, if any.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="axis.html#dephycf.Axis.Axis" title="dephycf.Axis.Axis">Axis</a> or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dephycf.Variable.Variable.coord">
+<span class="sig-name descname"><span class="pre">coord</span></span><a class="headerlink" href="#dephycf.Variable.Variable.coord" title="Link to this definition">#</a></dt>
+<dd><p>Space-separated coordinates string (netCDF <code class="docutils literal notranslate"><span class="pre">coordinates</span></code>
+attribute).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dephycf.Variable.Variable.plotcoef">
+<span class="sig-name descname"><span class="pre">plotcoef</span></span><a class="headerlink" href="#dephycf.Variable.Variable.plotcoef" title="Link to this definition">#</a></dt>
+<dd><p>Multiplicative coefficient applied to the data before
+plotting.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dephycf.Variable.Variable.plotunits">
+<span class="sig-name descname"><span class="pre">plotunits</span></span><a class="headerlink" href="#dephycf.Variable.Variable.plotunits" title="Link to this definition">#</a></dt>
+<dd><p>Units used when plotting (may differ from <cite>units</cite>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dephycf.Variable.Variable.height">
+<span class="sig-name descname"><span class="pre">height</span></span><a class="headerlink" href="#dephycf.Variable.Variable.height" title="Link to this definition">#</a></dt>
+<dd><p>Height companion variable, used as an alternative vertical
+coordinate.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#dephycf.Variable.Variable" title="dephycf.Variable.Variable">Variable</a> or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dephycf.Variable.Variable.pressure">
+<span class="sig-name descname"><span class="pre">pressure</span></span><a class="headerlink" href="#dephycf.Variable.Variable.pressure" title="Link to this definition">#</a></dt>
+<dd><p>Pressure companion variable, used as an alternative vertical
+coordinate.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#dephycf.Variable.Variable" title="dephycf.Variable.Variable">Variable</a> or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dephycf.Variable.Variable.extend_vert">
+<span class="sig-name descname"><span class="pre">extend_vert</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pressure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tunits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dephycf/Variable.html#Variable.extend_vert"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dephycf.Variable.Variable.extend_vert" title="Link to this definition">#</a></dt>
+<dd><p>Extend the variable in the vertical with additional levels.</p>
+<p>Adds levels below and/or above the current vertical range,
+using <cite>data</cite>/<cite>height</cite> (or <cite>data</cite>/<cite>pressure</cite>) as the source of
+the extra levels to insert.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>height</strong> (<em>array_like</em><em>, </em><em>optional</em>) – Height values associated with <cite>data</cite>, used to extend the
+variable vertically. Privileged over <cite>pressure</cite> when the
+variable has a height companion variable. May be 1D
+(shared across time) or 2D <code class="docutils literal notranslate"><span class="pre">(time,</span> <span class="pre">level)</span></code>, in which
+case <cite>time</cite> and <cite>tunits</cite> must also be given.</p></li>
+<li><p><strong>pressure</strong> (<em>array_like</em><em>, </em><em>optional</em>) – Pressure values associated with <cite>data</cite>. Currently not
+implemented.</p></li>
+<li><p><strong>data</strong> (<em>array_like</em>) – Data values to insert at the levels given by <cite>height</cite>
+(or <cite>pressure</cite>).</p></li>
+<li><p><strong>time</strong> (<em>array_like</em><em>, </em><em>optional</em>) – Time values associated with a 2D <cite>height</cite>/<cite>pressure</cite>
+array.</p></li>
+<li><p><strong>tunits</strong> (<em>str</em><em>, </em><em>optional</em>) – Units of <cite>time</cite>, associated with a 2D <cite>height</cite>/<cite>pressure</cite>
+array.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A new <a class="reference internal" href="#dephycf.Variable.Variable" title="dephycf.Variable.Variable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Variable</span></code></a> with the vertical range extended.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#dephycf.Variable.Variable" title="dephycf.Variable.Variable">Variable</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> – If the variable has no level axis, if both <cite>height</cite> and
+    <cite>pressure</cite> are <code class="docutils literal notranslate"><span class="pre">None</span></code>, if <cite>data</cite> is <code class="docutils literal notranslate"><span class="pre">None</span></code>, or if a
+    2D <cite>height</cite>/<cite>pressure</cite> is given without <cite>time</cite>/<cite>tunits</cite>.</p></li>
+<li><p><strong>NotImplementedError</strong> – For cases not yet handled (pressure-based extension,
+    non-constant number of levels to add, or simultaneous
+    extension below and above).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dephycf.Variable.Variable.info">
+<span class="sig-name descname"><span class="pre">info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dephycf/Variable.html#Variable.info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dephycf.Variable.Variable.info" title="Link to this definition">#</a></dt>
+<dd><p>Print a short summary of the variable to stdout.</p>
+<p>Displays the identifier, name, units, axes, coordinates
+string, and basic statistics (mean, min, max) of the data.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dephycf.Variable.Variable.interpol_time">
+<span class="sig-name descname"><span class="pre">interpol_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dephycf/Variable.html#Variable.interpol_time"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dephycf.Variable.Variable.interpol_time" title="Link to this definition">#</a></dt>
+<dd><p>Interpolate the variable onto a new time axis.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>time</strong> (<a class="reference internal" href="axis.html#dephycf.Axis.Axis" title="dephycf.Axis.Axis"><em>Axis</em></a><em>, </em><em>optional</em>) – Target time axis. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, a warning is logged and
+<cite>self</cite> is returned unchanged.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A new <a class="reference internal" href="#dephycf.Variable.Variable" title="dephycf.Variable.Variable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Variable</span></code></a> interpolated onto <cite>time</cite> (or
+<cite>self</cite>, unchanged, if no interpolation is needed/possible).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#dephycf.Variable.Variable" title="dephycf.Variable.Variable">Variable</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the variable does not have a time axis.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dephycf.Variable.Variable.interpol_vert">
+<span class="sig-name descname"><span class="pre">interpol_vert</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pressure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dephycf/Variable.html#Variable.interpol_vert"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dephycf.Variable.Variable.interpol_vert" title="Link to this definition">#</a></dt>
+<dd><p>Interpolate the variable onto a new vertical coordinate.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>height</strong> (<em>array_like</em><em>, </em><em>optional</em>) – Target height values (1D, shared for all times, or 2D
+<code class="docutils literal notranslate"><span class="pre">(time,</span> <span class="pre">level)</span></code>). Used only if the variable already has
+a height companion variable.</p></li>
+<li><p><strong>pressure</strong> (<em>array_like</em><em>, </em><em>optional</em>) – Target pressure values (1D or 2D <code class="docutils literal notranslate"><span class="pre">(time,</span> <span class="pre">level)</span></code>). Used
+only if the variable already has a pressure companion
+variable, and only when <cite>height</cite> is not usable.</p></li>
+<li><p><strong>log</strong> (<em>bool</em><em>, </em><em>optional</em>) – Unused placeholder flag kept for API compatibility.
+Defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><cite>self</cite> unchanged if there is no level axis or if neither
+<cite>height</cite> nor <cite>pressure</cite> is given; otherwise a new
+<a class="reference internal" href="#dephycf.Variable.Variable" title="dephycf.Variable.Variable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Variable</span></code></a> interpolated onto the target vertical
+coordinate.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#dephycf.Variable.Variable" title="dephycf.Variable.Variable">Variable</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If neither a usable height nor a usable pressure
+    companion variable/target is available.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dephycf.Variable.Variable.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rep_images</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeunits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">levunits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dephycf/Variable.html#Variable.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dephycf.Variable.Variable.plot" title="Link to this definition">#</a></dt>
+<dd><p>Plot the variable, optionally overlaid with a second one.</p>
+<p>Depending on which axes (<cite>time</cite>, <cite>level</cite>) the variable has,
+this produces a vertical profile, a time series, or a
+Hovmoller-like time/height plot, delegating the actual
+drawing to <code class="xref py py-mod docutils literal notranslate"><span class="pre">plotbasics</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rep_images</strong> (<em>str</em><em>, </em><em>optional</em>) – Output directory for the generated image(s).</p></li>
+<li><p><strong>var2</strong> (<a class="reference internal" href="#dephycf.Variable.Variable" title="dephycf.Variable.Variable"><em>Variable</em></a><em>, </em><em>optional</em>) – A second variable to overlay on the same plot for
+comparison.</p></li>
+<li><p><strong>label</strong> (<em>str</em><em>, </em><em>optional</em>) – Legend label for <cite>self</cite> when <cite>var2</cite> is given.</p></li>
+<li><p><strong>label2</strong> (<em>str</em><em>, </em><em>optional</em>) – Legend label for <cite>var2</cite> when <cite>var2</cite> is given.</p></li>
+<li><p><strong>timeunits</strong> (<em>{'hours'</em><em>, </em><em>'days'}</em><em>, </em><em>optional</em>) – Units to convert the time axis to before plotting. If
+<code class="docutils literal notranslate"><span class="pre">None</span></code>, the native time units are used.</p></li>
+<li><p><strong>levunits</strong> (<em>{'hPa'</em><em>, </em><em>'Pa'</em><em>, </em><em>'km'</em><em>, </em><em>'m'}</em><em>, </em><em>optional</em>) – Units to convert the level axis to before plotting. If
+<code class="docutils literal notranslate"><span class="pre">None</span></code>, the native level units are used.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dephycf.Variable.Variable.set_coordinates">
+<span class="sig-name descname"><span class="pre">set_coordinates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">coord</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dephycf/Variable.html#Variable.set_coordinates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dephycf.Variable.Variable.set_coordinates" title="Link to this definition">#</a></dt>
+<dd><p>Set the netCDF <code class="docutils literal notranslate"><span class="pre">coordinates</span></code> attribute string.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>*coord</strong> (<em>str</em>) – Coordinate identifiers to join with a single space to
+build <cite>self.coord</cite>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dephycf.Variable.Variable.set_level">
+<span class="sig-name descname"><span class="pre">set_level</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lev</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dephycf/Variable.html#Variable.set_level"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dephycf.Variable.Variable.set_level" title="Link to this definition">#</a></dt>
+<dd><p>Replace the level axis of the variable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>lev</strong> (<a class="reference internal" href="axis.html#dephycf.Axis.Axis" title="dephycf.Axis.Axis"><em>Axis</em></a><em>, </em><em>optional</em>) – New level axis. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, a warning is logged and
+nothing is done.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dephycf.Variable.Variable.write">
+<span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filein</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write_time_axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write_level_axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write_vertical</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dephycf/Variable.html#Variable.write"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dephycf.Variable.Variable.write" title="Link to this definition">#</a></dt>
+<dd><p>Write the variable (and, optionally, its axes) to netCDF.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filein</strong> (<em>netCDF4.Dataset</em>) – Open (writable) netCDF file/dataset to write into.</p></li>
+<li><p><strong>write_time_axes</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to write the time axis/axes. Defaults to
+<code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><strong>write_level_axes</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to write the level axis/axes, when the variable
+has a vertical dimension. Defaults to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><strong>write_data</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to write the variable data itself. Defaults to
+<code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><strong>write_vertical</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to also write the height/pressure companion
+variables, when the variable has a vertical dimension.
+Defaults to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dephycf.Variable.interpol">
+<span class="sig-name descname"><span class="pre">interpol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">levout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dephycf/Variable.html#interpol"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dephycf.Variable.interpol" title="Link to this definition">#</a></dt>
+<dd><p>Interpolate a variable onto new level and/or time axes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>var</strong> (<a class="reference internal" href="#dephycf.Variable.Variable" title="dephycf.Variable.Variable"><em>Variable</em></a>) – Variable to interpolate.</p></li>
+<li><p><strong>levout</strong> (<a class="reference internal" href="axis.html#dephycf.Axis.Axis" title="dephycf.Axis.Axis"><em>Axis</em></a><em>, </em><em>optional</em>) – Target level axis. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, the original level axis (and
+data) is kept.</p></li>
+<li><p><strong>timeout</strong> (<a class="reference internal" href="axis.html#dephycf.Axis.Axis" title="dephycf.Axis.Axis"><em>Axis</em></a><em>, </em><em>optional</em>) – Target time axis. If <code class="docutils literal notranslate"><span class="pre">None</span></code> (or if the variable has a
+single time step), the original time axis (and data) is
+kept.</p></li>
+<li><p><strong>log</strong> (<em>bool</em><em>, </em><em>optional</em>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, interpolate in log-space along the vertical
+(only used for the time-and-level branch and the level-only
+branch). Defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A new <a class="reference internal" href="#dephycf.Variable.Variable" title="dephycf.Variable.Variable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Variable</span></code></a> interpolated onto <cite>levout</cite> and/or
+<cite>timeout</cite>, as applicable.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#dephycf.Variable.Variable" title="dephycf.Variable.Variable">Variable</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the input variable has neither a time nor a level axis.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>TODO: Extrapolation to be revisited.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="dephycf.Variable.read">
+<span class="sig-name descname"><span class="pre">read</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filein</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dephycf/Variable.html#read"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dephycf.Variable.read" title="Link to this definition">#</a></dt>
+<dd><p>Read a <a class="reference internal" href="#dephycf.Variable.Variable" title="dephycf.Variable.Variable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Variable</span></code></a> from an open netCDF file.</p>
+<p>Reads the variable <cite>name</cite> from <cite>filein</cite>, together with its
+dimensions (as <code class="xref py py-class docutils literal notranslate"><span class="pre">Axis</span></code> objects) and, if present, its
+height or pressure vertical-coordinate companion variable
+(identified from the netCDF <code class="docutils literal notranslate"><span class="pre">coordinates</span></code> attribute).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – Name of the netCDF variable to read.</p></li>
+<li><p><strong>filein</strong> (<em>netCDF4.Dataset</em>) – Open netCDF file/dataset to read from.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The variable read from the file, with its axes and, if
+applicable, its height/pressure companion variable attached.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#dephycf.Variable.Variable" title="dephycf.Variable.Variable">Variable</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="axis.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Axis (<code class="xref py py-mod docutils literal notranslate"><span class="pre">dephycf.Axis</span></code>)</p>
+      </div>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example">Example</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#notes">Notes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-dephycf.Variable">API Reference</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.Variable.Variable"><code class="docutils literal notranslate"><span class="pre">Variable</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.Variable.Variable.id"><code class="docutils literal notranslate"><span class="pre">Variable.id</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.Variable.Variable.name"><code class="docutils literal notranslate"><span class="pre">Variable.name</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.Variable.Variable.units"><code class="docutils literal notranslate"><span class="pre">Variable.units</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.Variable.Variable.data"><code class="docutils literal notranslate"><span class="pre">Variable.data</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.Variable.Variable.sh"><code class="docutils literal notranslate"><span class="pre">Variable.sh</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.Variable.Variable.axes"><code class="docutils literal notranslate"><span class="pre">Variable.axes</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.Variable.Variable.axlist"><code class="docutils literal notranslate"><span class="pre">Variable.axlist</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.Variable.Variable.time"><code class="docutils literal notranslate"><span class="pre">Variable.time</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.Variable.Variable.level"><code class="docutils literal notranslate"><span class="pre">Variable.level</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.Variable.Variable.coord"><code class="docutils literal notranslate"><span class="pre">Variable.coord</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.Variable.Variable.plotcoef"><code class="docutils literal notranslate"><span class="pre">Variable.plotcoef</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.Variable.Variable.plotunits"><code class="docutils literal notranslate"><span class="pre">Variable.plotunits</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.Variable.Variable.height"><code class="docutils literal notranslate"><span class="pre">Variable.height</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.Variable.Variable.pressure"><code class="docutils literal notranslate"><span class="pre">Variable.pressure</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.Variable.Variable.extend_vert"><code class="docutils literal notranslate"><span class="pre">Variable.extend_vert()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.Variable.Variable.info"><code class="docutils literal notranslate"><span class="pre">Variable.info()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.Variable.Variable.interpol_time"><code class="docutils literal notranslate"><span class="pre">Variable.interpol_time()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.Variable.Variable.interpol_vert"><code class="docutils literal notranslate"><span class="pre">Variable.interpol_vert()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.Variable.Variable.plot"><code class="docutils literal notranslate"><span class="pre">Variable.plot()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.Variable.Variable.set_coordinates"><code class="docutils literal notranslate"><span class="pre">Variable.set_coordinates()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.Variable.Variable.set_level"><code class="docutils literal notranslate"><span class="pre">Variable.set_level()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.Variable.Variable.write"><code class="docutils literal notranslate"><span class="pre">Variable.write()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.Variable.interpol"><code class="docutils literal notranslate"><span class="pre">interpol()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.Variable.read"><code class="docutils literal notranslate"><span class="pre">read()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/api/variable.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, DEPHY.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.4.7.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Attributes (dephycf.attributes) &#8212; DEPHY-SCM 1.0 documentation</title>
+    <title>Kernel smoothing (dephycf.kernel) &#8212; DEPHY-SCM 1.0 documentation</title>
   
   
   
@@ -43,11 +43,12 @@
     <script src="../_static/documentation_options.js?v=f2a433a1"></script>
     <script src="../_static/doctools.js?v=9a2dae69"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'api/attributes';</script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/kernel';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Attributes catalog" href="variables_attributes.html" />
-    <link rel="prev" title="Kernel smoothing (dephycf.kernel)" href="kernel.html" />
+    <link rel="next" title="Attributes (dephycf.attributes)" href="attributes.html" />
+    <link rel="prev" title="Thermodynamical functions and other utilities (dephycf.thermo)" href="thermo.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -281,8 +282,8 @@
   <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="constants.html">Physical Constants (<code class="xref py py-mod docutils literal notranslate"><span class="pre">dephycf.constants</span></code>)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="thermo.html">Thermodynamical functions and other utilities (<code class="xref py py-mod docutils literal notranslate"><span class="pre">dephycf.thermo</span></code>)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="kernel.html">Kernel smoothing (<code class="xref py py-mod docutils literal notranslate"><span class="pre">dephycf.kernel</span></code>)</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Attributes (<code class="xref py py-mod docutils literal notranslate"><span class="pre">dephycf.attributes</span></code>)</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Kernel smoothing (<code class="xref py py-mod docutils literal notranslate"><span class="pre">dephycf.kernel</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="attributes.html">Attributes (<code class="xref py py-mod docutils literal notranslate"><span class="pre">dephycf.attributes</span></code>)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="variables_attributes.html">Attributes catalog</a></li>
 <li class="toctree-l1"><a class="reference internal" href="plotbasics.html">Plotting Utilities (<code class="xref py py-mod docutils literal notranslate"><span class="pre">dephycf.plotbasics</span></code>)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="axis.html">Axis (<code class="xref py py-mod docutils literal notranslate"><span class="pre">dephycf.Axis</span></code>)</a></li>
@@ -330,7 +331,7 @@
     
     <li class="breadcrumb-item"><a href="index.html" class="nav-link">API Reference</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Attributes (<code class="xref py py-mod docutils literal notranslate"><span class="pre">dephycf.attributes</span></code>)</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Kernel smoothing (<code class="xref py py-mod docutils literal notranslate"><span class="pre">dephycf.kernel</span></code>)</span></li>
   </ul>
 </nav>
 </div>
@@ -347,46 +348,101 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="attributes-dephycf-attributes">
-<h1>Attributes (<a class="reference internal" href="#module-dephycf.attributes" title="dephycf.attributes"><code class="xref py py-mod docutils literal notranslate"><span class="pre">dephycf.attributes</span></code></a>)<a class="headerlink" href="#attributes-dephycf-attributes" title="Link to this heading">#</a></h1>
-<p>This page documents the <strong>known</strong> and <strong>required</strong> metadata attributes
-used in DEPHY-CF case descriptions.</p>
-<section id="known-attributes">
-<h2>Known Attributes<a class="headerlink" href="#known-attributes" title="Link to this heading">#</a></h2>
-<p>The following attributes are recognized in case metadata:</p>
-<div class="pst-scrollable-table-container"><table class="table">
-<colgroup>
-<col style="width: 25.0%" />
-<col style="width: 75.0%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p>Attribute</p></td>
-<td><p>Description</p></td>
-</tr>
-</tbody>
-</table>
+  <section id="kernel-smoothing-dephycf-kernel">
+<h1>Kernel smoothing (<a class="reference internal" href="#module-dephycf.kernel" title="dephycf.kernel"><code class="xref py py-mod docutils literal notranslate"><span class="pre">dephycf.kernel</span></code></a>)<a class="headerlink" href="#kernel-smoothing-dephycf-kernel" title="Link to this heading">#</a></h1>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">#</a></h2>
+<p>This module implements Gaussian kernel smoothing.</p>
+<p>The Gaussian kernel is defined as</p>
+<div class="math notranslate nohighlight">
+\[w(x)=
+\exp\left(
+-\frac{(x-\mu)^2}
+       {2\sigma^2}
+\right)\]</div>
+<p>where <span class="math notranslate nohighlight">\(\mu\)</span> is the kernel center and
+<span class="math notranslate nohighlight">\(\sigma\)</span> the kernel standard deviation.</p>
+</section>
+<section id="example">
+<h2>Example<a class="headerlink" href="#example" title="Link to this heading">#</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">dephycf.kernel</span> <span class="kn">import</span> <span class="n">gaussian_kernel_mean</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+<span class="n">ys</span> <span class="o">=</span> <span class="n">gaussian_kernel_mean</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
 </div>
 </section>
-<section id="module-dephycf.attributes">
-<span id="module-api"></span><h2>Module API<a class="headerlink" href="#module-dephycf.attributes" title="Link to this heading">#</a></h2>
-<p>Definition of known and required case attributes for DEPHY-CF experiments.</p>
-<p>This module provides two lists:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">known_attributes</span></code> : the full set of attributes that may be present in a case.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">required_attributes</span></code> : the subset of attributes that are mandatory for a valid case.</p></li>
+<section id="module-dephycf.kernel">
+<span id="api-reference"></span><h2>API Reference<a class="headerlink" href="#module-dephycf.kernel" title="Link to this heading">#</a></h2>
+<p>Gaussian kernel smoothing utilities.</p>
+<p>This module provides simple functions for computing Gaussian weights and
+Gaussian kernel moving averages.</p>
+<p>The Gaussian kernel is defined as</p>
+<div class="math notranslate nohighlight">
+\[w(x) = \exp\left(-\frac{(x-\mu)^2}{2\sigma^2}\right)\]</div>
+<p>where <span class="math notranslate nohighlight">\(\mu\)</span> is the kernel center and <span class="math notranslate nohighlight">\(\sigma\)</span> its standard
+deviation.</p>
+<p>The weights are normalized so that their mean equals one, which preserves
+the magnitude of weighted averages.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="dephycf.kernel.gaussian_kernel_mean">
+<span class="sig-name descname"><span class="pre">gaussian_kernel_mean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dephycf/kernel.html#gaussian_kernel_mean"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dephycf.kernel.gaussian_kernel_mean" title="Link to this definition">#</a></dt>
+<dd><p>Compute Gaussian kernel moving averages.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>array-like</em>) – Values to smooth.</p></li>
+<li><p><strong>y</strong> (<em>array-like</em>) – Coordinates associated with the values.</p></li>
+<li><p><strong>sigma</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Gaussian kernel standard deviation.</p></li>
+<li><p><strong>yout</strong> (<em>array-like</em><em>, </em><em>optional</em>) – Coordinates where the smoothed values are evaluated.
+If None, <code class="docutils literal notranslate"><span class="pre">y</span></code> is used.</p></li>
 </ul>
-<p>These attributes are typically used in the metadata of input/output files
-and in case descriptions.</p>
-<dl class="py data">
-<dt class="sig sig-object py" id="dephycf.attributes.known_attributes">
-<span class="sig-name descname"><span class="pre">known_attributes</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['case',</span> <span class="pre">'title',</span> <span class="pre">'reference',</span> <span class="pre">'author',</span> <span class="pre">'version',</span> <span class="pre">'format_version',</span> <span class="pre">'modifications',</span> <span class="pre">'script',</span> <span class="pre">'comment',</span> <span class="pre">'case_type',</span> <span class="pre">'start_date',</span> <span class="pre">'end_date',</span> <span class="pre">'forcing_scale',</span> <span class="pre">'ini_ta',</span> <span class="pre">'ini_theta',</span> <span class="pre">'ini_thetal',</span> <span class="pre">'ini_qv',</span> <span class="pre">'ini_qt',</span> <span class="pre">'ini_rv',</span> <span class="pre">'ini_rt',</span> <span class="pre">'ini_hur',</span> <span class="pre">'adv_ta',</span> <span class="pre">'adv_theta',</span> <span class="pre">'adv_thetal',</span> <span class="pre">'radiation',</span> <span class="pre">'adv_qv',</span> <span class="pre">'adv_qt',</span> <span class="pre">'adv_rv',</span> <span class="pre">'adv_rt',</span> <span class="pre">'adv_ua',</span> <span class="pre">'adv_va',</span> <span class="pre">'forc_zh',</span> <span class="pre">'forc_pa',</span> <span class="pre">'forc_wa',</span> <span class="pre">'forc_wap',</span> <span class="pre">'forc_geo',</span> <span class="pre">'nudging_ua',</span> <span class="pre">'nudging_va',</span> <span class="pre">'nudging_ta',</span> <span class="pre">'nudging_theta',</span> <span class="pre">'nudging_thetal',</span> <span class="pre">'nudging_qv',</span> <span class="pre">'nudging_qt',</span> <span class="pre">'nudging_rv',</span> <span class="pre">'nudging_rt',</span> <span class="pre">'pa_nudging_ua',</span> <span class="pre">'pa_nudging_va',</span> <span class="pre">'pa_nudging_ta',</span> <span class="pre">'pa_nudging_theta',</span> <span class="pre">'pa_nudging_thetal',</span> <span class="pre">'pa_nudging_qv',</span> <span class="pre">'pa_nudging_qt',</span> <span class="pre">'pa_nudging_rv',</span> <span class="pre">'pa_nudging_rt',</span> <span class="pre">'zh_nudging_ua',</span> <span class="pre">'zh_nudging_va',</span> <span class="pre">'zh_nudging_ta',</span> <span class="pre">'zh_nudging_theta',</span> <span class="pre">'zh_nudging_thetal',</span> <span class="pre">'zh_nudging_qv',</span> <span class="pre">'zh_nudging_qt',</span> <span class="pre">'zh_nudging_rv',</span> <span class="pre">'zh_nudging_rt',</span> <span class="pre">'surface_type',</span> <span class="pre">'surface_radiation_temp',</span> <span class="pre">'surface_forcing_temp',</span> <span class="pre">'surface_forcing_moisture',</span> <span class="pre">'surface_forcing_wind']</span></em><a class="headerlink" href="#dephycf.attributes.known_attributes" title="Link to this definition">#</a></dt>
-<dd><p>List of all recognized attributes for case metadata.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Smoothed values.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The smoothed value at position <span class="math notranslate nohighlight">\(y_0\)</span> is</p>
+<div class="math notranslate nohighlight">
+\[f(y_0)=
+\frac{\sum_i w_i(y_0)x_i}
+     {\sum_i w_i(y_0)}\]</div>
+<p>where <span class="math notranslate nohighlight">\(w_i\)</span> are Gaussian weights.</p>
 </dd></dl>
 
-<dl class="py data">
-<dt class="sig sig-object py" id="dephycf.attributes.required_attributes">
-<span class="sig-name descname"><span class="pre">required_attributes</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['case',</span> <span class="pre">'title',</span> <span class="pre">'reference',</span> <span class="pre">'author',</span> <span class="pre">'version',</span> <span class="pre">'format_version',</span> <span class="pre">'modifications',</span> <span class="pre">'script',</span> <span class="pre">'comment',</span> <span class="pre">'case_type',</span> <span class="pre">'start_date',</span> <span class="pre">'end_date',</span> <span class="pre">'forcing_scale',</span> <span class="pre">'ini_ta',</span> <span class="pre">'ini_theta',</span> <span class="pre">'ini_thetal',</span> <span class="pre">'ini_qv',</span> <span class="pre">'ini_qt',</span> <span class="pre">'ini_rv',</span> <span class="pre">'ini_rt',</span> <span class="pre">'ini_hur',</span> <span class="pre">'adv_ta',</span> <span class="pre">'adv_theta',</span> <span class="pre">'adv_thetal',</span> <span class="pre">'radiation',</span> <span class="pre">'adv_qv',</span> <span class="pre">'adv_qt',</span> <span class="pre">'adv_rv',</span> <span class="pre">'adv_rt',</span> <span class="pre">'adv_ua',</span> <span class="pre">'adv_va',</span> <span class="pre">'forc_zh',</span> <span class="pre">'forc_pa',</span> <span class="pre">'forc_wa',</span> <span class="pre">'forc_wap',</span> <span class="pre">'forc_geo',</span> <span class="pre">'nudging_ua',</span> <span class="pre">'nudging_va',</span> <span class="pre">'nudging_ta',</span> <span class="pre">'nudging_theta',</span> <span class="pre">'nudging_thetal',</span> <span class="pre">'nudging_qv',</span> <span class="pre">'nudging_qt',</span> <span class="pre">'nudging_rv',</span> <span class="pre">'nudging_rt',</span> <span class="pre">'surface_type',</span> <span class="pre">'surface_forcing_temp',</span> <span class="pre">'surface_forcing_moisture',</span> <span class="pre">'surface_forcing_wind']</span></em><a class="headerlink" href="#dephycf.attributes.required_attributes" title="Link to this definition">#</a></dt>
-<dd><p>List of mandatory attributes for a valid case definition.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="dephycf.kernel.gaussian_weights">
+<span class="sig-name descname"><span class="pre">gaussian_weights</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dephycf/kernel.html#gaussian_weights"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dephycf.kernel.gaussian_weights" title="Link to this definition">#</a></dt>
+<dd><p>Compute Gaussian weights.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>array-like</em>) – Coordinates.</p></li>
+<li><p><strong>center</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Center of the Gaussian kernel.</p></li>
+<li><p><strong>sigma</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Standard deviation of the Gaussian kernel.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Gaussian weights normalized by their mean.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The weights are computed as</p>
+<div class="math notranslate nohighlight">
+\[w_i =
+\frac{\mathcal N(x_i;\mu,\sigma)}
+     {\mathrm{mean}(\mathcal N)}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\mathcal N\)</span> denotes the Gaussian probability density.</p>
 </dd></dl>
 
 </section>
@@ -403,20 +459,20 @@ and in case descriptions.</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="kernel.html"
+       href="thermo.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Kernel smoothing (<code class="xref py py-mod docutils literal notranslate"><span class="pre">dephycf.kernel</span></code>)</p>
+        <p class="prev-next-title">Thermodynamical functions and other utilities (<code class="xref py py-mod docutils literal notranslate"><span class="pre">dephycf.thermo</span></code>)</p>
       </div>
     </a>
     <a class="right-next"
-       href="variables_attributes.html"
+       href="attributes.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Attributes catalog</p>
+        <p class="prev-next-title">Attributes (<code class="xref py py-mod docutils literal notranslate"><span class="pre">dephycf.attributes</span></code>)</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -439,10 +495,11 @@ and in case descriptions.</p>
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#known-attributes">Known Attributes</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-dephycf.attributes">Module API</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.attributes.known_attributes"><code class="docutils literal notranslate"><span class="pre">known_attributes</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.attributes.required_attributes"><code class="docutils literal notranslate"><span class="pre">required_attributes</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example">Example</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-dephycf.kernel">API Reference</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.kernel.gaussian_kernel_mean"><code class="docutils literal notranslate"><span class="pre">gaussian_kernel_mean()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.kernel.gaussian_weights"><code class="docutils literal notranslate"><span class="pre">gaussian_weights()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -452,7 +509,7 @@ and in case descriptions.</p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../_sources/api/attributes.rst.txt"
+      <li><a href="../_sources/api/kernel.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div></div>

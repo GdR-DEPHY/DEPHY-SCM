@@ -21,7 +21,7 @@ parser=argparse.ArgumentParser()
 
 from dephycf.Case import Case
 from dephycf.other_thermo import rm_from_hu, td_from_rm, hu_from_td
-from dephycf.utils import kernel_mean_gauss
+from dephycf.kernel import gaussian_kernel_mean
 
 # function to pass True|False
 def str2bool(v):
@@ -156,7 +156,7 @@ elif (initial_profile == 'rs_smooth'):
     else:
       return ds.variables[var][:]
   def smoothvar(var, npts=40):
-    return kernel_mean_gauss(getvar(var)[imin:imax],z,npts)
+    return gaussian_kernel_mean(getvar(var)[imin:imax],z,npts)
 
   z = getvar("height")    # m
   imin = 0
