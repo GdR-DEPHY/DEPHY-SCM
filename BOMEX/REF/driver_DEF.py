@@ -32,7 +32,7 @@ lverbose = False # print information about variables and case
 # 1. General information about the case
 ################################################
 
-duration=24
+duration=6
 tmin = datetime(1969, 6, 24, 00, 00)
 tmax = tmin + timedelta(hours=duration)
 
