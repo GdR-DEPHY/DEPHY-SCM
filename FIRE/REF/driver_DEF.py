@@ -27,7 +27,7 @@ lverbose = False # print information about variables and case
 # 1. General information about the case
 ################################################
 
-duration = 72 # hours
+duration = 36 # hours
 tmin = datetime(1987, 7, 14, 8)
 tmax = tmin + timedelta(hours=duration)
 
