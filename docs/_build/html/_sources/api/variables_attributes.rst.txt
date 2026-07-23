@@ -1,5 +1,6 @@
-Attributes catalog
-==================
+**********************************************************
+Variables attributes (:mod:`dephycf.variables_attributes`)
+**********************************************************
 
 This page documents the catalog of physical variables defined in
 :mod:`dephycf.variables_attributes`.
