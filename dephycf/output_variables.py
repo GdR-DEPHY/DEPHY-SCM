@@ -6,10 +6,11 @@
 
 # Coordinates 
 coordinates = {
-  'time' : {'standard_name':'time'                 , 'units': 'seconds since YYYY-MM-DD HH:MM:SS'},
-  'levf' : {'standard_name':'full_level_coordinate', 'units':                                 '1'},
-  'levh' : {'standard_name':'half_level_coordinate', 'units':                                 '1'},
-  'plev' : {'standard_name':'air_pressure'         , 'units':                                'Pa'},
+  'time'        : {'standard_name':'time'                 , 'units': 'seconds since YYYY-MM-DD HH:MM:SS'},
+  'time_budget' : {'standard_name':'time_budget'          , 'units': 'seconds since YYYY-MM-DD HH:MM:SS'},
+  'levf'        : {'standard_name':'full_level_coordinate', 'units':                                 '1'},
+  'levh'        : {'standard_name':'half_level_coordinate', 'units':                                 '1'},
+  'plev'        : {'standard_name':'air_pressure'         , 'units':                                'Pa'},
 }
 
 # Variables

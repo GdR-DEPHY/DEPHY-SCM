@@ -56,6 +56,10 @@ timeout = np.array(fin['time_hfss'][:])
 # Conversion
 newcase = case.convert2SCM(time=timeout,lev=levout,levtype='altitude')
 
+# add a surface temperature. To be improved...
+ts = timeout*0. + 310 # same shape as timeout
+newcase.add_surface_temp(ts,time=timeout,timeid='time')
+
 # Update some attributes
 newcase.set_title("Forcing and initial conditions for AMMA case - SCM-enabled version")
 newcase.set_script("DEPHY-SCM/AMMA/REF/driver_SCM.py")

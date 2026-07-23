@@ -54,7 +54,8 @@ timeout = np.array(fin['time_hfss'][:])
 # conversion
 newcase = case.convert2SCM(time=timeout,lev=levout,levtype='altitude')
 
-# add a surface temperature. To be improved...
+# add a surface temperature because some models need it even when 
+# the case is forced with fluxes. To be improved...
 ts = timeout*0. + 310 # same shape as timeout
 newcase.add_surface_temp(ts,time=timeout,timeid='time')
 
