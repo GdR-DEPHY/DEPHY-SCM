@@ -57,6 +57,11 @@ timeout = np.array(range(0,86400*7+3600,3600),dtype=float)
 # Conversion
 newcase = case.convert2SCM(time=timeout,lev=levout,levtype='altitude')
 
+# add a surface temperature because some models need it even when 
+# the case is forced with fluxes. To be improved...
+ts = timeout*0. + 310 # same shape as timeout
+newcase.add_surface_temp(ts,time=timeout,timeid='time')
+
 # Update some attributes
 newcase.set_title("Forcing and initial conditions for KB2006 case - SCM-enabled version")
 newcase.set_script("DEPHY-SCM/KB2006/REF/driver_SCM.py")
