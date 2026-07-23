@@ -47,17 +47,12 @@ if lverbose:
 
 # Grid onto which interpolate the input data
 
-# Same grid as in driver DEF
-levout=[]
-for k in fin.variables:
-  if "lev_" in k: levout += fin[k][:].tolist()
-levout = np.unique(np.array(levout))
+htop=20000
+# New vertical grid, 10-m resolution from surface to 6000 m (above the surface)
+levout = np.array(list(range(0,6000,10)) + list(range(6100,int(htop)+1,100)),dtype=float)
 
-# Same grid as in driver DEF
-timeout=[]
-for k in fin.variables:
-  if "time_" in k: timeout += fin[k][:].tolist()
-timeout = np.unique(np.array(timeout))
+# New temporal grid, every half hour
+timeout = np.array(range(0,86400*7+3600,3600),dtype=float) 
 
 # Conversion
 newcase = case.convert2SCM(time=timeout,lev=levout,levtype='altitude')
