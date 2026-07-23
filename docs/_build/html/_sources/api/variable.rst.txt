@@ -2,6 +2,8 @@
 Variable (:mod:`dephycf.Variable`)
 **********************************
 
+.. _variable:
+
 This module provides the :class:`Variable` class, a container that
 associates a data array with its axes (time, level, latitude,
 longitude) and, optionally, with a companion vertical-coordinate

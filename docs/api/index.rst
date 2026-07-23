@@ -4,12 +4,12 @@ API Reference
 .. toctree::
    :maxdepth: 2
 
+   case
+   variable
+   axis
+   attributes
+   variables_attributes
    constants
    thermo
    kernel
-   attributes
-   variables_attributes
    plotbasics
-   axis
-   variable
-   case
