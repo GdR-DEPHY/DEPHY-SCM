@@ -1,9 +1,20 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Created on 27 November 2019
+"""Case module.
 
-@author: Romain Roehrig
+This module defines the :class:`Case` class, the main entry point of
+the DEPHY Single Column Model (SCM) format toolbox. A :class:`Case`
+object gathers everything describing a single-column case: global
+metadata (case identifier, dates, location, surface type, forcing
+scale...), the initial-state and forcing :class:`~dephycf.Variable.Variable`
+objects, and the methods needed to build, complete, read, write, plot,
+interpolate, and convert such a case to/from the DEPHY netCDF format.
+
+Typical usage is to instantiate a :class:`Case`, add initial-state and
+forcing variables to it with the various ``add_*`` methods, optionally
+complete missing variables with :meth:`Case.add_missing_init_variables`
+and :meth:`Case.add_missing_forcing_variables`, and finally write the
+case to a netCDF file with :meth:`Case.write`.
 """
 
 import os
@@ -39,7 +50,7 @@ from .attributes import known_attributes, required_attributes
 from . import thermo
 from . import constants as CC
 
-# Default start and en dates
+# Default start and end dates
 startDate0 = datetime(1979,1,1,0,0,0)
 endDate0 = datetime(1979,1,1,0,0,0)
 
@@ -49,6 +60,56 @@ forc_vars_1D = ['ps_forc','hfss','hfls','ustar',\
                 'orog','lat','lon','z0','z0h','z0q','beta','alb','emis','i0','sza']
 
 class Case:
+    """Container for a DEPHY single-column model (SCM) case.
+
+    A :class:`Case` bundles all the information describing a
+    single-column case: an identifier, start/end dates, location
+    (latitude/longitude), surface type, forcing scale, global netCDF
+    attributes, and the initial-state and forcing variables
+    themselves (stored as :class:`~dephycf.Variable.Variable`
+    objects in `self.variables`).
+
+    Attributes
+    ----------
+    id : str
+        Case identifier, expected to be of the form ``"case/subcase"``.
+    lat : float or None
+        Case latitude, in degrees north.
+    lon : float or None
+        Case longitude, in degrees east.
+    case_type : str
+        Case type (e.g. ``"standard"``).
+    surface_type : str
+        Surface type (e.g. ``"ocean"``, ``"land"``).
+    forcing_scale : float
+        Forcing scale factor.
+    start_date : datetime.datetime
+        Simulation start date.
+    end_date : datetime.datetime
+        Simulation end date.
+    t0 : int
+        Initial time value (always ``0``).
+    t0Axis : Axis
+        Single-value initial-time :class:`~dephycf.Axis.Axis`.
+    tunits : str
+        Time units string, of the form
+        ``"seconds since %Y-%m-%d %H:%M:%S"``, anchored on `start_date`.
+    tstart : float or None
+        `start_date` converted to numeric time in `tunits`.
+    tend : float or None
+        `end_date` converted to numeric time in `tunits`.
+    var_init_list : list of str
+        Identifiers of the initial-state variables.
+    var_forcing_list : list of str
+        Identifiers of the forcing variables.
+    variables : dict
+        Mapping from variable identifier to
+        :class:`~dephycf.Variable.Variable` instance.
+    attlist : list of str
+        List of global (netCDF) attribute names to write out.
+    attributes : dict
+        Mapping from attribute name to attribute value.
+    """
 
     def __init__(self, caseid,
             lat=None, lon=None,
@@ -56,7 +117,36 @@ class Case:
             startDate=startDate0, endDate=endDate0,
             surfaceType='ocean', zorog=0.,
             forcing_scale=-1):
+        """Build a :class:`Case` instance.
 
+        Parameters
+        ----------
+        caseid : str
+            Case identifier, expected to be of the form ``"case/subcase"``
+            (split on ``"/"`` to derive `self._case` and `self._subcase`).
+        lat : float, optional
+            Case latitude, in degrees north. If given, a corresponding forcing
+            variable is added via :meth:`add_latitude`.
+        lon : float, optional
+            Case longitude, in degrees east. If given, a corresponding forcing
+            variable is added via :meth:`add_longitude`.
+        case_type : str, optional
+            Case type. Defaults to ``"standard"``.
+        startDate : datetime.datetime or str, optional
+            Simulation start date, as a :class:`datetime.datetime` or a string
+            (see :meth:`set_dates` for accepted string formats). Defaults to
+            `startDate0`.
+        endDate : datetime.datetime or str, optional
+            Simulation end date, same format as `startDate`. Defaults to
+            `endDate0`.
+        surfaceType : str, optional
+            Surface type. Defaults to ``'ocean'``.
+        zorog : float, optional
+            Orography altitude above sea level, in meters. Defaults to ``0.``.
+            Added as a forcing variable via :meth:`add_orography`.
+        forcing_scale : float, optional
+            Forcing scale factor. Defaults to ``-1``.
+        """
         self.id = caseid
         tmp = caseid.split('/')
         self._case = tmp[0]
@@ -129,6 +219,21 @@ class Case:
 
 
     def set_dates(self,startDate,endDate):
+        """Set the simulation start/end dates and the initial-time axis.
+
+        Also derives `self.tunits` (the ``"seconds since ..."`` time units
+        string anchored on `startDate`), `self.t0Axis` (a single-value initial-
+        time :class:`~dephycf.Axis.Axis`), and `self.tstart`/`self.tend`
+        (numeric time values in `tunits`).
+
+        Parameters
+        ----------
+        startDate : datetime.datetime or str
+            Simulation start date. If a string, it must be either 14 digits
+            (``'%Y%m%d%H%M%S'``) or of the form ``'%Y-%m-%d %H:%M:%S'``.
+        endDate : datetime.datetime or str
+            Simulation end date, same accepted formats as `startDate`.
+        """
 
         # Start en end dates of the simulation
         if isinstance(startDate,datetime):
@@ -160,6 +265,15 @@ class Case:
             self.tend = nc.date2num(self.end_date,self.tunits,calendar='gregorian')
 
     def set_latlon(self,lat,lon):
+        """Set the case latitude/longitude and add corresponding variables.
+
+        Parameters
+        ----------
+        lat : float
+            Latitude, in degrees north.
+        lon : float
+            Longitude, in degrees east.
+        """
 
         self.lat = lat
         self.lon = lon
@@ -168,6 +282,14 @@ class Case:
         self.add_longitude(lon)
 
     def set_attribute(self,attid,attvalue):
+        """Set (or add) a global netCDF attribute on the case.
+
+        Parameters
+        ----------
+        attid : str
+            Attribute name. A warning is logged if it is not part of
+            `known_attributes`. attvalue Attribute value.
+        """
 
         if not(attid in known_attributes):
             logger.warning("Warning, attribute {0} is not known. It might not be written in the case output file.".format(attid))
@@ -178,30 +300,79 @@ class Case:
         self.attributes[attid] = attvalue
 
     def set_title(self,title):
+        """Set the case ``title`` global attribute.
+
+        Parameters
+        ----------
+        title : str
+            Case title.
+        """
 
         self.attributes['title'] = title
 
     def set_comment(self,comment):
+        """Set the case ``comment`` global attribute.
+
+        Parameters
+        ----------
+        comment : str
+            Free-form comment about the case.
+        """
 
         self.attributes['comment'] = comment
 
     def set_reference(self,ref):
+        """Set the case ``reference`` global attribute.
+
+        Parameters
+        ----------
+        ref : str
+            Bibliographic reference associated with the case.
+        """
 
         self.attributes['reference'] = ref
 
     def set_author(self,author):
+        """Set the case ``author`` global attribute.
+
+        Parameters
+        ----------
+        author : str
+            Author name(s).
+        """
 
         self.attributes['author'] = author
 
     def set_modifications(self,modifications):
+        """Set the case ``modifications`` global attribute.
+
+        Parameters
+        ----------
+        modifications : str
+            Description of modifications made to the case.
+        """
 
         self.attributes['modifications'] = modifications
 
     def set_script(self,script):
+        """Set the case ``script`` global attribute.
+
+        Parameters
+        ----------
+        script : str
+            Name (or description) of the script used to build the case.
+        """
 
         self.attributes['script'] = script
 
     def set_case_type(self,case_type):
+        """Set the case ``case_type`` global attribute.
+
+        Parameters
+        ----------
+        case_type : str
+            Case type (e.g. ``"standard"``).
+        """
 
         self.attributes['case_type'] = case_type
 
@@ -212,8 +383,13 @@ class Case:
     def remove_variable(self, varid):
         """Remove a variable of a Case object
 
-        Require arguments:
-        varid -- string for the variable id
+        Require arguments: varid -- string for the variable id
+
+
+        Parameters
+        ----------
+        varid : str
+            See :meth:`add_variable` for details.
         """
 
         if varid in self.var_init_list:
@@ -231,21 +407,54 @@ class Case:
             pressure=None, pressure_id=None, pressure_units=None,
             time=None, timeid=None):
         """Add a variable to a Case object.
-            
-        Required arguments:
-        varid   -- string for the variable id. Should be in ...
-        vardata -- input data as a list or a numpy array
 
-        Optional (keyword) arguments:
-        lev     -- input data for the level axis as a list, a numpy array or an Axis object (default None)
-        levtype -- string describing the type of the level axis: None (default), 'altitude' or 'pressure'
-        levid   -- string for the level axis id. The default is None, which implies a generic id (default None)
-        height  -- variable object describing height for current variable
-        pressure-- variable object describing pressure for current variable
-        time    -- input data for the time axis, as a list, a numpy array or an Axis object (default None)
-        timeid  -- string for the time axis id. The default is None, which implies a generic id (default None)
-        name    -- string of the name attribute of the variable (to be use as long_name in a netCDF file) (default None)
-        units   -- string of the units attribute of the variable (default None)
+        Parameters
+        ----------
+        varid : str
+            string for the variable id. Should be in ...
+        vardata : int, float, list, or numpy.ndarray
+            input data as a list or a numpy array
+        lev : list, numpy.ndarray, or Axis, optional
+            input data for the level axis as a list, a numpy array or an Axis
+            object (default None)
+        levtype : str, optional
+            string describing the type of the level axis: None (default),
+            'altitude' or 'pressure'
+        levid : str, optional
+            string for the level axis id. The default is None, which implies a
+            generic id (default None)
+        height : Variable, optional
+            variable object describing height for current variable
+        pressure : Variable, optional
+            variable object describing pressure for current variable
+        time : list, numpy.ndarray, or Axis, optional
+            input data for the time axis, as a list, a numpy array or an Axis
+            object (default None)
+        timeid : str, optional
+            string for the time axis id. The default is None, which implies a
+            generic id (default None)
+        name : str, optional
+            string of the name attribute of the variable (to be use as
+            long_name in a netCDF file) (default None)
+        units : str, optional
+            string of the units attribute of the variable (default None)
+        height_id : str
+            Identifier to use for the height companion variable, when `height`
+            is given as raw data rather than as a `Variable`/`Axis` object.
+        height_units : str
+            Units of `height`, when given as raw data.
+        pressure_id : str
+            Identifier to use for the pressure companion variable, when
+            `pressure` is given as raw data rather than as a `Variable`/`Axis`
+            object.
+        pressure_units : str
+            Units of `pressure`, when given as raw data.
+
+        Raises
+        ------
+        ValueError
+            time axis must not be None for variable <value>. level and time
+            axes are None. Case unexpected.
         """
 
         # if variable is already defined, stop
@@ -367,18 +576,31 @@ class Case:
 ###################################################################################################
 
     def add_init_variable(self,varid,vardata,coordinate=False,**kwargs): 
-        """Add an initial state variable to a case object.
-            
-        Prepare time axis for such initial state variable and possibly reshape input data to conform with DEPHY format.
-            
-        Required argument:
-        varid   -- id of the initial variable. Should be in ...
-        vardata -- input data as a numeric value (int or float), a list or a numpy array
+        """Add an initial state variable to a case object. Prepare time axis for
+        such initial state variable and possibly reshape input data to conform
+        with DEPHY format.
 
-        See add_variable function for optional arguments.
-        Note that, for all variable except ps:
-        - a level axis is required (lev optional argument).
+        See add_variable function for optional arguments. Note that, for all
+        variable except ps: - a level axis is required (lev optional argument).
         - a levtype is required (levtype optional argument).
+
+        Parameters
+        ----------
+        varid : str
+            id of the initial variable. Should be in ...
+        vardata : int, float, list, or numpy.ndarray
+            input data as a numeric value (int or float), a list or a numpy
+            array
+        coordinate : bool
+            See :meth:`add_variable` for details.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
+
+        Raises
+        ------
+        ValueError
+            level axis should be given for variable <value>.
         """
 
         # Get time axis for initial state variables
@@ -406,174 +628,240 @@ class Case:
 
     def add_init_ps(self,vardata,**kwargs):
         """Add initial state variable for surface pressure to a Case object.
-           
-        Required argument:
-        vardata -- input data as an integer or a float.
 
         See add_variable function for optional arguments.
+
+        Parameters
+        ----------
+        vardata : int, float, list, or numpy.ndarray
+            input data as an integer or a float.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
 
         self.add_init_variable('ps',vardata,**kwargs)
 
     def add_init_ts(self,vardata,**kwargs):
         """Add initial state variable for surface temperature to a Case object.
-           
-        Required argument:
-        vardata -- input data as an integer or a float.
 
         See add_variable function for optional arguments.
+
+        Parameters
+        ----------
+        vardata : int, float, list, or numpy.ndarray
+            input data as an integer or a float.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
 
         self.add_init_variable('ts',vardata,**kwargs)
 
     def add_init_thetas(self,vardata,**kwargs):
-        """Add initial state variable for surface potential temperature to a Case object.
-           
-        Required argument:
-        vardata -- input data as an integer or a float.
+        """Add initial state variable for surface potential temperature to a Case
+        object.
 
         See add_variable function for optional arguments.
+
+        Parameters
+        ----------
+        vardata : int, float, list, or numpy.ndarray
+            input data as an integer or a float.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
 
         self.add_init_variable('thetas',vardata,**kwargs)
 
     def add_init_height(self,vardata,**kwargs):
         """Add initial state variable for height to a Case object.
-           
-        Required argument:
-        vardata -- input data as a list or a numpy array.
 
-        See add_variable function for optional arguments.
-        Note that:
-        - a level axis is required (lev optional argument).
-        - a levtype is required (levtype optional argument).
+        See add_variable function for optional arguments. Note that: - a level
+        axis is required (lev optional argument). - a levtype is required
+        (levtype optional argument).
+
+        Parameters
+        ----------
+        vardata : int, float, list, or numpy.ndarray
+            input data as a list or a numpy array.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
 
         self.add_init_variable('zh',vardata,**kwargs)
 
     def add_init_pressure(self,vardata,**kwargs):
         """Add initial state variable for pressure to a Case object.
-           
-        Required argument:
-        vardata -- input data as a list or a numpy array.
 
-        See add_variable function for optional arguments.
-        Note that:
-        - a level axis is required (lev optional argument).
-        - a levtype is required (levtype optional argument).
+        See add_variable function for optional arguments. Note that: - a level
+        axis is required (lev optional argument). - a levtype is required
+        (levtype optional argument).
+
+        Parameters
+        ----------
+        vardata : int, float, list, or numpy.ndarray
+            input data as a list or a numpy array.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
 
         self.add_init_variable('pa',vardata,**kwargs)
 
     def add_init_temp(self,vardata,**kwargs):
         """Add initial state variable for temperature to a Case object.
-           
-        Required argument:
-        vardata -- input data as a list or a numpy array.
 
-        See add_variable function for optional arguments.
-        Note that:
-        - a level axis is required (lev optional argument).
-        - a levtype is required (levtype optional argument).
+        See add_variable function for optional arguments. Note that: - a level
+        axis is required (lev optional argument). - a levtype is required
+        (levtype optional argument).
+
+        Parameters
+        ----------
+        vardata : int, float, list, or numpy.ndarray
+            input data as a list or a numpy array.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
         self.set_attribute('ini_ta',1)
         self.add_init_variable('ta',vardata,**kwargs)
 
     def add_init_theta(self,vardata,**kwargs):
         """Add initial state variable for potential temperature to a Case object.
-           
-        Required argument:
-        vardata -- input data as a list or a numpy array.
 
-        See add_variable function for optional arguments.
-        Note that:
-        - a level axis is required (lev optional argument).
-        - a levtype is required (levtype optional argument).
+        See add_variable function for optional arguments. Note that: - a level
+        axis is required (lev optional argument). - a levtype is required
+        (levtype optional argument).
+
+        Parameters
+        ----------
+        vardata : int, float, list, or numpy.ndarray
+            input data as a list or a numpy array.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
         self.set_attribute('ini_theta',1)
         self.add_init_variable('theta',vardata,**kwargs)
 
     def add_init_thetal(self,vardata,**kwargs):
-        """Add initial state variable for liquid water potential temperature to a Case object.
-        
-        Required argument:
-        vardata -- input data as a list or a numpy array.
+        """Add initial state variable for liquid water potential temperature to a
+        Case object.
 
-        See add_variable function for optional arguments.
-        Note that:
-        - a level axis is required (lev optional argument).
-        - a levtype is required (levtype optional argument).
+        See add_variable function for optional arguments. Note that: - a level
+        axis is required (lev optional argument). - a levtype is required
+        (levtype optional argument).
+
+        Parameters
+        ----------
+        vardata : int, float, list, or numpy.ndarray
+            input data as a list or a numpy array.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
         self.set_attribute('ini_thetal',1)
         self.add_init_variable('thetal',vardata,**kwargs)
 
     def add_init_qv(self,vardata,**kwargs):
         """Add initial state variable for specific humidity to a Case object.
-        
-        Required argument:
-        vardata -- input data as a list or a numpy array.
 
-        See add_variable function for optional arguments.
-        Note that:
-        - a level axis is required (lev optional argument).
-        - a levtype is required (levtype optional argument).
+        See add_variable function for optional arguments. Note that: - a level
+        axis is required (lev optional argument). - a levtype is required
+        (levtype optional argument).
+
+        Parameters
+        ----------
+        vardata : int, float, list, or numpy.ndarray
+            input data as a list or a numpy array.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
         self.set_attribute('ini_qv',1)
         self.add_init_variable('qv',vardata,**kwargs)
 
     def add_init_qt(self,vardata,**kwargs):
         """Add initial state variable for total water to a Case object.
-    
-        Required argument:
-        vardata -- input data as a list or a numpy array.
 
-        See add_variable function for optional arguments.
-        Note that:
-        - a level axis is required (lev optional argument).
-        - a levtype is required (levtype optional argument).
+        See add_variable function for optional arguments. Note that: - a level
+        axis is required (lev optional argument). - a levtype is required
+        (levtype optional argument).
+
+        Parameters
+        ----------
+        vardata : int, float, list, or numpy.ndarray
+            input data as a list or a numpy array.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
         self.set_attribute('ini_qt',1)
         self.add_init_variable('qt',vardata,**kwargs)
 
     def add_init_rv(self,vardata,**kwargs):
-        """Add initial state variable for water vapor mixing ratio to a Case object.
-        
-        Required argument:
-        vardata -- input data as a list or a numpy array.
+        """Add initial state variable for water vapor mixing ratio to a Case
+        object.
 
-        See add_variable function for optional arguments.
-        Note that:
-        - a level axis is required (lev optional argument).
-        - a levtype is required (levtype optional argument).
+        See add_variable function for optional arguments. Note that: - a level
+        axis is required (lev optional argument). - a levtype is required
+        (levtype optional argument).
+
+        Parameters
+        ----------
+        vardata : int, float, list, or numpy.ndarray
+            input data as a list or a numpy array.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
         self.set_attribute('ini_rv',1)
         self.add_init_variable('rv',vardata,**kwargs)
 
     def add_init_rt(self,vardata,**kwargs):
-        """Add initial state variable for total water mixing ratio to a Case object.
-        
-        Required argument:
-        vardata -- input data as a list or a numpy array.
+        """Add initial state variable for total water mixing ratio to a Case
+        object.
 
-        See add_variable function for optional arguments.
-        Note that:
-        - a level axis is required (lev optional argument).
-        - a levtype is required (levtype optional argument).
+        See add_variable function for optional arguments. Note that: - a level
+        axis is required (lev optional argument). - a levtype is required
+        (levtype optional argument).
+
+        Parameters
+        ----------
+        vardata : int, float, list, or numpy.ndarray
+            input data as a list or a numpy array.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
         self.set_attribute('ini_rt',1)
         self.add_init_variable('rt',vardata,**kwargs)
 
     def add_init_hur(self,vardata,**kwargs):
         """Add initial state variable for relative humidity to a Case object.
-        
-        Required argument:
-        vardata -- input data as a list or a numpy array.
 
-        See add_variable function for optional arguments.
-        Note that:
-        - hur has no units
-        - a level axis is required (lev optional argument).
-        - a levtype is required (levtype optional argument).
+        See add_variable function for optional arguments. Note that: - hur has
+        no units - a level axis is required (lev optional argument). - a
+        levtype is required (levtype optional argument).
+
+        Parameters
+        ----------
+        vardata : int, float, list, or numpy.ndarray
+            input data as a list or a numpy array.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
+
+        Raises
+        ------
+        NotImplementedError
+            Raised in an unexpected case.
+
+        ValueError
+            Raised in an unexpected case.
         """
         if not(lhur):
             logger.error('Metpy library is not available')
@@ -590,20 +878,34 @@ class Case:
 
     def add_init_wind(self,u=None,v=None,ulev=None,vlev=None,**kwargs):
         """Add initial state variable for total water to a Case object.
-        
-        Required arguments:
-        u -- input data for zonal wind as a list or a numpy array.
-        v -- input data for meridional wind as a list or a numpy array.
 
-        Optional arguments:
-        lev -- level axis for both u and v as a list or a numpy array (default None)
-        ulev -- level axis for u as a list or a numpy array (default None)
-        vlev -- level axis for v as a list or a numpy array (default None)
-        levtype -- type of vertical axis (pressure or altitude)
+        Either lev or ulev/vlev should be provided See add_variable function
+        for optional arguments.
 
-        Either lev or ulev/vlev should be provided
+        Parameters
+        ----------
+        u : list or numpy.ndarray
+            input data for zonal wind as a list or a numpy array.
+        v : list or numpy.ndarray
+            input data for meridional wind as a list or a numpy array.
+        lev : list, numpy.ndarray, or Axis, optional
+            level axis for both u and v as a list or a numpy array (default
+            None)
+        ulev : list or numpy.ndarray, optional
+            level axis for u as a list or a numpy array (default None)
+        vlev : list or numpy.ndarray, optional
+            level axis for v as a list or a numpy array (default None)
+        levtype : str, optional
+            type of vertical axis (pressure or altitude)
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
 
-        See add_variable function for optional arguments.
+        Raises
+        ------
+        ValueError
+            You must provide both zonal and meridional wind. You must provide a
+            vertical axis either with lev or with both ulev/vlev.
         """
 
         if u is None or v is None:
@@ -623,26 +925,36 @@ class Case:
         self.add_init_variable('va',v,**kwargs)
 
     def add_init_tke(self,vardata,**kwargs):
-        """Add initial state variable for turbulent kinetic energy to a Case object.
-           
-        Required argument:
-        vardata -- input data as a list or a numpy array.
+        """Add initial state variable for turbulent kinetic energy to a Case
+        object.
 
-        See add_variable function for optional arguments.
-        Note that:
-        - a level axis is required (lev optional argument).
-        - a levtype is required (levtype optional argument).
+        See add_variable function for optional arguments. Note that: - a level
+        axis is required (lev optional argument). - a levtype is required
+        (levtype optional argument).
+
+        Parameters
+        ----------
+        vardata : int, float, list, or numpy.ndarray
+            input data as a list or a numpy array.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
 
         self.add_init_variable('tke',vardata,**kwargs)
 
     def add_init_ts(self,vardata,**kwargs):
         """Add initial state variable for surface temperature to a Case object.
-           
-        Required argument:
-        vardata -- input data as an integer or a float.
 
         See add_variable function for optional arguments.
+
+        Parameters
+        ----------
+        vardata : int, float, list, or numpy.ndarray
+            input data as an integer or a float.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
 
         self.add_init_variable('ts',vardata,**kwargs)
@@ -652,18 +964,28 @@ class Case:
 ###################################################################################################
 
     def add_forcing_variable(self,varid,vardata,**kwargs): 
-        """ Add a forcing variable to a case object.
-            
-        Required argument:
-        varid   -- id of the forcing variable. Should be in ...
-        vardata -- input data as a numeric value (int or float), a list or a numpy array
+        """Add a forcing variable to a case object.
 
-        See add_variable function for optional arguments.
-        Note that, for all variable except ps_forc:
-        - a level axis is required (lev optional argument).
-        - a levtype is required (levtype optional argument).
+        See add_variable function for optional arguments. Note that, for all
+        variable except ps_forc: - a level axis is required (lev optional
+        argument). - a levtype is required (levtype optional argument). If time
+        is not provided, forcing is assumed constant in time
 
-        If time is not provided, forcing is assumed constant in time
+        Parameters
+        ----------
+        varid : str
+            id of the forcing variable. Should be in ...
+        vardata : int, float, list, or numpy.ndarray
+            input data as a numeric value (int or float), a list or a numpy
+            array
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
+
+        Raises
+        ------
+        ValueError
+            level axis should be given for variable <value>.
         """
 
         # Prepare time axis
@@ -709,145 +1031,194 @@ class Case:
 
     def add_latitude(self,data,**kwargs):
         """Add latitude to a Case object
-           
-        Required argument:
-        data -- input data as a list or a numpy array.
 
-        See add_variable function for optional arguments.
+        See add_variable function for optional arguments. If time is not
+        provided, forcing is assumed constant in time.
 
-        If time is not provided, forcing is assumed constant in time.           
+        Parameters
+        ----------
+        data : int, float, list, or numpy.ndarray
+            input data as a list or a numpy array.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
 
         self.add_forcing_variable('lat',data,**kwargs)
 
     def add_longitude(self,data,**kwargs):
         """Add longitude to a Case object
-           
-        Required argument:
-        data -- input data as a list or a numpy array.
 
-        See add_variable function for optional arguments.
+        See add_variable function for optional arguments. If time is not
+        provided, forcing is assumed constant in time.
 
-        If time is not provided, forcing is assumed constant in time.           
+        Parameters
+        ----------
+        data : int, float, list, or numpy.ndarray
+            input data as a list or a numpy array.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
 
         self.add_forcing_variable('lon',data,**kwargs)
 
     def add_orography(self,data,**kwargs):
         """Add orography to a Case object
-        
-        Required argument:
-        data -- input data as a list or a numpy array.
 
-        See add_variable function for optional arguments.
+        See add_variable function for optional arguments. If time is not
+        provided, forcing is assumed constant in time.
 
-        If time is not provided, forcing is assumed constant in time.           
+        Parameters
+        ----------
+        data : int, float, list, or numpy.ndarray
+            input data as a list or a numpy array.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
 
         self.add_forcing_variable('orog',data,**kwargs)
 
     def add_z0(self,data,**kwargs):
         """Add roughness length for wind to a Case object
-        
-        Required argument:
-        data -- input data as a list or a numpy array.
 
-        See add_variable function for optional arguments.
+        See add_variable function for optional arguments. If time is not
+        provided, forcing is assumed constant in time.
 
-        If time is not provided, forcing is assumed constant in time.           
+        Parameters
+        ----------
+        data : int, float, list, or numpy.ndarray
+            input data as a list or a numpy array.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
 
         self.add_forcing_variable('z0',data,**kwargs)
 
     def add_z0h(self,data,**kwargs):
         """Add roughness length for heat to a Case object
-        
-        Required argument:
-        data -- input data as a list or a numpy array.
 
-        See add_variable function for optional arguments.
+        See add_variable function for optional arguments. If time is not
+        provided, forcing is assumed constant in time.
 
-        If time is not provided, forcing is assumed constant in time.           
+        Parameters
+        ----------
+        data : int, float, list, or numpy.ndarray
+            input data as a list or a numpy array.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
 
         self.add_forcing_variable('z0h',data,**kwargs)
 
     def add_z0q(self,data,**kwargs):
         """Add roughness length for moisture to a Case object
-        
-        Required argument:
-        data -- input data as a list or a numpy array.
 
-        See add_variable function for optional arguments.
+        See add_variable function for optional arguments. If time is not
+        provided, forcing is assumed constant in time.
 
-        If time is not provided, forcing is assumed constant in time.           
+        Parameters
+        ----------
+        data : int, float, list, or numpy.ndarray
+            input data as a list or a numpy array.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
 
         self.add_forcing_variable('z0q',data,**kwargs)
 
     def add_surface_pressure_forcing(self,data,**kwargs):
         """Add a surface pressure forcing to a Case object
-        
-        Required argument:
-        data -- input data as a list or a numpy array.
 
-        See add_variable function for optional arguments.
+        See add_variable function for optional arguments. If time is not
+        provided, forcing is assumed constant in time.
 
-        If time is not provided, forcing is assumed constant in time.           
+        Parameters
+        ----------
+        data : int, float, list, or numpy.ndarray
+            input data as a list or a numpy array.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
 
         self.add_forcing_variable('ps_forc',data,**kwargs)
 
     def add_pressure_forcing(self,data,**kwargs):
         """Add forcing pressure levels to a Case object
-        
-        Required argument:
-        data -- input data as a list or a numpy array.
 
-        See add_variable function for optional arguments.
-        Note that:
-        - a level axis is required (lev optional argument).
-        - a levtype is required (levtype optional argument).           
+        See add_variable function for optional arguments. Note that: - a level
+        axis is required (lev optional argument). - a levtype is required
+        (levtype optional argument). If time is not provided, forcing is
+        assumed constant in time.
 
-        If time is not provided, forcing is assumed constant in time.           
+        Parameters
+        ----------
+        data : int, float, list, or numpy.ndarray
+            input data as a list or a numpy array.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
 
         self.add_forcing_variable('pa_forc',data,**kwargs)
 
     def add_height_forcing(self,data,**kwargs):
         """Add forcing height levels to a Case object
-        
-        Required argument:
-        data -- input data as a list or a numpy array.
 
-        See add_variable function for optional arguments.
-        Note that:
-        - a level axis is required (lev optional argument).
-        - a levtype is required (levtype optional argument).           
+        See add_variable function for optional arguments. Note that: - a level
+        axis is required (lev optional argument). - a levtype is required
+        (levtype optional argument). If time is not provided, forcing is
+        assumed constant in time.
 
-        If time is not provided, forcing is assumed constant in time.           
+        Parameters
+        ----------
+        data : int, float, list, or numpy.ndarray
+            input data as a list or a numpy array.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
 
         self.add_forcing_variable('zh_forc',data,**kwargs)
 
     def add_geostrophic_wind(self,ug=None,vg=None,uglev=None,vglev=None,**kwargs):
         """Add a geostrophic wind forcing to a Case object.
-        
-        Required argument:
-        ug -- input data for geostrophic zonal wind as a list or a numpy array.
-        vg -- input data for geostrophic meridional wind as a list or a numpy array.
 
-        Optional arguments:
-        lev     -- level axis for both u and v as a list or a numpy array (default None)
-        uglev   -- level axis for u as a list or a numpy array (default None)
-        vglev   -- level axis for v as a list or a numpy array (default None)
-        levtype -- type of vertical axis (pressure or altitude)
+        Either lev or ulev/vlev should be provided See add_variable function
+        for optional arguments. If time is not provided, forcing is assumed
+        constant in time
 
-        Either lev or ulev/vlev should be provided
+        Parameters
+        ----------
+        ug : list or numpy.ndarray
+            input data for geostrophic zonal wind as a list or a numpy array.
+        vg : list or numpy.ndarray
+            input data for geostrophic meridional wind as a list or a numpy
+            array.
+        lev : list, numpy.ndarray, or Axis, optional
+            level axis for both u and v as a list or a numpy array (default
+            None)
+        uglev : list or numpy.ndarray, optional
+            level axis for u as a list or a numpy array (default None)
+        vglev : list or numpy.ndarray, optional
+            level axis for v as a list or a numpy array (default None)
+        levtype : str, optional
+            type of vertical axis (pressure or altitude)
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
 
-        See add_variable function for optional arguments.
-
-        If time is not provided, forcing is assumed constant in time
+        Raises
+        ------
+        ValueError
+            You must provide both zonal and meridional geostrophic wind. You
+            must provide a vertical axis either with lev or with both
+            uglev/vglev.
         """
 
         if ug is None or vg is None:
@@ -870,19 +1241,35 @@ class Case:
 
     def add_vertical_velocity(self,w=None,omega=None,**kwargs):
         """Add a potential temperature advection to a Case object.
-        
-        Argument:
-        w     -- input vertical velocity in m s-1 as a list or a numpy array (default None).
-        omega -- input pressure vertical velocity in Pa s-1 as a list or a numpy array (default None).
+
+        Argument: w     -- input vertical velocity in m s-1 as a list or a
+        numpy array (default None). omega -- input pressure vertical velocity
+        in Pa s-1 as a list or a numpy array (default None).
 
         Either w or omega should be given
 
-        See add_variable function for optional arguments.
-        Note that:
-        - a level axis is required (lev optional argument).
-        - a levtype is required (levtype optional argument).
+        See add_variable function for optional arguments. Note that: - a level
+        axis is required (lev optional argument). - a levtype is required
+        (levtype optional argument).
 
         If time is not provided, forcing is assumed constant in time.
+
+
+        Parameters
+        ----------
+        w : list or numpy.ndarray
+            See :meth:`add_variable` for details.
+        omega : list or numpy.ndarray
+            See :meth:`add_variable` for details.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
+
+        Raises
+        ------
+        ValueError
+            You must provide either w or omega. You cannot provide both w and
+            omega at the same time.
         """
 
         if w is None and omega is None:
@@ -903,20 +1290,22 @@ class Case:
 
     def add_temp_advection(self,data,include_rad=False,**kwargs):
         """Add a temperature advection to a Case object.
-           
-        Required argument:
-        data -- input data as a list or a numpy array.
 
-        Optional (keyword) argument:
-        include_rad -- boolean indicated whether the radiative tendency 
-                       is included in the advection (default False)
+        See add_variable function for optional arguments. Note that: - a level
+        axis is required (lev optional argument). - a levtype is required
+        (levtype optional argument). If time is not provided, forcing is
+        assumed constant in time.
 
-        See add_variable function for optional arguments.
-        Note that:
-        - a level axis is required (lev optional argument).
-        - a levtype is required (levtype optional argument).
-
-        If time is not provided, forcing is assumed constant in time.
+        Parameters
+        ----------
+        data : int, float, list, or numpy.ndarray
+            input data as a list or a numpy array.
+        include_rad : bool, optional
+            boolean indicated whether the radiative tendency is included in the
+            advection (default False)
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
 
         self.set_attribute('adv_ta',1)
@@ -927,20 +1316,22 @@ class Case:
 
     def add_theta_advection(self,data,include_rad=False,**kwargs):
         """Add a potential temperature advection to a Case object.
-        
-        Required argument:
-        data -- input data as a list or a numpy array.
 
-        Optional (keyword) argument:
-        include_rad -- boolean indicated whether the radiative tendency 
-                          is included in the advection (default False)
+        See add_variable function for optional arguments. Note that: - a level
+        axis is required (lev optional argument). - a levtype is required
+        (levtype optional argument). If time is not provided, forcing is
+        assumed constant in time.
 
-        See add_variable function for optional arguments.
-        Note that:
-        - a level axis is required (lev optional argument).
-        - a levtype is required (levtype optional argument).
-
-        If time is not provided, forcing is assumed constant in time.
+        Parameters
+        ----------
+        data : int, float, list, or numpy.ndarray
+            input data as a list or a numpy array.
+        include_rad : bool, optional
+            boolean indicated whether the radiative tendency is included in the
+            advection (default False)
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
 
         self.set_attribute('adv_theta',1)
@@ -951,20 +1342,22 @@ class Case:
 
     def add_thetal_advection(self,data,include_rad=False,**kwargs):
         """Add a liquid potential temperature advection to a Case object.
-        
-        Required argument:
-        data -- input data as a list or a numpy array.
 
-        Optional (keyword) argument:
-        include_rad -- boolean indicated whether the radiative tendency 
-                          is included in the advection (default False)
+        See add_variable function for optional arguments. Note that: - a level
+        axis is required (lev optional argument). - a levtype is required
+        (levtype optional argument). If time is not provided, forcing is
+        assumed constant in time.
 
-        See add_variable function for optional arguments.
-        Note that:
-        - a level axis is required (lev optional argument).
-        - a levtype is required (levtype optional argument).
-
-        If time is not provided, forcing is assumed constant in time.
+        Parameters
+        ----------
+        data : int, float, list, or numpy.ndarray
+            input data as a list or a numpy array.
+        include_rad : bool, optional
+            boolean indicated whether the radiative tendency is included in the
+            advection (default False)
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
 
         self.set_attribute('adv_thetal',1)
@@ -975,16 +1368,19 @@ class Case:
 
     def add_temp_radiation_tendency(self,data,**kwargs):
         """Add a temperature radiative tendency to a Case object.
-        
-        Required argument:
-        data -- input data as a list or a numpy array.
 
-        See add_variable function for optional arguments.
-        Note that:
-        - a level axis is required (lev optional argument).
-        - a levtype is required (levtype optional argument).
+        See add_variable function for optional arguments. Note that: - a level
+        axis is required (lev optional argument). - a levtype is required
+        (levtype optional argument). If time is not provided, forcing is
+        assumed constant in time.
 
-        If time is not provided, forcing is assumed constant in time.
+        Parameters
+        ----------
+        data : int, float, list, or numpy.ndarray
+            input data as a list or a numpy array.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
 
         self.set_attribute('radiation','tend')
@@ -992,33 +1388,40 @@ class Case:
 
     def add_theta_radiation_tendency(self,data,**kwargs):
         """Add a potential temperature radiative tendency to a Case object.
-        
-        Required argument:
-        data -- input data as a list or a numpy array.
 
-        See add_variable function for optional arguments.
-        Note that:
-        - a level axis is required (lev optional argument).
-        - a levtype is required (levtype optional argument).
+        See add_variable function for optional arguments. Note that: - a level
+        axis is required (lev optional argument). - a levtype is required
+        (levtype optional argument). If time is not provided, forcing is
+        assumed constant in time.
 
-        If time is not provided, forcing is assumed constant in time.
+        Parameters
+        ----------
+        data : int, float, list, or numpy.ndarray
+            input data as a list or a numpy array.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
 
         self.set_attribute('radiation','tend')
         self.add_forcing_variable('tntheta_rad',data,**kwargs)
 
     def add_thetal_radiation_tendency(self,data,**kwargs):
-        """Add a liquid-water potential temperature radiative tendency to a Case object.
-        
-        Required argument:
-        data -- input data as a list or a numpy array.
+        """Add a liquid-water potential temperature radiative tendency to a Case
+        object.
 
-        See add_variable function for optional arguments.
-        Note that:
-        - a level axis is required (lev optional argument).
-        - a levtype is required (levtype optional argument).
+        See add_variable function for optional arguments. Note that: - a level
+        axis is required (lev optional argument). - a levtype is required
+        (levtype optional argument). If time is not provided, forcing is
+        assumed constant in time.
 
-        If time is not provided, forcing is assumed constant in time.
+        Parameters
+        ----------
+        data : int, float, list, or numpy.ndarray
+            input data as a list or a numpy array.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
 
         self.set_attribute('radiation','tend')
@@ -1026,16 +1429,19 @@ class Case:
 
     def add_qv_advection(self,data,**kwargs):
         """Add a specific humidity advection to a Case object.
-        
-        Required argument:
-        data -- input data as a list or a numpy array.
 
-        See add_variable function for optional arguments.
-        Note that:
-        - a level axis is required (lev optional argument).
-        - a levtype is required (levtype optional argument).
+        See add_variable function for optional arguments. Note that: - a level
+        axis is required (lev optional argument). - a levtype is required
+        (levtype optional argument). If time is not provided, forcing is
+        assumed constant in time.
 
-        If time is not provided, forcing is assumed constant in time.
+        Parameters
+        ----------
+        data : int, float, list, or numpy.ndarray
+            input data as a list or a numpy array.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
 
         self.set_attribute('adv_qv',1)
@@ -1043,18 +1449,24 @@ class Case:
         self.add_forcing_variable('tnqv_adv',data,**kwargs)
 
     def add_wind_advection(self,ua_adv=None, va_adv=None,**kwargs):
-        """ 
-        Add a wind advection to a Case object.
-        
-        Required argument:
-        data -- input data as a list or a numpy array.
+        """Add a wind advection to a Case object.
 
-        See add_variable function for optional arguments.
-        Note that:
-        - a level axis is required (lev optional argument).
-        - a levtype is required (levtype optional argument).
+        See add_variable function for optional arguments. Note that: - a level
+        axis is required (lev optional argument). - a levtype is required
+        (levtype optional argument). If time is not provided, forcing is
+        assumed constant in time.
 
-        If time is not provided, forcing is assumed constant in time.
+        Parameters
+        ----------
+        data : int, float, list, or numpy.ndarray
+            input data as a list or a numpy array.
+        ua_adv : list or numpy.ndarray
+            See :meth:`add_variable` for details.
+        va_adv : list or numpy.ndarray
+            See :meth:`add_variable` for details.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
         
         if ua_adv is not None:
@@ -1067,16 +1479,19 @@ class Case:
 
     def add_qt_advection(self,data,**kwargs):
         """Add a total water advection to a Case object.
-        
-        Required argument:
-        data -- input data as a list or a numpy array.
 
-        See add_variable function for optional arguments.
-        Note that:
-        - a level axis is required (lev optional argument).
-        - a levtype is required (levtype optional argument).
+        See add_variable function for optional arguments. Note that: - a level
+        axis is required (lev optional argument). - a levtype is required
+        (levtype optional argument). If time is not provided, forcing is
+        assumed constant in time.
 
-        If time is not provided, forcing is assumed constant in time.
+        Parameters
+        ----------
+        data : int, float, list, or numpy.ndarray
+            input data as a list or a numpy array.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
 
         self.set_attribute('adv_qt',1)
@@ -1085,16 +1500,19 @@ class Case:
 
     def add_rv_advection(self,data,**kwargs):
         """Add a water vapor mixing ratio advection to a Case object.
-        
-        Required argument:
-        data -- input data as a list or a numpy array.
 
-        See add_variable function for optional arguments.
-        Note that:
-        - a level axis is required (lev optional argument).
-        - a levtype is required (levtype optional argument).
+        See add_variable function for optional arguments. Note that: - a level
+        axis is required (lev optional argument). - a levtype is required
+        (levtype optional argument). If time is not provided, forcing is
+        assumed constant in time.
 
-        If time is not provided, forcing is assumed constant in time.
+        Parameters
+        ----------
+        data : int, float, list, or numpy.ndarray
+            input data as a list or a numpy array.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
 
         self.set_attribute('adv_rv',1)
@@ -1103,16 +1521,19 @@ class Case:
 
     def add_rt_advection(self,data,**kwargs):
         """Add a total water mixing ratio advection to a Case object.
-        
-        Required argument:
-        data -- input data as a list or a numpy array.
 
-        See add_variable function for optional arguments.
-        Note that:
-        - a level axis is required (lev optional argument).
-        - a levtype is required (levtype optional argument).
+        See add_variable function for optional arguments. Note that: - a level
+        axis is required (lev optional argument). - a levtype is required
+        (levtype optional argument). If time is not provided, forcing is
+        assumed constant in time.
 
-        If time is not provided, forcing is assumed constant in time.
+        Parameters
+        ----------
+        data : int, float, list, or numpy.ndarray
+            input data as a list or a numpy array.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
 
         self.set_attribute('adv_rt',1)
@@ -1121,24 +1542,44 @@ class Case:
 
     def add_nudging(self,varid,data,timescale=None,z_nudging=None,p_nudging=None,lev=None,nudging_coefficient=None,lev_coef=None,**kwargs):
         """Add a nudging forcing to a Case object.
-        
-        Required argument:
-        varid     -- id of the variable to be nudged as a string
-        data      -- input data as a list or a numpy array.
-        timescale -- nudging timescale in seconds (integer or float)
-        z_nudging -- altitude above which nudging is applied (integer or float)
-        p_nudging -- pressure altitude under which nudging is applied (integer or float)
-        nudging_coefficient -- profile of nudging coefficien
 
-        Either timescale or nudging_coefficient must be defined.
-        If z_nudging and p_nudging are not provided, nudging is assumed to over the whole atmosphere
+        Either timescale or nudging_coefficient must be defined. If z_nudging
+        and p_nudging are not provided, nudging is assumed to over the whole
+        atmosphere See add_variable function for optional arguments. Note that:
+        - a level axis is required (lev optional argument). - a levtype is
+        required (levtype optional argument). If time is not provided, forcing
+        is assumed constant in time.
 
-        See add_variable function for optional arguments.
-        Note that:
-        - a level axis is required (lev optional argument).
-        - a levtype is required (levtype optional argument).
+        Parameters
+        ----------
+        varid : str
+            id of the variable to be nudged as a string
+        data : int, float, list, or numpy.ndarray
+            input data as a list or a numpy array.
+        timescale : int or float
+            nudging timescale in seconds (integer or float)
+        z_nudging : int or float
+            altitude above which nudging is applied (integer or float)
+        p_nudging : int or float
+            pressure altitude under which nudging is applied (integer or float)
+        nudging_coefficient : array_like
+            profile of nudging coefficient
+        lev : list, numpy.ndarray, or Axis
+            Level axis for the nudged variable, as a list, a numpy array or an
+            Axis object.
+        lev_coef : array_like
+            Level axis associated with `nudging_coefficient`, if it differs
+            from `lev`.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
 
-        If time is not provided, forcing is assumed constant in time.
+        Raises
+        ------
+        ValueError
+            You must provide a nudging timescale for variable <value>. The
+            nudging timescale for <value> is expected to be positive, but it is
+            equal to <value>.
         """
 
         if timescale is not None and nudging_coefficient is not None:
@@ -1185,22 +1626,35 @@ class Case:
 
     def add_wind_nudging(self,unudg=None,vnudg=None,ulev=None,vlev=None,**kwargs):
         """Add a wind nudging forcing to a Case object.
-        
-        Required argument:
-        unudg -- input data for zonal wind as a list or a numpy array.
-        vnudg -- input data for meridional wind as a list or a numpy array.
 
-        Optional arguments:
-        lev     -- level axis for both unudg and vnudg as a list or a numpy array (default None)
-        ulev    -- level axis for unudg as a list or a numpy array (default None)
-        vlev    -- level axis for vnudg as a list or a numpy array (default None)
-        levtype -- type of vertical axis (pressure or altitude)
+        Either lev or ulev/vlev should be provided See add_variable function
+        for optional arguments. If time is not provided, forcing is assumed
+        constant in time
 
-        Either lev or ulev/vlev should be provided
+        Parameters
+        ----------
+        unudg : list or numpy.ndarray
+            input data for zonal wind as a list or a numpy array.
+        vnudg : list or numpy.ndarray
+            input data for meridional wind as a list or a numpy array.
+        lev : list, numpy.ndarray, or Axis, optional
+            level axis for both unudg and vnudg as a list or a numpy array
+            (default None)
+        ulev : list or numpy.ndarray, optional
+            level axis for unudg as a list or a numpy array (default None)
+        vlev : list or numpy.ndarray, optional
+            level axis for vnudg as a list or a numpy array (default None)
+        levtype : str, optional
+            type of vertical axis (pressure or altitude)
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
 
-        See add_variable function for optional arguments.
-
-        If time is not provided, forcing is assumed constant in time
+        Raises
+        ------
+        ValueError
+            You must provide both zonal and meridional nudging wind. You must
+            provide a vertical axis either with lev or with both ulev/vlev.
         """
 
         if unudg is None or vnudg is None:
@@ -1221,126 +1675,141 @@ class Case:
 
     def add_temp_nudging(self,data,**kwargs):
         """Add a temperature nudging forcing to a Case object.
-           
-        Required argument:
-        data -- input data as a list or a numpy array.
 
-        See add_nudging for other required arguments
+        See add_nudging for other required arguments See add_variable function
+        for optional arguments. Note that: - a level axis is required (lev
+        optional argument). - a levtype is required (levtype optional
+        argument). If time is not provided, forcing is assumed constant in
+        time.
 
-        See add_variable function for optional arguments.
-        Note that:
-        - a level axis is required (lev optional argument).
-        - a levtype is required (levtype optional argument).
-
-        If time is not provided, forcing is assumed constant in time.
+        Parameters
+        ----------
+        data : int, float, list, or numpy.ndarray
+            input data as a list or a numpy array.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
 
         self.add_nudging('ta',data,**kwargs)
 
     def add_theta_nudging(self,data,**kwargs):
         """Add a potential temperature nudging forcing to a Case object.
-        
-        Required argument:
-        data -- input data as a list or a numpy array.
 
-        See add_nudging for other required arguments
+        See add_nudging for other required arguments See add_variable function
+        for optional arguments. Note that: - a level axis is required (lev
+        optional argument). - a levtype is required (levtype optional
+        argument). If time is not provided, forcing is assumed constant in
+        time.
 
-        See add_variable function for optional arguments.
-        Note that:
-        - a level axis is required (lev optional argument).
-        - a levtype is required (levtype optional argument).
-
-        If time is not provided, forcing is assumed constant in time.
+        Parameters
+        ----------
+        data : int, float, list, or numpy.ndarray
+            input data as a list or a numpy array.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
 
         self.add_nudging('theta',data,**kwargs)
 
     def add_thetal_nudging(self,data,**kwargs):
-        """Add a liquid water potential temperature nudging forcing to a Case object.
-           
-        Required argument:
-        data -- input data as a list or a numpy array.
+        """Add a liquid water potential temperature nudging forcing to a Case
+        object.
 
-        See add_nudging for other required arguments
+        See add_nudging for other required arguments See add_variable function
+        for optional arguments. Note that: - a level axis is required (lev
+        optional argument). - a levtype is required (levtype optional
+        argument). If time is not provided, forcing is assumed constant in
+        time.
 
-        See add_variable function for optional arguments.
-        Note that:
-        - a level axis is required (lev optional argument).
-        - a levtype is required (levtype optional argument).
-
-        If time is not provided, forcing is assumed constant in time.
+        Parameters
+        ----------
+        data : int, float, list, or numpy.ndarray
+            input data as a list or a numpy array.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
 
         self.add_nudging('thetal',data,**kwargs)
 
     def add_qv_nudging(self,data,**kwargs):
         """Add a specific humidity nudging forcing to a Case object.
-        
-        Required argument:
-        data -- input data as a list or a numpy array.
 
-        See add_nudging for other required arguments
+        See add_nudging for other required arguments See add_variable function
+        for optional arguments. Note that: - a level axis is required (lev
+        optional argument). - a levtype is required (levtype optional
+        argument). If time is not provided, forcing is assumed constant in
+        time.
 
-        See add_variable function for optional arguments.
-        Note that:
-        - a level axis is required (lev optional argument).
-        - a levtype is required (levtype optional argument).
-
-        If time is not provided, forcing is assumed constant in time.
+        Parameters
+        ----------
+        data : int, float, list, or numpy.ndarray
+            input data as a list or a numpy array.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
 
         self.add_nudging('qv',data,**kwargs)
 
     def add_qt_nudging(self,data,**kwargs):
         """Add a total water nudging forcing to a Case object.
-        
-        Required argument:
-        data -- input data as a list or a numpy array.
 
-        See add_nudging for other required arguments
+        See add_nudging for other required arguments See add_variable function
+        for optional arguments. Note that: - a level axis is required (lev
+        optional argument). - a levtype is required (levtype optional
+        argument). If time is not provided, forcing is assumed constant in
+        time.
 
-        See add_variable function for optional arguments.
-        Note that:
-        - a level axis is required (lev optional argument).
-        - a levtype is required (levtype optional argument).
-
-        If time is not provided, forcing is assumed constant in time.
+        Parameters
+        ----------
+        data : int, float, list, or numpy.ndarray
+            input data as a list or a numpy array.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
 
         self.add_nudging('qt',data,**kwargs)
 
     def add_rv_nudging(self,data,**kwargs):
         """Add a water vapor mixing ratio nudging forcing to a Case object.
-        
-        Required argument:
-        data -- input data as a list or a numpy array.
 
-        See add_nudging for other required arguments
+        See add_nudging for other required arguments See add_variable function
+        for optional arguments. Note that: - a level axis is required (lev
+        optional argument). - a levtype is required (levtype optional
+        argument). If time is not provided, forcing is assumed constant in
+        time.
 
-        See add_variable function for optional arguments.
-        Note that:
-        - a level axis is required (lev optional argument).
-        - a levtype is required (levtype optional argument).
-
-        If time is not provided, forcing is assumed constant in time.
+        Parameters
+        ----------
+        data : int, float, list, or numpy.ndarray
+            input data as a list or a numpy array.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
 
         self.add_nudging('rv',data,**kwargs)
 
     def add_rt_nudging(self,data,**kwargs):
         """Add a total water mixing ratio nudging forcing to a Case object.
-        
-        Required argument:
-        data -- input data as a list or a numpy array.
 
-        See add_nudging for other required arguments
+        See add_nudging for other required arguments See add_variable function
+        for optional arguments. Note that: - a level axis is required (lev
+        optional argument). - a levtype is required (levtype optional
+        argument). If time is not provided, forcing is assumed constant in
+        time.
 
-        See add_variable function for optional arguments.
-        Note that:
-        - a level axis is required (lev optional argument).
-        - a levtype is required (levtype optional argument).
-
-        If time is not provided, forcing is assumed constant in time.
+        Parameters
+        ----------
+        data : int, float, list, or numpy.ndarray
+            input data as a list or a numpy array.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
 
         self.add_nudging('rt',data,**kwargs)
@@ -1348,12 +1817,29 @@ class Case:
     def add_ozone(self,ro3=None,o3=None,**kwargs):
         """Add an ozone forcing to a Case object.
 
-        
-        One of the following argument is required:
-        ro3 -- ozone mixing ratio as a list or a numpy array.
-        o3 -- ozone mole fraction in air as a list or a numpy array.
+
+        One of the following argument is required: ro3 -- ozone mixing ratio as
+        a list or a numpy array. o3 -- ozone mole fraction in air as a list or
+        a numpy array.
 
         If time is not provided, forcing is assumed constant in time.
+
+
+        Parameters
+        ----------
+        ro3 : list or numpy.ndarray
+            See :meth:`add_variable` for details.
+        o3 : list or numpy.ndarray
+            See :meth:`add_variable` for details.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
+
+        Raises
+        ------
+        ValueError
+            Either ozone mixing ratio or ozone mole fraction in air must be
+            provided.
         """
 
         if ro3 is not None:
@@ -1365,7 +1851,7 @@ class Case:
 
     def activate_radiation(self):
         """Activate radiation in a Case object
-           
+
         No argument required.
         """
 
@@ -1373,64 +1859,88 @@ class Case:
 
     def deactivate_radiation(self):
         """Deactivate radiation in a Case object
-           
+
         No argument required.
         """
 
         self.set_attribute('radiation',"off")
 
     def add_surface_temp(self,data,**kwargs):
-        """Add a surface temperature forcing to a Case object.
-        
-        This function does not imply that the surface forcing type is ts.
-        This function can be used to add a useful surface temperature in case surface fluxes are prescribed.
-
-        Required argument:
-        data -- input data as a list or a numpy array.
+        """Add a surface temperature forcing to a Case object. This function does
+        not imply that the surface forcing type is ts. This function can be
+        used to add a useful surface temperature in case surface fluxes are
+        prescribed.
 
         If time is not provided, forcing is assumed constant in time.
+
+        Parameters
+        ----------
+        data : int, float, list, or numpy.ndarray
+            input data as a list or a numpy array.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
 
         self.add_forcing_variable('ts_forc',data,**kwargs)
 
     def add_surface_skin_temp(self,data,**kwargs):
-        """Add a surface skin temperature forcing to a Case object.
-        
-        This function does not imply that the surface forcing type is ts.
-        This function can be used to add a useful surface temperature in case surface fluxes are prescribed.
-
-        Required argument:
-        data -- input data as a list or a numpy array.
+        """Add a surface skin temperature forcing to a Case object. This function
+        does not imply that the surface forcing type is ts. This function can
+        be used to add a useful surface temperature in case surface fluxes are
+        prescribed.
 
         If time is not provided, forcing is assumed constant in time.
+
+        Parameters
+        ----------
+        data : int, float, list, or numpy.ndarray
+            input data as a list or a numpy array.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
 
         self.add_forcing_variable('tskin',data,**kwargs)
 
     def add_rad_ts(self,data,**kwargs):
-        """Add a surface temperature for radiation to a Case object.
-        
-        This function sets a surface temperature for the radiation scheme.
-
-        Required argument:
-        data -- input data as a list or a numpy array.
+        """Add a surface temperature for radiation to a Case object. This function
+        sets a surface temperature for the radiation scheme.
 
         If time is not provided, temperature is assumed constant in time.
+
+        Parameters
+        ----------
+        data : int, float, list, or numpy.ndarray
+            input data as a list or a numpy array.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
 
         self.set_attribute('surface_radiation_temp','ts')
         self.add_forcing_variable('ts_forc',data,**kwargs)
 
     def add_forcing_ts(self,data,z0=None,z0h=None,z0q=None,**kwargs):
-        """Add a surface temperature forcing to a Case object.
-        
-        This function sets a surface temperature forcing as the case surface forcing.
-        In case the initial surface temperature is not defined, add it.
-
-        Required argument:
-        data -- input data as a list or a numpy array.
+        """Add a surface temperature forcing to a Case object. This function sets
+        a surface temperature forcing as the case surface forcing. In case the
+        initial surface temperature is not defined, add it.
 
         If time is not provided, forcing is assumed constant in time.
+
+        Parameters
+        ----------
+        data : int, float, list, or numpy.ndarray
+            input data as a list or a numpy array.
+        z0 : float
+            See :meth:`add_variable` for details.
+        z0h : object
+            See :meth:`add_variable` for details.
+        z0q : object
+            See :meth:`add_variable` for details.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
 
         self.set_attribute('surface_forcing_temp','ts')
@@ -1451,15 +1961,26 @@ class Case:
                 self.add_forcing_variable('z0q',z0q)
 
     def add_forcing_thetas(self,data,z0=None,z0h=None,z0q=None,**kwargs):
-        """Add a surface potential temperature forcing to a Case object.
-        
-        This function sets a surface temperature forcing as the case surface forcing.
-        In case the initial surface temperature is not defined, add it.
-
-        Required argument:
-        data -- input data as a list or a numpy array.
+        """Add a surface potential temperature forcing to a Case object. This
+        function sets a surface temperature forcing as the case surface
+        forcing. In case the initial surface temperature is not defined, add
+        it.
 
         If time is not provided, forcing is assumed constant in time.
+
+        Parameters
+        ----------
+        data : int, float, list, or numpy.ndarray
+            input data as a list or a numpy array.
+        z0 : float
+            See :meth:`add_variable` for details.
+        z0h : object
+            See :meth:`add_variable` for details.
+        z0q : object
+            See :meth:`add_variable` for details.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
 
         self.set_attribute('surface_forcing_temp','thetas')
@@ -1483,23 +2004,45 @@ class Case:
                            forc_wind=None,z0=None,time_z0=None,ustar=None,time_ustar=None,**kwargs):
         """Add a surface flux forcing to a Case object.
 
-        Required argument:
-        sens -- input data for surface sensible heat flux as a numeric, a list or a numpy array.
-        lat -- input data for surface latent heat flux as a numeric, a list or a numpy array.
+        See add_variable function for other optional arguments. If time is not
+        provided, surface fluxes are assumed constant in time. If time_ustar is
+        not provided, friction velocity is assumed constant in time.
 
-        Optional (keyword) argument:
-        time       -- time axis for both sensible and latent heat fluxes
-        time_sens  -- time axis for sensibile heat flux
-        time_lat   -- time axis for latent heat flux
-        forc_wind  -- type of surface wind forcing as a string: 'z0' or 'ustar' (default 'z0')
-        z0         -- numeric value for surface roughness (default None)
-        ustar      -- input data for surface friction velocity as a numeric, a list or a numpy array (default None)
-        time_ustar -- time axis for ustar (default None)
+        Parameters
+        ----------
+        sens : int, float, list, or numpy.ndarray
+            input data for surface sensible heat flux as a numeric, a list or a
+            numpy array.
+        lat : int, float, list, or numpy.ndarray
+            input data for surface latent heat flux as a numeric, a list or a
+            numpy array.
+        time : list, numpy.ndarray, or Axis, optional
+            time axis for both sensible and latent heat fluxes
+        time_sens : list, numpy.ndarray, or Axis, optional
+            time axis for sensibile heat flux
+        time_lat : list, numpy.ndarray, or Axis, optional
+            time axis for latent heat flux
+        forc_wind : str, optional
+            type of surface wind forcing as a string: 'z0' or 'ustar' (default
+            'z0')
+        z0 : float, optional
+            numeric value for surface roughness (default None)
+        ustar : int, float, list, or numpy.ndarray, optional
+            input data for surface friction velocity as a numeric, a list or a
+            numpy array (default None)
+        time_ustar : list, numpy.ndarray, or Axis, optional
+            time axis for ustar (default None)
+        time_z0 : object
+            See :meth:`add_variable` for details.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
 
-        See add_variable function for other optional arguments.
-
-        If time is not provided, surface fluxes are assumed constant in time.
-        If time_ustar is not provided, friction velocity is assumed constant in time.
+        Raises
+        ------
+        ValueError
+            You must provide both sensible and latent heat fluxes. z0 must be
+            provided.
         """
 
         if sens is None or lat is None:
@@ -1542,9 +2085,11 @@ class Case:
 
     def set_betaevap(self,beta=1.):
         """Activate a beta model for surface evaporation in a Case object
-           
-        Optional (keyword) argument:
-        beta -- beta value of the beta model (default: 1.)
+
+        Parameters
+        ----------
+        beta : float, optional
+            beta value of the beta model (default: 1.)
         """
 
         self.set_attribute("surface_forcing_moisture","beta")
@@ -1552,7 +2097,7 @@ class Case:
 
     def deactivate_surface_evaporation(self):
         """Deactivate surface evoporation in a Case object
-           
+
         No argument required.
         """
 
@@ -1585,12 +2130,13 @@ class Case:
     def write(self,fileout):
         """Write case object into a netCDF file
 
-        Required argument:
-        fileout -- netCDF file name as a string
+        Time axes are first written, then level axes, then altitude/pressure
+        variables and finally the variables themselves.
 
-        Time axes are first written, then level axes, 
-        then altitude/pressure variables 
-        and finally the variables themselves.
+        Parameters
+        ----------
+        fileout : str
+            netCDF file name as a string
         """
 
         g = nc.Dataset(fileout,'w',format='NETCDF3_CLASSIC')
@@ -1637,10 +2183,12 @@ class Case:
     def read(self,filein):
         """Read a netCDF file to store data and information into a case object.
 
-        Required argument:
-        filein -- netCDF file name as a string
-
         Note that the case object should be initialize first.
+
+        Parameters
+        ----------
+        filein : str
+            netCDF file name as a string
         """
 
         f = nc.Dataset(filein,'r')
@@ -1681,6 +2229,22 @@ class Case:
 ###################################################################################################
 
     def plot(self,rep_images='./images/',timeunits=None,levunits=None):
+        """Plot all the initial-state and forcing variables of the case.
+
+        Delegates to :meth:`~dephycf.Variable.Variable.plot` for each variable
+        in `self.variables`; see that method for the supported
+        `timeunits`/`levunits` values.
+
+        Parameters
+        ----------
+        rep_images : str, optional
+            Output directory for the generated images. Created if it does not
+            already exist. Defaults to ``'./images/'``.
+        timeunits : {'hours', 'days'}, optional
+            Units to convert the time axis to before plotting.
+        levunits : {'hPa', 'Pa', 'km', 'm'}, optional
+            Units to convert the level axis to before plotting.
+        """
 
         if not(os.path.exists(rep_images)):
             os.makedirs(rep_images)
@@ -1689,6 +2253,28 @@ class Case:
             self.variables[var].plot(rep_images=rep_images,timeunits=timeunits,levunits=levunits)
 
     def plot_compare(self,cc,rep_images='./images/',label1=None,label2=None,timeunits=None,levunits=None):
+        """Plot this case's variables overlaid with another case's.
+
+        For each variable shared by both cases (with at most 3 dimensions, or a
+        single initial time step), plot `self`'s version overlaid with `cc`'s
+        version for comparison.
+
+        Parameters
+        ----------
+        cc : Case
+            The other case to compare against.
+        rep_images : str, optional
+            Output directory for the generated images. Created if it does not
+            already exist. Defaults to ``'./images/'``.
+        label1 : str, optional
+            Legend label for `self`'s curves.
+        label2 : str, optional
+            Legend label for `cc`'s curves.
+        timeunits : {'hours', 'days'}, optional
+            Units to convert the time axis to before plotting.
+        levunits : {'hPa', 'Pa', 'km', 'm'}, optional
+            Units to convert the level axis to before plotting.
+        """
 
         if not(os.path.exists(rep_images)):
             os.makedirs(rep_images)
@@ -1706,6 +2292,28 @@ class Case:
 ###################################################################################################
 
     def compute_theta(self,pressure=None):
+        """Compute the initial potential temperature profile.
+
+        Derived from initial temperature (``ta``, requires `pressure`) if
+        available, otherwise assumed equal to the initial liquid-water
+        potential temperature (``thetal``).
+
+        Parameters
+        ----------
+        pressure : Variable, optional
+            Initial pressure profile, required if ``ta`` is used as the source
+            variable.
+
+        Returns
+        -------
+        numpy.ndarray
+            The initial potential temperature profile (first time step).
+
+        Raises
+        ------
+        ValueError
+            If neither ``ta`` (with `pressure`) nor ``thetal`` is available.
+        """
 
         if 'ta' in self.var_init_list:
             if pressure is None:
@@ -1724,6 +2332,29 @@ class Case:
         return theta
 
     def compute_thetal(self,pressure=None):
+        """Compute the initial liquid-water potential temperature profile.
+
+        Derived from initial temperature (``ta``, requires `pressure`, assuming
+        ``thetal=theta``) if available, otherwise assumed equal to the initial
+        potential temperature (``theta``).
+
+        Parameters
+        ----------
+        pressure : Variable, optional
+            Initial pressure profile, required if ``ta`` is used as the source
+            variable.
+
+        Returns
+        -------
+        numpy.ndarray
+            The initial liquid-water potential temperature profile (first time
+            step).
+
+        Raises
+        ------
+        ValueError
+            If neither ``ta`` (with `pressure`) nor ``theta`` is available.
+        """
 
         if 'ta' in self.var_init_list:
             if pressure is None:
@@ -1742,6 +2373,28 @@ class Case:
         return thetal
 
     def compute_temp(self,pressure=None):
+        """Compute the initial temperature profile.
+
+        Derived from the initial potential temperature (``theta``) or liquid-
+        water potential temperature (``thetal``, assumed equal to ``theta``,
+        ignoring liquid water), given `pressure`.
+
+        Parameters
+        ----------
+        pressure : Variable
+            Initial pressure profile (required).
+
+        Returns
+        -------
+        numpy.ndarray
+            The initial temperature profile (first time step).
+
+        Raises
+        ------
+        ValueError
+            If `pressure` is ``None``, or if neither ``theta`` nor ``thetal``
+            is available.
+        """
 
         if pressure is None:
             logger.error('Pressure should be None to compute ta from theta or thetahl')
@@ -1760,6 +2413,24 @@ class Case:
         return temp
 
     def compute_qv(self):
+        """Compute the initial specific humidity profile.
+
+        Derived from whichever of ``qt``, ``rv``, ``rt`` or ``hur`` is
+        available in the initial state (in that order of preference),
+        converting as needed (``hur`` conversion additionally requires ``pa``
+        and ``ta``).
+
+        Returns
+        -------
+        numpy.ndarray
+            The initial specific humidity profile (first time step).
+
+        Raises
+        ------
+        ValueError
+            If none of ``qt``, ``rv``, ``rt`` or ``hur`` is available, or if
+            ``hur`` is used without ``pa``/``ta`` available.
+        """
 
         if 'qt' in self.var_init_list:
             logger.info('Assume qv=qt')
@@ -1788,6 +2459,24 @@ class Case:
         return qv
 
     def compute_qt(self):
+        """Compute the initial total water content profile.
+
+        Derived from whichever of ``qv``, ``rv``, ``rt`` or ``hur`` is
+        available in the initial state (in that order of preference),
+        converting as needed (``hur`` conversion additionally requires ``pa``
+        and ``ta``).
+
+        Returns
+        -------
+        numpy.ndarray
+            The initial total water content profile (first time step).
+
+        Raises
+        ------
+        ValueError
+            If none of ``qv``, ``rv``, ``rt`` or ``hur`` is available, or if
+            ``hur`` is used without ``pa``/``ta`` available.
+        """
 
         if 'qv' in self.var_init_list:
             logger.info('Assume qt=qv')
@@ -1816,6 +2505,24 @@ class Case:
         return qt
 
     def compute_rv(self):
+        """Compute the initial water vapor mixing ratio profile.
+
+        Derived from whichever of ``qv``, ``qt``, ``rt`` or ``hur`` is
+        available in the initial state (in that order of preference),
+        converting as needed (``hur`` conversion additionally requires ``pa``
+        and ``ta``).
+
+        Returns
+        -------
+        numpy.ndarray
+            The initial water vapor mixing ratio profile (first time step).
+
+        Raises
+        ------
+        ValueError
+            If none of ``qv``, ``qt``, ``rt`` or ``hur`` is available, or if
+            ``hur`` is used without ``pa``/``ta`` available.
+        """
 
         if 'qv' in self.var_init_list:
             logger.info('Compute rv from qv')
@@ -1844,6 +2551,24 @@ class Case:
         return rv
 
     def compute_rt(self):
+        """Compute the initial total water mixing ratio profile.
+
+        Derived from whichever of ``qv``, ``qt``, ``rv`` or ``hur`` is
+        available in the initial state (in that order of preference),
+        converting as needed (``hur`` conversion additionally requires ``pa``
+        and ``ta``).
+
+        Returns
+        -------
+        numpy.ndarray
+            The initial total water mixing ratio profile (first time step).
+
+        Raises
+        ------
+        ValueError
+            If none of ``qv``, ``qt``, ``rv`` or ``hur`` is available, or if
+            ``hur`` is used without ``pa``/``ta`` available.
+        """
 
         if 'qv' in self.var_init_list:
             logger.info('Compute rt from qt, assuming qt=qv')
@@ -1872,6 +2597,23 @@ class Case:
         return rt
 
     def compute_hur(self):
+        """Compute the initial relative humidity profile.
+
+        Derived from whichever of ``qv``, ``qt``, ``rv`` or ``rt`` is available
+        in the initial state (in that order of preference). Requires ``pa`` and
+        ``ta`` to be available.
+
+        Returns
+        -------
+        numpy.ndarray
+            The initial relative humidity profile (first time step).
+
+        Raises
+        ------
+        ValueError
+            If ``pa`` or ``ta`` is missing, or if none of ``qv``, ``qt``,
+            ``rv`` or ``rt`` is available.
+        """
 
         if 'pa' not in self.variables:
             logger.error('To compute hur, pressure is required')
@@ -1907,6 +2649,21 @@ class Case:
         return hur
 
     def compute_tnta_adv(self):
+        """Compute the large-scale temperature advection tendency.
+
+        Derived from ``tntheta_adv`` or ``tnthetal_adv`` (assumed equal to
+        ``tntheta_adv``), converted using the forcing pressure (``pa_forc``).
+
+        Returns
+        -------
+        numpy.ndarray
+            The temperature advection tendency.
+
+        Raises
+        ------
+        ValueError
+            If neither ``tntheta_adv`` nor ``tnthetal_adv`` is available.
+        """
 
         pressure = self.variables['pa_forc'].data
 
@@ -1925,6 +2682,21 @@ class Case:
         return tadv
 
     def compute_tntheta_adv(self):
+        """Compute the large-scale potential temperature advection tendency.
+
+        Derived from ``tnta_adv`` (converted using the forcing pressure
+        ``pa_forc``) or assumed equal to ``tnthetal_adv``.
+
+        Returns
+        -------
+        numpy.ndarray
+            The potential temperature advection tendency.
+
+        Raises
+        ------
+        ValueError
+            If neither ``tnta_adv`` nor ``tnthetal_adv`` is available.
+        """
 
         pressure = self.variables['pa_forc'].data
 
@@ -1942,6 +2714,23 @@ class Case:
         return thadv
 
     def compute_tnthetal_adv(self):
+        """Compute the large-scale liquid-water potential temperature advection
+        tendency.
+
+        Derived from ``tnta_adv`` (converted using the forcing pressure
+        ``pa_forc``, assuming ``tnthetal_adv=tntheta_adv``) or assumed equal to
+        ``tntheta_adv``.
+
+        Returns
+        -------
+        numpy.ndarray
+            The liquid-water potential temperature advection tendency.
+
+        Raises
+        ------
+        ValueError
+            If neither ``tnta_adv`` nor ``tntheta_adv`` is available.
+        """
 
         pressure = self.variables['pa_forc'].data
 
@@ -1959,6 +2748,21 @@ class Case:
         return thladv
 
     def compute_tnta_rad(self):
+        """Compute the radiative temperature tendency.
+
+        Derived from ``tntheta_rad`` or ``tnthetal_rad`` (assumed equal to
+        ``tntheta_rad``), converted using the forcing pressure (``pa_forc``).
+
+        Returns
+        -------
+        numpy.ndarray
+            The radiative temperature tendency.
+
+        Raises
+        ------
+        ValueError
+            If neither ``tntheta_rad`` nor ``tnthetal_rad`` is available.
+        """
 
         pressure = self.variables['pa_forc'].data
 
@@ -1977,6 +2781,21 @@ class Case:
         return trad
 
     def compute_tntheta_rad(self):
+        """Compute the radiative potential temperature tendency.
+
+        Derived from ``tnta_rad`` (converted using the forcing pressure
+        ``pa_forc``) or assumed equal to ``tnthetal_rad``.
+
+        Returns
+        -------
+        numpy.ndarray
+            The radiative potential temperature tendency.
+
+        Raises
+        ------
+        ValueError
+            If neither ``tnta_rad`` nor ``tnthetal_rad`` is available.
+        """
 
         pressure = self.variables['pa_forc'].data
 
@@ -1994,6 +2813,22 @@ class Case:
         return thrad
 
     def compute_tnthetal_rad(self):
+        """Compute the radiative liquid-water potential temperature tendency.
+
+        Derived from ``tnta_rad`` (converted using the forcing pressure
+        ``pa_forc``, assuming ``tnthetal_rad=tntheta_rad``) or assumed equal to
+        ``tntheta_rad``.
+
+        Returns
+        -------
+        numpy.ndarray
+            The radiative liquid-water potential temperature tendency.
+
+        Raises
+        ------
+        ValueError
+            If neither ``tnta_rad`` nor ``tntheta_rad`` is available.
+        """
 
         pressure = self.variables['pa_forc'].data
 
@@ -2011,6 +2846,22 @@ class Case:
         return thlrad
 
     def compute_tnqv_adv(self):
+        """Compute the large-scale specific humidity advection tendency.
+
+        Derived from ``tnqt_adv``, ``tnrv_adv`` or ``tnrt_adv`` (in that order
+        of preference), converting as needed using the corresponding initial
+        water profile.
+
+        Returns
+        -------
+        numpy.ndarray
+            The specific humidity advection tendency.
+
+        Raises
+        ------
+        ValueError
+            If none of ``tnqt_adv``, ``tnrv_adv`` or ``tnrt_adv`` is available.
+        """
 
         if 'tnqt_adv' in self.var_forcing_list:
             logger.info('Assume tnqv_adv=tnqt_adv')
@@ -2032,6 +2883,22 @@ class Case:
         return qvadv
 
     def compute_tnqt_adv(self):
+        """Compute the large-scale total water content advection tendency.
+
+        Derived from ``tnqv_adv``, ``tnrv_adv`` or ``tnrt_adv`` (in that order
+        of preference), converting as needed using the corresponding initial
+        water profile.
+
+        Returns
+        -------
+        numpy.ndarray
+            The total water content advection tendency.
+
+        Raises
+        ------
+        ValueError
+            If none of ``tnqv_adv``, ``tnrv_adv`` or ``tnrt_adv`` is available.
+        """
 
         if 'tnqv_adv' in self.var_forcing_list:
             logger.info('Assume tnqt_adv=tnqv_adv')
@@ -2053,6 +2920,22 @@ class Case:
         return qtadv
 
     def compute_tnrv_adv(self):
+        """Compute the large-scale water vapor mixing ratio advection tendency.
+
+        Derived from ``tnrt_adv``, ``tnqv_adv`` or ``tnqt_adv`` (in that order
+        of preference), converting as needed using the corresponding initial
+        water profile.
+
+        Returns
+        -------
+        numpy.ndarray
+            The water vapor mixing ratio advection tendency.
+
+        Raises
+        ------
+        ValueError
+            If none of ``tnrt_adv``, ``tnqv_adv`` or ``tnqt_adv`` is available.
+        """
 
         if 'tnrt_adv' in self.var_forcing_list:
             logger.info('Assume tnrv_adv=tnrt_adv')
@@ -2074,6 +2957,22 @@ class Case:
         return rvadv
 
     def compute_tnrt_adv(self):
+        """Compute the large-scale total water mixing ratio advection tendency.
+
+        Derived from ``tnrv_adv``, ``tnqv_adv`` or ``tnqt_adv`` (in that order
+        of preference), converting as needed using the corresponding initial
+        water profile.
+
+        Returns
+        -------
+        numpy.ndarray
+            The total water mixing ratio advection tendency.
+
+        Raises
+        ------
+        ValueError
+            If none of ``tnrv_adv``, ``tnqv_adv`` or ``tnqt_adv`` is available.
+        """
 
         if 'tnrv_adv' in self.var_forcing_list:
             logger.info('Assume tnrt_adv=tnrv_adv')
@@ -2095,6 +2994,21 @@ class Case:
         return rtadv
 
     def compute_ta_nud(self):
+        """Compute the temperature nudging profile.
+
+        Derived from ``theta_nud`` or ``thetal_nud`` (assumed equal to
+        ``theta_nud``), converted using the forcing pressure (``pa_forc``).
+
+        Returns
+        -------
+        numpy.ndarray
+            The temperature nudging profile.
+
+        Raises
+        ------
+        ValueError
+            If neither ``theta_nud`` nor ``thetal_nud`` is available.
+        """
 
         pressure = self.variables['pa_forc'].data
 
@@ -2113,6 +3027,21 @@ class Case:
         return tnud
 
     def compute_theta_nud(self):
+        """Compute the potential temperature nudging profile.
+
+        Derived from ``ta_nud`` (converted using the forcing pressure
+        ``pa_forc``) or assumed equal to ``thetal_nud``.
+
+        Returns
+        -------
+        numpy.ndarray
+            The potential temperature nudging profile.
+
+        Raises
+        ------
+        ValueError
+            If neither ``ta_nud`` nor ``thetal_nud`` is available.
+        """
 
         pressure = self.variables['pa_forc'].data
 
@@ -2130,6 +3059,22 @@ class Case:
         return thnud
 
     def compute_thetal_nud(self):
+        """Compute the liquid-water potential temperature nudging profile.
+
+        Derived from ``ta_nud`` (converted using the forcing pressure
+        ``pa_forc``, assuming ``thetal_nud=theta_nud``) or assumed equal to
+        ``theta_nud``.
+
+        Returns
+        -------
+        numpy.ndarray
+            The liquid-water potential temperature nudging profile.
+
+        Raises
+        ------
+        ValueError
+            If neither ``ta_nud`` nor ``theta_nud`` is available.
+        """
 
         pressure = self.variables['pa_forc'].data
 
@@ -2147,6 +3092,21 @@ class Case:
         return thlnud
 
     def compute_qv_nud(self):
+        """Compute the specific humidity nudging profile.
+
+        Assumed equal to ``qt_nud`` if available, otherwise derived from
+        ``rv_nud`` or ``rt_nud`` (in that order of preference).
+
+        Returns
+        -------
+        numpy.ndarray
+            The specific humidity nudging profile.
+
+        Raises
+        ------
+        ValueError
+            If none of ``qt_nud``, ``rv_nud`` or ``rt_nud`` is available.
+        """
 
         if 'qt_nud' in self.var_forcing_list:
             logger.info('Assume qv_nud=qt_nud')
@@ -2166,6 +3126,21 @@ class Case:
         return qvnud
 
     def compute_qt_nud(self):
+        """Compute the total water content nudging profile.
+
+        Assumed equal to ``qv_nud`` if available, otherwise derived from
+        ``rv_nud`` or ``rt_nud`` (in that order of preference).
+
+        Returns
+        -------
+        numpy.ndarray
+            The total water content nudging profile.
+
+        Raises
+        ------
+        ValueError
+            If none of ``qv_nud``, ``rv_nud`` or ``rt_nud`` is available.
+        """
 
         if 'qv_nud' in self.var_forcing_list:
             logger.info('Assume qt_nud=qv_nud')
@@ -2185,6 +3160,21 @@ class Case:
         return qtnud
 
     def compute_rv_nud(self):
+        """Compute the water vapor mixing ratio nudging profile.
+
+        Derived from ``qv_nud`` or ``qt_nud`` (assumed equal to ``qv_nud``), or
+        assumed equal to ``rt_nud`` if available.
+
+        Returns
+        -------
+        numpy.ndarray
+            The water vapor mixing ratio nudging profile.
+
+        Raises
+        ------
+        ValueError
+            If none of ``qv_nud``, ``qt_nud`` or ``rt_nud`` is available.
+        """
 
         if 'qv_nud' in self.var_forcing_list:
             logger.info('Compute rv_nud from qv_nud')
@@ -2204,6 +3194,21 @@ class Case:
         return rvnud
 
     def compute_rt_nud(self):
+        """Compute the total water mixing ratio nudging profile.
+
+        Derived from ``qv_nud`` or ``qt_nud`` (assumed equal to ``qv_nud``), or
+        assumed equal to ``rv_nud`` if available.
+
+        Returns
+        -------
+        numpy.ndarray
+            The total water mixing ratio nudging profile.
+
+        Raises
+        ------
+        ValueError
+            If none of ``qv_nud``, ``qt_nud`` or ``rv_nud`` is available.
+        """
 
         if 'qv_nud' in self.var_forcing_list:
             logger.info('Compute rt_nud from qt_nud assuming qt_nud=qv_nud')
@@ -2227,6 +3232,47 @@ class Case:
 ###################################################################################################
 
     def interpolate(self,time=None,lev=None,levtype=None,usetemp=True,usetheta=True,usethetal=True):
+        """Return a new, time- and/or vertically-interpolated, Case.
+
+        Builds a new :class:`Case` (with the same global attributes as `self`)
+        whose initial-state and forcing variables have been interpolated onto
+        the given time axis and/or level axis. If `time` is ``None``, no time
+        interpolation is performed (only the ``t0`` time axis of initial
+        variables is renamed to ``'time'`` when relevant). If `lev` is
+        ``None``, no vertical interpolation is performed.
+
+        Parameters
+        ----------
+        time : array_like, optional
+            Target time values (seconds since `self.tunits`). If ``None``,
+            variables are kept on their original time axis.
+        lev : array_like, optional
+            Target level values. Required together with `levtype` to perform a
+            vertical interpolation. If ``None``, no vertical interpolation is
+            performed.
+        levtype : {'altitude', 'pressure'}, optional
+            Type of the target level axis `lev`. Required when `lev` is given.
+        usetemp : bool, optional
+            Currently unused placeholder flag, kept for API compatibility.
+            Defaults to ``True``.
+        usetheta : bool, optional
+            Currently unused placeholder flag, kept for API compatibility.
+            Defaults to ``True``.
+        usethetal : bool, optional
+            Currently unused placeholder flag, kept for API compatibility.
+            Defaults to ``True``.
+
+        Returns
+        -------
+        Case
+            A new, interpolated, :class:`Case` instance.
+
+        Raises
+        ------
+        ValueError
+            If a variable's level axis has unexpected units, or if `levtype` is
+            neither ``'altitude'`` nor ``'pressure'`` when `lev` is given.
+        """
 
         ###########################
         # Init new case structure
@@ -2387,8 +3433,8 @@ class Case:
 
             else:
 
-                logger.error('levtype unexpected: {0}'.forma(levtype))
-                raise ValueError('levtype unexpected: {0}'.forma(levtype))
+                logger.error('levtype unexpected: {0}'.format(levtype))
+                raise ValueError('levtype unexpected: {0}'.format(levtype))
 
         for var in self.var_init_list:
             newcase.var_init_list.append(var)
@@ -2405,6 +3451,28 @@ class Case:
 ###################################################################################################
 
     def add_missing_init_variables(self):
+        """Complete the initial state with all required DEPHY variables.
+
+        First ensures both a height (``zh``) and a pressure (``pa``) initial
+        vertical-coordinate variable are available, deriving the missing one
+        from the other using the hydrostatic equation (:mod:`thermo`). Then,
+        for each variable expected in the DEPHY initial-state format (``zh``,
+        ``pa``, ``ua``, ``va``, ``ta``, ``theta``, ``thetal``, ``qv``, ``qt``,
+        ``rv``, ``rt``, ``rl``, ``ri``, ``ql``, ``qi``, ``hur``, ``tke``), adds
+        it if missing, computing it from the available alternatives via the
+        corresponding ``compute_*`` method (zero for the cloud/turbulence
+        variables ``rl``/``ri``/``ql``/``qi`` /``tke``).
+
+        Requires at least one of ``ta``, ``theta`` or ``thetal`` to already be
+        defined, together with a wind variable (``ua``) to infer the number of
+        vertical levels.
+
+        Raises
+        ------
+        ValueError If none of ``ta``, ``theta`` or ``thetal`` is available, or
+        if both height and pressure are missing for the reference temperature-
+        like variable, or if an expected variable cannot be handled.
+        """
 
         _, nlev = self.variables['ua'].data.shape
 
@@ -2556,6 +3624,43 @@ class Case:
 ###################################################################################################
 
     def add_missing_forcing_variables(self):
+        """Complete the forcing with all required/expected DEPHY variables.
+
+        Does nothing (besides logging a warning) if no forcing variable has
+        been defined yet. Otherwise, in order:
+
+        1. Adds ``ps_forc`` (constant, equal to the initial surface pressure)
+        if missing. 2. Ensures both ``ts_forc`` and ``thetas_forc`` are
+        available when the ``surface_forcing_temp`` attribute requests one of
+        them, deriving the missing one and the corresponding initial-state
+        variable. 3. Ensures both a height (``zh_forc``) and a pressure
+        (``pa_forc``) forcing vertical-coordinate variable are available
+        (assumed constant in time when derived from the initial-state
+        ``zh``/``pa``). 4. Adds the large-scale temperature advection variables
+        (``tnta_adv``, ``tntheta_adv``, ``tnthetal_adv``) if advection is
+        active (``adv_ta``/``adv_theta`` /``adv_thetal`` attributes). 5. Adds
+        the radiative temperature tendency variables (``tnta_rad``,
+        ``tntheta_rad``, ``tnthetal_rad``) if the ``radiation`` attribute is
+        set to ``'tend'``. 6. Adds the large-scale humidity advection variables
+        (``tnqv_adv``, ``tnqt_adv``, ``tnrv_adv``, ``tnrt_adv``) if advection
+        is active (``adv_qv``/``adv_qt``/``adv_rv`` /``adv_rt`` attributes). 7.
+        Updates the nudging height/pressure attributes for ``ua``/``va`` when
+        wind nudging is active. 8. Adds the temperature nudging variables
+        (``ta_nud``, ``theta_nud``, ``thetal_nud``) and the humidity nudging
+        variables (``qv_nud``, ``qt_nud``, ``rv_nud``, ``rt_nud``) when the
+        corresponding ``nudging_*`` attributes are active, either from a simple
+        nudging profile description (height/ pressure attributes) or from an
+        explicit nudging coefficient variable.
+
+        Missing variables are always computed via the corresponding
+        ``compute_*`` method, using whichever alternative variables are already
+        available.
+
+        Raises
+        ------
+        ValueError If a ``nudging_*`` or similar control attribute has an
+        unexpected value.
+        """
 
         if not(self.var_forcing_list):
             logger.warning('No forcing variable. Nothing to do')
@@ -2931,6 +4036,34 @@ class Case:
 
     def convert2SCM(self, time=None, lev=None, levtype=None,
             usetemp=True, usetheta=True, usethetal=True):
+        """Convert this Case to a fully SCM-ready (DEPHY) Case.
+
+        Convenience wrapper chaining :meth:`interpolate` (onto the given
+        time/level target axes), :meth:`add_missing_init_variables` and
+        :meth:`add_missing_forcing_variables`, to produce a case ready to be
+        used to drive a single-column model, or written out with :meth:`write`.
+
+        Parameters
+        ----------
+        time : array_like, optional
+            Target time values, forwarded to :meth:`interpolate`.
+        lev : array_like, optional
+            Target level values, forwarded to :meth:`interpolate`.
+        levtype : {'altitude', 'pressure'}, optional
+            Type of the target level axis `lev`, forwarded to
+            :meth:`interpolate`.
+        usetemp : bool, optional
+            Forwarded to :meth:`interpolate`. Defaults to ``True``.
+        usetheta : bool, optional
+            Forwarded to :meth:`interpolate`. Defaults to ``True``.
+        usethetal : bool, optional
+            Forwarded to :meth:`interpolate`. Defaults to ``True``.
+
+        Returns
+        -------
+        Case
+            The new, fully completed, SCM-ready :class:`Case`.
+        """
 
         # Interpolation
         logger.info('#'*40)
@@ -2963,24 +4096,46 @@ class Case:
     def extend_variable(self, varid, data=None, height=None, pressure=None, time=None, tunits=None):
         """Vertically extend the variable varid using data
 
-        Arguments:
-        varid -- string for the variable id
-        data -- data to be used to extend vertically the variable varid
-        height -- altitude above the reference geoide (m)
-        pressure -- pressure (Pa)
-        time -- time stamps
-        tunits -- units to interpret time data
+        Extends the variable `varid` with one or more additional
+        levels, built from `data` and `height` or `pressure`. Either
+        `height` or `pressure` must be given (not both).
 
-        Either height or pressure must be given
+        If `data` is ``None``, the variable is extended constantly
+        from its highest or lowest value. If `data` is a scalar
+        (`int` or `float`), the variable is extended by one level,
+        based on either ``(data, height)`` or ``(data, pressure)``
+        (`height`/`pressure` must then also be a scalar). If `data`
+        is a 1D array, it is taken as a vertical profile, and
+        `height`/`pressure` must be given with the same shape. If
+        `data` is a 2D array, its first dimension is taken to be
+        time and its second one height or pressure; `height`/
+        `pressure` can then be 1D or 2D (consistent with `data`), and
+        `time`/`tunits` must also be given, with `time` shaped
+        consistently with `data`'s first dimension.
 
-        if data is None, the variable is extended constantly from its highest or lowest value.
-        if data is a float or an integer, the variable is extended by on level based on either (data,height) 
-            or (data,pressure). height or pressure must be a float or an integer.
-        if data is a 1D array, it is supposed to be a vertical profile. Either height or pressure must be given 
-            and must have the same shape.
-        if data is a 2D array, first dimension is supposed to be time and second to be either height or pressure. 
-            height or pressure must be given and could be 1D or 2D (shape to be consistent with data)
-            time and tunits must be given. time must have a shape consistent with the data first dimention. 
+        Parameters
+        ----------
+        varid : str
+            Identifier of the variable to extend.
+        data : int, float, list, or numpy.ndarray, optional
+            Data used to extend the variable vertically. See the
+            description above for the accepted shapes.
+        height : int, float, list, or numpy.ndarray, optional
+            Altitude(s) above the reference geoid (m) associated with
+            `data`.
+        pressure : int, float, list, or numpy.ndarray, optional
+            Pressure(s) (Pa) associated with `data`.
+        time : list or numpy.ndarray, optional
+            Time stamps associated with a 2D `data` array.
+        tunits : str, optional
+            Units of `time`, associated with a 2D `data` array.
+
+        Raises
+        ------
+        ValueError
+            If both `height` and `pressure` are ``None``, or if
+            `data`/`height`/`pressure`/`time` have inconsistent
+            shapes.
         """
 
         if height is None and pressure is None:
@@ -3104,64 +4259,183 @@ class Case:
                 raise ValueError
 
     def extend_init_pressure(self, pa=None, **kwargs):
-        """Vertically extend the pressure"""
+        """Vertically extend the pressure
+
+        Parameters
+        ----------
+        pa : object
+            See :meth:`add_variable` for details.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
+        """
 
         self.extend_variable('pa', data=pa, **kwargs)
 
     def extend_init_wind(self, u=None, v=None, **kwargs):
-        """Vertically extend the two wind initial components"""
+        """Vertically extend the two wind initial components
+
+        Parameters
+        ----------
+        u : list or numpy.ndarray
+            See :meth:`add_variable` for details.
+        v : list or numpy.ndarray
+            See :meth:`add_variable` for details.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
+        """
 
         self.extend_variable('ua', data=u, **kwargs)
         self.extend_variable('va', data=v, **kwargs)
 
     def extend_init_temp(self, temp=None, **kwargs):
-        """Vertically extend the temperarture"""
+        """Vertically extend the temperarture
+
+        Parameters
+        ----------
+        temp : object
+            See :meth:`add_variable` for details.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
+        """
 
         self.extend_variable('ta', data=temp, **kwargs)
 
     def extend_init_theta(self, theta=None, **kwargs):
-        """Vertically extend the potential temperature"""
+        """Vertically extend the potential temperature
+
+        Parameters
+        ----------
+        theta : object
+            See :meth:`add_variable` for details.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
+        """
 
         self.extend_variable('theta', data=theta, **kwargs)
 
     def extend_init_thetal(self, thetal=None, **kwargs):
-        """Vertically extend the liquid-water potential temperature"""
+        """Vertically extend the liquid-water potential temperature
+
+        Parameters
+        ----------
+        thetal : object
+            See :meth:`add_variable` for details.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
+        """
 
         self.extend_variable('thetal', data=thetal, **kwargs)
 
     def extend_init_qv(self, qv=None, **kwargs):
-        """Vertically extend the specific humidity"""
+        """Vertically extend the specific humidity
+
+        Parameters
+        ----------
+        qv : object
+            See :meth:`add_variable` for details.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
+        """
 
         self.extend_variable('qv', data=qv, **kwargs)
 
     def extend_init_qt(self, qt=None, **kwargs):
-        """Vertically extend the total water"""
+        """Vertically extend the total water
+
+        Parameters
+        ----------
+        qt : object
+            See :meth:`add_variable` for details.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
+        """
 
         self.extend_variable('qt', data=qt, **kwargs)
 
     def extend_init_rv(self, rv=None, **kwargs):
-        """Vertically extend the water vapor mixing ratio"""
+        """Vertically extend the water vapor mixing ratio
+
+        Parameters
+        ----------
+        rv : object
+            See :meth:`add_variable` for details.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
+        """
 
         self.extend_variable('rv', data=rv, **kwargs)
 
     def extend_init_rt(self, rt=None, **kwargs):
-        """Vertically extend the total water mixing ratio"""
+        """Vertically extend the total water mixing ratio
+
+        Parameters
+        ----------
+        rt : object
+            See :meth:`add_variable` for details.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
+        """
 
         self.extend_variable('rt', data=rt, **kwargs)
 
     def extend_init_hur(self, hur=None, **kwargs):
-        """Vertically extend the relative humidity"""
+        """Vertically extend the relative humidity
+
+        Parameters
+        ----------
+        hur : object
+            See :meth:`add_variable` for details.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
+        """
 
         self.extend_variable('hur', data=hur, **kwargs)
 
     def extend_geostrophic_wind(self, ug=None, vg=None, **kwargs):
-        """Vertically extend the geostrophic wind components"""
+        """Vertically extend the geostrophic wind components
+
+        Parameters
+        ----------
+        ug : list or numpy.ndarray
+            See :meth:`add_variable` for details.
+        vg : list or numpy.ndarray
+            See :meth:`add_variable` for details.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
+        """
 
         self.extend_variable('ug', data=ug, **kwargs)
         self.extend_variable('vg', data=vg, **kwargs)
 
     def extend_vertical_velocity(self, w=None, omega=None, **kwargs):
-        """Vertically extend the vertical velocity, either w or omega"""
+        """Vertically extend the vertical velocity, either w or omega
+
+        Parameters
+        ----------
+        w : list or numpy.ndarray
+            See :meth:`add_variable` for details.
+        omega : list or numpy.ndarray
+            See :meth:`add_variable` for details.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
+
+        Raises
+        ------
+        ValueError
+            Raised in an unexpected case.
+        """
 
         if w is not None:
             self.extend_variable('wa', data=w, **kwargs)
@@ -3172,42 +4446,117 @@ class Case:
             raise ValueError
 
     def extend_temperature_advection(self, temp_adv=None, **kwargs):
-        """Vertically extend the temperature large-scale advection"""
+        """Vertically extend the temperature large-scale advection
+
+        Parameters
+        ----------
+        temp_adv : list or numpy.ndarray
+            See :meth:`add_variable` for details.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
+        """
 
         self.extend_variable('tnta_adv', data=temp_adv, **kwargs)
 
     def extend_theta_advection(self, theta_adv=None, **kwargs):
-        """Vertically extend the potential temperature large-scale advection"""
+        """Vertically extend the potential temperature large-scale advection
+
+        Parameters
+        ----------
+        theta_adv : list or numpy.ndarray
+            See :meth:`add_variable` for details.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
+        """
 
         self.extend_variable('tntheta_adv', data=theta_adv, **kwargs)
 
     def extend_thetal_advection(self, thetal_adv=None, **kwargs):
-        """Vertically extend the liquid-water potential temperature large-scale advection"""
+        """Vertically extend the liquid-water potential temperature large-scale
+        advection
+
+        Parameters
+        ----------
+        thetal_adv : list or numpy.ndarray
+            See :meth:`add_variable` for details.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
+        """
 
         self.extend_variable('tnthetal_adv', data=thetal_adv, **kwargs)
 
     def extend_qv_advection(self, qv_adv=None, **kwargs):
-        """Vertically extend the specific humidity large-scale advection"""
+        """Vertically extend the specific humidity large-scale advection
+
+        Parameters
+        ----------
+        qv_adv : list or numpy.ndarray
+            See :meth:`add_variable` for details.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
+        """
 
         self.extend_variable('tnqv_adv', data=qv_adv, **kwargs)
 
     def extend_qt_advection(self, qt_adv=None, **kwargs):
-        """Vertically extend the total water content large-scale advection"""
+        """Vertically extend the total water content large-scale advection
+
+        Parameters
+        ----------
+        qt_adv : list or numpy.ndarray
+            See :meth:`add_variable` for details.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
+        """
 
         self.extend_variable('tnqt_adv', data=qt_adv, **kwargs)
 
     def extend_rv_advection(self, rv_adv=None, **kwargs):
-        """Vertically extend the water vapor mixing ratio large-scale advection"""
+        """Vertically extend the water vapor mixing ratio large-scale advection
+
+        Parameters
+        ----------
+        rv_adv : list or numpy.ndarray
+            See :meth:`add_variable` for details.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
+        """
 
         self.extend_variable('tnrv_adv', data=rv_adv, **kwargs)
 
     def extend_wind_advection(self, ua_adv=None, va_adv=None, **kwargs):
-        """Vertically extend the two wind initial components"""
+        """Vertically extend the two wind initial components
+
+        Parameters
+        ----------
+        ua_adv : list or numpy.ndarray
+            See :meth:`add_variable` for details.
+        va_adv : list or numpy.ndarray
+            See :meth:`add_variable` for details.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
+        """
 
         self.extend_variable('tnua_adv', data=ua_adv, **kwargs)
         self.extend_variable('tnva_adv', data=va_adv, **kwargs)
 
     def extend_rt_advection(self, rt_adv=None, **kwargs):
-        """Vertically extend the total water mixing ratio large-scale advection"""
+        """Vertically extend the total water mixing ratio large-scale advection
+
+        Parameters
+        ----------
+        rt_adv : list or numpy.ndarray
+            See :meth:`add_variable` for details.
+        **kwargs
+            Additional keyword arguments forwarded to :meth:`add_variable`
+            (e.g. `time`, `name`, `units`, `height`, `pressure`...).
+        """
 
         self.extend_variable('tnrt_adv', data=rt_adv, **kwargs)

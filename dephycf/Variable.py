@@ -264,7 +264,7 @@ class Variable:
 
         Parameters
         ----------
-        *coord : str
+        *coord : :class:`str`
             Coordinate identifiers to join with a single space to
             build `self.coord`.
         """
@@ -275,7 +275,7 @@ class Variable:
 
         Parameters
         ----------
-        lev : Axis, optional
+        lev : :class:`Axis`, optional
             New level axis. If ``None``, a warning is logged and
             nothing is done.
         """
@@ -302,18 +302,18 @@ class Variable:
 
         Parameters
         ----------
-        filein : netCDF4.Dataset
+        filein : :class:`netCDF4.Dataset`
             Open (writable) netCDF file/dataset to write into.
         write_time_axes : bool, optional
             Whether to write the time axis/axes. Defaults to
             ``True``.
-        write_level_axes : bool, optional
+        write_level_axes : :class:`bool`, optional
             Whether to write the level axis/axes, when the variable
             has a vertical dimension. Defaults to ``True``.
-        write_data : bool, optional
+        write_data : :class:`bool`, optional
             Whether to write the variable data itself. Defaults to
             ``True``.
-        write_vertical : bool, optional
+        write_vertical : :class:`bool`, optional
             Whether to also write the height/pressure companion
             variables, when the variable has a vertical dimension.
             Defaults to ``True``.
@@ -375,14 +375,14 @@ class Variable:
 
         Parameters
         ----------
-        rep_images : str, optional
+        rep_images : :class:`str`, optional
             Output directory for the generated image(s).
-        var2 : Variable, optional
+        var2 : :class:`Variable`, optional
             A second variable to overlay on the same plot for
             comparison.
-        label : str, optional
+        label : :class:`str`, optional
             Legend label for `self` when `var2` is given.
-        label2 : str, optional
+        label2 : :class:`str`, optional
             Legend label for `var2` when `var2` is given.
         timeunits : {'hours', 'days'}, optional
             Units to convert the time axis to before plotting. If
@@ -571,7 +571,7 @@ class Variable:
 
         Parameters
         ----------
-        time : Axis, optional
+        time : :class:`Axis`, optional
             Target time axis. If ``None``, a warning is logged and
             `self` is returned unchanged.
 
@@ -682,7 +682,7 @@ class Variable:
             Target pressure values (1D or 2D ``(time, level)``). Used
             only if the variable already has a pressure companion
             variable, and only when `height` is not usable.
-        log : bool, optional
+        log : :class:`bool`, optional
             Unused placeholder flag kept for API compatibility.
             Defaults to ``False``.
 
@@ -810,7 +810,7 @@ class Variable:
         time : array_like, optional
             Time values associated with a 2D `height`/`pressure`
             array.
-        tunits : str, optional
+        tunits : :class:`str`, optional
             Units of `time`, associated with a 2D `height`/`pressure`
             array.
 
@@ -1002,14 +1002,14 @@ def read(name, filein):
 
     Parameters
     ----------
-    name : str
+    name : :class:`str`
         Name of the netCDF variable to read.
-    filein : netCDF4.Dataset
+    filein : :class:`netCDF4.Dataset`
         Open netCDF file/dataset to read from.
 
     Returns
     -------
-    Variable
+    Variable : :class:`Variable`
         The variable read from the file, with its axes and, if
         applicable, its height/pressure companion variable attached.
     """
@@ -1080,23 +1080,23 @@ def interpol(var, levout=None, timeout=None, log=False):
 
     Parameters
     ----------
-    var : Variable
+    var : :class:`Variable`
         Variable to interpolate.
-    levout : Axis, optional
+    levout : :class:`Axis`, optional
         Target level axis. If ``None``, the original level axis (and
         data) is kept.
-    timeout : Axis, optional
+    timeout : :class:`Axis`, optional
         Target time axis. If ``None`` (or if the variable has a
         single time step), the original time axis (and data) is
         kept.
-    log : bool, optional
+    log : :class:`bool`, optional
         If ``True``, interpolate in log-space along the vertical
         (only used for the time-and-level branch and the level-only
         branch). Defaults to ``False``.
 
     Returns
     -------
-    Variable
+    Variable : :class:`Variable`
         A new :class:`Variable` interpolated onto `levout` and/or
         `timeout`, as applicable.
 

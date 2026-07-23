@@ -12,3 +12,4 @@ API Reference
    plotbasics
    axis
    variable
+   case

@@ -46,6 +46,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'api/variable';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Case (dephycf.Case)" href="case.html" />
     <link rel="prev" title="Axis (dephycf.Axis)" href="axis.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -286,6 +287,7 @@
 <li class="toctree-l1"><a class="reference internal" href="plotbasics.html">Plotting Utilities (<code class="xref py py-mod docutils literal notranslate"><span class="pre">dephycf.plotbasics</span></code>)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="axis.html">Axis (<code class="xref py py-mod docutils literal notranslate"><span class="pre">dephycf.Axis</span></code>)</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Variable (<code class="xref py py-mod docutils literal notranslate"><span class="pre">dephycf.Variable</span></code>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="case.html">Case (<code class="xref py py-mod docutils literal notranslate"><span class="pre">dephycf.Case</span></code>)</a></li>
 </ul>
 </div>
 </nav></div>
@@ -418,7 +420,7 @@ the variable, and interpolate it in time and in the vertical.</p>
 <dd><p>Variable identifier (netCDF variable name).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>str</p>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -429,7 +431,7 @@ the variable, and interpolate it in time and in the vertical.</p>
 <dd><p>Standard/long name of the variable.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>str or None</p>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code> or <cite>None</cite></p>
 </dd>
 </dl>
 </dd></dl>
@@ -440,7 +442,7 @@ the variable, and interpolate it in time and in the vertical.</p>
 <dd><p>Physical units of the variable.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>str or None</p>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code> or <cite>None</cite></p>
 </dd>
 </dl>
 </dd></dl>
@@ -451,7 +453,7 @@ the variable, and interpolate it in time and in the vertical.</p>
 <dd><p>Data array associated with the variable.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>numpy.ndarray or None</p>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code> or <cite>None</cite></p>
 </dd>
 </dl>
 </dd></dl>
@@ -463,7 +465,7 @@ the variable, and interpolate it in time and in the vertical.</p>
 None).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>int</p>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -475,7 +477,7 @@ None).</p>
 variable is defined on.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>list</p>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -486,7 +488,7 @@ variable is defined on.</p>
 <dd><p>List of axis identifiers, in the same order as <cite>axes</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>list</p>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -497,7 +499,7 @@ variable is defined on.</p>
 <dd><p>Time axis, if any.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="axis.html#dephycf.Axis.Axis" title="dephycf.Axis.Axis">Axis</a> or None</p>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Axis</span></code> or <cite>None</cite></p>
 </dd>
 </dl>
 </dd></dl>
@@ -508,7 +510,7 @@ variable is defined on.</p>
 <dd><p>Level (vertical) axis, if any.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="axis.html#dephycf.Axis.Axis" title="dephycf.Axis.Axis">Axis</a> or None</p>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Axis</span></code> or <cite>None</cite></p>
 </dd>
 </dl>
 </dd></dl>
@@ -520,7 +522,7 @@ variable is defined on.</p>
 attribute).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>str</p>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -532,7 +534,7 @@ attribute).</p>
 plotting.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>float</p>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -543,7 +545,7 @@ plotting.</p>
 <dd><p>Units used when plotting (may differ from <cite>units</cite>).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>str or None</p>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code> or <cite>None</cite></p>
 </dd>
 </dl>
 </dd></dl>
@@ -555,7 +557,7 @@ plotting.</p>
 coordinate.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="#dephycf.Variable.Variable" title="dephycf.Variable.Variable">Variable</a> or None</p>
+<dd class="field-odd"><p><a class="reference internal" href="#dephycf.Variable.Variable" title="dephycf.Variable.Variable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Variable</span></code></a> or <cite>None</cite></p>
 </dd>
 </dl>
 </dd></dl>
@@ -567,7 +569,7 @@ coordinate.</p>
 coordinate.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="#dephycf.Variable.Variable" title="dephycf.Variable.Variable">Variable</a> or None</p>
+<dd class="field-odd"><p><a class="reference internal" href="#dephycf.Variable.Variable" title="dephycf.Variable.Variable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Variable</span></code></a> or <cite>None</cite></p>
 </dd>
 </dl>
 </dd></dl>
@@ -593,7 +595,7 @@ implemented.</p></li>
 (or <cite>pressure</cite>).</p></li>
 <li><p><strong>time</strong> (<em>array_like</em><em>, </em><em>optional</em>) – Time values associated with a 2D <cite>height</cite>/<cite>pressure</cite>
 array.</p></li>
-<li><p><strong>tunits</strong> (<em>str</em><em>, </em><em>optional</em>) – Units of <cite>time</cite>, associated with a 2D <cite>height</cite>/<cite>pressure</cite>
+<li><p><strong>tunits</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, optional) – Units of <cite>time</cite>, associated with a 2D <cite>height</cite>/<cite>pressure</cite>
 array.</p></li>
 </ul>
 </dd>
@@ -630,7 +632,7 @@ string, and basic statistics (mean, min, max) of the data.</p>
 <dd><p>Interpolate the variable onto a new time axis.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>time</strong> (<a class="reference internal" href="axis.html#dephycf.Axis.Axis" title="dephycf.Axis.Axis"><em>Axis</em></a><em>, </em><em>optional</em>) – Target time axis. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, a warning is logged and
+<dd class="field-odd"><p><strong>time</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Axis</span></code>, optional) – Target time axis. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, a warning is logged and
 <cite>self</cite> is returned unchanged.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -659,7 +661,7 @@ a height companion variable.</p></li>
 <li><p><strong>pressure</strong> (<em>array_like</em><em>, </em><em>optional</em>) – Target pressure values (1D or 2D <code class="docutils literal notranslate"><span class="pre">(time,</span> <span class="pre">level)</span></code>). Used
 only if the variable already has a pressure companion
 variable, and only when <cite>height</cite> is not usable.</p></li>
-<li><p><strong>log</strong> (<em>bool</em><em>, </em><em>optional</em>) – Unused placeholder flag kept for API compatibility.
+<li><p><strong>log</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, optional) – Unused placeholder flag kept for API compatibility.
 Defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
 </ul>
 </dd>
@@ -690,11 +692,11 @@ drawing to <code class="xref py py-mod docutils literal notranslate"><span class
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>rep_images</strong> (<em>str</em><em>, </em><em>optional</em>) – Output directory for the generated image(s).</p></li>
-<li><p><strong>var2</strong> (<a class="reference internal" href="#dephycf.Variable.Variable" title="dephycf.Variable.Variable"><em>Variable</em></a><em>, </em><em>optional</em>) – A second variable to overlay on the same plot for
+<li><p><strong>rep_images</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, optional) – Output directory for the generated image(s).</p></li>
+<li><p><strong>var2</strong> (<a class="reference internal" href="#dephycf.Variable.Variable" title="dephycf.Variable.Variable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Variable</span></code></a>, optional) – A second variable to overlay on the same plot for
 comparison.</p></li>
-<li><p><strong>label</strong> (<em>str</em><em>, </em><em>optional</em>) – Legend label for <cite>self</cite> when <cite>var2</cite> is given.</p></li>
-<li><p><strong>label2</strong> (<em>str</em><em>, </em><em>optional</em>) – Legend label for <cite>var2</cite> when <cite>var2</cite> is given.</p></li>
+<li><p><strong>label</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, optional) – Legend label for <cite>self</cite> when <cite>var2</cite> is given.</p></li>
+<li><p><strong>label2</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, optional) – Legend label for <cite>var2</cite> when <cite>var2</cite> is given.</p></li>
 <li><p><strong>timeunits</strong> (<em>{'hours'</em><em>, </em><em>'days'}</em><em>, </em><em>optional</em>) – Units to convert the time axis to before plotting. If
 <code class="docutils literal notranslate"><span class="pre">None</span></code>, the native time units are used.</p></li>
 <li><p><strong>levunits</strong> (<em>{'hPa'</em><em>, </em><em>'Pa'</em><em>, </em><em>'km'</em><em>, </em><em>'m'}</em><em>, </em><em>optional</em>) – Units to convert the level axis to before plotting. If
@@ -710,7 +712,7 @@ comparison.</p></li>
 <dd><p>Set the netCDF <code class="docutils literal notranslate"><span class="pre">coordinates</span></code> attribute string.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>*coord</strong> (<em>str</em>) – Coordinate identifiers to join with a single space to
+<dd class="field-odd"><p><strong>*coord</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Coordinate identifiers to join with a single space to
 build <cite>self.coord</cite>.</p>
 </dd>
 </dl>
@@ -722,7 +724,7 @@ build <cite>self.coord</cite>.</p>
 <dd><p>Replace the level axis of the variable.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>lev</strong> (<a class="reference internal" href="axis.html#dephycf.Axis.Axis" title="dephycf.Axis.Axis"><em>Axis</em></a><em>, </em><em>optional</em>) – New level axis. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, a warning is logged and
+<dd class="field-odd"><p><strong>lev</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Axis</span></code>, optional) – New level axis. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, a warning is logged and
 nothing is done.</p>
 </dd>
 </dl>
@@ -735,14 +737,14 @@ nothing is done.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>filein</strong> (<em>netCDF4.Dataset</em>) – Open (writable) netCDF file/dataset to write into.</p></li>
+<li><p><strong>filein</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">netCDF4.Dataset</span></code>) – Open (writable) netCDF file/dataset to write into.</p></li>
 <li><p><strong>write_time_axes</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to write the time axis/axes. Defaults to
 <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
-<li><p><strong>write_level_axes</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to write the level axis/axes, when the variable
+<li><p><strong>write_level_axes</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, optional) – Whether to write the level axis/axes, when the variable
 has a vertical dimension. Defaults to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
-<li><p><strong>write_data</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to write the variable data itself. Defaults to
+<li><p><strong>write_data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, optional) – Whether to write the variable data itself. Defaults to
 <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
-<li><p><strong>write_vertical</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to also write the height/pressure companion
+<li><p><strong>write_vertical</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, optional) – Whether to also write the height/pressure companion
 variables, when the variable has a vertical dimension.
 Defaults to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
 </ul>
@@ -759,23 +761,23 @@ Defaults to <code class="docutils literal notranslate"><span class="pre">True</s
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>var</strong> (<a class="reference internal" href="#dephycf.Variable.Variable" title="dephycf.Variable.Variable"><em>Variable</em></a>) – Variable to interpolate.</p></li>
-<li><p><strong>levout</strong> (<a class="reference internal" href="axis.html#dephycf.Axis.Axis" title="dephycf.Axis.Axis"><em>Axis</em></a><em>, </em><em>optional</em>) – Target level axis. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, the original level axis (and
+<li><p><strong>var</strong> (<a class="reference internal" href="#dephycf.Variable.Variable" title="dephycf.Variable.Variable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Variable</span></code></a>) – Variable to interpolate.</p></li>
+<li><p><strong>levout</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Axis</span></code>, optional) – Target level axis. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, the original level axis (and
 data) is kept.</p></li>
-<li><p><strong>timeout</strong> (<a class="reference internal" href="axis.html#dephycf.Axis.Axis" title="dephycf.Axis.Axis"><em>Axis</em></a><em>, </em><em>optional</em>) – Target time axis. If <code class="docutils literal notranslate"><span class="pre">None</span></code> (or if the variable has a
+<li><p><strong>timeout</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Axis</span></code>, optional) – Target time axis. If <code class="docutils literal notranslate"><span class="pre">None</span></code> (or if the variable has a
 single time step), the original time axis (and data) is
 kept.</p></li>
-<li><p><strong>log</strong> (<em>bool</em><em>, </em><em>optional</em>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, interpolate in log-space along the vertical
+<li><p><strong>log</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, optional) – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, interpolate in log-space along the vertical
 (only used for the time-and-level branch and the level-only
 branch). Defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A new <a class="reference internal" href="#dephycf.Variable.Variable" title="dephycf.Variable.Variable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Variable</span></code></a> interpolated onto <cite>levout</cite> and/or
+<dd class="field-even"><p><strong>Variable</strong> – A new <a class="reference internal" href="#dephycf.Variable.Variable" title="dephycf.Variable.Variable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Variable</span></code></a> interpolated onto <cite>levout</cite> and/or
 <cite>timeout</cite>, as applicable.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="#dephycf.Variable.Variable" title="dephycf.Variable.Variable">Variable</a></p>
+<dd class="field-odd"><p><a class="reference internal" href="#dephycf.Variable.Variable" title="dephycf.Variable.Variable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Variable</span></code></a></p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>ValueError</strong> – If the input variable has neither a time nor a level axis.</p>
@@ -796,16 +798,16 @@ height or pressure vertical-coordinate companion variable
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<em>str</em>) – Name of the netCDF variable to read.</p></li>
-<li><p><strong>filein</strong> (<em>netCDF4.Dataset</em>) – Open netCDF file/dataset to read from.</p></li>
+<li><p><strong>name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Name of the netCDF variable to read.</p></li>
+<li><p><strong>filein</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">netCDF4.Dataset</span></code>) – Open netCDF file/dataset to read from.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The variable read from the file, with its axes and, if
+<dd class="field-even"><p><strong>Variable</strong> – The variable read from the file, with its axes and, if
 applicable, its height/pressure companion variable attached.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="#dephycf.Variable.Variable" title="dephycf.Variable.Variable">Variable</a></p>
+<dd class="field-odd"><p><a class="reference internal" href="#dephycf.Variable.Variable" title="dephycf.Variable.Variable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Variable</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -831,6 +833,15 @@ applicable, its height/pressure companion variable attached.</p>
         <p class="prev-next-subtitle">previous</p>
         <p class="prev-next-title">Axis (<code class="xref py py-mod docutils literal notranslate"><span class="pre">dephycf.Axis</span></code>)</p>
       </div>
+    </a>
+    <a class="right-next"
+       href="case.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Case (<code class="xref py py-mod docutils literal notranslate"><span class="pre">dephycf.Case</span></code>)</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
     </a>
 </div>
                 </footer>

@@ -371,38 +371,38 @@
 
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
-<span class="sd">    id : str</span>
+<span class="sd">    id : :class:`str`</span>
 <span class="sd">        Variable identifier (netCDF variable name).</span>
-<span class="sd">    name : str or None</span>
+<span class="sd">    name : :class:`str` or `None`</span>
 <span class="sd">        Standard/long name of the variable.</span>
-<span class="sd">    units : str or None</span>
+<span class="sd">    units : :class:`str` or `None`</span>
 <span class="sd">        Physical units of the variable.</span>
-<span class="sd">    data : numpy.ndarray or None</span>
+<span class="sd">    data : :class:`numpy.ndarray` or `None`</span>
 <span class="sd">        Data array associated with the variable.</span>
-<span class="sd">    sh : int</span>
+<span class="sd">    sh : :class:`int`</span>
 <span class="sd">        Number of dimensions of `data` (only set when `data` is not</span>
 <span class="sd">        None).</span>
-<span class="sd">    axes : list</span>
+<span class="sd">    axes : :class:`list`</span>
 <span class="sd">        List of :class:`Axis` (or :class:`Variable`) objects the</span>
 <span class="sd">        variable is defined on.</span>
-<span class="sd">    axlist : list</span>
+<span class="sd">    axlist : :class:`str`</span>
 <span class="sd">        List of axis identifiers, in the same order as `axes`.</span>
-<span class="sd">    time : Axis or None</span>
+<span class="sd">    time : :class:`Axis` or `None`</span>
 <span class="sd">        Time axis, if any.</span>
-<span class="sd">    level : Axis or None</span>
+<span class="sd">    level : :class:`Axis` or `None`</span>
 <span class="sd">        Level (vertical) axis, if any.</span>
-<span class="sd">    coord : str</span>
+<span class="sd">    coord : :class:`str`</span>
 <span class="sd">        Space-separated coordinates string (netCDF ``coordinates``</span>
 <span class="sd">        attribute).</span>
-<span class="sd">    plotcoef : float</span>
+<span class="sd">    plotcoef : :class:`float`</span>
 <span class="sd">        Multiplicative coefficient applied to the data before</span>
 <span class="sd">        plotting.</span>
-<span class="sd">    plotunits : str or None</span>
+<span class="sd">    plotunits : :class:`str` or `None`</span>
 <span class="sd">        Units used when plotting (may differ from `units`).</span>
-<span class="sd">    height : Variable or None</span>
+<span class="sd">    height : :class:`Variable` or `None`</span>
 <span class="sd">        Height companion variable, used as an alternative vertical</span>
 <span class="sd">        coordinate.</span>
-<span class="sd">    pressure : Variable or None</span>
+<span class="sd">    pressure : :class:`Variable` or `None`</span>
 <span class="sd">        Pressure companion variable, used as an alternative vertical</span>
 <span class="sd">        coordinate.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -417,53 +417,51 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        varid : str</span>
+<span class="sd">        varid : :class:`str`</span>
 <span class="sd">            Variable identifier (netCDF variable name).</span>
 <span class="sd">        data : array_like, optional</span>
 <span class="sd">            Data values. Converted to a ``numpy.float64`` array if</span>
 <span class="sd">            given.</span>
-<span class="sd">        name : str, optional</span>
+<span class="sd">        name : :class:`str`, optional</span>
 <span class="sd">            Standard/long name of the variable.</span>
-<span class="sd">        units : str, optional</span>
+<span class="sd">        units : :class:`str`, optional</span>
 <span class="sd">            Physical units of the variable.</span>
-<span class="sd">        height : Axis, Variable or array_like, optional</span>
+<span class="sd">        height : :class:`Axis`, :class:`Variable` or array_like, optional</span>
 <span class="sd">            Height vertical coordinate (or companion variable).</span>
 <span class="sd">            Privileged over `pressure` when both are given.</span>
-<span class="sd">        height_id : str, optional</span>
+<span class="sd">        height_id : :class:`str`, optional</span>
 <span class="sd">            Identifier to use for the height companion variable, when</span>
 <span class="sd">            `height` is given as raw data rather than as an</span>
 <span class="sd">            :class:`Axis`/:class:`Variable`.</span>
-<span class="sd">        height_units : str, optional</span>
+<span class="sd">        height_units : :class:`str`, optional</span>
 <span class="sd">            Units of `height`, when given as raw data.</span>
-<span class="sd">        pressure : Axis, Variable or array_like, optional</span>
+<span class="sd">        pressure : :class:`Axis`, Variable or array_like, optional</span>
 <span class="sd">            Pressure vertical coordinate (or companion variable).</span>
-<span class="sd">        pressure_id : str, optional</span>
+<span class="sd">        pressure_id : :class:`str`, optional</span>
 <span class="sd">            Identifier to use for the pressure companion variable,</span>
 <span class="sd">            when `pressure` is given as raw data.</span>
-<span class="sd">        pressure_units : str, optional</span>
+<span class="sd">        pressure_units : :class:`str`, optional</span>
 <span class="sd">            Units of `pressure`, when given as raw data.</span>
-<span class="sd">        level : Axis, optional</span>
+<span class="sd">        level : :class:`Axis`, optional</span>
 <span class="sd">            Level (vertical) axis. Ignored if `axes` is given.</span>
-<span class="sd">        time : Axis, optional</span>
+<span class="sd">        time : :class:`Axis`, optional</span>
 <span class="sd">            Time axis. Ignored if `axes` is given.</span>
-<span class="sd">        lat : optional</span>
-<span class="sd">            Latitude information (currently unused for axis</span>
-<span class="sd">            bookkeeping, kept for API compatibility).</span>
-<span class="sd">        lon : optional</span>
-<span class="sd">            Longitude information (currently unused for axis</span>
-<span class="sd">            bookkeeping, kept for API compatibility).</span>
-<span class="sd">        axlist : list, optional</span>
+<span class="sd">        lat : :class:`float` or array-like, optional</span>
+<span class="sd">            Latitude information </span>
+<span class="sd">        lon : :class:`float` or array-like,optional</span>
+<span class="sd">            Longitude information </span>
+<span class="sd">        axlist : :class:`list`, optional</span>
 <span class="sd">            Explicit list of axis identifiers. Used together with</span>
 <span class="sd">            `axes` when provided.</span>
-<span class="sd">        axes : list, optional</span>
+<span class="sd">        axes : :class:`list`, optional</span>
 <span class="sd">            Explicit list of :class:`Axis` objects. When given,</span>
 <span class="sd">            `time` and `level` axes are inferred from it instead of</span>
 <span class="sd">            from the `time`/`level` parameters.</span>
-<span class="sd">        plotcoef : float, optional</span>
+<span class="sd">        plotcoef : :class:`float`, optional</span>
 <span class="sd">            Default multiplicative coefficient applied before</span>
 <span class="sd">            plotting. Overridden by a value found in</span>
 <span class="sd">            `var_attributes`. Defaults to ``1.``.</span>
-<span class="sd">        plotunits : str, optional</span>
+<span class="sd">        plotunits : :class:`str`, optional</span>
 <span class="sd">            Default plotting units. Overridden by a value found in</span>
 <span class="sd">            `var_attributes` when not given.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -599,7 +597,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        *coord : str</span>
+<span class="sd">        *coord : :class:`str`</span>
 <span class="sd">            Coordinate identifiers to join with a single space to</span>
 <span class="sd">            build `self.coord`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -613,7 +611,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        lev : Axis, optional</span>
+<span class="sd">        lev : :class:`Axis`, optional</span>
 <span class="sd">            New level axis. If ``None``, a warning is logged and</span>
 <span class="sd">            nothing is done.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -643,18 +641,18 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        filein : netCDF4.Dataset</span>
+<span class="sd">        filein : :class:`netCDF4.Dataset`</span>
 <span class="sd">            Open (writable) netCDF file/dataset to write into.</span>
 <span class="sd">        write_time_axes : bool, optional</span>
 <span class="sd">            Whether to write the time axis/axes. Defaults to</span>
 <span class="sd">            ``True``.</span>
-<span class="sd">        write_level_axes : bool, optional</span>
+<span class="sd">        write_level_axes : :class:`bool`, optional</span>
 <span class="sd">            Whether to write the level axis/axes, when the variable</span>
 <span class="sd">            has a vertical dimension. Defaults to ``True``.</span>
-<span class="sd">        write_data : bool, optional</span>
+<span class="sd">        write_data : :class:`bool`, optional</span>
 <span class="sd">            Whether to write the variable data itself. Defaults to</span>
 <span class="sd">            ``True``.</span>
-<span class="sd">        write_vertical : bool, optional</span>
+<span class="sd">        write_vertical : :class:`bool`, optional</span>
 <span class="sd">            Whether to also write the height/pressure companion</span>
 <span class="sd">            variables, when the variable has a vertical dimension.</span>
 <span class="sd">            Defaults to ``True``.</span>
@@ -719,14 +717,14 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        rep_images : str, optional</span>
+<span class="sd">        rep_images : :class:`str`, optional</span>
 <span class="sd">            Output directory for the generated image(s).</span>
-<span class="sd">        var2 : Variable, optional</span>
+<span class="sd">        var2 : :class:`Variable`, optional</span>
 <span class="sd">            A second variable to overlay on the same plot for</span>
 <span class="sd">            comparison.</span>
-<span class="sd">        label : str, optional</span>
+<span class="sd">        label : :class:`str`, optional</span>
 <span class="sd">            Legend label for `self` when `var2` is given.</span>
-<span class="sd">        label2 : str, optional</span>
+<span class="sd">        label2 : :class:`str`, optional</span>
 <span class="sd">            Legend label for `var2` when `var2` is given.</span>
 <span class="sd">        timeunits : {&#39;hours&#39;, &#39;days&#39;}, optional</span>
 <span class="sd">            Units to convert the time axis to before plotting. If</span>
@@ -918,7 +916,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        time : Axis, optional</span>
+<span class="sd">        time : :class:`Axis`, optional</span>
 <span class="sd">            Target time axis. If ``None``, a warning is logged and</span>
 <span class="sd">            `self` is returned unchanged.</span>
 
@@ -1032,7 +1030,7 @@
 <span class="sd">            Target pressure values (1D or 2D ``(time, level)``). Used</span>
 <span class="sd">            only if the variable already has a pressure companion</span>
 <span class="sd">            variable, and only when `height` is not usable.</span>
-<span class="sd">        log : bool, optional</span>
+<span class="sd">        log : :class:`bool`, optional</span>
 <span class="sd">            Unused placeholder flag kept for API compatibility.</span>
 <span class="sd">            Defaults to ``False``.</span>
 
@@ -1163,7 +1161,7 @@
 <span class="sd">        time : array_like, optional</span>
 <span class="sd">            Time values associated with a 2D `height`/`pressure`</span>
 <span class="sd">            array.</span>
-<span class="sd">        tunits : str, optional</span>
+<span class="sd">        tunits : :class:`str`, optional</span>
 <span class="sd">            Units of `time`, associated with a 2D `height`/`pressure`</span>
 <span class="sd">            array.</span>
 
@@ -1359,14 +1357,14 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    name : str</span>
+<span class="sd">    name : :class:`str`</span>
 <span class="sd">        Name of the netCDF variable to read.</span>
-<span class="sd">    filein : netCDF4.Dataset</span>
+<span class="sd">    filein : :class:`netCDF4.Dataset`</span>
 <span class="sd">        Open netCDF file/dataset to read from.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    Variable</span>
+<span class="sd">    Variable : :class:`Variable`</span>
 <span class="sd">        The variable read from the file, with its axes and, if</span>
 <span class="sd">        applicable, its height/pressure companion variable attached.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -1440,23 +1438,23 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    var : Variable</span>
+<span class="sd">    var : :class:`Variable`</span>
 <span class="sd">        Variable to interpolate.</span>
-<span class="sd">    levout : Axis, optional</span>
+<span class="sd">    levout : :class:`Axis`, optional</span>
 <span class="sd">        Target level axis. If ``None``, the original level axis (and</span>
 <span class="sd">        data) is kept.</span>
-<span class="sd">    timeout : Axis, optional</span>
+<span class="sd">    timeout : :class:`Axis`, optional</span>
 <span class="sd">        Target time axis. If ``None`` (or if the variable has a</span>
 <span class="sd">        single time step), the original time axis (and data) is</span>
 <span class="sd">        kept.</span>
-<span class="sd">    log : bool, optional</span>
+<span class="sd">    log : :class:`bool`, optional</span>
 <span class="sd">        If ``True``, interpolate in log-space along the vertical</span>
 <span class="sd">        (only used for the time-and-level branch and the level-only</span>
 <span class="sd">        branch). Defaults to ``False``.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    Variable</span>
+<span class="sd">    Variable : :class:`Variable`</span>
 <span class="sd">        A new :class:`Variable` interpolated onto `levout` and/or</span>
 <span class="sd">        `timeout`, as applicable.</span>
 
