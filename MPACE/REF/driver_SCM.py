@@ -9,6 +9,7 @@ Created on 01 October 2020
 ## MPACE SCM-enabled case definition
 
 import numpy as np
+import netCDF4 as nc
 
 from dephycf.Case import Case
 
@@ -46,6 +47,11 @@ if lverbose:
 
 # New temporal grid, from 17:00 UTC, 09 October 2004 to 05:00 UTC, 10 October 2004, 1-hour timestep
 #timeout = np.array(range(0,43201,3600),dtype=np.float64) 
+
+#case.extend_init_thetal(thetal=[1800.,316.],pressure=[1.,30000.])
+#case.extend_init_wind(pressure=1.)
+#case.extend_init_qt(qt=[0,0], pressure=[1., 30000.])
+
 
 # conversion
 newcase = case.convert2SCM()
