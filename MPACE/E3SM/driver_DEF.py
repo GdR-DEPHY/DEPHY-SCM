@@ -47,13 +47,14 @@ case.set_title("Forcing and initial conditions for MPACE case - Original definit
 case.set_reference("Klein et al. (2009, QJRMS)")
 case.set_author("E. Vignon")
 case.set_script("driver_DEF.py")
-case.set_comment("Use of forcing file from E3SM, https://github.com/E3SM-Project/scmlib/wiki/E3SM-Single-Column-Model-Case-Library")
+case.set_modifications("Use of forcing file from E3SM, https://github.com/E3SM-Project/scmlib/wiki/E3SM-Single-Column-Model-Case-Library")
+case.set_comment("For model with an explicit aerosol-cloud coupling, it is recommended to use the bimodal lognormal \n size distribution for dry aerosols given in Klein et al. 2009. Aerosol composition was assumed to be ammonium bisulphate\n with an insoluble fraction of about 30%. A concentration value of 0.16 L-1 is also recommended for INPs in the\ndeposition, condensation-freezing, and immersion-freezing modes")
 
 ################################################
 # 2. Input netCDF file
 ################################################
 
-fin = nc.Dataset('MPACE_forcing_dephy.nc','r')
+fin = nc.Dataset('../aux/MPACE_forcing_dephy.nc','r')
 
 ################################################
 # 3. Initial state

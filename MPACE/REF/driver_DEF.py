@@ -1,30 +1,30 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on 01 October 2020
+Created on 27 November 2019
 
-@author: Etienne Vignon
+@author: Romain Roehrig
 
-Modifications:
-  2021/01/03, R. Roehrig: update for improved case definition interface.
-
-MPACE original case definition
-From Klein et al. 2009; QJRMS, DOI: 10.1002/qj.416
-In  the  baseline  simulation, longitude is 209.0, latitude is 71.75. The lower initial boundary condition is specified as an ocean surface with temperature 274.01 K Models were asked to simulate the 12h starting from 1700 UTC 9 October 2004. Initial profiles of ice-liquid water temperature and total water are prescribed and correspond to a cloudy (purely liquid) convective boundary layer topped by an inversion. Surfaces heat and latent fluxes are assumed constant throughout the simulation and vertical velocity and horizontal advections of heat and water vapor are prescribed.
+Modification
+  2020/11/11, R. Roehrig: update for improved case definition interface.
+  2025/01/26, N. Villefranque: merge with MESONH and clean for publication.
 """
+#MPACE original case definition
+#From Klein et al. 2009; QJRMS, DOI: 10.1002/qj.416
+#In  the  baseline  simulation, longitude is 209.0, latitude is 71.75. The lower initial boundary condition is specified as an ocean surface with temperature 274.01 K Models were asked to simulate the 12h starting from 1700 UTC 9 October 2004. Initial profiles of ice-liquid water temperature and total water are prescribed and correspond to a cloudy (purely liquid) convective boundary layer topped by an inversion. Surfaces heat and latent fluxes are assumed constant throughout the simulation and vertical velocity and horizontal advections of heat and water vapor are prescribed.
 
-import os
 
-import netCDF4 as nc
 import numpy as np
 
+from datetime import datetime, timedelta
 from dephycf.Case import Case
+from dephycf import constants
 
 ################################################
 # 0. General configuration of the present script
 ################################################
 
-lplot = True # plot all the variables
+lplot    = True  # plot all the variables
 lverbose = False # print information about variables and case
 
 ################################################
@@ -46,100 +46,76 @@ case.set_title("Forcing and initial conditions for MPACE case - Original definit
 case.set_reference("Klein et al. (2009, QJRMS)")
 case.set_author("E. Vignon")
 case.set_script("driver_DEF.py")
-case.set_comment("Use of forcing file from E3SM, https://github.com/E3SM-Project/scmlib/wiki/E3SM-Single-Column-Model-Case-Library")
+case.set_modifications("In the original case, their is no struct constraint on how to nudge the wind towards the initial profile. Here we apply a nudging time scale of 1h.")
+case.set_comment("For model with an explicit aerosol-cloud coupling, it is recommended to use the bimodal lognormal \n size distribution for dry aerosols given in Klein et al. 2009. Aerosol composition was assumed to be ammonium bisulphate\n with an insoluble fraction of about 30%. A concentration value of 0.16 L-1 is also recommended for INPs in the\ndeposition, condensation-freezing, and immersion-freezing modes")
+
 
 ################################################
-# 2. Input netCDF file
+# 2. Initial state
 ################################################
+pinv=85000. # inversion pressure in Pa
+ps=101000.  # surface pressure
+pf = np.logspace(np.log10(ps), np.log10(30000), 101)
 
-fin = nc.Dataset('MPACE_forcing_dephy.nc','r')
-
-################################################
-# 3. Initial state
-################################################
 
 # Surface pressure
-ps  =  fin['Ps'][0,0,0]
+ps = 101000.
 case.add_init_ps(ps)
-# Surface temperature
-ts  =  fin['Tg'][0,0,0]
+# surface temperature
+ts=274.01
 case.add_init_ts(ts)
 
-
-
-# Pressure
-pressure  = fin['lev'][-1:0:-1]
-pressure[0] = ps
-
-case.add_init_pressure(pressure,lev=pressure,levtype='pressure',levid='lev')
-
-# Temperature in K and moisture (vapor and total mixing ratio)
-# Note that in the ref paper, the ice-liquid potential temperature is initially set 
-# but the initial state corresponds to a purely-liquid cloud
-
-temp  = fin['T'][0,-1:0:-1,0,0]
-
-case.add_init_temp(temp,lev=pressure,levtype='pressure',levid='lev')
-
-#  water vapor mixing ratio in kg/kg
-rv =  fin['q'][0,-1:0:-1,0,0]
-qv=rv/(1.+rv)
-
-case.add_init_qv(qv,lev=pressure,levtype='pressure',levid='lev')
-
-
-#  total water mixing ratio in kg/kg
-rl =  fin['CLDLIQ'][0,-1:0:-1,0,0]
-ri =  fin['CLDICE'][0,-1:0:-1,0,0]
-rt=rl+ri+rv
-qt=rt/(1.+rt)
-
-case.add_init_qt(qt,lev=pressure,levtype='pressure',levid='lev')
-
 # Zonal and meridional wind
-u  = fin['u'][0,-1:0:-1,0,0]
-v  = fin['v'][0,-1:0:-1,0,0]
 
-case.add_init_wind(u=u,v=v,lev=pressure,levtype='pressure',levid='lev')
+u=pf*0.-13.
+v=pf*0.-3
+case.add_init_wind(u=u,ulev=pf,v=v,vlev=pf,levtype='pressure')
+
+# Liquid potential temperature and total humidity
+thetal = np.where(pf > pinv, 269.2, 275.33+0.0791*(815-pf/100.))
+qt=np.where(pf>pinv, 1.95/1000., (0.291+0.00204*(pf/100-590))/1000.)
+qt=np.maximum(0.,qt)
+case.add_init_thetal(thetal,lev=pf,levtype='pressure')
+
+case.add_init_qt(qt,lev=pf,levtype='pressure') 
+
+
 
 ################################################
 # 3. Forcing
 ################################################
 
-# pressure levels
-
+# Constant surface pressure
 case.add_surface_pressure_forcing(ps,timeid='time')
 
-case.add_pressure_forcing(pressure,timeid='time',lev=pressure,levtype='pressure',levid='lev')
+# Constant SST [K]
+case.add_surface_temp(ts,timeid='time')
+
+# Surface forcing in fluxes
+hs=136.5
+hl=107.7
+case.add_surface_fluxes(sens=hs,lat=hl,timeid='time',forc_wind='z0',z0=0.01)
+# vertical velocity
+Div=5.8e-6 # large scale divergence in s-1
+omega=np.minimum(Div*(ps-pf),Div*(ps-pinv))
+
+case.add_vertical_velocity(omega=omega,timeid='time',lev=pf,levtype='pressure',levid='lev')
+
+# temperature and vapor advection
+
+tadv=np.minimum(-4., -15.*(1.-(ps-pf)/21818.))/86400.
+qadv=np.minimum(-0.164,-3.*(1.-(ps-pf)/15171.))/86400./1000
+
+case.add_temp_advection(tadv,timeid='time',lev=pf,levtype='pressure',levid='lev')
+case.add_qv_advection(qadv,timeid='time',lev=pf,levtype='pressure',levid='lev')
+
 
 # nudging of wind towards constant values
-case.add_wind_nudging(unudg=u,vnudg=v,timescale=3600.,p_nudging=110000.,timeid='time',lev=pressure,levtype='pressure',levid='lev')
+u=np.zeros((len(pf)))-13.
+v=np.zeros((len(pf)))-3.
+case.add_wind_nudging(unudg=u,vnudg=v,timescale=3600.,p_nudging=110000.,timeid='time',lev=pf,levtype='pressure',levid='lev')
 
-# Large scale vertical pressure velocity
-omega  = fin['omega'][0,-1:0:-1,0,0]
 
-case.add_vertical_velocity(omega=omega,timeid='time',lev=pressure,levtype='pressure',levid='lev')
-
-# Large-scale advection of temperature in K s-1
-tadv  = fin['divT'][0,-1:0:-1,0,0]
-
-case.add_temp_advection(tadv,timeid='time',lev=pressure,levtype='pressure',levid='lev')
-
-# Large-scale advection of specific humidity in kg kg-1 s-1
-qvadv=fin['divq'][0,-1:0:-1,0,0]
-
-case.add_qv_advection(qvadv,timeid='time',lev=pressure,levtype='pressure',levid='lev')
-
-# Surface Forcing
-# constant surface latent and sensible fluxes [W m-2] (be careful sign convention)
-hs=fin['shflx'][0,0,0]
-hl=fin['lhflx'][0,0,0]
-
-case.add_surface_fluxes(sens=hs,lat=hl,timeid='time',forc_wind='z0',z0=0.01)
-
-# Constant SST [K]
-ts=274.01
-case.add_surface_temp(ts,timeid='time')
 
 ################################################
 # 4. Writing file
