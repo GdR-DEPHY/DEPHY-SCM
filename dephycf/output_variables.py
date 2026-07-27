@@ -15,6 +15,12 @@ coordinates = {
 
 # Variables
 variables = {
+# 0. Coordinates 
+  'time' : {'standard_name':'time'                 , 'units': 'seconds since YYYY-MM-DD HH:MM:SS'},
+  'time_budget' : {'standard_name':'time_budget'   , 'units': 'seconds since YYYY-MM-DD HH:MM:SS'},
+  'levf' : {'standard_name':'full_level_coordinate', 'units':                                 '1'},
+  'levh' : {'standard_name':'half_level_coordinate', 'units':                                 '1'},
+  'plev' : {'standard_name':'air_pressure'         , 'units':                                'Pa'},
 # 1. Standard variables
   'longitude' : {'standard_name':'longitude'                          , 'units':'degrees_east'} ,
   'latitude'  : {'standard_name':'latitude'                           , 'units':'degrees_north'},
@@ -112,6 +118,8 @@ variables = {
   'tnta_dconv'   : {'standard_name':'tendency_of_air_temperature_due_to_deep_convection'       , 'units':'K s-1'},
   'tnta_turb'    : {'standard_name':'tendency_of_air_temperature_due_to_turbulence'            , 'units':'K s-1'},
   'tnta_micro'   : {'standard_name':'tendency_of_air_temperature_due_to_microphysics'          , 'units':'K s-1'},
+  'tnta_micro_cold' : {'standard_name':'tendency_of_air_temperature_due_to_cold_microphysics'  , 'units':'K s-1'},
+  'tnta_micro_warm' : {'standard_name':'tendency_of_air_temperature_due_to_warm_microphysics'  , 'units':'K s-1'},
   'tnta_rad'     : {'standard_name':'tendency_of_air_temperature_due_to_radiation'             , 'units':'K s-1'},
   'tnta_radsw'   : {'standard_name':'tendency_of_air_temperature_due_to_sw_radiation'          , 'units':'K s-1'},
   'tnta_radlw'   : {'standard_name':'tendency_of_air_temperature_due_to_lw_radiation'          , 'units':'K s-1'},
@@ -129,6 +137,8 @@ variables = {
   'tntheta_dconv'   : {'standard_name':'tendency_of_air_potential_temperature_due_to_deep_convection'       , 'units':'K s-1'},
   'tntheta_turb'    : {'standard_name':'tendency_of_air_potential_temperature_due_to_turbulence'            , 'units':'K s-1'},
   'tntheta_micro'   : {'standard_name':'tendency_of_air_potential_temperature_due_to_microphysics'          , 'units':'K s-1'},
+  'tntheta_micro_cold'   : {'standard_name':'tendency_of_air_potential_temperature_due_to_cold_microphysics', 'units':'K s-1'},
+  'tntheta_micro_warm'   : {'standard_name':'tendency_of_air_potential_temperature_due_to_warm_microphysics', 'units':'K s-1'},
   'tntheta_rad'     : {'standard_name':'tendency_of_air_potential_temperature_due_to_radiation'             , 'units':'K s-1'},
   'tntheta_radsw'   : {'standard_name':'tendency_of_air_potential_temperature_due_to_sw_radiation'          , 'units':'K s-1'},
   'tntheta_radlw'   : {'standard_name':'tendency_of_air_potential_temperature_due_to_lw_radiation'          , 'units':'K s-1'},
@@ -146,6 +156,8 @@ variables = {
   'tnqv_dconv'   : {'standard_name':'tendency_of_specific_humidity_due_to_deep_convection'     , 'units':'s-1'}  ,
   'tnqv_turb'    : {'standard_name':'tendency_of_specific_humidity_due_to_turbulence'          , 'units':'s-1'}  ,
   'tnqv_micro'   : {'standard_name':'tendency_of_specific_humidity_due_to_microphysics'        , 'units':'s-1'}  ,
+  'tnqv_micro_cold'   : {'standard_name':'tendency_of_specific_humidity_due_to_cold_microphysics'  , 'units':'s-1'}  ,
+  'tnqv_micro_warm'   : {'standard_name':'tendency_of_specific_humidity_due_to_warm_microphysics'  , 'units':'s-1'}  ,
   'tnqv_wake'    : {'standard_name':'tendency_of_specific_humidity_due_to_wake'                , 'units':'s-1'}  ,
   'tnrv'         : {'standard_name':'tendency_of_humidity_mixing_ratio'                            , 'units':'s-1'}  ,
   'tnrv_adv'     : {'standard_name':'tendency_of_humidity_mixing_ratio_due_to_advection'           , 'units':'s-1'}  ,
@@ -158,6 +170,8 @@ variables = {
   'tnrv_dconv'   : {'standard_name':'tendency_of_humidity_mixing_ratio_due_to_deep_convection'     , 'units':'s-1'}  ,
   'tnrv_turb'    : {'standard_name':'tendency_of_humidity_mixing_ratio_due_to_turbulence'          , 'units':'s-1'}  ,
   'tnrv_micro'   : {'standard_name':'tendency_of_humidity_mixing_ratio_due_to_microphysics'        , 'units':'s-1'}  ,
+  'tnrv_micro_cold'   : {'standard_name':'tendency_of_humidity_mixing_ratio_due_to_cold_microphysics'        , 'units':'s-1'}  ,
+  'tnrv_micro_warm'   : {'standard_name':'tendency_of_humidity_mixing_ratio_due_to_warm_microphysics'        , 'units':'s-1'}  ,
   'tnrv_wake'    : {'standard_name':'tendency_of_humidity_mixing_ratio_due_to_wake'                , 'units':'s-1'}  ,
   'tnrl'         : {'standard_name':'tendency_of_cloud_liquid_water_mixing_ratio'                            , 'units':'s-1'}  ,
   'tnrl_adv'     : {'standard_name':'tendency_of_cloud_liquid_water_mixing_ratio_due_to_advection'           , 'units':'s-1'}  ,
@@ -170,6 +184,8 @@ variables = {
   'tnrl_dconv'   : {'standard_name':'tendency_of_cloud_liquid_water_mixing_ratio_due_to_deep_convection'     , 'units':'s-1'}  ,
   'tnrl_turb'    : {'standard_name':'tendency_of_cloud_liquid_water_mixing_ratio_due_to_turbulence'          , 'units':'s-1'}  ,
   'tnrl_micro'   : {'standard_name':'tendency_of_cloud_liquid_water_mixing_ratio_due_to_microphysics'        , 'units':'s-1'}  ,
+  'tnrl_micro_cold'   : {'standard_name':'tendency_of_cloud_liquid_water_mixing_ratio_due_to_cold_microphysics'        , 'units':'s-1'}  ,
+  'tnrl_micro_warm'   : {'standard_name':'tendency_of_cloud_liquid_water_mixing_ratio_due_to_warm_microphysics'        , 'units':'s-1'}  ,
   'tnrl_wake'    : {'standard_name':'tendency_of_cloud_liquid_water_mixing_ratio_due_to_wake'                , 'units':'s-1'}  ,
   'tnua'         : {'standard_name':'tendency_of_eastward_wind'                                , 'units':'m s-2'},
   'tnua_adv'     : {'standard_name':'tendency_of_eastward_wind_due_to_advection'               , 'units':'m s-2'},
