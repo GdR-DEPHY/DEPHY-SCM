@@ -6,7 +6,7 @@ Created on 11 Avril 2025
 @author: Najda Villefranque
 
 Modifications
-  03/11/2025 - NV - nudging above 4500 m
+  03/11/2025 - NV - nudging above 5000 m
 """
 
 import numpy as np
@@ -32,7 +32,7 @@ lverbose = args.v
 
 # these will be written in *nudg* attributes
 nudging_timescale=6    # hours
-nudging_minheight=4500 # nudging only above this height
+nudging_minheight=5000 # nudging only above this height
 
 
 ################################################
@@ -55,7 +55,7 @@ case = Case('BOTANY/%s'%scase,
         surfaceType='ocean',
         zorog=Zorog)
 
-case.set_title("Forcing and initial conditions for BOTANY case - %s case ; nudging only > 4500 m"%scase)
+case.set_title("Forcing and initial conditions for BOTANY case - %s case ; nudging only > 5000 m"%scase)
 case.set_reference("Cloud Botany, Jansson et al. 2023, https://doi.org/10.1029/2023MS003796")
 case.set_author("N Villefranque")
 case.set_script("DEPHY-SCM/BOTANY/%s/driver_DEF.py"%scase)
@@ -72,7 +72,7 @@ case.add_init_ps(ps)
 file="profiles_init.txt"
 
 # Altitude, theta_l, qt, u, w_ls
-z, thl, qt, u, w_ls   = np.genfromtxt(file,dtype=float,skip_header=0,usecols=[0,1,2,3,4]).transpose()
+z, thl, qt, u, w_ls   = np.genfromtxt(file, dtype=float).transpose()
 
 # Wind initial profiles
 case.add_init_wind(u=u, v=u*0, lev=z, levtype='altitude')
@@ -91,7 +91,7 @@ case.add_init_qt(qt, lev=z, levtype='altitude')
 file="profiles_tendencies.txt"
 
 # Altitude, theta_l, qt
-z, thl_adv, qt_adv, tau_h = np.genfromtxt(file,dtype=float,skip_header=0,usecols=[0,1,2,3]).transpose()
+z, thl_adv, qt_adv, _ = np.genfromtxt(file, dtype=float).transpose()
 
 # Temperature advection
 case.add_thetal_advection(thl_adv, lev=z, levtype='altitude')
@@ -107,6 +107,8 @@ case.add_qt_nudging(qt, lev=z, levtype='altitude',
 
 # Wind forcing
 case.add_geostrophic_wind(ug=u,vg=u*0,lev=z,levtype='altitude')
+case.add_wind_nudging(unudg=u,vnudg=0*u, lev=z, levtype='altitude',
+        timescale=3600*nudging_timescale, z_nudging=nudging_minheight)
 
 # Vertical velocity forcing
 case.add_vertical_velocity(w=w_ls, lev=z, levtype='altitude')

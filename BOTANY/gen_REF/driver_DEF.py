@@ -66,7 +66,7 @@ case.add_init_ps(ps)
 file="profiles_init.txt"
 
 # Altitude, theta_l, qt, u, w_ls
-z, thl, qt, u, w_ls   = np.genfromtxt(file,dtype=float,skip_header=0,usecols=[0,1,2,3,4]).transpose()
+z, thl, qt, u, w_ls   = np.genfromtxt(file, dtype=float).transpose()
 
 # Wind initial profiles
 case.add_init_wind(u=u, v=u*0, lev=z, levtype='altitude')
@@ -85,7 +85,7 @@ case.add_init_qt(qt, lev=z, levtype='altitude')
 file="profiles_tendencies.txt"
 
 # Altitude, theta_l, qt
-z, thl_adv, qt_adv, tau_h = np.genfromtxt(file,dtype=float,skip_header=0,usecols=[0,1,2,3]).transpose()
+z, thl_adv, qt_adv, tau_h = np.genfromtxt(file, dtype=float).transpose()
 
 tau_s = tau_h*3600
 nudging_coefficient = 1/tau_s

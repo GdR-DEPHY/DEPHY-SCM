@@ -99,7 +99,7 @@ case.add_geostrophic_wind(ug=u,vg=u*0,lev=z,levtype='altitude')
 case.add_vertical_velocity(w=w_ls, lev=z, levtype='altitude')
 
 # Surface Forcings
-# Constant sea surface temperature, 1.25 warmer than first level
+# Constant sea surface potential temperature, 1.25 warmer than first level
 albedo = 0.065
 emissi = 0.96
 z0 = 0.001
