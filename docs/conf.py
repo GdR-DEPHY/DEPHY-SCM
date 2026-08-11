@@ -16,7 +16,7 @@ release = '1.0'
 
 import os
 import sys
-sys.path.insert(0, os.path.abspath(".."))  # pour trouver axis.py
+sys.path.insert(0, os.path.abspath(".."))  # pour trouver dephycf
 
 extensions = [
     "sphinx.ext.todo",
@@ -57,7 +57,8 @@ autosummary_generate = False
 html_theme = 'pydata_sphinx_theme'
 
 html_theme_options = {
-    "navbar_end": ["version-switcher", "navbar-icon-links", "theme-switcher"],
+    #"navbar_end": ["version-switcher", "navbar-icon-links", "theme-switcher"],
+    "navbar_end": ["navbar-icon-links", "theme-switcher"],
     "icon_links": [],
     "logo": {
         "text": "DEPHY-SCM",

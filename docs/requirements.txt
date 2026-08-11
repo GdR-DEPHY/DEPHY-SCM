@@ -1,0 +1,16 @@
+# --- Sphinx and documentation build tools ---
+sphinx>=7.4
+pydata-sphinx-theme>=0.16
+# Note: sphinx.ext.napoleon (parses the NumPy-style Parameters/
+# Returns/Raises sections used in dephycf.Variable and dephycf.Case)
+# is bundled with Sphinx itself -- no separate package needed.
+
+# --- Runtime dependencies of dephycf ---
+# Required because Sphinx's autodoc/autoclass directives actually
+# import Case.py / Variable.py to read their docstrings, so these
+# must be installable in the ReadTheDocs build environment too.
+netCDF4
+numpy
+scipy
+xarray
+matplotlib
