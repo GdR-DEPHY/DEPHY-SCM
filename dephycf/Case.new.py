@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
+"""Case module.
+
 This module defines the :class:`Case` class, the main entry point of
 the DEPHY Single Column Model (SCM) format toolbox. A :class:`Case`
 object gathers everything describing a single-column case: global
@@ -606,7 +607,7 @@ class Case:
             array
         coordinate : :class:`bool`
             See :meth:`add_variable` for details.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
 
@@ -648,7 +649,7 @@ class Case:
         ----------
         vardata : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`
             input data as an integer or a float.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
@@ -664,7 +665,7 @@ class Case:
         ----------
         vardata : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`
             input data as an integer or a float.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
@@ -681,7 +682,7 @@ class Case:
         ----------
         vardata : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`
             input data as an integer or a float.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
@@ -699,7 +700,7 @@ class Case:
         ----------
         vardata : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`
             input data as a list or a numpy array.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
@@ -717,7 +718,7 @@ class Case:
         ----------
         vardata : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`
             input data as a list or a numpy array.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
@@ -735,7 +736,7 @@ class Case:
         ----------
         vardata : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`
             input data as a list or a numpy array.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
@@ -753,7 +754,7 @@ class Case:
         ----------
         vardata : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`
             input data as a list or a numpy array.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
@@ -772,7 +773,7 @@ class Case:
         ----------
         vardata : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`
             input data as a list or a numpy array.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
@@ -790,7 +791,7 @@ class Case:
         ----------
         vardata : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`
             input data as a list or a numpy array.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
@@ -808,7 +809,7 @@ class Case:
         ----------
         vardata : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`
             input data as a list or a numpy array.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
@@ -827,7 +828,7 @@ class Case:
         ----------
         vardata : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`
             input data as a list or a numpy array.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
@@ -846,7 +847,7 @@ class Case:
         ----------
         vardata : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`
             input data as a list or a numpy array.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
@@ -864,7 +865,7 @@ class Case:
         ----------
         vardata : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`
             input data as a list or a numpy array.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
 
@@ -910,7 +911,7 @@ class Case:
             level axis for v as a list or a numpy array (default None)
         levtype : :class:`str`, optional
             type of vertical axis (pressure or altitude)
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
 
@@ -949,7 +950,7 @@ class Case:
         ----------
         vardata : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`
             input data as a list or a numpy array.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
@@ -965,7 +966,7 @@ class Case:
         ----------
         vardata : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`
             input data as an integer or a float.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
@@ -991,7 +992,7 @@ class Case:
         vardata : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`
             input data as a numeric value (int or float), a list or a numpy
             array
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
 
@@ -1052,7 +1053,7 @@ class Case:
         ----------
         data : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`
             input data as a list or a numpy array.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
@@ -1069,7 +1070,7 @@ class Case:
         ----------
         data : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`
             input data as a list or a numpy array.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
@@ -1086,7 +1087,7 @@ class Case:
         ----------
         data : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`
             input data as a list or a numpy array.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
@@ -1103,7 +1104,7 @@ class Case:
         ----------
         data : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`
             input data as a list or a numpy array.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
@@ -1120,7 +1121,7 @@ class Case:
         ----------
         data : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`
             input data as a list or a numpy array.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
@@ -1137,7 +1138,7 @@ class Case:
         ----------
         data : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`
             input data as a list or a numpy array.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
@@ -1154,7 +1155,7 @@ class Case:
         ----------
         data : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`
             input data as a list or a numpy array.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
@@ -1173,7 +1174,7 @@ class Case:
         ----------
         data : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`
             input data as a list or a numpy array.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
@@ -1192,7 +1193,7 @@ class Case:
         ----------
         data : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`
             input data as a list or a numpy array.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
@@ -1222,7 +1223,7 @@ class Case:
             level axis for v as a list or a numpy array (default None)
         levtype : :class:`str`, optional
             type of vertical axis (pressure or altitude)
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
 
@@ -1274,7 +1275,7 @@ class Case:
             See :meth:`add_variable` for details.
         omega : :class:`list` or :class:`numpy.ndarray`
             See :meth:`add_variable` for details.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
 
@@ -1316,7 +1317,7 @@ class Case:
         include_rad : :class:`bool`, optional
             boolean indicated whether the radiative tendency is included in the
             advection (default False)
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
@@ -1342,7 +1343,7 @@ class Case:
         include_rad : :class:`bool`, optional
             boolean indicated whether the radiative tendency is included in the
             advection (default False)
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
@@ -1368,7 +1369,7 @@ class Case:
         include_rad : :class:`bool`, optional
             boolean indicated whether the radiative tendency is included in the
             advection (default False)
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
@@ -1391,7 +1392,7 @@ class Case:
         ----------
         data : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`
             input data as a list or a numpy array.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
@@ -1411,7 +1412,7 @@ class Case:
         ----------
         data : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`
             input data as a list or a numpy array.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
@@ -1432,7 +1433,7 @@ class Case:
         ----------
         data : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`
             input data as a list or a numpy array.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
@@ -1452,7 +1453,7 @@ class Case:
         ----------
         data : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`
             input data as a list or a numpy array.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
@@ -1477,7 +1478,7 @@ class Case:
             See :meth:`add_variable` for details.
         va_adv : :class:`list` or :class:`numpy.ndarray`
             See :meth:`add_variable` for details.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
@@ -1502,7 +1503,7 @@ class Case:
         ----------
         data : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`
             input data as a list or a numpy array.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
@@ -1523,7 +1524,7 @@ class Case:
         ----------
         data : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`
             input data as a list or a numpy array.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
@@ -1544,7 +1545,7 @@ class Case:
         ----------
         data : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`
             input data as a list or a numpy array.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
@@ -1583,7 +1584,7 @@ class Case:
         lev_coef : array_like
             Level axis associated with `nudging_coefficient`, if it differs
             from `lev`.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
 
@@ -1659,7 +1660,7 @@ class Case:
             level axis for vnudg as a list or a numpy array (default None)
         levtype : :class:`str`, optional
             type of vertical axis (pressure or altitude)
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
 
@@ -1699,7 +1700,7 @@ class Case:
         ----------
         data : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`
             input data as a list or a numpy array.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
@@ -1719,7 +1720,7 @@ class Case:
         ----------
         data : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`
             input data as a list or a numpy array.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
@@ -1740,7 +1741,7 @@ class Case:
         ----------
         data : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`
             input data as a list or a numpy array.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
@@ -1760,7 +1761,7 @@ class Case:
         ----------
         data : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`
             input data as a list or a numpy array.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
@@ -1780,7 +1781,7 @@ class Case:
         ----------
         data : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`
             input data as a list or a numpy array.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
@@ -1800,7 +1801,7 @@ class Case:
         ----------
         data : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`
             input data as a list or a numpy array.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
@@ -1820,7 +1821,7 @@ class Case:
         ----------
         data : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`
             input data as a list or a numpy array.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
@@ -1844,7 +1845,7 @@ class Case:
             See :meth:`add_variable` for details.
         o3 : :class:`list` or :class:`numpy.ndarray`
             See :meth:`add_variable` for details.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
 
@@ -1890,7 +1891,7 @@ class Case:
         ----------
         data : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`
             input data as a list or a numpy array.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
@@ -1909,7 +1910,7 @@ class Case:
         ----------
         data : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`
             input data as a list or a numpy array.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
@@ -1926,7 +1927,7 @@ class Case:
         ----------
         data : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`
             input data as a list or a numpy array.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
@@ -1951,7 +1952,7 @@ class Case:
             See :meth:`add_variable` for details.
         z0q : object
             See :meth:`add_variable` for details.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
@@ -1991,7 +1992,7 @@ class Case:
             See :meth:`add_variable` for details.
         z0q : object
             See :meth:`add_variable` for details.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
@@ -2047,7 +2048,7 @@ class Case:
             time axis for ustar (default None)
         time_z0 : object
             See :meth:`add_variable` for details.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
 
@@ -4278,7 +4279,7 @@ class Case:
         ----------
         pa : object
             See :meth:`add_variable` for details.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
@@ -4294,7 +4295,7 @@ class Case:
             See :meth:`add_variable` for details.
         v : :class:`list` or :class:`numpy.ndarray`
             See :meth:`add_variable` for details.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
@@ -4309,7 +4310,7 @@ class Case:
         ----------
         temp : object
             See :meth:`add_variable` for details.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
@@ -4323,7 +4324,7 @@ class Case:
         ----------
         theta : object
             See :meth:`add_variable` for details.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
@@ -4337,7 +4338,7 @@ class Case:
         ----------
         thetal : object
             See :meth:`add_variable` for details.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
@@ -4351,7 +4352,7 @@ class Case:
         ----------
         qv : object
             See :meth:`add_variable` for details.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
@@ -4365,7 +4366,7 @@ class Case:
         ----------
         qt : object
             See :meth:`add_variable` for details.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
@@ -4379,7 +4380,7 @@ class Case:
         ----------
         rv : object
             See :meth:`add_variable` for details.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
@@ -4393,7 +4394,7 @@ class Case:
         ----------
         rt : object
             See :meth:`add_variable` for details.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
@@ -4407,7 +4408,7 @@ class Case:
         ----------
         hur : object
             See :meth:`add_variable` for details.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
@@ -4423,7 +4424,7 @@ class Case:
             See :meth:`add_variable` for details.
         vg : :class:`list` or :class:`numpy.ndarray`
             See :meth:`add_variable` for details.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
@@ -4440,7 +4441,7 @@ class Case:
             See :meth:`add_variable` for details.
         omega : :class:`list` or :class:`numpy.ndarray`
             See :meth:`add_variable` for details.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
 
@@ -4465,7 +4466,7 @@ class Case:
         ----------
         temp_adv : :class:`list` or :class:`numpy.ndarray`
             See :meth:`add_variable` for details.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
@@ -4479,7 +4480,7 @@ class Case:
         ----------
         theta_adv : :class:`list` or :class:`numpy.ndarray`
             See :meth:`add_variable` for details.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
@@ -4494,7 +4495,7 @@ class Case:
         ----------
         thetal_adv : :class:`list` or :class:`numpy.ndarray`
             See :meth:`add_variable` for details.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
@@ -4508,7 +4509,7 @@ class Case:
         ----------
         qv_adv : :class:`list` or :class:`numpy.ndarray`
             See :meth:`add_variable` for details.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
@@ -4522,7 +4523,7 @@ class Case:
         ----------
         qt_adv : :class:`list` or :class:`numpy.ndarray`
             See :meth:`add_variable` for details.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
@@ -4536,7 +4537,7 @@ class Case:
         ----------
         rv_adv : :class:`list` or :class:`numpy.ndarray`
             See :meth:`add_variable` for details.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
@@ -4552,7 +4553,7 @@ class Case:
             See :meth:`add_variable` for details.
         va_adv : :class:`list` or :class:`numpy.ndarray`
             See :meth:`add_variable` for details.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """
@@ -4567,7 +4568,7 @@ class Case:
         ----------
         rt_adv : :class:`list` or :class:`numpy.ndarray`
             See :meth:`add_variable` for details.
-        **kwargs
+        \**kwargs
             Additional keyword arguments forwarded to :meth:`add_variable`
             (e.g. `time`, `name`, `units`, `height`, `pressure`...).
         """

@@ -17,7 +17,7 @@ class Axis:
     Represents a numeric data axis, typically used in scientific datasets
     (e.g., NetCDF files).
 
-    Parameters
+    Attributes
     ----------
     axis_id : :class:`str`
         Short name of the axis identifier (e.g., 'time', 'lat', 'lon').

@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Variable module.
-
+"""
 This module defines the :class:`Variable` class, a container that
 associates a data array with its axes (time, level, latitude,
 longitude) and, optionally, with a companion height or pressure
@@ -77,6 +76,22 @@ class Variable:
     pressure : :class:`Variable` or `None`
         Pressure companion variable, used as an alternative vertical
         coordinate.
+
+    Examples
+    --------
+    >>> from dephycf.Variable import Variable
+    >>> from dephycf.Axis import Axis
+    >>> time = Axis('time', [0, 3600, 7200], units='seconds since 2020-01-01')
+    >>> level = Axis('lev', [1000., 850., 700.], units='hPa')
+    >>> var = Variable('ta', data=[[280., 270., 260.]],
+    ...                 name='air_temperature', units='K',
+    ...                 time=time, level=level)
+    >>> var.id
+    'ta'
+    >>> var.units
+    'K'
+    >>> var.coord
+    'time lev lat lon'
     """
 
     def __init__(self, varid, data=None, name=None, units=None,
@@ -107,7 +122,7 @@ class Variable:
             :class:`Axis`/:class:`Variable`.
         height_units : :class:`str`, optional
             Units of `height`, when given as raw data.
-        pressure : :class:`Axis`, Variable or array_like, optional
+        pressure : :class:`Axis`, :class:`Variable` or array_like, optional
             Pressure vertical coordinate (or companion variable).
         pressure_id : :class:`str`, optional
             Identifier to use for the pressure companion variable,
@@ -120,7 +135,7 @@ class Variable:
             Time axis. Ignored if `axes` is given.
         lat : :class:`float` or array-like, optional
             Latitude information 
-        lon : :class:`float` or array-like,optional
+        lon : :class:`float` or array-like, optional
             Longitude information 
         axlist : :class:`list`, optional
             Explicit list of axis identifiers. Used together with
@@ -304,7 +319,7 @@ class Variable:
         ----------
         filein : :class:`netCDF4.Dataset`
             Open (writable) netCDF file/dataset to write into.
-        write_time_axes : bool, optional
+        write_time_axes : :class:`bool`, optional
             Whether to write the time axis/axes. Defaults to
             ``True``.
         write_level_axes : :class:`bool`, optional
@@ -577,7 +592,7 @@ class Variable:
 
         Returns
         -------
-        Variable
+        :class:`Variable`
             A new :class:`Variable` interpolated onto `time` (or
             `self`, unchanged, if no interpolation is needed/possible).
 
@@ -688,7 +703,7 @@ class Variable:
 
         Returns
         -------
-        Variable
+        :class:`Variable`
             `self` unchanged if there is no level axis or if neither
             `height` nor `pressure` is given; otherwise a new
             :class:`Variable` interpolated onto the target vertical
@@ -816,7 +831,7 @@ class Variable:
 
         Returns
         -------
-        Variable
+        :class:`Variable`
             A new :class:`Variable` with the vertical range extended.
 
         Raises
@@ -1009,7 +1024,7 @@ def read(name, filein):
 
     Returns
     -------
-    Variable : :class:`Variable`
+    :class:`Variable`
         The variable read from the file, with its axes and, if
         applicable, its height/pressure companion variable attached.
     """
@@ -1096,7 +1111,7 @@ def interpol(var, levout=None, timeout=None, log=False):
 
     Returns
     -------
-    Variable : :class:`Variable`
+    :class:`Variable`
         A new :class:`Variable` interpolated onto `levout` and/or
         `timeout`, as applicable.
 
