@@ -12,7 +12,7 @@ Python objects:
     A data array associated with its axes and, where relevant, a
     height or pressure companion variable used as an alternative
     vertical coordinate. Provides netCDF read/write, plotting, and
-    time/vertical interpolation.
+    time/vertical interpolation functionalities.
 
 :class:`~dephycf.Case.Case`
     The main entry point: a full case (initial state + forcing),
@@ -20,13 +20,12 @@ Python objects:
     exposes convenience methods to add each standard DEPHY variable
     (initial profiles, forcings, nudging, radiative tendencies...),
     to derive missing-but-required variables from whatever is
-    available (:meth:`~dephycf.Case.Case.add_missing_init_variables`,
+    available (e.g., :meth:`~dephycf.Case.Case.add_missing_init_variables`,
     :meth:`~dephycf.Case.Case.add_missing_forcing_variables`), to
     interpolate a case onto a new time/vertical grid
     (:meth:`~dephycf.Case.Case.interpolate`), and to convert a case
     end-to-end into an SCM-ready driver file
-    (:meth:`~dephycf.Case.Case.convert2SCM`,
-    :meth:`~dephycf.Case.Case.write`).
+    (:meth:`~dephycf.Case.Case.convert2SCM`).
 
 Supporting modules cover unit conversions and thermodynamic
 relations (``thermo``), physical constants (``constants``), known
@@ -47,8 +46,11 @@ A typical workflow looks like:
    case.add_init_wind(u=..., v=..., ulev=..., vlev=...)
    # ... add forcing variables ...
 
-   case.add_missing_init_variables()
-   case.add_missing_forcing_variables()
+   scm_case.write('MYCASE_REF_DEF_driver.nc')
 
+   # Prepare a SCM-ready driver file
+   target_levels=...
    scm_case = case.convert2SCM(lev=target_levels, levtype='pressure')
    scm_case.write('MYCASE_REF_SCM_driver.nc')
+
+Please refer to the :ref:`tutorial <tutorial-section>` section, the already :ref:`implemented cases <cases-section>` and the :ref:`dephycf API <api-section>` for further use of the dephycf toolbox

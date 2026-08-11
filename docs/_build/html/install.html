@@ -31,7 +31,7 @@
 <link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
-    <link rel="stylesheet" type="text/css" href="_static/plot_directive.css?v=7f9a90b1" />
+    <link rel="stylesheet" type="text/css" href="_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="_static/custom.css" />
   
   <!-- So that users can add custom icons -->
@@ -141,8 +141,8 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="example.html">
-    Examples
+  <a class="nav-link nav-internal" href="tutorial.html">
+    Tutorial
   </a>
 </li>
 
@@ -248,8 +248,8 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="example.html">
-    Examples
+  <a class="nav-link nav-internal" href="tutorial.html">
+    Tutorial
   </a>
 </li>
 
@@ -360,7 +360,7 @@ It needs the following packages:</p>
 <li><p><a class="reference external" href="https://unidata.github.io/netcdf4-python/">netCDF4</a></p></li>
 <li><p><a class="reference external" href="https://numpy.org/">numpy</a></p></li>
 <li><p><a class="reference external" href="https://scipy.org/">scipy</a></p></li>
-<li><p><a class="reference external" href="https://docs.xarray.dev/en/stable/">xarray</a> (only for MAGIC case)</p></li>
+<li><p><a class="reference external" href="https://docs.xarray.dev/en/stable/">xarray</a> (only for MAGIC cases)</p></li>
 <li><p><a class="reference external" href="https://matplotlib.org/">matplotlib</a></p></li>
 </ul>
 <p>Optional packages:</p>
@@ -375,9 +375,9 @@ It needs the following packages:</p>
 </section>
 <section id="using-dephycf">
 <h2>Using <code class="docutils literal notranslate"><span class="pre">dephycf</span></code><a class="headerlink" href="#using-dephycf" title="Link to this heading">#</a></h2>
-<p>The tools is provided as a Python module named dephycf. To use it just update your <code class="docutils literal notranslate"><span class="pre">PYTHONPATH</span></code>, e.g., sourcing the <code class="docutils literal notranslate"><span class="pre">setenv</span></code> file:</p>
+<p>The tools is provided as a Python module named dephycf. To use it just update your <code class="docutils literal notranslate"><span class="pre">PYTHONPATH</span></code>, e.g., sourcing a <code class="docutils literal notranslate"><span class="pre">setenv</span></code> file, where you have defined where dephycf is installed:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cat<span class="w"> </span>setenv
-&gt;&gt;<span class="w"> </span><span class="nb">export</span><span class="w"> </span><span class="nv">PYTHONPATH</span><span class="o">=</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span>:<span class="nv">$PYTHONPATH</span>
+&gt;&gt;<span class="w"> </span><span class="nb">export</span><span class="w"> </span><span class="nv">PYTHONPATH</span><span class="o">=</span><span class="si">${</span><span class="nv">DEPHYCF</span><span class="si">}</span>:<span class="nv">$PYTHONPATH</span>
 <span class="nb">source</span><span class="w"> </span>setenv.
 </pre></div>
 </div>
@@ -472,7 +472,7 @@ It needs the following packages:</p>
 
   <p class="copyright">
     
-      © Copyright 2025, DEPHY.
+      © Copyright 2026, DEPHY.
       <br/>
     
   </p>

@@ -31,7 +31,7 @@
 <link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
-    <link rel="stylesheet" type="text/css" href="_static/plot_directive.css?v=7f9a90b1" />
+    <link rel="stylesheet" type="text/css" href="_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="_static/custom.css" />
   
   <!-- So that users can add custom icons -->
@@ -141,8 +141,8 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="example.html">
-    Examples
+  <a class="nav-link nav-internal" href="tutorial.html">
+    Tutorial
   </a>
 </li>
 
@@ -250,8 +250,8 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="example.html">
-    Examples
+  <a class="nav-link nav-internal" href="tutorial.html">
+    Tutorial
   </a>
 </li>
 
@@ -322,32 +322,31 @@
   <section id="welcome-to-dephy-scm">
 <h1>Welcome to DEPHY-SCM!<a class="headerlink" href="#welcome-to-dephy-scm" title="Link to this heading">#</a></h1>
 <p><a class="reference external" href="https://github.com/GdR-DEPHY/DEPHY-SCM">DEPHY-SCM</a> is a
-community initiative of the French <a class="reference external" href="https://web.lmd.jussieu.fr/DEPHY/dephy.html">GdR DEPHY</a> research group,
+community initiative of the French <a class="reference external" href="https://web.lmd.jussieu.fr/DEPHY/dephy.html">DEPHY</a> research group,
 providing:</p>
 <ul class="simple">
 <li><p>a <strong>standard netCDF format</strong> for describing the initial state and
-forcing of Single-Column Model (SCM) and Large-Eddy Simulation
+forcing of Single-Column Models (SCM), as well as Large-Eddy Simulation
 (LES) case studies, so that the same input file can be used to
 drive many different models in a consistent way;</p></li>
 <li><p>a <strong>library of ready-to-use SCM cases</strong> in that format of
 well-known boundary-layer and convection cases such as
 <code class="docutils literal notranslate"><span class="pre">GABLS1</span></code>, <code class="docutils literal notranslate"><span class="pre">GABLS4</span></code>, <code class="docutils literal notranslate"><span class="pre">ARMCU</span></code>, <code class="docutils literal notranslate"><span class="pre">BOMEX</span></code>, <code class="docutils literal notranslate"><span class="pre">RICO</span></code>, <code class="docutils literal notranslate"><span class="pre">DYNAMO</span></code>,
-<code class="docutils literal notranslate"><span class="pre">SANDU</span></code>, and many others;</p></li>
+and many others;</p></li>
 <li><p>a <strong>Python-based toolbox</strong>, the <code class="docutils literal notranslate"><span class="pre">dephycf</span></code> package, used both to build
 and maintain that case library and to help modeling groups
 produce their own DEPHY-compliant driver files from their own data.</p></li>
 </ul>
 <p>The goal is to lower the cost of running the same case across
-different models (LES, SCMs embedded in various climate/NWP models) and
+different models (LES, SCMs embedded in various climate and NWP models) and
 thereby to ease the use of 1D/LES simulations for model development and
 tuning and facilitate multi-model intercomparison studies. The initiative
 builds also on earlier community efforts such as GCSS/GASS.</p>
 <p>The DEPHY format standard itself — the precise netCDF conventions
 (dimensions, required/optional variables, naming, units, global
 attributes) — is described in the project’s <em>Common Format</em>
-specification document, versioned independently of the code (see the
-PDF at the root of the repository). This toolbox implements and
-helps use that standard; it does not redefine it.</p>
+specification document, versioned independently of the code (see XX).
+This toolbox implements and helps use that standard; it does not redefine it.</p>
 <div class="toctree-wrapper compound">
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Contents</span></p>
 <ul>
@@ -358,9 +357,16 @@ helps use that standard; it does not redefine it.</p>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="toolbox.html"><code class="docutils literal notranslate"><span class="pre">dephycf</span></code> toolbox</a></li>
-<li class="toctree-l1"><a class="reference internal" href="example.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#from-a-case-description-to-an-scm-ready-driver">From a Case Description to an SCM-Ready Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#stage-1-building-the-def-driver">Stage 1 — Building the “DEF” driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#stage-2-converting-to-an-scm-ready-driver">Stage 2 — Converting to an SCM-ready driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#summary">Summary</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="cases/index.html">DEPHY-SCM Cases</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="cases/ARMCU_REF.html">ARMCU/REF</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cases/RICO_SHORT.html">RICO/SHORT</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="api/index.html">API Reference</a><ul>
@@ -443,7 +449,7 @@ helps use that standard; it does not redefine it.</p>
 
   <p class="copyright">
     
-      © Copyright 2025, DEPHY.
+      © Copyright 2026, DEPHY.
       <br/>
     
   </p>

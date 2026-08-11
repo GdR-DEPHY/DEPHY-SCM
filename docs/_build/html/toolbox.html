@@ -31,7 +31,7 @@
 <link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
-    <link rel="stylesheet" type="text/css" href="_static/plot_directive.css?v=7f9a90b1" />
+    <link rel="stylesheet" type="text/css" href="_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="_static/custom.css" />
   
   <!-- So that users can add custom icons -->
@@ -46,7 +46,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'toolbox';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Examples" href="example.html" />
+    <link rel="next" title="Tutorial" href="tutorial.html" />
     <link rel="prev" title="Installation" href="install.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -141,8 +141,8 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="example.html">
-    Examples
+  <a class="nav-link nav-internal" href="tutorial.html">
+    Tutorial
   </a>
 </li>
 
@@ -248,8 +248,8 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="example.html">
-    Examples
+  <a class="nav-link nav-internal" href="tutorial.html">
+    Tutorial
   </a>
 </li>
 
@@ -361,20 +361,19 @@ units and metadata.</p>
 <dt><a class="reference internal" href="api/variable.html#dephycf.Variable.Variable" title="dephycf.Variable.Variable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Variable</span></code></a></dt><dd><p>A data array associated with its axes and, where relevant, a
 height or pressure companion variable used as an alternative
 vertical coordinate. Provides netCDF read/write, plotting, and
-time/vertical interpolation.</p>
+time/vertical interpolation functionalities.</p>
 </dd>
 <dt><a class="reference internal" href="api/case.html#dephycf.Case.Case" title="dephycf.Case.Case"><code class="xref py py-class docutils literal notranslate"><span class="pre">Case</span></code></a></dt><dd><p>The main entry point: a full case (initial state + forcing),
 with global metadata (dates, location, surface type…). It
 exposes convenience methods to add each standard DEPHY variable
 (initial profiles, forcings, nudging, radiative tendencies…),
 to derive missing-but-required variables from whatever is
-available (<a class="reference internal" href="api/case.html#dephycf.Case.Case.add_missing_init_variables" title="dephycf.Case.Case.add_missing_init_variables"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_missing_init_variables()</span></code></a>,
+available (e.g., <a class="reference internal" href="api/case.html#dephycf.Case.Case.add_missing_init_variables" title="dephycf.Case.Case.add_missing_init_variables"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_missing_init_variables()</span></code></a>,
 <a class="reference internal" href="api/case.html#dephycf.Case.Case.add_missing_forcing_variables" title="dephycf.Case.Case.add_missing_forcing_variables"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_missing_forcing_variables()</span></code></a>), to
 interpolate a case onto a new time/vertical grid
 (<a class="reference internal" href="api/case.html#dephycf.Case.Case.interpolate" title="dephycf.Case.Case.interpolate"><code class="xref py py-meth docutils literal notranslate"><span class="pre">interpolate()</span></code></a>), and to convert a case
 end-to-end into an SCM-ready driver file
-(<a class="reference internal" href="api/case.html#dephycf.Case.Case.convert2SCM" title="dephycf.Case.Case.convert2SCM"><code class="xref py py-meth docutils literal notranslate"><span class="pre">convert2SCM()</span></code></a>,
-<a class="reference internal" href="api/case.html#dephycf.Case.Case.write" title="dephycf.Case.Case.write"><code class="xref py py-meth docutils literal notranslate"><span class="pre">write()</span></code></a>).</p>
+(<a class="reference internal" href="api/case.html#dephycf.Case.Case.convert2SCM" title="dephycf.Case.Case.convert2SCM"><code class="xref py py-meth docutils literal notranslate"><span class="pre">convert2SCM()</span></code></a>).</p>
 </dd>
 </dl>
 <p>Supporting modules cover unit conversions and thermodynamic
@@ -392,13 +391,15 @@ and basic plotting helpers (<code class="docutils literal notranslate"><span cla
 <span class="k">case</span><span class="o">.</span><span class="n">add_init_wind</span><span class="p">(</span><span class="n">u</span><span class="o">=...</span><span class="p">,</span> <span class="n">v</span><span class="o">=...</span><span class="p">,</span> <span class="n">ulev</span><span class="o">=...</span><span class="p">,</span> <span class="n">vlev</span><span class="o">=...</span><span class="p">)</span>
 <span class="c1"># ... add forcing variables ...</span>
 
-<span class="k">case</span><span class="o">.</span><span class="n">add_missing_init_variables</span><span class="p">()</span>
-<span class="k">case</span><span class="o">.</span><span class="n">add_missing_forcing_variables</span><span class="p">()</span>
+<span class="n">scm_case</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;MYCASE_REF_DEF_driver.nc&#39;</span><span class="p">)</span>
 
+<span class="c1"># Prepare a SCM-ready driver file</span>
+<span class="n">target_levels</span><span class="o">=...</span>
 <span class="n">scm_case</span> <span class="o">=</span> <span class="n">case</span><span class="o">.</span><span class="n">convert2SCM</span><span class="p">(</span><span class="n">lev</span><span class="o">=</span><span class="n">target_levels</span><span class="p">,</span> <span class="n">levtype</span><span class="o">=</span><span class="s1">&#39;pressure&#39;</span><span class="p">)</span>
 <span class="n">scm_case</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;MYCASE_REF_SCM_driver.nc&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>Please refer to the <a class="reference internal" href="tutorial.html#tutorial-section"><span class="std std-ref">tutorial</span></a> section, the already <a class="reference internal" href="cases/index.html#cases-section"><span class="std std-ref">implemented cases</span></a> and the <a class="reference internal" href="api/index.html#api-section"><span class="std std-ref">dephycf API</span></a> for further use of the dephycf toolbox</p>
 </section>
 
 
@@ -421,11 +422,11 @@ and basic plotting helpers (<code class="docutils literal notranslate"><span cla
       </div>
     </a>
     <a class="right-next"
-       href="example.html"
+       href="tutorial.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Examples</p>
+        <p class="prev-next-title">Tutorial</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -474,7 +475,7 @@ and basic plotting helpers (<code class="docutils literal notranslate"><span cla
 
   <p class="copyright">
     
-      © Copyright 2025, DEPHY.
+      © Copyright 2026, DEPHY.
       <br/>
     
   </p>

@@ -11,7 +11,7 @@ It needs the following packages:
 - `netCDF4 <https://unidata.github.io/netcdf4-python/>`_
 - `numpy <https://numpy.org/>`_
 - `scipy <https://scipy.org/>`_
-- `xarray <https://docs.xarray.dev/en/stable/>`_ (only for MAGIC case)
+- `xarray <https://docs.xarray.dev/en/stable/>`_ (only for MAGIC cases)
 - `matplotlib <https://matplotlib.org/>`_
 
 Optional packages:
@@ -28,12 +28,12 @@ Note that the full repository has currently a size of ??, as it comes with alrea
 Using ``dephycf``
 """""""""""""""""
 
-The tools is provided as a Python module named dephycf. To use it just update your ``PYTHONPATH``, e.g., sourcing the ``setenv`` file: 
+The tools is provided as a Python module named dephycf. To use it just update your ``PYTHONPATH``, e.g., sourcing a ``setenv`` file, where you have defined where dephycf is installed: 
 
 .. code-block:: bash
    
    cat setenv
-   >> export PYTHONPATH=$(pwd):$PYTHONPATH
+   >> export PYTHONPATH=${DEPHYCF}:$PYTHONPATH
    source setenv. 
 
 You may need to update it. A pip install is in progress.

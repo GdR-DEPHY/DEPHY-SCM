@@ -1,3 +1,5 @@
+.. _ARMCU_REF-section:
+
 ARMCU/REF
 =========
 

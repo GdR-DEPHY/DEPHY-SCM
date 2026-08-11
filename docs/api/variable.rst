@@ -1,3 +1,5 @@
+.. _variable-section:
+
 **********************************
 Variable (:mod:`dephycf.Variable`)
 **********************************

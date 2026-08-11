@@ -7,7 +7,7 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = 'DEPHY-SCM'
-copyright = '2025, DEPHY'
+copyright = '2026, DEPHY'
 author = 'Roehrig et al.'
 release = '1.0'
 
