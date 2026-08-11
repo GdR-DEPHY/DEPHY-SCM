@@ -33,8 +33,8 @@ lverbose = False # print information about variables and case
 case = Case('ARMCU/REF',
         lat=36,
         lon=-97.5,
-        startDate="19970621113000",
-        endDate="19970622020000",
+        startDate="1997-06-21 11:30:00",
+        endDate="1997-06-22 02:00:00",
         surfaceType='land',
         zorog=314.)
 
