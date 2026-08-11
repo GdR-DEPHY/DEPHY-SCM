@@ -36,6 +36,7 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 # -- Options for napoleon ----------------------------------------------------
 napoleon_google_docstring = False
 napoleon_numpy_docstring = True
+napoleon_use_ivar = True
 
 # -- Options for autodoc ----------------------------------------------------
 autodoc_typehints = "description"
@@ -74,3 +75,13 @@ html_css_files = [
 # -- Options for matplotlib plots
 plot_formats = [("png", 90), "pdf"]
 
+
+# Render "Attributes" sections the same way as "Parameters" (compact
+# field list) instead of Napoleon's default (one ".. attribute::"
+# block per item), while keeping the "Attributes" heading.
+from sphinx.ext.napoleon.docstring import GoogleDocstring
+
+def _parse_attributes_section(self, section):
+    return self._format_fields('Attributes', self._consume_fields())
+
+GoogleDocstring._parse_attributes_section = _parse_attributes_section

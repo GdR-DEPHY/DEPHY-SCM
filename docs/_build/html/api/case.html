@@ -368,7 +368,6 @@
 <span id="case-section"></span><h1>Case (<a class="reference internal" href="#module-dephycf.Case" title="dephycf.Case"><code class="xref py py-mod docutils literal notranslate"><span class="pre">dephycf.Case</span></code></a>)<a class="headerlink" href="#case-dephycf-case" title="Link to this heading">#</a></h1>
 <section id="module-dephycf.Case">
 <span id="case-module"></span><h2><code class="docutils literal notranslate"><span class="pre">Case</span></code> Module<a class="headerlink" href="#module-dephycf.Case" title="Link to this heading">#</a></h2>
-<p>Case module.</p>
 <p>This module defines the <a class="reference internal" href="#dephycf.Case.Case" title="dephycf.Case.Case"><code class="xref py py-class docutils literal notranslate"><span class="pre">Case</span></code></a> class, the main entry point of
 the DEPHY Single Column Model (SCM) format toolbox. A <a class="reference internal" href="#dephycf.Case.Case" title="dephycf.Case.Case"><code class="xref py py-class docutils literal notranslate"><span class="pre">Case</span></code></a>
 object gathers everything describing a single-column case: global
@@ -405,15 +404,6 @@ case to a netCDF file with <a class="reference internal" href="#dephycf.Case.Cas
 <span class="n">scm_case</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;EXAMPLE_control_SCM_driver.nc&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-</section>
-<section id="notes">
-<h3>Notes<a class="headerlink" href="#notes" title="Link to this heading">#</a></h3>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>The <code class="xref py py-meth docutils literal notranslate"><span class="pre">interpolate()</span></code> method contains placeholder
-<code class="docutils literal notranslate"><span class="pre">usetemp</span></code>/<code class="docutils literal notranslate"><span class="pre">usetheta</span></code>/<code class="docutils literal notranslate"><span class="pre">usethetal</span></code> parameters that are
-currently unused (see the source code).</p>
-</div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <p><code class="xref py py-mod docutils literal notranslate"><span class="pre">Variable</span></code>, <code class="xref py py-mod docutils literal notranslate"><span class="pre">Axis</span></code>, <code class="xref py py-mod docutils literal notranslate"><span class="pre">thermo</span></code>, <code class="xref py py-mod docutils literal notranslate"><span class="pre">constants</span></code>,
@@ -433,206 +423,46 @@ single-column case: an identifier, start/end dates, location
 attributes, and the initial-state and forcing variables
 themselves (stored as <a class="reference internal" href="variable.html#dephycf.Variable.Variable" title="dephycf.Variable.Variable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Variable</span></code></a>
 objects in <cite>self.variables</cite>).</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="dephycf.Case.Case.id">
-<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#dephycf.Case.Case.id" title="Link to this definition">#</a></dt>
-<dd><p>Case identifier, expected to be of the form <code class="docutils literal notranslate"><span class="pre">&quot;case/subcase&quot;</span></code>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>str</p>
+<dt class="field-odd">Attributes<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Case identifier, expected to be of the form <code class="docutils literal notranslate"><span class="pre">&quot;case/subcase&quot;</span></code>.</p></li>
+<li><p><strong>lat</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> or <cite>None</cite>) – Case latitude, in degrees north.</p></li>
+<li><p><strong>lon</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> or <cite>None</cite>) – Case longitude, in degrees east.</p></li>
+<li><p><strong>case_type</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Case type (e.g. <code class="docutils literal notranslate"><span class="pre">&quot;standard&quot;</span></code>).</p></li>
+<li><p><strong>surface_type</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Surface type (e.g. <code class="docutils literal notranslate"><span class="pre">&quot;ocean&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;land&quot;</span></code>).</p></li>
+<li><p><strong>forcing_scale</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Forcing scale factor.</p></li>
+<li><p><strong>start_date</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">datetime.datetime</span></code>) – Simulation start date.</p></li>
+<li><p><strong>end_date</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">datetime.datetime</span></code>) – Simulation end date.</p></li>
+<li><p><strong>t0</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Initial time value (always <code class="docutils literal notranslate"><span class="pre">0</span></code>).</p></li>
+<li><p><strong>t0Axis</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Axis</span></code>) – Single-value initial-time <a class="reference internal" href="axis.html#dephycf.Axis.Axis" title="dephycf.Axis.Axis"><code class="xref py py-class docutils literal notranslate"><span class="pre">Axis</span></code></a>.</p></li>
+<li><p><strong>tunits</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Time units string, of the form
+<code class="docutils literal notranslate"><span class="pre">&quot;seconds</span> <span class="pre">since</span> <span class="pre">%Y-%m-%d</span> <span class="pre">%H:%M:%S&quot;</span></code>, anchored on <cite>start_date</cite>.</p></li>
+<li><p><strong>tstart</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> or <cite>None</cite>) – <cite>start_date</cite> converted to numeric time in <cite>tunits</cite>.</p></li>
+<li><p><strong>tend</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> or <cite>None</cite>) – <cite>end_date</cite> converted to numeric time in <cite>tunits</cite>.</p></li>
+<li><p><strong>var_init_list</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Identifiers of the initial-state variables.</p></li>
+<li><p><strong>var_forcing_list</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Identifiers of the forcing variables.</p></li>
+<li><p><strong>variables</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>) – Mapping from variable identifier to
+<a class="reference internal" href="variable.html#dephycf.Variable.Variable" title="dephycf.Variable.Variable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Variable</span></code></a> instance.</p></li>
+<li><p><strong>attlist</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – List of global (netCDF) attribute names to write out.</p></li>
+<li><p><strong>attributes</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>) – Mapping from attribute name to attribute value.</p></li>
+</ul>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="dephycf.Case.Case.lat">
-<span class="sig-name descname"><span class="pre">lat</span></span><a class="headerlink" href="#dephycf.Case.Case.lat" title="Link to this definition">#</a></dt>
-<dd><p>Case latitude, in degrees north.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>float or None</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="dephycf.Case.Case.lon">
-<span class="sig-name descname"><span class="pre">lon</span></span><a class="headerlink" href="#dephycf.Case.Case.lon" title="Link to this definition">#</a></dt>
-<dd><p>Case longitude, in degrees east.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>float or None</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="dephycf.Case.Case.case_type">
-<span class="sig-name descname"><span class="pre">case_type</span></span><a class="headerlink" href="#dephycf.Case.Case.case_type" title="Link to this definition">#</a></dt>
-<dd><p>Case type (e.g. <code class="docutils literal notranslate"><span class="pre">&quot;standard&quot;</span></code>).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>str</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="dephycf.Case.Case.surface_type">
-<span class="sig-name descname"><span class="pre">surface_type</span></span><a class="headerlink" href="#dephycf.Case.Case.surface_type" title="Link to this definition">#</a></dt>
-<dd><p>Surface type (e.g. <code class="docutils literal notranslate"><span class="pre">&quot;ocean&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;land&quot;</span></code>).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>str</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="dephycf.Case.Case.forcing_scale">
-<span class="sig-name descname"><span class="pre">forcing_scale</span></span><a class="headerlink" href="#dephycf.Case.Case.forcing_scale" title="Link to this definition">#</a></dt>
-<dd><p>Forcing scale factor.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>float</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="dephycf.Case.Case.start_date">
-<span class="sig-name descname"><span class="pre">start_date</span></span><a class="headerlink" href="#dephycf.Case.Case.start_date" title="Link to this definition">#</a></dt>
-<dd><p>Simulation start date.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>datetime.datetime</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="dephycf.Case.Case.end_date">
-<span class="sig-name descname"><span class="pre">end_date</span></span><a class="headerlink" href="#dephycf.Case.Case.end_date" title="Link to this definition">#</a></dt>
-<dd><p>Simulation end date.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>datetime.datetime</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="dephycf.Case.Case.t0">
-<span class="sig-name descname"><span class="pre">t0</span></span><a class="headerlink" href="#dephycf.Case.Case.t0" title="Link to this definition">#</a></dt>
-<dd><p>Initial time value (always <code class="docutils literal notranslate"><span class="pre">0</span></code>).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>int</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="dephycf.Case.Case.t0Axis">
-<span class="sig-name descname"><span class="pre">t0Axis</span></span><a class="headerlink" href="#dephycf.Case.Case.t0Axis" title="Link to this definition">#</a></dt>
-<dd><p>Single-value initial-time <a class="reference internal" href="axis.html#dephycf.Axis.Axis" title="dephycf.Axis.Axis"><code class="xref py py-class docutils literal notranslate"><span class="pre">Axis</span></code></a>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="axis.html#dephycf.Axis.Axis" title="dephycf.Axis.Axis">Axis</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="dephycf.Case.Case.tunits">
-<span class="sig-name descname"><span class="pre">tunits</span></span><a class="headerlink" href="#dephycf.Case.Case.tunits" title="Link to this definition">#</a></dt>
-<dd><p>Time units string, of the form
-<code class="docutils literal notranslate"><span class="pre">&quot;seconds</span> <span class="pre">since</span> <span class="pre">%Y-%m-%d</span> <span class="pre">%H:%M:%S&quot;</span></code>, anchored on <cite>start_date</cite>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>str</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="dephycf.Case.Case.tstart">
-<span class="sig-name descname"><span class="pre">tstart</span></span><a class="headerlink" href="#dephycf.Case.Case.tstart" title="Link to this definition">#</a></dt>
-<dd><p><cite>start_date</cite> converted to numeric time in <cite>tunits</cite>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>float or None</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="dephycf.Case.Case.tend">
-<span class="sig-name descname"><span class="pre">tend</span></span><a class="headerlink" href="#dephycf.Case.Case.tend" title="Link to this definition">#</a></dt>
-<dd><p><cite>end_date</cite> converted to numeric time in <cite>tunits</cite>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>float or None</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="dephycf.Case.Case.var_init_list">
-<span class="sig-name descname"><span class="pre">var_init_list</span></span><a class="headerlink" href="#dephycf.Case.Case.var_init_list" title="Link to this definition">#</a></dt>
-<dd><p>Identifiers of the initial-state variables.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>list of str</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="dephycf.Case.Case.var_forcing_list">
-<span class="sig-name descname"><span class="pre">var_forcing_list</span></span><a class="headerlink" href="#dephycf.Case.Case.var_forcing_list" title="Link to this definition">#</a></dt>
-<dd><p>Identifiers of the forcing variables.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>list of str</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="dephycf.Case.Case.variables">
-<span class="sig-name descname"><span class="pre">variables</span></span><a class="headerlink" href="#dephycf.Case.Case.variables" title="Link to this definition">#</a></dt>
-<dd><p>Mapping from variable identifier to
-<a class="reference internal" href="variable.html#dephycf.Variable.Variable" title="dephycf.Variable.Variable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Variable</span></code></a> instance.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>dict</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="dephycf.Case.Case.attlist">
-<span class="sig-name descname"><span class="pre">attlist</span></span><a class="headerlink" href="#dephycf.Case.Case.attlist" title="Link to this definition">#</a></dt>
-<dd><p>List of global (netCDF) attribute names to write out.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>list of str</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="dephycf.Case.Case.attributes">
-<span class="sig-name descname"><span class="pre">attributes</span></span><a class="headerlink" href="#dephycf.Case.Case.attributes" title="Link to this definition">#</a></dt>
-<dd><p>Mapping from attribute name to attribute value.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>dict</p>
-</dd>
-</dl>
-</dd></dl>
-
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">dephycf.Case</span> <span class="kn">import</span> <span class="n">Case</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">case</span> <span class="o">=</span> <span class="n">Case</span><span class="p">(</span><span class="s1">&#39;MYCASE/SUBCASE&#39;</span><span class="p">,</span> <span class="n">lat</span><span class="o">=</span><span class="mf">45.0</span><span class="p">,</span> <span class="n">lon</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span>
+<span class="gp">... </span>             <span class="n">startDate</span><span class="o">=</span><span class="s1">&#39;2020-01-01 00:00:00&#39;</span><span class="p">,</span>
+<span class="gp">... </span>             <span class="n">endDate</span><span class="o">=</span><span class="s1">&#39;2020-01-01 06:00:00&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">case</span><span class="o">.</span><span class="n">id</span>
+<span class="go">&#39;MYCASE/SUBCASE&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">case</span><span class="o">.</span><span class="n">lat</span>
+<span class="go">45.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">case</span><span class="o">.</span><span class="n">add_init_ps</span><span class="p">(</span><span class="mf">101325.</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">case</span><span class="o">.</span><span class="n">var_init_list</span>
+<span class="go">[&#39;ps&#39;]</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </section>
@@ -645,22 +475,22 @@ objects in <cite>self.variables</cite>).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>caseid</strong> (<em>str</em>) – Case identifier, expected to be of the form <code class="docutils literal notranslate"><span class="pre">&quot;case/subcase&quot;</span></code>
+<li><p><strong>caseid</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Case identifier, expected to be of the form <code class="docutils literal notranslate"><span class="pre">&quot;case/subcase&quot;</span></code>
 (split on <code class="docutils literal notranslate"><span class="pre">&quot;/&quot;</span></code> to derive <cite>self._case</cite> and <cite>self._subcase</cite>).</p></li>
-<li><p><strong>lat</strong> (<em>float</em><em>, </em><em>optional</em>) – Case latitude, in degrees north. If given, a corresponding forcing
+<li><p><strong>lat</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, optional) – Case latitude, in degrees north. If given, a corresponding forcing
 variable is added via <a class="reference internal" href="#dephycf.Case.Case.add_latitude" title="dephycf.Case.Case.add_latitude"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_latitude()</span></code></a>.</p></li>
-<li><p><strong>lon</strong> (<em>float</em><em>, </em><em>optional</em>) – Case longitude, in degrees east. If given, a corresponding forcing
+<li><p><strong>lon</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, optional) – Case longitude, in degrees east. If given, a corresponding forcing
 variable is added via <a class="reference internal" href="#dephycf.Case.Case.add_longitude" title="dephycf.Case.Case.add_longitude"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_longitude()</span></code></a>.</p></li>
-<li><p><strong>case_type</strong> (<em>str</em><em>, </em><em>optional</em>) – Case type. Defaults to <code class="docutils literal notranslate"><span class="pre">&quot;standard&quot;</span></code>.</p></li>
-<li><p><strong>startDate</strong> (<em>datetime.datetime</em><em> or </em><em>str</em><em>, </em><em>optional</em>) – Simulation start date, as a <code class="xref py py-class docutils literal notranslate"><span class="pre">datetime.datetime</span></code> or a string
+<li><p><strong>case_type</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, optional) – Case type. Defaults to <code class="docutils literal notranslate"><span class="pre">&quot;standard&quot;</span></code>.</p></li>
+<li><p><strong>startDate</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">datetime.datetime</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, optional) – Simulation start date, as a <code class="xref py py-class docutils literal notranslate"><span class="pre">datetime.datetime</span></code> or a string
 (see <a class="reference internal" href="#dephycf.Case.Case.set_dates" title="dephycf.Case.Case.set_dates"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_dates()</span></code></a> for accepted string formats). Defaults to
 <cite>startDate0</cite>.</p></li>
-<li><p><strong>endDate</strong> (<em>datetime.datetime</em><em> or </em><em>str</em><em>, </em><em>optional</em>) – Simulation end date, same format as <cite>startDate</cite>. Defaults to
+<li><p><strong>endDate</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">datetime.datetime</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, optional) – Simulation end date, same format as <cite>startDate</cite>. Defaults to
 <cite>endDate0</cite>.</p></li>
-<li><p><strong>surfaceType</strong> (<em>str</em><em>, </em><em>optional</em>) – Surface type. Defaults to <code class="docutils literal notranslate"><span class="pre">'ocean'</span></code>.</p></li>
-<li><p><strong>zorog</strong> (<em>float</em><em>, </em><em>optional</em>) – Orography altitude above sea level, in meters. Defaults to <code class="docutils literal notranslate"><span class="pre">0.</span></code>.
+<li><p><strong>surfaceType</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, optional) – Surface type. Defaults to <code class="docutils literal notranslate"><span class="pre">'ocean'</span></code>.</p></li>
+<li><p><strong>zorog</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, optional) – Orography altitude above sea level, in meters. Defaults to <code class="docutils literal notranslate"><span class="pre">0.</span></code>.
 Added as a forcing variable via <a class="reference internal" href="#dephycf.Case.Case.add_orography" title="dephycf.Case.Case.add_orography"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_orography()</span></code></a>.</p></li>
-<li><p><strong>forcing_scale</strong> (<em>float</em><em>, </em><em>optional</em>) – Forcing scale factor. Defaults to <code class="docutils literal notranslate"><span class="pre">-1</span></code>.</p></li>
+<li><p><strong>forcing_scale</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, optional) – Forcing scale factor. Defaults to <code class="docutils literal notranslate"><span class="pre">-1</span></code>.</p></li>
 </ul>
 </dd>
 </dl>
@@ -677,9 +507,9 @@ time <a class="reference internal" href="axis.html#dephycf.Axis.Axis" title="dep
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>startDate</strong> (<em>datetime.datetime</em><em> or </em><em>str</em>) – Simulation start date. If a string, it must be either 14 digits
+<li><p><strong>startDate</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">datetime.datetime</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Simulation start date. If a string, it must be either 14 digits
 (<code class="docutils literal notranslate"><span class="pre">'%Y%m%d%H%M%S'</span></code>) or of the form <code class="docutils literal notranslate"><span class="pre">'%Y-%m-%d</span> <span class="pre">%H:%M:%S'</span></code>.</p></li>
-<li><p><strong>endDate</strong> (<em>datetime.datetime</em><em> or </em><em>str</em>) – Simulation end date, same accepted formats as <cite>startDate</cite>.</p></li>
+<li><p><strong>endDate</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">datetime.datetime</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Simulation end date, same accepted formats as <cite>startDate</cite>.</p></li>
 </ul>
 </dd>
 </dl>
@@ -692,8 +522,8 @@ time <a class="reference internal" href="axis.html#dephycf.Axis.Axis" title="dep
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>lat</strong> (<em>float</em>) – Latitude, in degrees north.</p></li>
-<li><p><strong>lon</strong> (<em>float</em>) – Longitude, in degrees east.</p></li>
+<li><p><strong>lat</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Latitude, in degrees north.</p></li>
+<li><p><strong>lon</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Longitude, in degrees east.</p></li>
 </ul>
 </dd>
 </dl>
@@ -705,7 +535,7 @@ time <a class="reference internal" href="axis.html#dephycf.Axis.Axis" title="dep
 <dd><p>Set (or add) a global netCDF attribute on the case.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>attid</strong> (<em>str</em>) – Attribute name. A warning is logged if it is not part of
+<dd class="field-odd"><p><strong>attid</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Attribute name. A warning is logged if it is not part of
 <cite>known_attributes</cite>. attvalue Attribute value.</p>
 </dd>
 </dl>
@@ -717,7 +547,7 @@ time <a class="reference internal" href="axis.html#dephycf.Axis.Axis" title="dep
 <dd><p>Set the case <code class="docutils literal notranslate"><span class="pre">title</span></code> global attribute.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>title</strong> (<em>str</em>) – Case title.</p>
+<dd class="field-odd"><p><strong>title</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Case title.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -728,7 +558,7 @@ time <a class="reference internal" href="axis.html#dephycf.Axis.Axis" title="dep
 <dd><p>Set the case <code class="docutils literal notranslate"><span class="pre">comment</span></code> global attribute.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>comment</strong> (<em>str</em>) – Free-form comment about the case.</p>
+<dd class="field-odd"><p><strong>comment</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Free-form comment about the case.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -739,7 +569,7 @@ time <a class="reference internal" href="axis.html#dephycf.Axis.Axis" title="dep
 <dd><p>Set the case <code class="docutils literal notranslate"><span class="pre">reference</span></code> global attribute.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>ref</strong> (<em>str</em>) – Bibliographic reference associated with the case.</p>
+<dd class="field-odd"><p><strong>ref</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Bibliographic reference associated with the case.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -750,7 +580,7 @@ time <a class="reference internal" href="axis.html#dephycf.Axis.Axis" title="dep
 <dd><p>Set the case <code class="docutils literal notranslate"><span class="pre">author</span></code> global attribute.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>author</strong> (<em>str</em>) – Author name(s).</p>
+<dd class="field-odd"><p><strong>author</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Author name(s).</p>
 </dd>
 </dl>
 </dd></dl>
@@ -761,7 +591,7 @@ time <a class="reference internal" href="axis.html#dephycf.Axis.Axis" title="dep
 <dd><p>Set the case <code class="docutils literal notranslate"><span class="pre">modifications</span></code> global attribute.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>modifications</strong> (<em>str</em>) – Description of modifications made to the case.</p>
+<dd class="field-odd"><p><strong>modifications</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Description of modifications made to the case.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -772,7 +602,7 @@ time <a class="reference internal" href="axis.html#dephycf.Axis.Axis" title="dep
 <dd><p>Set the case <code class="docutils literal notranslate"><span class="pre">script</span></code> global attribute.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>script</strong> (<em>str</em>) – Name (or description) of the script used to build the case.</p>
+<dd class="field-odd"><p><strong>script</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Name (or description) of the script used to build the case.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -783,7 +613,7 @@ time <a class="reference internal" href="axis.html#dephycf.Axis.Axis" title="dep
 <dd><p>Set the case <code class="docutils literal notranslate"><span class="pre">case_type</span></code> global attribute.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>case_type</strong> (<em>str</em>) – Case type (e.g. <code class="docutils literal notranslate"><span class="pre">&quot;standard&quot;</span></code>).</p>
+<dd class="field-odd"><p><strong>case_type</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Case type (e.g. <code class="docutils literal notranslate"><span class="pre">&quot;standard&quot;</span></code>).</p>
 </dd>
 </dl>
 </dd></dl>
@@ -798,7 +628,7 @@ time <a class="reference internal" href="axis.html#dephycf.Axis.Axis" title="dep
 <p>Require arguments: varid – string for the variable id</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>varid</strong> (<em>str</em>) – See <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a> for details.</p>
+<dd class="field-odd"><p><strong>varid</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – See <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a> for details.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -810,30 +640,30 @@ time <a class="reference internal" href="axis.html#dephycf.Axis.Axis" title="dep
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>varid</strong> (<em>str</em>) – string for the variable id. Should be in …</p></li>
-<li><p><strong>vardata</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>list</em><em>, or </em><em>numpy.ndarray</em>) – input data as a list or a numpy array</p></li>
-<li><p><strong>lev</strong> (<em>list</em><em>, </em><em>numpy.ndarray</em><em>, or </em><a class="reference internal" href="axis.html#dephycf.Axis.Axis" title="dephycf.Axis.Axis"><em>Axis</em></a><em>, </em><em>optional</em>) – input data for the level axis as a list, a numpy array or an Axis
+<li><p><strong>varid</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – string for the variable id. Should be in …</p></li>
+<li><p><strong>vardata</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – input data as a list or a numpy array</p></li>
+<li><p><strong>lev</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>, or <code class="xref py py-class docutils literal notranslate"><span class="pre">Axis</span></code>, optional) – input data for the level axis as a list, a numpy array or an Axis
 object (default None)</p></li>
-<li><p><strong>levtype</strong> (<em>str</em><em>, </em><em>optional</em>) – string describing the type of the level axis: None (default),
+<li><p><strong>levtype</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, optional) – string describing the type of the level axis: None (default),
 ‘altitude’ or ‘pressure’</p></li>
-<li><p><strong>levid</strong> (<em>str</em><em>, </em><em>optional</em>) – string for the level axis id. The default is None, which implies a
+<li><p><strong>levid</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, optional) – string for the level axis id. The default is None, which implies a
 generic id (default None)</p></li>
-<li><p><strong>height</strong> (<a class="reference internal" href="variable.html#dephycf.Variable.Variable" title="dephycf.Variable.Variable"><em>Variable</em></a><em>, </em><em>optional</em>) – variable object describing height for current variable</p></li>
-<li><p><strong>pressure</strong> (<a class="reference internal" href="variable.html#dephycf.Variable.Variable" title="dephycf.Variable.Variable"><em>Variable</em></a><em>, </em><em>optional</em>) – variable object describing pressure for current variable</p></li>
-<li><p><strong>time</strong> (<em>list</em><em>, </em><em>numpy.ndarray</em><em>, or </em><a class="reference internal" href="axis.html#dephycf.Axis.Axis" title="dephycf.Axis.Axis"><em>Axis</em></a><em>, </em><em>optional</em>) – input data for the time axis, as a list, a numpy array or an Axis
+<li><p><strong>height</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Variable</span></code>, optional) – variable object describing height for current variable</p></li>
+<li><p><strong>pressure</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Variable</span></code>, optional) – variable object describing pressure for current variable</p></li>
+<li><p><strong>time</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>, or <code class="xref py py-class docutils literal notranslate"><span class="pre">Axis</span></code>, optional) – input data for the time axis, as a list, a numpy array or an Axis
 object (default None)</p></li>
-<li><p><strong>timeid</strong> (<em>str</em><em>, </em><em>optional</em>) – string for the time axis id. The default is None, which implies a
+<li><p><strong>timeid</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, optional) – string for the time axis id. The default is None, which implies a
 generic id (default None)</p></li>
-<li><p><strong>name</strong> (<em>str</em><em>, </em><em>optional</em>) – string of the name attribute of the variable (to be use as
+<li><p><strong>name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, optional) – string of the name attribute of the variable (to be use as
 long_name in a netCDF file) (default None)</p></li>
-<li><p><strong>units</strong> (<em>str</em><em>, </em><em>optional</em>) – string of the units attribute of the variable (default None)</p></li>
-<li><p><strong>height_id</strong> (<em>str</em>) – Identifier to use for the height companion variable, when <cite>height</cite>
+<li><p><strong>units</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, optional) – string of the units attribute of the variable (default None)</p></li>
+<li><p><strong>height_id</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Identifier to use for the height companion variable, when <cite>height</cite>
 is given as raw data rather than as a <cite>Variable</cite>/<cite>Axis</cite> object.</p></li>
-<li><p><strong>height_units</strong> (<em>str</em>) – Units of <cite>height</cite>, when given as raw data.</p></li>
-<li><p><strong>pressure_id</strong> (<em>str</em>) – Identifier to use for the pressure companion variable, when
+<li><p><strong>height_units</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Units of <cite>height</cite>, when given as raw data.</p></li>
+<li><p><strong>pressure_id</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Identifier to use for the pressure companion variable, when
 <cite>pressure</cite> is given as raw data rather than as a <cite>Variable</cite>/<cite>Axis</cite>
 object.</p></li>
-<li><p><strong>pressure_units</strong> (<em>str</em>) – Units of <cite>pressure</cite>, when given as raw data.</p></li>
+<li><p><strong>pressure_units</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Units of <cite>pressure</cite>, when given as raw data.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
@@ -855,10 +685,10 @@ variable except ps: - a level axis is required (lev optional argument).
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>varid</strong> (<em>str</em>) – id of the initial variable. Should be in …</p></li>
-<li><p><strong>vardata</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>list</em><em>, or </em><em>numpy.ndarray</em>) – input data as a numeric value (int or float), a list or a numpy
+<li><p><strong>varid</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – id of the initial variable. Should be in …</p></li>
+<li><p><strong>vardata</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – input data as a numeric value (int or float), a list or a numpy
 array</p></li>
-<li><p><strong>coordinate</strong> (<em>bool</em>) – See <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a> for details.</p></li>
+<li><p><strong>coordinate</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – See <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a> for details.</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments forwarded to <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a>
 (e.g. <cite>time</cite>, <cite>name</cite>, <cite>units</cite>, <cite>height</cite>, <cite>pressure</cite>…).</p></li>
 </ul>
@@ -880,8 +710,8 @@ is not provided, forcing is assumed constant in time</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>varid</strong> (<em>str</em>) – id of the forcing variable. Should be in …</p></li>
-<li><p><strong>vardata</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>list</em><em>, or </em><em>numpy.ndarray</em>) – input data as a numeric value (int or float), a list or a numpy
+<li><p><strong>varid</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – id of the forcing variable. Should be in …</p></li>
+<li><p><strong>vardata</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – input data as a numeric value (int or float), a list or a numpy
 array</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments forwarded to <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a>
 (e.g. <cite>time</cite>, <cite>name</cite>, <cite>units</cite>, <cite>height</cite>, <cite>pressure</cite>…).</p></li>
@@ -902,7 +732,7 @@ provided, forcing is assumed constant in time.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>list</em><em>, or </em><em>numpy.ndarray</em>) – input data as a list or a numpy array.</p></li>
+<li><p><strong>data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – input data as a list or a numpy array.</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments forwarded to <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a>
 (e.g. <cite>time</cite>, <cite>name</cite>, <cite>units</cite>, <cite>height</cite>, <cite>pressure</cite>…).</p></li>
 </ul>
@@ -919,7 +749,7 @@ provided, forcing is assumed constant in time.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>list</em><em>, or </em><em>numpy.ndarray</em>) – input data as a list or a numpy array.</p></li>
+<li><p><strong>data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – input data as a list or a numpy array.</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments forwarded to <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a>
 (e.g. <cite>time</cite>, <cite>name</cite>, <cite>units</cite>, <cite>height</cite>, <cite>pressure</cite>…).</p></li>
 </ul>
@@ -936,7 +766,7 @@ provided, forcing is assumed constant in time.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>list</em><em>, or </em><em>numpy.ndarray</em>) – input data as a list or a numpy array.</p></li>
+<li><p><strong>data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – input data as a list or a numpy array.</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments forwarded to <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a>
 (e.g. <cite>time</cite>, <cite>name</cite>, <cite>units</cite>, <cite>height</cite>, <cite>pressure</cite>…).</p></li>
 </ul>
@@ -955,7 +785,7 @@ provided, forcing is assumed constant in time.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>vardata</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>list</em><em>, or </em><em>numpy.ndarray</em>) – input data as an integer or a float.</p></li>
+<li><p><strong>vardata</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – input data as an integer or a float.</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments forwarded to <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a>
 (e.g. <cite>time</cite>, <cite>name</cite>, <cite>units</cite>, <cite>height</cite>, <cite>pressure</cite>…).</p></li>
 </ul>
@@ -971,7 +801,7 @@ provided, forcing is assumed constant in time.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>vardata</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>list</em><em>, or </em><em>numpy.ndarray</em>) – input data as an integer or a float.</p></li>
+<li><p><strong>vardata</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – input data as an integer or a float.</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments forwarded to <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a>
 (e.g. <cite>time</cite>, <cite>name</cite>, <cite>units</cite>, <cite>height</cite>, <cite>pressure</cite>…).</p></li>
 </ul>
@@ -988,7 +818,7 @@ object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>vardata</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>list</em><em>, or </em><em>numpy.ndarray</em>) – input data as an integer or a float.</p></li>
+<li><p><strong>vardata</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – input data as an integer or a float.</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments forwarded to <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a>
 (e.g. <cite>time</cite>, <cite>name</cite>, <cite>units</cite>, <cite>height</cite>, <cite>pressure</cite>…).</p></li>
 </ul>
@@ -1006,7 +836,7 @@ axis is required (lev optional argument). - a levtype is required
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>vardata</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>list</em><em>, or </em><em>numpy.ndarray</em>) – input data as a list or a numpy array.</p></li>
+<li><p><strong>vardata</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – input data as a list or a numpy array.</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments forwarded to <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a>
 (e.g. <cite>time</cite>, <cite>name</cite>, <cite>units</cite>, <cite>height</cite>, <cite>pressure</cite>…).</p></li>
 </ul>
@@ -1024,7 +854,7 @@ axis is required (lev optional argument). - a levtype is required
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>vardata</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>list</em><em>, or </em><em>numpy.ndarray</em>) – input data as a list or a numpy array.</p></li>
+<li><p><strong>vardata</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – input data as a list or a numpy array.</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments forwarded to <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a>
 (e.g. <cite>time</cite>, <cite>name</cite>, <cite>units</cite>, <cite>height</cite>, <cite>pressure</cite>…).</p></li>
 </ul>
@@ -1042,7 +872,7 @@ axis is required (lev optional argument). - a levtype is required
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>vardata</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>list</em><em>, or </em><em>numpy.ndarray</em>) – input data as a list or a numpy array.</p></li>
+<li><p><strong>vardata</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – input data as a list or a numpy array.</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments forwarded to <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a>
 (e.g. <cite>time</cite>, <cite>name</cite>, <cite>units</cite>, <cite>height</cite>, <cite>pressure</cite>…).</p></li>
 </ul>
@@ -1060,7 +890,7 @@ axis is required (lev optional argument). - a levtype is required
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>vardata</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>list</em><em>, or </em><em>numpy.ndarray</em>) – input data as a list or a numpy array.</p></li>
+<li><p><strong>vardata</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – input data as a list or a numpy array.</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments forwarded to <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a>
 (e.g. <cite>time</cite>, <cite>name</cite>, <cite>units</cite>, <cite>height</cite>, <cite>pressure</cite>…).</p></li>
 </ul>
@@ -1079,7 +909,7 @@ axis is required (lev optional argument). - a levtype is required
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>vardata</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>list</em><em>, or </em><em>numpy.ndarray</em>) – input data as a list or a numpy array.</p></li>
+<li><p><strong>vardata</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – input data as a list or a numpy array.</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments forwarded to <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a>
 (e.g. <cite>time</cite>, <cite>name</cite>, <cite>units</cite>, <cite>height</cite>, <cite>pressure</cite>…).</p></li>
 </ul>
@@ -1097,7 +927,7 @@ axis is required (lev optional argument). - a levtype is required
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>vardata</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>list</em><em>, or </em><em>numpy.ndarray</em>) – input data as a list or a numpy array.</p></li>
+<li><p><strong>vardata</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – input data as a list or a numpy array.</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments forwarded to <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a>
 (e.g. <cite>time</cite>, <cite>name</cite>, <cite>units</cite>, <cite>height</cite>, <cite>pressure</cite>…).</p></li>
 </ul>
@@ -1115,7 +945,7 @@ axis is required (lev optional argument). - a levtype is required
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>vardata</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>list</em><em>, or </em><em>numpy.ndarray</em>) – input data as a list or a numpy array.</p></li>
+<li><p><strong>vardata</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – input data as a list or a numpy array.</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments forwarded to <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a>
 (e.g. <cite>time</cite>, <cite>name</cite>, <cite>units</cite>, <cite>height</cite>, <cite>pressure</cite>…).</p></li>
 </ul>
@@ -1134,7 +964,7 @@ axis is required (lev optional argument). - a levtype is required
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>vardata</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>list</em><em>, or </em><em>numpy.ndarray</em>) – input data as a list or a numpy array.</p></li>
+<li><p><strong>vardata</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – input data as a list or a numpy array.</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments forwarded to <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a>
 (e.g. <cite>time</cite>, <cite>name</cite>, <cite>units</cite>, <cite>height</cite>, <cite>pressure</cite>…).</p></li>
 </ul>
@@ -1153,7 +983,7 @@ axis is required (lev optional argument). - a levtype is required
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>vardata</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>list</em><em>, or </em><em>numpy.ndarray</em>) – input data as a list or a numpy array.</p></li>
+<li><p><strong>vardata</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – input data as a list or a numpy array.</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments forwarded to <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a>
 (e.g. <cite>time</cite>, <cite>name</cite>, <cite>units</cite>, <cite>height</cite>, <cite>pressure</cite>…).</p></li>
 </ul>
@@ -1171,7 +1001,7 @@ levtype is required (levtype optional argument).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>vardata</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>list</em><em>, or </em><em>numpy.ndarray</em>) – input data as a list or a numpy array.</p></li>
+<li><p><strong>vardata</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – input data as a list or a numpy array.</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments forwarded to <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a>
 (e.g. <cite>time</cite>, <cite>name</cite>, <cite>units</cite>, <cite>height</cite>, <cite>pressure</cite>…).</p></li>
 </ul>
@@ -1194,13 +1024,13 @@ for optional arguments.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>u</strong> (<em>list</em><em> or </em><em>numpy.ndarray</em>) – input data for zonal wind as a list or a numpy array.</p></li>
-<li><p><strong>v</strong> (<em>list</em><em> or </em><em>numpy.ndarray</em>) – input data for meridional wind as a list or a numpy array.</p></li>
-<li><p><strong>lev</strong> (<em>list</em><em>, </em><em>numpy.ndarray</em><em>, or </em><a class="reference internal" href="axis.html#dephycf.Axis.Axis" title="dephycf.Axis.Axis"><em>Axis</em></a><em>, </em><em>optional</em>) – level axis for both u and v as a list or a numpy array (default
+<li><p><strong>u</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – input data for zonal wind as a list or a numpy array.</p></li>
+<li><p><strong>v</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – input data for meridional wind as a list or a numpy array.</p></li>
+<li><p><strong>lev</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>, or <code class="xref py py-class docutils literal notranslate"><span class="pre">Axis</span></code>, optional) – level axis for both u and v as a list or a numpy array (default
 None)</p></li>
-<li><p><strong>ulev</strong> (<em>list</em><em> or </em><em>numpy.ndarray</em><em>, </em><em>optional</em>) – level axis for u as a list or a numpy array (default None)</p></li>
-<li><p><strong>vlev</strong> (<em>list</em><em> or </em><em>numpy.ndarray</em><em>, </em><em>optional</em>) – level axis for v as a list or a numpy array (default None)</p></li>
-<li><p><strong>levtype</strong> (<em>str</em><em>, </em><em>optional</em>) – type of vertical axis (pressure or altitude)</p></li>
+<li><p><strong>ulev</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>, optional) – level axis for u as a list or a numpy array (default None)</p></li>
+<li><p><strong>vlev</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>, optional) – level axis for v as a list or a numpy array (default None)</p></li>
+<li><p><strong>levtype</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, optional) – type of vertical axis (pressure or altitude)</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments forwarded to <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a>
 (e.g. <cite>time</cite>, <cite>name</cite>, <cite>units</cite>, <cite>height</cite>, <cite>pressure</cite>…).</p></li>
 </ul>
@@ -1223,7 +1053,7 @@ axis is required (lev optional argument). - a levtype is required
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>vardata</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>list</em><em>, or </em><em>numpy.ndarray</em>) – input data as a list or a numpy array.</p></li>
+<li><p><strong>vardata</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – input data as a list or a numpy array.</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments forwarded to <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a>
 (e.g. <cite>time</cite>, <cite>name</cite>, <cite>units</cite>, <cite>height</cite>, <cite>pressure</cite>…).</p></li>
 </ul>
@@ -1243,7 +1073,7 @@ provided, forcing is assumed constant in time.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>list</em><em>, or </em><em>numpy.ndarray</em>) – input data as a list or a numpy array.</p></li>
+<li><p><strong>data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – input data as a list or a numpy array.</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments forwarded to <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a>
 (e.g. <cite>time</cite>, <cite>name</cite>, <cite>units</cite>, <cite>height</cite>, <cite>pressure</cite>…).</p></li>
 </ul>
@@ -1260,7 +1090,7 @@ provided, forcing is assumed constant in time.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>list</em><em>, or </em><em>numpy.ndarray</em>) – input data as a list or a numpy array.</p></li>
+<li><p><strong>data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – input data as a list or a numpy array.</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments forwarded to <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a>
 (e.g. <cite>time</cite>, <cite>name</cite>, <cite>units</cite>, <cite>height</cite>, <cite>pressure</cite>…).</p></li>
 </ul>
@@ -1277,7 +1107,7 @@ provided, forcing is assumed constant in time.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>list</em><em>, or </em><em>numpy.ndarray</em>) – input data as a list or a numpy array.</p></li>
+<li><p><strong>data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – input data as a list or a numpy array.</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments forwarded to <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a>
 (e.g. <cite>time</cite>, <cite>name</cite>, <cite>units</cite>, <cite>height</cite>, <cite>pressure</cite>…).</p></li>
 </ul>
@@ -1294,7 +1124,7 @@ provided, forcing is assumed constant in time.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>list</em><em>, or </em><em>numpy.ndarray</em>) – input data as a list or a numpy array.</p></li>
+<li><p><strong>data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – input data as a list or a numpy array.</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments forwarded to <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a>
 (e.g. <cite>time</cite>, <cite>name</cite>, <cite>units</cite>, <cite>height</cite>, <cite>pressure</cite>…).</p></li>
 </ul>
@@ -1313,7 +1143,7 @@ assumed constant in time.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>list</em><em>, or </em><em>numpy.ndarray</em>) – input data as a list or a numpy array.</p></li>
+<li><p><strong>data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – input data as a list or a numpy array.</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments forwarded to <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a>
 (e.g. <cite>time</cite>, <cite>name</cite>, <cite>units</cite>, <cite>height</cite>, <cite>pressure</cite>…).</p></li>
 </ul>
@@ -1332,7 +1162,7 @@ assumed constant in time.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>list</em><em>, or </em><em>numpy.ndarray</em>) – input data as a list or a numpy array.</p></li>
+<li><p><strong>data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – input data as a list or a numpy array.</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments forwarded to <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a>
 (e.g. <cite>time</cite>, <cite>name</cite>, <cite>units</cite>, <cite>height</cite>, <cite>pressure</cite>…).</p></li>
 </ul>
@@ -1350,14 +1180,14 @@ constant in time</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>ug</strong> (<em>list</em><em> or </em><em>numpy.ndarray</em>) – input data for geostrophic zonal wind as a list or a numpy array.</p></li>
-<li><p><strong>vg</strong> (<em>list</em><em> or </em><em>numpy.ndarray</em>) – input data for geostrophic meridional wind as a list or a numpy
+<li><p><strong>ug</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – input data for geostrophic zonal wind as a list or a numpy array.</p></li>
+<li><p><strong>vg</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – input data for geostrophic meridional wind as a list or a numpy
 array.</p></li>
-<li><p><strong>lev</strong> (<em>list</em><em>, </em><em>numpy.ndarray</em><em>, or </em><a class="reference internal" href="axis.html#dephycf.Axis.Axis" title="dephycf.Axis.Axis"><em>Axis</em></a><em>, </em><em>optional</em>) – level axis for both u and v as a list or a numpy array (default
+<li><p><strong>lev</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>, or <code class="xref py py-class docutils literal notranslate"><span class="pre">Axis</span></code>, optional) – level axis for both u and v as a list or a numpy array (default
 None)</p></li>
-<li><p><strong>uglev</strong> (<em>list</em><em> or </em><em>numpy.ndarray</em><em>, </em><em>optional</em>) – level axis for u as a list or a numpy array (default None)</p></li>
-<li><p><strong>vglev</strong> (<em>list</em><em> or </em><em>numpy.ndarray</em><em>, </em><em>optional</em>) – level axis for v as a list or a numpy array (default None)</p></li>
-<li><p><strong>levtype</strong> (<em>str</em><em>, </em><em>optional</em>) – type of vertical axis (pressure or altitude)</p></li>
+<li><p><strong>uglev</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>, optional) – level axis for u as a list or a numpy array (default None)</p></li>
+<li><p><strong>vglev</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>, optional) – level axis for v as a list or a numpy array (default None)</p></li>
+<li><p><strong>levtype</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, optional) – type of vertical axis (pressure or altitude)</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments forwarded to <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a>
 (e.g. <cite>time</cite>, <cite>name</cite>, <cite>units</cite>, <cite>height</cite>, <cite>pressure</cite>…).</p></li>
 </ul>
@@ -1385,8 +1215,8 @@ axis is required (lev optional argument). - a levtype is required
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>w</strong> (<em>list</em><em> or </em><em>numpy.ndarray</em>) – See <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a> for details.</p></li>
-<li><p><strong>omega</strong> (<em>list</em><em> or </em><em>numpy.ndarray</em>) – See <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a> for details.</p></li>
+<li><p><strong>w</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – See <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a> for details.</p></li>
+<li><p><strong>omega</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – See <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a> for details.</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments forwarded to <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a>
 (e.g. <cite>time</cite>, <cite>name</cite>, <cite>units</cite>, <cite>height</cite>, <cite>pressure</cite>…).</p></li>
 </ul>
@@ -1409,8 +1239,8 @@ assumed constant in time.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>list</em><em>, or </em><em>numpy.ndarray</em>) – input data as a list or a numpy array.</p></li>
-<li><p><strong>include_rad</strong> (<em>bool</em><em>, </em><em>optional</em>) – boolean indicated whether the radiative tendency is included in the
+<li><p><strong>data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – input data as a list or a numpy array.</p></li>
+<li><p><strong>include_rad</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, optional) – boolean indicated whether the radiative tendency is included in the
 advection (default False)</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments forwarded to <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a>
 (e.g. <cite>time</cite>, <cite>name</cite>, <cite>units</cite>, <cite>height</cite>, <cite>pressure</cite>…).</p></li>
@@ -1430,8 +1260,8 @@ assumed constant in time.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>list</em><em>, or </em><em>numpy.ndarray</em>) – input data as a list or a numpy array.</p></li>
-<li><p><strong>include_rad</strong> (<em>bool</em><em>, </em><em>optional</em>) – boolean indicated whether the radiative tendency is included in the
+<li><p><strong>data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – input data as a list or a numpy array.</p></li>
+<li><p><strong>include_rad</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, optional) – boolean indicated whether the radiative tendency is included in the
 advection (default False)</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments forwarded to <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a>
 (e.g. <cite>time</cite>, <cite>name</cite>, <cite>units</cite>, <cite>height</cite>, <cite>pressure</cite>…).</p></li>
@@ -1451,8 +1281,8 @@ assumed constant in time.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>list</em><em>, or </em><em>numpy.ndarray</em>) – input data as a list or a numpy array.</p></li>
-<li><p><strong>include_rad</strong> (<em>bool</em><em>, </em><em>optional</em>) – boolean indicated whether the radiative tendency is included in the
+<li><p><strong>data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – input data as a list or a numpy array.</p></li>
+<li><p><strong>include_rad</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, optional) – boolean indicated whether the radiative tendency is included in the
 advection (default False)</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments forwarded to <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a>
 (e.g. <cite>time</cite>, <cite>name</cite>, <cite>units</cite>, <cite>height</cite>, <cite>pressure</cite>…).</p></li>
@@ -1472,7 +1302,7 @@ assumed constant in time.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>list</em><em>, or </em><em>numpy.ndarray</em>) – input data as a list or a numpy array.</p></li>
+<li><p><strong>data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – input data as a list or a numpy array.</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments forwarded to <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a>
 (e.g. <cite>time</cite>, <cite>name</cite>, <cite>units</cite>, <cite>height</cite>, <cite>pressure</cite>…).</p></li>
 </ul>
@@ -1491,7 +1321,7 @@ assumed constant in time.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>list</em><em>, or </em><em>numpy.ndarray</em>) – input data as a list or a numpy array.</p></li>
+<li><p><strong>data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – input data as a list or a numpy array.</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments forwarded to <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a>
 (e.g. <cite>time</cite>, <cite>name</cite>, <cite>units</cite>, <cite>height</cite>, <cite>pressure</cite>…).</p></li>
 </ul>
@@ -1511,7 +1341,7 @@ assumed constant in time.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>list</em><em>, or </em><em>numpy.ndarray</em>) – input data as a list or a numpy array.</p></li>
+<li><p><strong>data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – input data as a list or a numpy array.</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments forwarded to <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a>
 (e.g. <cite>time</cite>, <cite>name</cite>, <cite>units</cite>, <cite>height</cite>, <cite>pressure</cite>…).</p></li>
 </ul>
@@ -1530,7 +1360,7 @@ assumed constant in time.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>list</em><em>, or </em><em>numpy.ndarray</em>) – input data as a list or a numpy array.</p></li>
+<li><p><strong>data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – input data as a list or a numpy array.</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments forwarded to <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a>
 (e.g. <cite>time</cite>, <cite>name</cite>, <cite>units</cite>, <cite>height</cite>, <cite>pressure</cite>…).</p></li>
 </ul>
@@ -1549,9 +1379,9 @@ assumed constant in time.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>list</em><em>, or </em><em>numpy.ndarray</em>) – input data as a list or a numpy array.</p></li>
-<li><p><strong>ua_adv</strong> (<em>list</em><em> or </em><em>numpy.ndarray</em>) – See <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a> for details.</p></li>
-<li><p><strong>va_adv</strong> (<em>list</em><em> or </em><em>numpy.ndarray</em>) – See <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a> for details.</p></li>
+<li><p><strong>data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – input data as a list or a numpy array.</p></li>
+<li><p><strong>ua_adv</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – See <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a> for details.</p></li>
+<li><p><strong>va_adv</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – See <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a> for details.</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments forwarded to <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a>
 (e.g. <cite>time</cite>, <cite>name</cite>, <cite>units</cite>, <cite>height</cite>, <cite>pressure</cite>…).</p></li>
 </ul>
@@ -1570,7 +1400,7 @@ assumed constant in time.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>list</em><em>, or </em><em>numpy.ndarray</em>) – input data as a list or a numpy array.</p></li>
+<li><p><strong>data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – input data as a list or a numpy array.</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments forwarded to <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a>
 (e.g. <cite>time</cite>, <cite>name</cite>, <cite>units</cite>, <cite>height</cite>, <cite>pressure</cite>…).</p></li>
 </ul>
@@ -1589,7 +1419,7 @@ assumed constant in time.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>list</em><em>, or </em><em>numpy.ndarray</em>) – input data as a list or a numpy array.</p></li>
+<li><p><strong>data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – input data as a list or a numpy array.</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments forwarded to <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a>
 (e.g. <cite>time</cite>, <cite>name</cite>, <cite>units</cite>, <cite>height</cite>, <cite>pressure</cite>…).</p></li>
 </ul>
@@ -1608,7 +1438,7 @@ assumed constant in time.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>list</em><em>, or </em><em>numpy.ndarray</em>) – input data as a list or a numpy array.</p></li>
+<li><p><strong>data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – input data as a list or a numpy array.</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments forwarded to <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a>
 (e.g. <cite>time</cite>, <cite>name</cite>, <cite>units</cite>, <cite>height</cite>, <cite>pressure</cite>…).</p></li>
 </ul>
@@ -1629,13 +1459,13 @@ is assumed constant in time.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>varid</strong> (<em>str</em>) – id of the variable to be nudged as a string</p></li>
-<li><p><strong>data</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>list</em><em>, or </em><em>numpy.ndarray</em>) – input data as a list or a numpy array.</p></li>
-<li><p><strong>timescale</strong> (<em>int</em><em> or </em><em>float</em>) – nudging timescale in seconds (integer or float)</p></li>
-<li><p><strong>z_nudging</strong> (<em>int</em><em> or </em><em>float</em>) – altitude above which nudging is applied (integer or float)</p></li>
-<li><p><strong>p_nudging</strong> (<em>int</em><em> or </em><em>float</em>) – pressure altitude under which nudging is applied (integer or float)</p></li>
+<li><p><strong>varid</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – id of the variable to be nudged as a string</p></li>
+<li><p><strong>data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – input data as a list or a numpy array.</p></li>
+<li><p><strong>timescale</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – nudging timescale in seconds (integer or float)</p></li>
+<li><p><strong>z_nudging</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – altitude above which nudging is applied (integer or float)</p></li>
+<li><p><strong>p_nudging</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – pressure altitude under which nudging is applied (integer or float)</p></li>
 <li><p><strong>nudging_coefficient</strong> (<em>array_like</em>) – profile of nudging coefficient</p></li>
-<li><p><strong>lev</strong> (<em>list</em><em>, </em><em>numpy.ndarray</em><em>, or </em><a class="reference internal" href="axis.html#dephycf.Axis.Axis" title="dephycf.Axis.Axis"><em>Axis</em></a>) – Level axis for the nudged variable, as a list, a numpy array or an
+<li><p><strong>lev</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>, or <code class="xref py py-class docutils literal notranslate"><span class="pre">Axis</span></code>) – Level axis for the nudged variable, as a list, a numpy array or an
 Axis object.</p></li>
 <li><p><strong>lev_coef</strong> (<em>array_like</em>) – Level axis associated with <cite>nudging_coefficient</cite>, if it differs
 from <cite>lev</cite>.</p></li>
@@ -1661,13 +1491,13 @@ constant in time</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>unudg</strong> (<em>list</em><em> or </em><em>numpy.ndarray</em>) – input data for zonal wind as a list or a numpy array.</p></li>
-<li><p><strong>vnudg</strong> (<em>list</em><em> or </em><em>numpy.ndarray</em>) – input data for meridional wind as a list or a numpy array.</p></li>
-<li><p><strong>lev</strong> (<em>list</em><em>, </em><em>numpy.ndarray</em><em>, or </em><a class="reference internal" href="axis.html#dephycf.Axis.Axis" title="dephycf.Axis.Axis"><em>Axis</em></a><em>, </em><em>optional</em>) – level axis for both unudg and vnudg as a list or a numpy array
+<li><p><strong>unudg</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – input data for zonal wind as a list or a numpy array.</p></li>
+<li><p><strong>vnudg</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – input data for meridional wind as a list or a numpy array.</p></li>
+<li><p><strong>lev</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>, or <code class="xref py py-class docutils literal notranslate"><span class="pre">Axis</span></code>, optional) – level axis for both unudg and vnudg as a list or a numpy array
 (default None)</p></li>
-<li><p><strong>ulev</strong> (<em>list</em><em> or </em><em>numpy.ndarray</em><em>, </em><em>optional</em>) – level axis for unudg as a list or a numpy array (default None)</p></li>
-<li><p><strong>vlev</strong> (<em>list</em><em> or </em><em>numpy.ndarray</em><em>, </em><em>optional</em>) – level axis for vnudg as a list or a numpy array (default None)</p></li>
-<li><p><strong>levtype</strong> (<em>str</em><em>, </em><em>optional</em>) – type of vertical axis (pressure or altitude)</p></li>
+<li><p><strong>ulev</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>, optional) – level axis for unudg as a list or a numpy array (default None)</p></li>
+<li><p><strong>vlev</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>, optional) – level axis for vnudg as a list or a numpy array (default None)</p></li>
+<li><p><strong>levtype</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, optional) – type of vertical axis (pressure or altitude)</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments forwarded to <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a>
 (e.g. <cite>time</cite>, <cite>name</cite>, <cite>units</cite>, <cite>height</cite>, <cite>pressure</cite>…).</p></li>
 </ul>
@@ -1691,7 +1521,7 @@ time.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>list</em><em>, or </em><em>numpy.ndarray</em>) – input data as a list or a numpy array.</p></li>
+<li><p><strong>data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – input data as a list or a numpy array.</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments forwarded to <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a>
 (e.g. <cite>time</cite>, <cite>name</cite>, <cite>units</cite>, <cite>height</cite>, <cite>pressure</cite>…).</p></li>
 </ul>
@@ -1711,7 +1541,7 @@ time.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>list</em><em>, or </em><em>numpy.ndarray</em>) – input data as a list or a numpy array.</p></li>
+<li><p><strong>data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – input data as a list or a numpy array.</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments forwarded to <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a>
 (e.g. <cite>time</cite>, <cite>name</cite>, <cite>units</cite>, <cite>height</cite>, <cite>pressure</cite>…).</p></li>
 </ul>
@@ -1732,7 +1562,7 @@ time.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>list</em><em>, or </em><em>numpy.ndarray</em>) – input data as a list or a numpy array.</p></li>
+<li><p><strong>data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – input data as a list or a numpy array.</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments forwarded to <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a>
 (e.g. <cite>time</cite>, <cite>name</cite>, <cite>units</cite>, <cite>height</cite>, <cite>pressure</cite>…).</p></li>
 </ul>
@@ -1752,7 +1582,7 @@ time.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>list</em><em>, or </em><em>numpy.ndarray</em>) – input data as a list or a numpy array.</p></li>
+<li><p><strong>data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – input data as a list or a numpy array.</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments forwarded to <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a>
 (e.g. <cite>time</cite>, <cite>name</cite>, <cite>units</cite>, <cite>height</cite>, <cite>pressure</cite>…).</p></li>
 </ul>
@@ -1772,7 +1602,7 @@ time.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>list</em><em>, or </em><em>numpy.ndarray</em>) – input data as a list or a numpy array.</p></li>
+<li><p><strong>data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – input data as a list or a numpy array.</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments forwarded to <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a>
 (e.g. <cite>time</cite>, <cite>name</cite>, <cite>units</cite>, <cite>height</cite>, <cite>pressure</cite>…).</p></li>
 </ul>
@@ -1792,7 +1622,7 @@ time.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>list</em><em>, or </em><em>numpy.ndarray</em>) – input data as a list or a numpy array.</p></li>
+<li><p><strong>data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – input data as a list or a numpy array.</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments forwarded to <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a>
 (e.g. <cite>time</cite>, <cite>name</cite>, <cite>units</cite>, <cite>height</cite>, <cite>pressure</cite>…).</p></li>
 </ul>
@@ -1812,7 +1642,7 @@ time.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>list</em><em>, or </em><em>numpy.ndarray</em>) – input data as a list or a numpy array.</p></li>
+<li><p><strong>data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – input data as a list or a numpy array.</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments forwarded to <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a>
 (e.g. <cite>time</cite>, <cite>name</cite>, <cite>units</cite>, <cite>height</cite>, <cite>pressure</cite>…).</p></li>
 </ul>
@@ -1831,8 +1661,8 @@ a numpy array.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>ro3</strong> (<em>list</em><em> or </em><em>numpy.ndarray</em>) – See <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a> for details.</p></li>
-<li><p><strong>o3</strong> (<em>list</em><em> or </em><em>numpy.ndarray</em>) – See <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a> for details.</p></li>
+<li><p><strong>ro3</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – See <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a> for details.</p></li>
+<li><p><strong>o3</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – See <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a> for details.</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments forwarded to <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a>
 (e.g. <cite>time</cite>, <cite>name</cite>, <cite>units</cite>, <cite>height</cite>, <cite>pressure</cite>…).</p></li>
 </ul>
@@ -1869,7 +1699,7 @@ prescribed.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>list</em><em>, or </em><em>numpy.ndarray</em>) – input data as a list or a numpy array.</p></li>
+<li><p><strong>data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – input data as a list or a numpy array.</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments forwarded to <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a>
 (e.g. <cite>time</cite>, <cite>name</cite>, <cite>units</cite>, <cite>height</cite>, <cite>pressure</cite>…).</p></li>
 </ul>
@@ -1888,7 +1718,7 @@ prescribed.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>list</em><em>, or </em><em>numpy.ndarray</em>) – input data as a list or a numpy array.</p></li>
+<li><p><strong>data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – input data as a list or a numpy array.</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments forwarded to <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a>
 (e.g. <cite>time</cite>, <cite>name</cite>, <cite>units</cite>, <cite>height</cite>, <cite>pressure</cite>…).</p></li>
 </ul>
@@ -1905,7 +1735,7 @@ sets a surface temperature for the radiation scheme.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>list</em><em>, or </em><em>numpy.ndarray</em>) – input data as a list or a numpy array.</p></li>
+<li><p><strong>data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – input data as a list or a numpy array.</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments forwarded to <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a>
 (e.g. <cite>time</cite>, <cite>name</cite>, <cite>units</cite>, <cite>height</cite>, <cite>pressure</cite>…).</p></li>
 </ul>
@@ -1923,8 +1753,8 @@ initial surface temperature is not defined, add it.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>list</em><em>, or </em><em>numpy.ndarray</em>) – input data as a list or a numpy array.</p></li>
-<li><p><strong>z0</strong> (<em>float</em>) – See <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a> for details.</p></li>
+<li><p><strong>data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – input data as a list or a numpy array.</p></li>
+<li><p><strong>z0</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – See <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a> for details.</p></li>
 <li><p><strong>z0h</strong> (<em>object</em>) – See <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a> for details.</p></li>
 <li><p><strong>z0q</strong> (<em>object</em>) – See <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a> for details.</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments forwarded to <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a>
@@ -1945,8 +1775,8 @@ it.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>list</em><em>, or </em><em>numpy.ndarray</em>) – input data as a list or a numpy array.</p></li>
-<li><p><strong>z0</strong> (<em>float</em>) – See <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a> for details.</p></li>
+<li><p><strong>data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – input data as a list or a numpy array.</p></li>
+<li><p><strong>z0</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – See <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a> for details.</p></li>
 <li><p><strong>z0h</strong> (<em>object</em>) – See <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a> for details.</p></li>
 <li><p><strong>z0q</strong> (<em>object</em>) – See <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a> for details.</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments forwarded to <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a>
@@ -1966,19 +1796,19 @@ not provided, friction velocity is assumed constant in time.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>sens</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>list</em><em>, or </em><em>numpy.ndarray</em>) – input data for surface sensible heat flux as a numeric, a list or a
+<li><p><strong>sens</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – input data for surface sensible heat flux as a numeric, a list or a
 numpy array.</p></li>
-<li><p><strong>lat</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>list</em><em>, or </em><em>numpy.ndarray</em>) – input data for surface latent heat flux as a numeric, a list or a
+<li><p><strong>lat</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – input data for surface latent heat flux as a numeric, a list or a
 numpy array.</p></li>
-<li><p><strong>time</strong> (<em>list</em><em>, </em><em>numpy.ndarray</em><em>, or </em><a class="reference internal" href="axis.html#dephycf.Axis.Axis" title="dephycf.Axis.Axis"><em>Axis</em></a><em>, </em><em>optional</em>) – time axis for both sensible and latent heat fluxes</p></li>
-<li><p><strong>time_sens</strong> (<em>list</em><em>, </em><em>numpy.ndarray</em><em>, or </em><a class="reference internal" href="axis.html#dephycf.Axis.Axis" title="dephycf.Axis.Axis"><em>Axis</em></a><em>, </em><em>optional</em>) – time axis for sensibile heat flux</p></li>
-<li><p><strong>time_lat</strong> (<em>list</em><em>, </em><em>numpy.ndarray</em><em>, or </em><a class="reference internal" href="axis.html#dephycf.Axis.Axis" title="dephycf.Axis.Axis"><em>Axis</em></a><em>, </em><em>optional</em>) – time axis for latent heat flux</p></li>
-<li><p><strong>forc_wind</strong> (<em>str</em><em>, </em><em>optional</em>) – type of surface wind forcing as a string: ‘z0’ or ‘ustar’ (default
+<li><p><strong>time</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>, or <code class="xref py py-class docutils literal notranslate"><span class="pre">Axis</span></code>, optional) – time axis for both sensible and latent heat fluxes</p></li>
+<li><p><strong>time_sens</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>, or <code class="xref py py-class docutils literal notranslate"><span class="pre">Axis</span></code>, optional) – time axis for sensibile heat flux</p></li>
+<li><p><strong>time_lat</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>, or <code class="xref py py-class docutils literal notranslate"><span class="pre">Axis</span></code>, optional) – time axis for latent heat flux</p></li>
+<li><p><strong>forc_wind</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, optional) – type of surface wind forcing as a string: ‘z0’ or ‘ustar’ (default
 ‘z0’)</p></li>
-<li><p><strong>z0</strong> (<em>float</em><em>, </em><em>optional</em>) – numeric value for surface roughness (default None)</p></li>
-<li><p><strong>ustar</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>list</em><em>, or </em><em>numpy.ndarray</em><em>, </em><em>optional</em>) – input data for surface friction velocity as a numeric, a list or a
+<li><p><strong>z0</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, optional) – numeric value for surface roughness (default None)</p></li>
+<li><p><strong>ustar</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>, optional) – input data for surface friction velocity as a numeric, a list or a
 numpy array (default None)</p></li>
-<li><p><strong>time_ustar</strong> (<em>list</em><em>, </em><em>numpy.ndarray</em><em>, or </em><a class="reference internal" href="axis.html#dephycf.Axis.Axis" title="dephycf.Axis.Axis"><em>Axis</em></a><em>, </em><em>optional</em>) – time axis for ustar (default None)</p></li>
+<li><p><strong>time_ustar</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>, or <code class="xref py py-class docutils literal notranslate"><span class="pre">Axis</span></code>, optional) – time axis for ustar (default None)</p></li>
 <li><p><strong>time_z0</strong> (<em>object</em>) – See <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a> for details.</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments forwarded to <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a>
 (e.g. <cite>time</cite>, <cite>name</cite>, <cite>units</cite>, <cite>height</cite>, <cite>pressure</cite>…).</p></li>
@@ -1997,7 +1827,7 @@ numpy array (default None)</p></li>
 <dd><p>Activate a beta model for surface evaporation in a Case object</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>beta</strong> (<em>float</em><em>, </em><em>optional</em>) – beta value of the beta model (default: 1.)</p>
+<dd class="field-odd"><p><strong>beta</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, optional) – beta value of the beta model (default: 1.)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2027,7 +1857,7 @@ numpy array (default None)</p></li>
 variables and finally the variables themselves.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>fileout</strong> (<em>str</em>) – netCDF file name as a string</p>
+<dd class="field-odd"><p><strong>fileout</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – netCDF file name as a string</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2039,7 +1869,7 @@ variables and finally the variables themselves.</p>
 <p>Note that the case object should be initialize first.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>filein</strong> (<em>str</em>) – netCDF file name as a string</p>
+<dd class="field-odd"><p><strong>filein</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – netCDF file name as a string</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2054,7 +1884,7 @@ in <cite>self.variables</cite>; see that method for the supported
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>rep_images</strong> (<em>str</em><em>, </em><em>optional</em>) – Output directory for the generated images. Created if it does not
+<li><p><strong>rep_images</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, optional) – Output directory for the generated images. Created if it does not
 already exist. Defaults to <code class="docutils literal notranslate"><span class="pre">'./images/'</span></code>.</p></li>
 <li><p><strong>timeunits</strong> (<em>{'hours'</em><em>, </em><em>'days'}</em><em>, </em><em>optional</em>) – Units to convert the time axis to before plotting.</p></li>
 <li><p><strong>levunits</strong> (<em>{'hPa'</em><em>, </em><em>'Pa'</em><em>, </em><em>'km'</em><em>, </em><em>'m'}</em><em>, </em><em>optional</em>) – Units to convert the level axis to before plotting.</p></li>
@@ -2073,11 +1903,11 @@ version for comparison.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>cc</strong> (<a class="reference internal" href="#dephycf.Case.Case" title="dephycf.Case.Case"><em>Case</em></a>) – The other case to compare against.</p></li>
-<li><p><strong>rep_images</strong> (<em>str</em><em>, </em><em>optional</em>) – Output directory for the generated images. Created if it does not
+<li><p><strong>cc</strong> (<a class="reference internal" href="#dephycf.Case.Case" title="dephycf.Case.Case"><code class="xref py py-class docutils literal notranslate"><span class="pre">Case</span></code></a>) – The other case to compare against.</p></li>
+<li><p><strong>rep_images</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, optional) – Output directory for the generated images. Created if it does not
 already exist. Defaults to <code class="docutils literal notranslate"><span class="pre">'./images/'</span></code>.</p></li>
-<li><p><strong>label1</strong> (<em>str</em><em>, </em><em>optional</em>) – Legend label for <cite>self</cite>’s curves.</p></li>
-<li><p><strong>label2</strong> (<em>str</em><em>, </em><em>optional</em>) – Legend label for <cite>cc</cite>’s curves.</p></li>
+<li><p><strong>label1</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, optional) – Legend label for <cite>self</cite>’s curves.</p></li>
+<li><p><strong>label2</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, optional) – Legend label for <cite>cc</cite>’s curves.</p></li>
 <li><p><strong>timeunits</strong> (<em>{'hours'</em><em>, </em><em>'days'}</em><em>, </em><em>optional</em>) – Units to convert the time axis to before plotting.</p></li>
 <li><p><strong>levunits</strong> (<em>{'hPa'</em><em>, </em><em>'Pa'</em><em>, </em><em>'km'</em><em>, </em><em>'m'}</em><em>, </em><em>optional</em>) – Units to convert the level axis to before plotting.</p></li>
 </ul>
@@ -2097,14 +1927,14 @@ available, otherwise assumed equal to the initial liquid-water
 potential temperature (<code class="docutils literal notranslate"><span class="pre">thetal</span></code>).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>pressure</strong> (<a class="reference internal" href="variable.html#dephycf.Variable.Variable" title="dephycf.Variable.Variable"><em>Variable</em></a><em>, </em><em>optional</em>) – Initial pressure profile, required if <code class="docutils literal notranslate"><span class="pre">ta</span></code> is used as the source
+<dd class="field-odd"><p><strong>pressure</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Variable</span></code>, optional) – Initial pressure profile, required if <code class="docutils literal notranslate"><span class="pre">ta</span></code> is used as the source
 variable.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The initial potential temperature profile (first time step).</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>numpy.ndarray</p>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>ValueError</strong> – If neither <code class="docutils literal notranslate"><span class="pre">ta</span></code> (with <cite>pressure</cite>) nor <code class="docutils literal notranslate"><span class="pre">thetal</span></code> is available.</p>
@@ -2121,7 +1951,7 @@ variable.</p>
 potential temperature (<code class="docutils literal notranslate"><span class="pre">theta</span></code>).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>pressure</strong> (<a class="reference internal" href="variable.html#dephycf.Variable.Variable" title="dephycf.Variable.Variable"><em>Variable</em></a><em>, </em><em>optional</em>) – Initial pressure profile, required if <code class="docutils literal notranslate"><span class="pre">ta</span></code> is used as the source
+<dd class="field-odd"><p><strong>pressure</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Variable</span></code>, optional) – Initial pressure profile, required if <code class="docutils literal notranslate"><span class="pre">ta</span></code> is used as the source
 variable.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -2129,7 +1959,7 @@ variable.</p>
 step).</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>numpy.ndarray</p>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>ValueError</strong> – If neither <code class="docutils literal notranslate"><span class="pre">ta</span></code> (with <cite>pressure</cite>) nor <code class="docutils literal notranslate"><span class="pre">theta</span></code> is available.</p>
@@ -2146,13 +1976,13 @@ water potential temperature (<code class="docutils literal notranslate"><span cl
 ignoring liquid water), given <cite>pressure</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>pressure</strong> (<a class="reference internal" href="variable.html#dephycf.Variable.Variable" title="dephycf.Variable.Variable"><em>Variable</em></a>) – Initial pressure profile (required).</p>
+<dd class="field-odd"><p><strong>pressure</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Variable</span></code>) – Initial pressure profile (required).</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The initial temperature profile (first time step).</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>numpy.ndarray</p>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>ValueError</strong> – If <cite>pressure</cite> is <code class="docutils literal notranslate"><span class="pre">None</span></code>, or if neither <code class="docutils literal notranslate"><span class="pre">theta</span></code> nor <code class="docutils literal notranslate"><span class="pre">thetal</span></code>
@@ -2174,7 +2004,7 @@ and <code class="docutils literal notranslate"><span class="pre">ta</span></code
 <dd class="field-odd"><p>The initial specific humidity profile (first time step).</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>numpy.ndarray</p>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></p>
 </dd>
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>ValueError</strong> – If none of <code class="docutils literal notranslate"><span class="pre">qt</span></code>, <code class="docutils literal notranslate"><span class="pre">rv</span></code>, <code class="docutils literal notranslate"><span class="pre">rt</span></code> or <code class="docutils literal notranslate"><span class="pre">hur</span></code> is available, or if
@@ -2196,7 +2026,7 @@ and <code class="docutils literal notranslate"><span class="pre">ta</span></code
 <dd class="field-odd"><p>The initial total water content profile (first time step).</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>numpy.ndarray</p>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></p>
 </dd>
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>ValueError</strong> – If none of <code class="docutils literal notranslate"><span class="pre">qv</span></code>, <code class="docutils literal notranslate"><span class="pre">rv</span></code>, <code class="docutils literal notranslate"><span class="pre">rt</span></code> or <code class="docutils literal notranslate"><span class="pre">hur</span></code> is available, or if
@@ -2218,7 +2048,7 @@ and <code class="docutils literal notranslate"><span class="pre">ta</span></code
 <dd class="field-odd"><p>The initial water vapor mixing ratio profile (first time step).</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>numpy.ndarray</p>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></p>
 </dd>
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>ValueError</strong> – If none of <code class="docutils literal notranslate"><span class="pre">qv</span></code>, <code class="docutils literal notranslate"><span class="pre">qt</span></code>, <code class="docutils literal notranslate"><span class="pre">rt</span></code> or <code class="docutils literal notranslate"><span class="pre">hur</span></code> is available, or if
@@ -2240,7 +2070,7 @@ and <code class="docutils literal notranslate"><span class="pre">ta</span></code
 <dd class="field-odd"><p>The initial total water mixing ratio profile (first time step).</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>numpy.ndarray</p>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></p>
 </dd>
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>ValueError</strong> – If none of <code class="docutils literal notranslate"><span class="pre">qv</span></code>, <code class="docutils literal notranslate"><span class="pre">qt</span></code>, <code class="docutils literal notranslate"><span class="pre">rv</span></code> or <code class="docutils literal notranslate"><span class="pre">hur</span></code> is available, or if
@@ -2261,7 +2091,7 @@ in the initial state (in that order of preference). Requires <code class="docuti
 <dd class="field-odd"><p>The initial relative humidity profile (first time step).</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>numpy.ndarray</p>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></p>
 </dd>
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>ValueError</strong> – If <code class="docutils literal notranslate"><span class="pre">pa</span></code> or <code class="docutils literal notranslate"><span class="pre">ta</span></code> is missing, or if none of <code class="docutils literal notranslate"><span class="pre">qv</span></code>, <code class="docutils literal notranslate"><span class="pre">qt</span></code>,
@@ -2281,7 +2111,7 @@ in the initial state (in that order of preference). Requires <code class="docuti
 <dd class="field-odd"><p>The temperature advection tendency.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>numpy.ndarray</p>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></p>
 </dd>
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>ValueError</strong> – If neither <code class="docutils literal notranslate"><span class="pre">tntheta_adv</span></code> nor <code class="docutils literal notranslate"><span class="pre">tnthetal_adv</span></code> is available.</p>
@@ -2300,7 +2130,7 @@ in the initial state (in that order of preference). Requires <code class="docuti
 <dd class="field-odd"><p>The potential temperature advection tendency.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>numpy.ndarray</p>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></p>
 </dd>
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>ValueError</strong> – If neither <code class="docutils literal notranslate"><span class="pre">tnta_adv</span></code> nor <code class="docutils literal notranslate"><span class="pre">tnthetal_adv</span></code> is available.</p>
@@ -2321,7 +2151,7 @@ tendency.</p>
 <dd class="field-odd"><p>The liquid-water potential temperature advection tendency.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>numpy.ndarray</p>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></p>
 </dd>
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>ValueError</strong> – If neither <code class="docutils literal notranslate"><span class="pre">tnta_adv</span></code> nor <code class="docutils literal notranslate"><span class="pre">tntheta_adv</span></code> is available.</p>
@@ -2340,7 +2170,7 @@ tendency.</p>
 <dd class="field-odd"><p>The radiative temperature tendency.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>numpy.ndarray</p>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></p>
 </dd>
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>ValueError</strong> – If neither <code class="docutils literal notranslate"><span class="pre">tntheta_rad</span></code> nor <code class="docutils literal notranslate"><span class="pre">tnthetal_rad</span></code> is available.</p>
@@ -2359,7 +2189,7 @@ tendency.</p>
 <dd class="field-odd"><p>The radiative potential temperature tendency.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>numpy.ndarray</p>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></p>
 </dd>
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>ValueError</strong> – If neither <code class="docutils literal notranslate"><span class="pre">tnta_rad</span></code> nor <code class="docutils literal notranslate"><span class="pre">tnthetal_rad</span></code> is available.</p>
@@ -2379,7 +2209,7 @@ tendency.</p>
 <dd class="field-odd"><p>The radiative liquid-water potential temperature tendency.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>numpy.ndarray</p>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></p>
 </dd>
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>ValueError</strong> – If neither <code class="docutils literal notranslate"><span class="pre">tnta_rad</span></code> nor <code class="docutils literal notranslate"><span class="pre">tntheta_rad</span></code> is available.</p>
@@ -2399,7 +2229,7 @@ water profile.</p>
 <dd class="field-odd"><p>The specific humidity advection tendency.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>numpy.ndarray</p>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></p>
 </dd>
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>ValueError</strong> – If none of <code class="docutils literal notranslate"><span class="pre">tnqt_adv</span></code>, <code class="docutils literal notranslate"><span class="pre">tnrv_adv</span></code> or <code class="docutils literal notranslate"><span class="pre">tnrt_adv</span></code> is available.</p>
@@ -2419,7 +2249,7 @@ water profile.</p>
 <dd class="field-odd"><p>The total water content advection tendency.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>numpy.ndarray</p>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></p>
 </dd>
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>ValueError</strong> – If none of <code class="docutils literal notranslate"><span class="pre">tnqv_adv</span></code>, <code class="docutils literal notranslate"><span class="pre">tnrv_adv</span></code> or <code class="docutils literal notranslate"><span class="pre">tnrt_adv</span></code> is available.</p>
@@ -2439,7 +2269,7 @@ water profile.</p>
 <dd class="field-odd"><p>The water vapor mixing ratio advection tendency.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>numpy.ndarray</p>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></p>
 </dd>
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>ValueError</strong> – If none of <code class="docutils literal notranslate"><span class="pre">tnrt_adv</span></code>, <code class="docutils literal notranslate"><span class="pre">tnqv_adv</span></code> or <code class="docutils literal notranslate"><span class="pre">tnqt_adv</span></code> is available.</p>
@@ -2459,7 +2289,7 @@ water profile.</p>
 <dd class="field-odd"><p>The total water mixing ratio advection tendency.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>numpy.ndarray</p>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></p>
 </dd>
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>ValueError</strong> – If none of <code class="docutils literal notranslate"><span class="pre">tnrv_adv</span></code>, <code class="docutils literal notranslate"><span class="pre">tnqv_adv</span></code> or <code class="docutils literal notranslate"><span class="pre">tnqt_adv</span></code> is available.</p>
@@ -2478,7 +2308,7 @@ water profile.</p>
 <dd class="field-odd"><p>The temperature nudging profile.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>numpy.ndarray</p>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></p>
 </dd>
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>ValueError</strong> – If neither <code class="docutils literal notranslate"><span class="pre">theta_nud</span></code> nor <code class="docutils literal notranslate"><span class="pre">thetal_nud</span></code> is available.</p>
@@ -2497,7 +2327,7 @@ water profile.</p>
 <dd class="field-odd"><p>The potential temperature nudging profile.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>numpy.ndarray</p>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></p>
 </dd>
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>ValueError</strong> – If neither <code class="docutils literal notranslate"><span class="pre">ta_nud</span></code> nor <code class="docutils literal notranslate"><span class="pre">thetal_nud</span></code> is available.</p>
@@ -2517,7 +2347,7 @@ water profile.</p>
 <dd class="field-odd"><p>The liquid-water potential temperature nudging profile.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>numpy.ndarray</p>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></p>
 </dd>
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>ValueError</strong> – If neither <code class="docutils literal notranslate"><span class="pre">ta_nud</span></code> nor <code class="docutils literal notranslate"><span class="pre">theta_nud</span></code> is available.</p>
@@ -2536,7 +2366,7 @@ water profile.</p>
 <dd class="field-odd"><p>The specific humidity nudging profile.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>numpy.ndarray</p>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></p>
 </dd>
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>ValueError</strong> – If none of <code class="docutils literal notranslate"><span class="pre">qt_nud</span></code>, <code class="docutils literal notranslate"><span class="pre">rv_nud</span></code> or <code class="docutils literal notranslate"><span class="pre">rt_nud</span></code> is available.</p>
@@ -2555,7 +2385,7 @@ water profile.</p>
 <dd class="field-odd"><p>The total water content nudging profile.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>numpy.ndarray</p>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></p>
 </dd>
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>ValueError</strong> – If none of <code class="docutils literal notranslate"><span class="pre">qv_nud</span></code>, <code class="docutils literal notranslate"><span class="pre">rv_nud</span></code> or <code class="docutils literal notranslate"><span class="pre">rt_nud</span></code> is available.</p>
@@ -2574,7 +2404,7 @@ assumed equal to <code class="docutils literal notranslate"><span class="pre">rt
 <dd class="field-odd"><p>The water vapor mixing ratio nudging profile.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>numpy.ndarray</p>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></p>
 </dd>
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>ValueError</strong> – If none of <code class="docutils literal notranslate"><span class="pre">qv_nud</span></code>, <code class="docutils literal notranslate"><span class="pre">qt_nud</span></code> or <code class="docutils literal notranslate"><span class="pre">rt_nud</span></code> is available.</p>
@@ -2593,7 +2423,7 @@ assumed equal to <code class="docutils literal notranslate"><span class="pre">rv
 <dd class="field-odd"><p>The total water mixing ratio nudging profile.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>numpy.ndarray</p>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></p>
 </dd>
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>ValueError</strong> – If none of <code class="docutils literal notranslate"><span class="pre">qv_nud</span></code>, <code class="docutils literal notranslate"><span class="pre">qt_nud</span></code> or <code class="docutils literal notranslate"><span class="pre">rv_nud</span></code> is available.</p>
@@ -2623,11 +2453,11 @@ variables are kept on their original time axis.</p></li>
 vertical interpolation. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, no vertical interpolation is
 performed.</p></li>
 <li><p><strong>levtype</strong> (<em>{'altitude'</em><em>, </em><em>'pressure'}</em><em>, </em><em>optional</em>) – Type of the target level axis <cite>lev</cite>. Required when <cite>lev</cite> is given.</p></li>
-<li><p><strong>usetemp</strong> (<em>bool</em><em>, </em><em>optional</em>) – Currently unused placeholder flag, kept for API compatibility.
+<li><p><strong>usetemp</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, optional) – Currently unused placeholder flag, kept for API compatibility.
 Defaults to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
-<li><p><strong>usetheta</strong> (<em>bool</em><em>, </em><em>optional</em>) – Currently unused placeholder flag, kept for API compatibility.
+<li><p><strong>usetheta</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, optional) – Currently unused placeholder flag, kept for API compatibility.
 Defaults to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
-<li><p><strong>usethetal</strong> (<em>bool</em><em>, </em><em>optional</em>) – Currently unused placeholder flag, kept for API compatibility.
+<li><p><strong>usethetal</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, optional) – Currently unused placeholder flag, kept for API compatibility.
 Defaults to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
 </ul>
 </dd>
@@ -2635,7 +2465,7 @@ Defaults to <code class="docutils literal notranslate"><span class="pre">True</s
 <dd class="field-even"><p>A new, interpolated, <a class="reference internal" href="#dephycf.Case.Case" title="dephycf.Case.Case"><code class="xref py py-class docutils literal notranslate"><span class="pre">Case</span></code></a> instance.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="#dephycf.Case.Case" title="dephycf.Case.Case">Case</a></p>
+<dd class="field-odd"><p><a class="reference internal" href="#dephycf.Case.Case" title="dephycf.Case.Case"><code class="xref py py-class docutils literal notranslate"><span class="pre">Case</span></code></a></p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>ValueError</strong> – If a variable’s level axis has unexpected units, or if <cite>levtype</cite> is
@@ -2644,6 +2474,12 @@ Defaults to <code class="docutils literal notranslate"><span class="pre">True</s
 </dl>
 </dd></dl>
 
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The <code class="xref py py-meth docutils literal notranslate"><span class="pre">interpolate()</span></code> method contains placeholder
+<code class="docutils literal notranslate"><span class="pre">usetemp</span></code>/<code class="docutils literal notranslate"><span class="pre">usetheta</span></code>/<code class="docutils literal notranslate"><span class="pre">usethetal</span></code> parameters that are
+currently unused (see the source code).</p>
+</div>
 <dl class="py method">
 <dt class="sig sig-object py" id="dephycf.Case.Case.add_missing_init_variables">
 <span class="sig-prename descclassname"><span class="pre">Case.</span></span><span class="sig-name descname"><span class="pre">add_missing_init_variables</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dephycf/Case.html#Case.add_missing_init_variables"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dephycf.Case.Case.add_missing_init_variables" title="Link to this definition">#</a></dt>
@@ -2727,16 +2563,16 @@ used to drive a single-column model, or written out with <a class="reference int
 <li><p><strong>lev</strong> (<em>array_like</em><em>, </em><em>optional</em>) – Target level values, forwarded to <a class="reference internal" href="#dephycf.Case.Case.interpolate" title="dephycf.Case.Case.interpolate"><code class="xref py py-meth docutils literal notranslate"><span class="pre">interpolate()</span></code></a>.</p></li>
 <li><p><strong>levtype</strong> (<em>{'altitude'</em><em>, </em><em>'pressure'}</em><em>, </em><em>optional</em>) – Type of the target level axis <cite>lev</cite>, forwarded to
 <a class="reference internal" href="#dephycf.Case.Case.interpolate" title="dephycf.Case.Case.interpolate"><code class="xref py py-meth docutils literal notranslate"><span class="pre">interpolate()</span></code></a>.</p></li>
-<li><p><strong>usetemp</strong> (<em>bool</em><em>, </em><em>optional</em>) – Forwarded to <a class="reference internal" href="#dephycf.Case.Case.interpolate" title="dephycf.Case.Case.interpolate"><code class="xref py py-meth docutils literal notranslate"><span class="pre">interpolate()</span></code></a>. Defaults to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
-<li><p><strong>usetheta</strong> (<em>bool</em><em>, </em><em>optional</em>) – Forwarded to <a class="reference internal" href="#dephycf.Case.Case.interpolate" title="dephycf.Case.Case.interpolate"><code class="xref py py-meth docutils literal notranslate"><span class="pre">interpolate()</span></code></a>. Defaults to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
-<li><p><strong>usethetal</strong> (<em>bool</em><em>, </em><em>optional</em>) – Forwarded to <a class="reference internal" href="#dephycf.Case.Case.interpolate" title="dephycf.Case.Case.interpolate"><code class="xref py py-meth docutils literal notranslate"><span class="pre">interpolate()</span></code></a>. Defaults to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><strong>usetemp</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, optional) – Forwarded to <a class="reference internal" href="#dephycf.Case.Case.interpolate" title="dephycf.Case.Case.interpolate"><code class="xref py py-meth docutils literal notranslate"><span class="pre">interpolate()</span></code></a>. Defaults to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><strong>usetheta</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, optional) – Forwarded to <a class="reference internal" href="#dephycf.Case.Case.interpolate" title="dephycf.Case.Case.interpolate"><code class="xref py py-meth docutils literal notranslate"><span class="pre">interpolate()</span></code></a>. Defaults to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><strong>usethetal</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, optional) – Forwarded to <a class="reference internal" href="#dephycf.Case.Case.interpolate" title="dephycf.Case.Case.interpolate"><code class="xref py py-meth docutils literal notranslate"><span class="pre">interpolate()</span></code></a>. Defaults to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The new, fully completed, SCM-ready <a class="reference internal" href="#dephycf.Case.Case" title="dephycf.Case.Case"><code class="xref py py-class docutils literal notranslate"><span class="pre">Case</span></code></a>.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="#dephycf.Case.Case" title="dephycf.Case.Case">Case</a></p>
+<dd class="field-odd"><p><a class="reference internal" href="#dephycf.Case.Case" title="dephycf.Case.Case"><code class="xref py py-class docutils literal notranslate"><span class="pre">Case</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -2766,14 +2602,14 @@ consistently with <cite>data</cite>’s first dimension.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>varid</strong> (<em>str</em>) – Identifier of the variable to extend.</p></li>
-<li><p><strong>data</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>list</em><em>, or </em><em>numpy.ndarray</em><em>, </em><em>optional</em>) – Data used to extend the variable vertically. See the
+<li><p><strong>varid</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Identifier of the variable to extend.</p></li>
+<li><p><strong>data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>, optional) – Data used to extend the variable vertically. See the
 description above for the accepted shapes.</p></li>
-<li><p><strong>height</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>list</em><em>, or </em><em>numpy.ndarray</em><em>, </em><em>optional</em>) – Altitude(s) above the reference geoid (m) associated with
+<li><p><strong>height</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>, optional) – Altitude(s) above the reference geoid (m) associated with
 <cite>data</cite>.</p></li>
-<li><p><strong>pressure</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>list</em><em>, or </em><em>numpy.ndarray</em><em>, </em><em>optional</em>) – Pressure(s) (Pa) associated with <cite>data</cite>.</p></li>
-<li><p><strong>time</strong> (<em>list</em><em> or </em><em>numpy.ndarray</em><em>, </em><em>optional</em>) – Time stamps associated with a 2D <cite>data</cite> array.</p></li>
-<li><p><strong>tunits</strong> (<em>str</em><em>, </em><em>optional</em>) – Units of <cite>time</cite>, associated with a 2D <cite>data</cite> array.</p></li>
+<li><p><strong>pressure</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>, optional) – Pressure(s) (Pa) associated with <cite>data</cite>.</p></li>
+<li><p><strong>time</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>, optional) – Time stamps associated with a 2D <cite>data</cite> array.</p></li>
+<li><p><strong>tunits</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, optional) – Units of <cite>time</cite>, associated with a 2D <cite>data</cite> array.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
@@ -2806,8 +2642,8 @@ description above for the accepted shapes.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>u</strong> (<em>list</em><em> or </em><em>numpy.ndarray</em>) – See <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a> for details.</p></li>
-<li><p><strong>v</strong> (<em>list</em><em> or </em><em>numpy.ndarray</em>) – See <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a> for details.</p></li>
+<li><p><strong>u</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – See <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a> for details.</p></li>
+<li><p><strong>v</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – See <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a> for details.</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments forwarded to <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a>
 (e.g. <cite>time</cite>, <cite>name</cite>, <cite>units</cite>, <cite>height</cite>, <cite>pressure</cite>…).</p></li>
 </ul>
@@ -2942,8 +2778,8 @@ description above for the accepted shapes.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>ug</strong> (<em>list</em><em> or </em><em>numpy.ndarray</em>) – See <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a> for details.</p></li>
-<li><p><strong>vg</strong> (<em>list</em><em> or </em><em>numpy.ndarray</em>) – See <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a> for details.</p></li>
+<li><p><strong>ug</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – See <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a> for details.</p></li>
+<li><p><strong>vg</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – See <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a> for details.</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments forwarded to <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a>
 (e.g. <cite>time</cite>, <cite>name</cite>, <cite>units</cite>, <cite>height</cite>, <cite>pressure</cite>…).</p></li>
 </ul>
@@ -2958,8 +2794,8 @@ description above for the accepted shapes.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>w</strong> (<em>list</em><em> or </em><em>numpy.ndarray</em>) – See <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a> for details.</p></li>
-<li><p><strong>omega</strong> (<em>list</em><em> or </em><em>numpy.ndarray</em>) – See <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a> for details.</p></li>
+<li><p><strong>w</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – See <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a> for details.</p></li>
+<li><p><strong>omega</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – See <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a> for details.</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments forwarded to <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a>
 (e.g. <cite>time</cite>, <cite>name</cite>, <cite>units</cite>, <cite>height</cite>, <cite>pressure</cite>…).</p></li>
 </ul>
@@ -2977,7 +2813,7 @@ description above for the accepted shapes.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>temp_adv</strong> (<em>list</em><em> or </em><em>numpy.ndarray</em>) – See <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a> for details.</p></li>
+<li><p><strong>temp_adv</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – See <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a> for details.</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments forwarded to <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a>
 (e.g. <cite>time</cite>, <cite>name</cite>, <cite>units</cite>, <cite>height</cite>, <cite>pressure</cite>…).</p></li>
 </ul>
@@ -2992,7 +2828,7 @@ description above for the accepted shapes.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>theta_adv</strong> (<em>list</em><em> or </em><em>numpy.ndarray</em>) – See <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a> for details.</p></li>
+<li><p><strong>theta_adv</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – See <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a> for details.</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments forwarded to <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a>
 (e.g. <cite>time</cite>, <cite>name</cite>, <cite>units</cite>, <cite>height</cite>, <cite>pressure</cite>…).</p></li>
 </ul>
@@ -3008,7 +2844,7 @@ advection</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>thetal_adv</strong> (<em>list</em><em> or </em><em>numpy.ndarray</em>) – See <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a> for details.</p></li>
+<li><p><strong>thetal_adv</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – See <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a> for details.</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments forwarded to <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a>
 (e.g. <cite>time</cite>, <cite>name</cite>, <cite>units</cite>, <cite>height</cite>, <cite>pressure</cite>…).</p></li>
 </ul>
@@ -3023,7 +2859,7 @@ advection</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>qv_adv</strong> (<em>list</em><em> or </em><em>numpy.ndarray</em>) – See <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a> for details.</p></li>
+<li><p><strong>qv_adv</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – See <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a> for details.</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments forwarded to <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a>
 (e.g. <cite>time</cite>, <cite>name</cite>, <cite>units</cite>, <cite>height</cite>, <cite>pressure</cite>…).</p></li>
 </ul>
@@ -3038,7 +2874,7 @@ advection</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>qt_adv</strong> (<em>list</em><em> or </em><em>numpy.ndarray</em>) – See <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a> for details.</p></li>
+<li><p><strong>qt_adv</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – See <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a> for details.</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments forwarded to <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a>
 (e.g. <cite>time</cite>, <cite>name</cite>, <cite>units</cite>, <cite>height</cite>, <cite>pressure</cite>…).</p></li>
 </ul>
@@ -3053,7 +2889,7 @@ advection</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>rv_adv</strong> (<em>list</em><em> or </em><em>numpy.ndarray</em>) – See <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a> for details.</p></li>
+<li><p><strong>rv_adv</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – See <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a> for details.</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments forwarded to <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a>
 (e.g. <cite>time</cite>, <cite>name</cite>, <cite>units</cite>, <cite>height</cite>, <cite>pressure</cite>…).</p></li>
 </ul>
@@ -3068,8 +2904,8 @@ advection</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>ua_adv</strong> (<em>list</em><em> or </em><em>numpy.ndarray</em>) – See <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a> for details.</p></li>
-<li><p><strong>va_adv</strong> (<em>list</em><em> or </em><em>numpy.ndarray</em>) – See <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a> for details.</p></li>
+<li><p><strong>ua_adv</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – See <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a> for details.</p></li>
+<li><p><strong>va_adv</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – See <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a> for details.</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments forwarded to <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a>
 (e.g. <cite>time</cite>, <cite>name</cite>, <cite>units</cite>, <cite>height</cite>, <cite>pressure</cite>…).</p></li>
 </ul>
@@ -3084,7 +2920,7 @@ advection</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>rt_adv</strong> (<em>list</em><em> or </em><em>numpy.ndarray</em>) – See <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a> for details.</p></li>
+<li><p><strong>rt_adv</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – See <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a> for details.</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments forwarded to <a class="reference internal" href="#dephycf.Case.Case.add_variable" title="dephycf.Case.Case.add_variable"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_variable()</span></code></a>
 (e.g. <cite>time</cite>, <cite>name</cite>, <cite>units</cite>, <cite>height</cite>, <cite>pressure</cite>…).</p></li>
 </ul>
@@ -3145,29 +2981,8 @@ advection</p>
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-dephycf.Case"><code class="docutils literal notranslate"><span class="pre">Case</span></code> Module</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#usage-example">Usage Example</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#notes">Notes</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#api-reference">API Reference</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.Case.Case"><code class="docutils literal notranslate"><span class="pre">Case</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.Case.Case.id"><code class="docutils literal notranslate"><span class="pre">Case.id</span></code></a></li>
-<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.Case.Case.lat"><code class="docutils literal notranslate"><span class="pre">Case.lat</span></code></a></li>
-<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.Case.Case.lon"><code class="docutils literal notranslate"><span class="pre">Case.lon</span></code></a></li>
-<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.Case.Case.case_type"><code class="docutils literal notranslate"><span class="pre">Case.case_type</span></code></a></li>
-<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.Case.Case.surface_type"><code class="docutils literal notranslate"><span class="pre">Case.surface_type</span></code></a></li>
-<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.Case.Case.forcing_scale"><code class="docutils literal notranslate"><span class="pre">Case.forcing_scale</span></code></a></li>
-<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.Case.Case.start_date"><code class="docutils literal notranslate"><span class="pre">Case.start_date</span></code></a></li>
-<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.Case.Case.end_date"><code class="docutils literal notranslate"><span class="pre">Case.end_date</span></code></a></li>
-<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.Case.Case.t0"><code class="docutils literal notranslate"><span class="pre">Case.t0</span></code></a></li>
-<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.Case.Case.t0Axis"><code class="docutils literal notranslate"><span class="pre">Case.t0Axis</span></code></a></li>
-<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.Case.Case.tunits"><code class="docutils literal notranslate"><span class="pre">Case.tunits</span></code></a></li>
-<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.Case.Case.tstart"><code class="docutils literal notranslate"><span class="pre">Case.tstart</span></code></a></li>
-<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.Case.Case.tend"><code class="docutils literal notranslate"><span class="pre">Case.tend</span></code></a></li>
-<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.Case.Case.var_init_list"><code class="docutils literal notranslate"><span class="pre">Case.var_init_list</span></code></a></li>
-<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.Case.Case.var_forcing_list"><code class="docutils literal notranslate"><span class="pre">Case.var_forcing_list</span></code></a></li>
-<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.Case.Case.variables"><code class="docutils literal notranslate"><span class="pre">Case.variables</span></code></a></li>
-<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.Case.Case.attlist"><code class="docutils literal notranslate"><span class="pre">Case.attlist</span></code></a></li>
-<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.Case.Case.attributes"><code class="docutils literal notranslate"><span class="pre">Case.attributes</span></code></a></li>
-</ul>
-</li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#dephycf.Case.Case"><code class="docutils literal notranslate"><span class="pre">Case</span></code></a></li>
 </ul>
 </li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#construction-and-global-attributes">Construction and global attributes</a><ul class="nav section-nav flex-column">

@@ -342,8 +342,7 @@
   <h1>Source code for dephycf.Variable</h1><div class="highlight"><pre>
 <span></span><span class="ch">#!/usr/bin/env python3</span>
 <span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">&quot;&quot;&quot;Variable module.</span>
-
+<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">This module defines the :class:`Variable` class, a container that</span>
 <span class="sd">associates a data array with its axes (time, level, latitude,</span>
 <span class="sd">longitude) and, optionally, with a companion height or pressure</span>
@@ -421,6 +420,22 @@
 <span class="sd">    pressure : :class:`Variable` or `None`</span>
 <span class="sd">        Pressure companion variable, used as an alternative vertical</span>
 <span class="sd">        coordinate.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from dephycf.Variable import Variable</span>
+<span class="sd">    &gt;&gt;&gt; from dephycf.Axis import Axis</span>
+<span class="sd">    &gt;&gt;&gt; time = Axis(&#39;time&#39;, [0, 3600, 7200], units=&#39;seconds since 2020-01-01&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; level = Axis(&#39;lev&#39;, [1000., 850., 700.], units=&#39;hPa&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; var = Variable(&#39;ta&#39;, data=[[280., 270., 260.]],</span>
+<span class="sd">    ...                 name=&#39;air_temperature&#39;, units=&#39;K&#39;,</span>
+<span class="sd">    ...                 time=time, level=level)</span>
+<span class="sd">    &gt;&gt;&gt; var.id</span>
+<span class="sd">    &#39;ta&#39;</span>
+<span class="sd">    &gt;&gt;&gt; var.units</span>
+<span class="sd">    &#39;K&#39;</span>
+<span class="sd">    &gt;&gt;&gt; var.coord</span>
+<span class="sd">    &#39;time lev lat lon&#39;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">varid</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -451,7 +466,7 @@
 <span class="sd">            :class:`Axis`/:class:`Variable`.</span>
 <span class="sd">        height_units : :class:`str`, optional</span>
 <span class="sd">            Units of `height`, when given as raw data.</span>
-<span class="sd">        pressure : :class:`Axis`, Variable or array_like, optional</span>
+<span class="sd">        pressure : :class:`Axis`, :class:`Variable` or array_like, optional</span>
 <span class="sd">            Pressure vertical coordinate (or companion variable).</span>
 <span class="sd">        pressure_id : :class:`str`, optional</span>
 <span class="sd">            Identifier to use for the pressure companion variable,</span>
@@ -464,7 +479,7 @@
 <span class="sd">            Time axis. Ignored if `axes` is given.</span>
 <span class="sd">        lat : :class:`float` or array-like, optional</span>
 <span class="sd">            Latitude information </span>
-<span class="sd">        lon : :class:`float` or array-like,optional</span>
+<span class="sd">        lon : :class:`float` or array-like, optional</span>
 <span class="sd">            Longitude information </span>
 <span class="sd">        axlist : :class:`list`, optional</span>
 <span class="sd">            Explicit list of axis identifiers. Used together with</span>
@@ -659,7 +674,7 @@
 <span class="sd">        ----------</span>
 <span class="sd">        filein : :class:`netCDF4.Dataset`</span>
 <span class="sd">            Open (writable) netCDF file/dataset to write into.</span>
-<span class="sd">        write_time_axes : bool, optional</span>
+<span class="sd">        write_time_axes : :class:`bool`, optional</span>
 <span class="sd">            Whether to write the time axis/axes. Defaults to</span>
 <span class="sd">            ``True``.</span>
 <span class="sd">        write_level_axes : :class:`bool`, optional</span>
@@ -938,7 +953,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        Variable</span>
+<span class="sd">        :class:`Variable`</span>
 <span class="sd">            A new :class:`Variable` interpolated onto `time` (or</span>
 <span class="sd">            `self`, unchanged, if no interpolation is needed/possible).</span>
 
@@ -1052,7 +1067,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        Variable</span>
+<span class="sd">        :class:`Variable`</span>
 <span class="sd">            `self` unchanged if there is no level axis or if neither</span>
 <span class="sd">            `height` nor `pressure` is given; otherwise a new</span>
 <span class="sd">            :class:`Variable` interpolated onto the target vertical</span>
@@ -1183,7 +1198,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        Variable</span>
+<span class="sd">        :class:`Variable`</span>
 <span class="sd">            A new :class:`Variable` with the vertical range extended.</span>
 
 <span class="sd">        Raises</span>
@@ -1380,7 +1395,7 @@
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    Variable : :class:`Variable`</span>
+<span class="sd">    :class:`Variable`</span>
 <span class="sd">        The variable read from the file, with its axes and, if</span>
 <span class="sd">        applicable, its height/pressure companion variable attached.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -1470,7 +1485,7 @@
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    Variable : :class:`Variable`</span>
+<span class="sd">    :class:`Variable`</span>
 <span class="sd">        A new :class:`Variable` interpolated onto `levout` and/or</span>
 <span class="sd">        `timeout`, as applicable.</span>
 

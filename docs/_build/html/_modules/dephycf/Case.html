@@ -342,8 +342,7 @@
   <h1>Source code for dephycf.Case</h1><div class="highlight"><pre>
 <span></span><span class="ch">#!/usr/bin/env python3</span>
 <span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">&quot;&quot;&quot;Case module.</span>
-
+<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">This module defines the :class:`Case` class, the main entry point of</span>
 <span class="sd">the DEPHY Single Column Model (SCM) format toolbox. A :class:`Case`</span>
 <span class="sd">object gathers everything describing a single-column case: global</span>
@@ -415,44 +414,58 @@
 
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
-<span class="sd">    id : str</span>
+<span class="sd">    id : :class:`str`</span>
 <span class="sd">        Case identifier, expected to be of the form ``&quot;case/subcase&quot;``.</span>
-<span class="sd">    lat : float or None</span>
+<span class="sd">    lat : :class:`float` or `None`</span>
 <span class="sd">        Case latitude, in degrees north.</span>
-<span class="sd">    lon : float or None</span>
+<span class="sd">    lon : :class:`float` or `None`</span>
 <span class="sd">        Case longitude, in degrees east.</span>
-<span class="sd">    case_type : str</span>
+<span class="sd">    case_type : :class:`str`</span>
 <span class="sd">        Case type (e.g. ``&quot;standard&quot;``).</span>
-<span class="sd">    surface_type : str</span>
+<span class="sd">    surface_type : :class:`str`</span>
 <span class="sd">        Surface type (e.g. ``&quot;ocean&quot;``, ``&quot;land&quot;``).</span>
-<span class="sd">    forcing_scale : float</span>
+<span class="sd">    forcing_scale : :class:`float`</span>
 <span class="sd">        Forcing scale factor.</span>
-<span class="sd">    start_date : datetime.datetime</span>
+<span class="sd">    start_date : :class:`datetime.datetime`</span>
 <span class="sd">        Simulation start date.</span>
-<span class="sd">    end_date : datetime.datetime</span>
+<span class="sd">    end_date : :class:`datetime.datetime`</span>
 <span class="sd">        Simulation end date.</span>
-<span class="sd">    t0 : int</span>
+<span class="sd">    t0 : :class:`int`</span>
 <span class="sd">        Initial time value (always ``0``).</span>
-<span class="sd">    t0Axis : Axis</span>
+<span class="sd">    t0Axis : :class:`Axis`</span>
 <span class="sd">        Single-value initial-time :class:`~dephycf.Axis.Axis`.</span>
-<span class="sd">    tunits : str</span>
+<span class="sd">    tunits : :class:`str`</span>
 <span class="sd">        Time units string, of the form</span>
 <span class="sd">        ``&quot;seconds since %Y-%m-%d %H:%M:%S&quot;``, anchored on `start_date`.</span>
-<span class="sd">    tstart : float or None</span>
+<span class="sd">    tstart : :class:`float` or `None`</span>
 <span class="sd">        `start_date` converted to numeric time in `tunits`.</span>
-<span class="sd">    tend : float or None</span>
+<span class="sd">    tend : :class:`float` or `None`</span>
 <span class="sd">        `end_date` converted to numeric time in `tunits`.</span>
-<span class="sd">    var_init_list : list of str</span>
+<span class="sd">    var_init_list : :class:`list` of :class:`str`</span>
 <span class="sd">        Identifiers of the initial-state variables.</span>
-<span class="sd">    var_forcing_list : list of str</span>
+<span class="sd">    var_forcing_list : :class:`list` of :class:`str`</span>
 <span class="sd">        Identifiers of the forcing variables.</span>
-<span class="sd">    variables : dict</span>
+<span class="sd">    variables : :class:`dict`</span>
 <span class="sd">        Mapping from variable identifier to</span>
 <span class="sd">        :class:`~dephycf.Variable.Variable` instance.</span>
-<span class="sd">    attlist : list of str</span>
+<span class="sd">    attlist : :class:`list` of :class:`str`</span>
 <span class="sd">        List of global (netCDF) attribute names to write out.</span>
-<span class="sd">    attributes : dict</span>
+<span class="sd">    attributes : :class:`dict`</span>
 <span class="sd">        Mapping from attribute name to attribute value.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from dephycf.Case import Case</span>
+<span class="sd">    &gt;&gt;&gt; case = Case(&#39;MYCASE/SUBCASE&#39;, lat=45.0, lon=5.0,</span>
+<span class="sd">    ...              startDate=&#39;2020-01-01 00:00:00&#39;,</span>
+<span class="sd">    ...              endDate=&#39;2020-01-01 06:00:00&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; case.id</span>
+<span class="sd">    &#39;MYCASE/SUBCASE&#39;</span>
+<span class="sd">    &gt;&gt;&gt; case.lat</span>
+<span class="sd">    45.0</span>
+<span class="sd">    &gt;&gt;&gt; case.add_init_ps(101325.)</span>
+<span class="sd">    &gt;&gt;&gt; case.var_init_list</span>
+<span class="sd">    [&#39;ps&#39;]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="Case.__init__">
@@ -467,30 +480,30 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        caseid : str</span>
+<span class="sd">        caseid : :class:`str`</span>
 <span class="sd">            Case identifier, expected to be of the form ``&quot;case/subcase&quot;``</span>
 <span class="sd">            (split on ``&quot;/&quot;`` to derive `self._case` and `self._subcase`).</span>
-<span class="sd">        lat : float, optional</span>
+<span class="sd">        lat : :class:`float`, optional</span>
 <span class="sd">            Case latitude, in degrees north. If given, a corresponding forcing</span>
 <span class="sd">            variable is added via :meth:`add_latitude`.</span>
-<span class="sd">        lon : float, optional</span>
+<span class="sd">        lon : :class:`float`, optional</span>
 <span class="sd">            Case longitude, in degrees east. If given, a corresponding forcing</span>
 <span class="sd">            variable is added via :meth:`add_longitude`.</span>
-<span class="sd">        case_type : str, optional</span>
+<span class="sd">        case_type : :class:`str`, optional</span>
 <span class="sd">            Case type. Defaults to ``&quot;standard&quot;``.</span>
-<span class="sd">        startDate : datetime.datetime or str, optional</span>
+<span class="sd">        startDate : :class:`datetime.datetime` or :class:`str`, optional</span>
 <span class="sd">            Simulation start date, as a :class:`datetime.datetime` or a string</span>
 <span class="sd">            (see :meth:`set_dates` for accepted string formats). Defaults to</span>
 <span class="sd">            `startDate0`.</span>
-<span class="sd">        endDate : datetime.datetime or str, optional</span>
+<span class="sd">        endDate : :class:`datetime.datetime` or :class:`str`, optional</span>
 <span class="sd">            Simulation end date, same format as `startDate`. Defaults to</span>
 <span class="sd">            `endDate0`.</span>
-<span class="sd">        surfaceType : str, optional</span>
+<span class="sd">        surfaceType : :class:`str`, optional</span>
 <span class="sd">            Surface type. Defaults to ``&#39;ocean&#39;``.</span>
-<span class="sd">        zorog : float, optional</span>
+<span class="sd">        zorog : :class:`float`, optional</span>
 <span class="sd">            Orography altitude above sea level, in meters. Defaults to ``0.``.</span>
 <span class="sd">            Added as a forcing variable via :meth:`add_orography`.</span>
-<span class="sd">        forcing_scale : float, optional</span>
+<span class="sd">        forcing_scale : :class:`float`, optional</span>
 <span class="sd">            Forcing scale factor. Defaults to ``-1``.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">caseid</span>
@@ -577,10 +590,10 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        startDate : datetime.datetime or str</span>
+<span class="sd">        startDate : :class:`datetime.datetime` or :class:`str`</span>
 <span class="sd">            Simulation start date. If a string, it must be either 14 digits</span>
 <span class="sd">            (``&#39;%Y%m%d%H%M%S&#39;``) or of the form ``&#39;%Y-%m-%d %H:%M:%S&#39;``.</span>
-<span class="sd">        endDate : datetime.datetime or str</span>
+<span class="sd">        endDate : :class:`datetime.datetime` or :class:`str`</span>
 <span class="sd">            Simulation end date, same accepted formats as `startDate`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -621,9 +634,9 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        lat : float</span>
+<span class="sd">        lat : :class:`float`</span>
 <span class="sd">            Latitude, in degrees north.</span>
-<span class="sd">        lon : float</span>
+<span class="sd">        lon : :class:`float`</span>
 <span class="sd">            Longitude, in degrees east.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -641,7 +654,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        attid : str</span>
+<span class="sd">        attid : :class:`str`</span>
 <span class="sd">            Attribute name. A warning is logged if it is not part of</span>
 <span class="sd">            `known_attributes`. attvalue Attribute value.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -662,7 +675,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        title : str</span>
+<span class="sd">        title : :class:`str`</span>
 <span class="sd">            Case title.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -676,7 +689,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        comment : str</span>
+<span class="sd">        comment : :class:`str`</span>
 <span class="sd">            Free-form comment about the case.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -690,7 +703,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        ref : str</span>
+<span class="sd">        ref : :class:`str`</span>
 <span class="sd">            Bibliographic reference associated with the case.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -704,7 +717,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        author : str</span>
+<span class="sd">        author : :class:`str`</span>
 <span class="sd">            Author name(s).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -718,7 +731,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        modifications : str</span>
+<span class="sd">        modifications : :class:`str`</span>
 <span class="sd">            Description of modifications made to the case.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -732,7 +745,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        script : str</span>
+<span class="sd">        script : :class:`str`</span>
 <span class="sd">            Name (or description) of the script used to build the case.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -746,7 +759,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        case_type : str</span>
+<span class="sd">        case_type : :class:`str`</span>
 <span class="sd">            Case type (e.g. ``&quot;standard&quot;``).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -767,7 +780,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        varid : str</span>
+<span class="sd">        varid : :class:`str`</span>
 <span class="sd">            See :meth:`add_variable` for details.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -792,44 +805,44 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        varid : str</span>
+<span class="sd">        varid : :class:`str`</span>
 <span class="sd">            string for the variable id. Should be in ...</span>
-<span class="sd">        vardata : int, float, list, or numpy.ndarray</span>
+<span class="sd">        vardata : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`</span>
 <span class="sd">            input data as a list or a numpy array</span>
-<span class="sd">        lev : list, numpy.ndarray, or Axis, optional</span>
+<span class="sd">        lev : :class:`list`, :class:`numpy.ndarray`, or :class:`Axis`, optional</span>
 <span class="sd">            input data for the level axis as a list, a numpy array or an Axis</span>
 <span class="sd">            object (default None)</span>
-<span class="sd">        levtype : str, optional</span>
+<span class="sd">        levtype : :class:`str`, optional</span>
 <span class="sd">            string describing the type of the level axis: None (default),</span>
 <span class="sd">            &#39;altitude&#39; or &#39;pressure&#39;</span>
-<span class="sd">        levid : str, optional</span>
+<span class="sd">        levid : :class:`str`, optional</span>
 <span class="sd">            string for the level axis id. The default is None, which implies a</span>
 <span class="sd">            generic id (default None)</span>
-<span class="sd">        height : Variable, optional</span>
+<span class="sd">        height : :class:`Variable`, optional</span>
 <span class="sd">            variable object describing height for current variable</span>
-<span class="sd">        pressure : Variable, optional</span>
+<span class="sd">        pressure : :class:`Variable`, optional</span>
 <span class="sd">            variable object describing pressure for current variable</span>
-<span class="sd">        time : list, numpy.ndarray, or Axis, optional</span>
+<span class="sd">        time : :class:`list`, :class:`numpy.ndarray`, or :class:`Axis`, optional</span>
 <span class="sd">            input data for the time axis, as a list, a numpy array or an Axis</span>
 <span class="sd">            object (default None)</span>
-<span class="sd">        timeid : str, optional</span>
+<span class="sd">        timeid : :class:`str`, optional</span>
 <span class="sd">            string for the time axis id. The default is None, which implies a</span>
 <span class="sd">            generic id (default None)</span>
-<span class="sd">        name : str, optional</span>
+<span class="sd">        name : :class:`str`, optional</span>
 <span class="sd">            string of the name attribute of the variable (to be use as</span>
 <span class="sd">            long_name in a netCDF file) (default None)</span>
-<span class="sd">        units : str, optional</span>
+<span class="sd">        units : :class:`str`, optional</span>
 <span class="sd">            string of the units attribute of the variable (default None)</span>
-<span class="sd">        height_id : str</span>
+<span class="sd">        height_id : :class:`str`</span>
 <span class="sd">            Identifier to use for the height companion variable, when `height`</span>
 <span class="sd">            is given as raw data rather than as a `Variable`/`Axis` object.</span>
-<span class="sd">        height_units : str</span>
+<span class="sd">        height_units : :class:`str`</span>
 <span class="sd">            Units of `height`, when given as raw data.</span>
-<span class="sd">        pressure_id : str</span>
+<span class="sd">        pressure_id : :class:`str`</span>
 <span class="sd">            Identifier to use for the pressure companion variable, when</span>
 <span class="sd">            `pressure` is given as raw data rather than as a `Variable`/`Axis`</span>
 <span class="sd">            object.</span>
-<span class="sd">        pressure_units : str</span>
+<span class="sd">        pressure_units : :class:`str`</span>
 <span class="sd">            Units of `pressure`, when given as raw data.</span>
 
 <span class="sd">        Raises</span>
@@ -971,12 +984,12 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        varid : str</span>
+<span class="sd">        varid : :class:`str`</span>
 <span class="sd">            id of the initial variable. Should be in ...</span>
-<span class="sd">        vardata : int, float, list, or numpy.ndarray</span>
+<span class="sd">        vardata : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`</span>
 <span class="sd">            input data as a numeric value (int or float), a list or a numpy</span>
 <span class="sd">            array</span>
-<span class="sd">        coordinate : bool</span>
+<span class="sd">        coordinate : :class:`bool`</span>
 <span class="sd">            See :meth:`add_variable` for details.</span>
 <span class="sd">        **kwargs</span>
 <span class="sd">            Additional keyword arguments forwarded to :meth:`add_variable`</span>
@@ -1021,7 +1034,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        vardata : int, float, list, or numpy.ndarray</span>
+<span class="sd">        vardata : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`</span>
 <span class="sd">            input data as an integer or a float.</span>
 <span class="sd">        **kwargs</span>
 <span class="sd">            Additional keyword arguments forwarded to :meth:`add_variable`</span>
@@ -1038,7 +1051,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        vardata : int, float, list, or numpy.ndarray</span>
+<span class="sd">        vardata : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`</span>
 <span class="sd">            input data as an integer or a float.</span>
 <span class="sd">        **kwargs</span>
 <span class="sd">            Additional keyword arguments forwarded to :meth:`add_variable`</span>
@@ -1057,7 +1070,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        vardata : int, float, list, or numpy.ndarray</span>
+<span class="sd">        vardata : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`</span>
 <span class="sd">            input data as an integer or a float.</span>
 <span class="sd">        **kwargs</span>
 <span class="sd">            Additional keyword arguments forwarded to :meth:`add_variable`</span>
@@ -1078,7 +1091,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        vardata : int, float, list, or numpy.ndarray</span>
+<span class="sd">        vardata : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`</span>
 <span class="sd">            input data as a list or a numpy array.</span>
 <span class="sd">        **kwargs</span>
 <span class="sd">            Additional keyword arguments forwarded to :meth:`add_variable`</span>
@@ -1099,7 +1112,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        vardata : int, float, list, or numpy.ndarray</span>
+<span class="sd">        vardata : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`</span>
 <span class="sd">            input data as a list or a numpy array.</span>
 <span class="sd">        **kwargs</span>
 <span class="sd">            Additional keyword arguments forwarded to :meth:`add_variable`</span>
@@ -1120,7 +1133,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        vardata : int, float, list, or numpy.ndarray</span>
+<span class="sd">        vardata : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`</span>
 <span class="sd">            input data as a list or a numpy array.</span>
 <span class="sd">        **kwargs</span>
 <span class="sd">            Additional keyword arguments forwarded to :meth:`add_variable`</span>
@@ -1141,7 +1154,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        vardata : int, float, list, or numpy.ndarray</span>
+<span class="sd">        vardata : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`</span>
 <span class="sd">            input data as a list or a numpy array.</span>
 <span class="sd">        **kwargs</span>
 <span class="sd">            Additional keyword arguments forwarded to :meth:`add_variable`</span>
@@ -1163,7 +1176,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        vardata : int, float, list, or numpy.ndarray</span>
+<span class="sd">        vardata : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`</span>
 <span class="sd">            input data as a list or a numpy array.</span>
 <span class="sd">        **kwargs</span>
 <span class="sd">            Additional keyword arguments forwarded to :meth:`add_variable`</span>
@@ -1184,7 +1197,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        vardata : int, float, list, or numpy.ndarray</span>
+<span class="sd">        vardata : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`</span>
 <span class="sd">            input data as a list or a numpy array.</span>
 <span class="sd">        **kwargs</span>
 <span class="sd">            Additional keyword arguments forwarded to :meth:`add_variable`</span>
@@ -1205,7 +1218,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        vardata : int, float, list, or numpy.ndarray</span>
+<span class="sd">        vardata : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`</span>
 <span class="sd">            input data as a list or a numpy array.</span>
 <span class="sd">        **kwargs</span>
 <span class="sd">            Additional keyword arguments forwarded to :meth:`add_variable`</span>
@@ -1227,7 +1240,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        vardata : int, float, list, or numpy.ndarray</span>
+<span class="sd">        vardata : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`</span>
 <span class="sd">            input data as a list or a numpy array.</span>
 <span class="sd">        **kwargs</span>
 <span class="sd">            Additional keyword arguments forwarded to :meth:`add_variable`</span>
@@ -1249,7 +1262,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        vardata : int, float, list, or numpy.ndarray</span>
+<span class="sd">        vardata : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`</span>
 <span class="sd">            input data as a list or a numpy array.</span>
 <span class="sd">        **kwargs</span>
 <span class="sd">            Additional keyword arguments forwarded to :meth:`add_variable`</span>
@@ -1270,7 +1283,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        vardata : int, float, list, or numpy.ndarray</span>
+<span class="sd">        vardata : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`</span>
 <span class="sd">            input data as a list or a numpy array.</span>
 <span class="sd">        **kwargs</span>
 <span class="sd">            Additional keyword arguments forwarded to :meth:`add_variable`</span>
@@ -1308,18 +1321,18 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        u : list or numpy.ndarray</span>
+<span class="sd">        u : :class:`list` or :class:`numpy.ndarray`</span>
 <span class="sd">            input data for zonal wind as a list or a numpy array.</span>
-<span class="sd">        v : list or numpy.ndarray</span>
+<span class="sd">        v : :class:`list` or :class:`numpy.ndarray`</span>
 <span class="sd">            input data for meridional wind as a list or a numpy array.</span>
-<span class="sd">        lev : list, numpy.ndarray, or Axis, optional</span>
+<span class="sd">        lev : :class:`list`, :class:`numpy.ndarray`, or :class:`Axis`, optional</span>
 <span class="sd">            level axis for both u and v as a list or a numpy array (default</span>
 <span class="sd">            None)</span>
-<span class="sd">        ulev : list or numpy.ndarray, optional</span>
+<span class="sd">        ulev : :class:`list` or :class:`numpy.ndarray`, optional</span>
 <span class="sd">            level axis for u as a list or a numpy array (default None)</span>
-<span class="sd">        vlev : list or numpy.ndarray, optional</span>
+<span class="sd">        vlev : :class:`list` or :class:`numpy.ndarray`, optional</span>
 <span class="sd">            level axis for v as a list or a numpy array (default None)</span>
-<span class="sd">        levtype : str, optional</span>
+<span class="sd">        levtype : :class:`str`, optional</span>
 <span class="sd">            type of vertical axis (pressure or altitude)</span>
 <span class="sd">        **kwargs</span>
 <span class="sd">            Additional keyword arguments forwarded to :meth:`add_variable`</span>
@@ -1361,7 +1374,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        vardata : int, float, list, or numpy.ndarray</span>
+<span class="sd">        vardata : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`</span>
 <span class="sd">            input data as a list or a numpy array.</span>
 <span class="sd">        **kwargs</span>
 <span class="sd">            Additional keyword arguments forwarded to :meth:`add_variable`</span>
@@ -1380,7 +1393,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        vardata : int, float, list, or numpy.ndarray</span>
+<span class="sd">        vardata : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`</span>
 <span class="sd">            input data as an integer or a float.</span>
 <span class="sd">        **kwargs</span>
 <span class="sd">            Additional keyword arguments forwarded to :meth:`add_variable`</span>
@@ -1406,9 +1419,9 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        varid : str</span>
+<span class="sd">        varid : :class:`str`</span>
 <span class="sd">            id of the forcing variable. Should be in ...</span>
-<span class="sd">        vardata : int, float, list, or numpy.ndarray</span>
+<span class="sd">        vardata : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`</span>
 <span class="sd">            input data as a numeric value (int or float), a list or a numpy</span>
 <span class="sd">            array</span>
 <span class="sd">        **kwargs</span>
@@ -1473,7 +1486,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        data : int, float, list, or numpy.ndarray</span>
+<span class="sd">        data : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`</span>
 <span class="sd">            input data as a list or a numpy array.</span>
 <span class="sd">        **kwargs</span>
 <span class="sd">            Additional keyword arguments forwarded to :meth:`add_variable`</span>
@@ -1493,7 +1506,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        data : int, float, list, or numpy.ndarray</span>
+<span class="sd">        data : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`</span>
 <span class="sd">            input data as a list or a numpy array.</span>
 <span class="sd">        **kwargs</span>
 <span class="sd">            Additional keyword arguments forwarded to :meth:`add_variable`</span>
@@ -1513,7 +1526,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        data : int, float, list, or numpy.ndarray</span>
+<span class="sd">        data : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`</span>
 <span class="sd">            input data as a list or a numpy array.</span>
 <span class="sd">        **kwargs</span>
 <span class="sd">            Additional keyword arguments forwarded to :meth:`add_variable`</span>
@@ -1533,7 +1546,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        data : int, float, list, or numpy.ndarray</span>
+<span class="sd">        data : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`</span>
 <span class="sd">            input data as a list or a numpy array.</span>
 <span class="sd">        **kwargs</span>
 <span class="sd">            Additional keyword arguments forwarded to :meth:`add_variable`</span>
@@ -1553,7 +1566,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        data : int, float, list, or numpy.ndarray</span>
+<span class="sd">        data : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`</span>
 <span class="sd">            input data as a list or a numpy array.</span>
 <span class="sd">        **kwargs</span>
 <span class="sd">            Additional keyword arguments forwarded to :meth:`add_variable`</span>
@@ -1573,7 +1586,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        data : int, float, list, or numpy.ndarray</span>
+<span class="sd">        data : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`</span>
 <span class="sd">            input data as a list or a numpy array.</span>
 <span class="sd">        **kwargs</span>
 <span class="sd">            Additional keyword arguments forwarded to :meth:`add_variable`</span>
@@ -1593,7 +1606,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        data : int, float, list, or numpy.ndarray</span>
+<span class="sd">        data : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`</span>
 <span class="sd">            input data as a list or a numpy array.</span>
 <span class="sd">        **kwargs</span>
 <span class="sd">            Additional keyword arguments forwarded to :meth:`add_variable`</span>
@@ -1615,7 +1628,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        data : int, float, list, or numpy.ndarray</span>
+<span class="sd">        data : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`</span>
 <span class="sd">            input data as a list or a numpy array.</span>
 <span class="sd">        **kwargs</span>
 <span class="sd">            Additional keyword arguments forwarded to :meth:`add_variable`</span>
@@ -1637,7 +1650,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        data : int, float, list, or numpy.ndarray</span>
+<span class="sd">        data : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`</span>
 <span class="sd">            input data as a list or a numpy array.</span>
 <span class="sd">        **kwargs</span>
 <span class="sd">            Additional keyword arguments forwarded to :meth:`add_variable`</span>
@@ -1658,19 +1671,19 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        ug : list or numpy.ndarray</span>
+<span class="sd">        ug : :class:`list` or :class:`numpy.ndarray`</span>
 <span class="sd">            input data for geostrophic zonal wind as a list or a numpy array.</span>
-<span class="sd">        vg : list or numpy.ndarray</span>
+<span class="sd">        vg : :class:`list` or :class:`numpy.ndarray`</span>
 <span class="sd">            input data for geostrophic meridional wind as a list or a numpy</span>
 <span class="sd">            array.</span>
-<span class="sd">        lev : list, numpy.ndarray, or Axis, optional</span>
+<span class="sd">        lev : :class:`list`, :class:`numpy.ndarray`, or :class:`Axis`, optional</span>
 <span class="sd">            level axis for both u and v as a list or a numpy array (default</span>
 <span class="sd">            None)</span>
-<span class="sd">        uglev : list or numpy.ndarray, optional</span>
+<span class="sd">        uglev : :class:`list` or :class:`numpy.ndarray`, optional</span>
 <span class="sd">            level axis for u as a list or a numpy array (default None)</span>
-<span class="sd">        vglev : list or numpy.ndarray, optional</span>
+<span class="sd">        vglev : :class:`list` or :class:`numpy.ndarray`, optional</span>
 <span class="sd">            level axis for v as a list or a numpy array (default None)</span>
-<span class="sd">        levtype : str, optional</span>
+<span class="sd">        levtype : :class:`str`, optional</span>
 <span class="sd">            type of vertical axis (pressure or altitude)</span>
 <span class="sd">        **kwargs</span>
 <span class="sd">            Additional keyword arguments forwarded to :meth:`add_variable`</span>
@@ -1723,9 +1736,9 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        w : list or numpy.ndarray</span>
+<span class="sd">        w : :class:`list` or :class:`numpy.ndarray`</span>
 <span class="sd">            See :meth:`add_variable` for details.</span>
-<span class="sd">        omega : list or numpy.ndarray</span>
+<span class="sd">        omega : :class:`list` or :class:`numpy.ndarray`</span>
 <span class="sd">            See :meth:`add_variable` for details.</span>
 <span class="sd">        **kwargs</span>
 <span class="sd">            Additional keyword arguments forwarded to :meth:`add_variable`</span>
@@ -1767,9 +1780,9 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        data : int, float, list, or numpy.ndarray</span>
+<span class="sd">        data : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`</span>
 <span class="sd">            input data as a list or a numpy array.</span>
-<span class="sd">        include_rad : bool, optional</span>
+<span class="sd">        include_rad : :class:`bool`, optional</span>
 <span class="sd">            boolean indicated whether the radiative tendency is included in the</span>
 <span class="sd">            advection (default False)</span>
 <span class="sd">        **kwargs</span>
@@ -1796,9 +1809,9 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        data : int, float, list, or numpy.ndarray</span>
+<span class="sd">        data : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`</span>
 <span class="sd">            input data as a list or a numpy array.</span>
-<span class="sd">        include_rad : bool, optional</span>
+<span class="sd">        include_rad : :class:`bool`, optional</span>
 <span class="sd">            boolean indicated whether the radiative tendency is included in the</span>
 <span class="sd">            advection (default False)</span>
 <span class="sd">        **kwargs</span>
@@ -1825,9 +1838,9 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        data : int, float, list, or numpy.ndarray</span>
+<span class="sd">        data : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`</span>
 <span class="sd">            input data as a list or a numpy array.</span>
-<span class="sd">        include_rad : bool, optional</span>
+<span class="sd">        include_rad : :class:`bool`, optional</span>
 <span class="sd">            boolean indicated whether the radiative tendency is included in the</span>
 <span class="sd">            advection (default False)</span>
 <span class="sd">        **kwargs</span>
@@ -1854,7 +1867,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        data : int, float, list, or numpy.ndarray</span>
+<span class="sd">        data : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`</span>
 <span class="sd">            input data as a list or a numpy array.</span>
 <span class="sd">        **kwargs</span>
 <span class="sd">            Additional keyword arguments forwarded to :meth:`add_variable`</span>
@@ -1877,7 +1890,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        data : int, float, list, or numpy.ndarray</span>
+<span class="sd">        data : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`</span>
 <span class="sd">            input data as a list or a numpy array.</span>
 <span class="sd">        **kwargs</span>
 <span class="sd">            Additional keyword arguments forwarded to :meth:`add_variable`</span>
@@ -1901,7 +1914,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        data : int, float, list, or numpy.ndarray</span>
+<span class="sd">        data : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`</span>
 <span class="sd">            input data as a list or a numpy array.</span>
 <span class="sd">        **kwargs</span>
 <span class="sd">            Additional keyword arguments forwarded to :meth:`add_variable`</span>
@@ -1924,7 +1937,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        data : int, float, list, or numpy.ndarray</span>
+<span class="sd">        data : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`</span>
 <span class="sd">            input data as a list or a numpy array.</span>
 <span class="sd">        **kwargs</span>
 <span class="sd">            Additional keyword arguments forwarded to :meth:`add_variable`</span>
@@ -1948,11 +1961,11 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        data : int, float, list, or numpy.ndarray</span>
+<span class="sd">        data : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`</span>
 <span class="sd">            input data as a list or a numpy array.</span>
-<span class="sd">        ua_adv : list or numpy.ndarray</span>
+<span class="sd">        ua_adv : :class:`list` or :class:`numpy.ndarray`</span>
 <span class="sd">            See :meth:`add_variable` for details.</span>
-<span class="sd">        va_adv : list or numpy.ndarray</span>
+<span class="sd">        va_adv : :class:`list` or :class:`numpy.ndarray`</span>
 <span class="sd">            See :meth:`add_variable` for details.</span>
 <span class="sd">        **kwargs</span>
 <span class="sd">            Additional keyword arguments forwarded to :meth:`add_variable`</span>
@@ -1980,7 +1993,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        data : int, float, list, or numpy.ndarray</span>
+<span class="sd">        data : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`</span>
 <span class="sd">            input data as a list or a numpy array.</span>
 <span class="sd">        **kwargs</span>
 <span class="sd">            Additional keyword arguments forwarded to :meth:`add_variable`</span>
@@ -2004,7 +2017,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        data : int, float, list, or numpy.ndarray</span>
+<span class="sd">        data : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`</span>
 <span class="sd">            input data as a list or a numpy array.</span>
 <span class="sd">        **kwargs</span>
 <span class="sd">            Additional keyword arguments forwarded to :meth:`add_variable`</span>
@@ -2028,7 +2041,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        data : int, float, list, or numpy.ndarray</span>
+<span class="sd">        data : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`</span>
 <span class="sd">            input data as a list or a numpy array.</span>
 <span class="sd">        **kwargs</span>
 <span class="sd">            Additional keyword arguments forwarded to :meth:`add_variable`</span>
@@ -2054,19 +2067,19 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        varid : str</span>
+<span class="sd">        varid : :class:`str`</span>
 <span class="sd">            id of the variable to be nudged as a string</span>
-<span class="sd">        data : int, float, list, or numpy.ndarray</span>
+<span class="sd">        data : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`</span>
 <span class="sd">            input data as a list or a numpy array.</span>
-<span class="sd">        timescale : int or float</span>
+<span class="sd">        timescale : :class:`int` or :class:`float`</span>
 <span class="sd">            nudging timescale in seconds (integer or float)</span>
-<span class="sd">        z_nudging : int or float</span>
+<span class="sd">        z_nudging : :class:`int` or :class:`float`</span>
 <span class="sd">            altitude above which nudging is applied (integer or float)</span>
-<span class="sd">        p_nudging : int or float</span>
+<span class="sd">        p_nudging : :class:`int` or :class:`float`</span>
 <span class="sd">            pressure altitude under which nudging is applied (integer or float)</span>
 <span class="sd">        nudging_coefficient : array_like</span>
 <span class="sd">            profile of nudging coefficient</span>
-<span class="sd">        lev : list, numpy.ndarray, or Axis</span>
+<span class="sd">        lev : :class:`list`, :class:`numpy.ndarray`, or :class:`Axis`</span>
 <span class="sd">            Level axis for the nudged variable, as a list, a numpy array or an</span>
 <span class="sd">            Axis object.</span>
 <span class="sd">        lev_coef : array_like</span>
@@ -2138,18 +2151,18 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        unudg : list or numpy.ndarray</span>
+<span class="sd">        unudg : :class:`list` or :class:`numpy.ndarray`</span>
 <span class="sd">            input data for zonal wind as a list or a numpy array.</span>
-<span class="sd">        vnudg : list or numpy.ndarray</span>
+<span class="sd">        vnudg : :class:`list` or :class:`numpy.ndarray`</span>
 <span class="sd">            input data for meridional wind as a list or a numpy array.</span>
-<span class="sd">        lev : list, numpy.ndarray, or Axis, optional</span>
+<span class="sd">        lev : :class:`list`, :class:`numpy.ndarray`, or :class:`Axis`, optional</span>
 <span class="sd">            level axis for both unudg and vnudg as a list or a numpy array</span>
 <span class="sd">            (default None)</span>
-<span class="sd">        ulev : list or numpy.ndarray, optional</span>
+<span class="sd">        ulev : :class:`list` or :class:`numpy.ndarray`, optional</span>
 <span class="sd">            level axis for unudg as a list or a numpy array (default None)</span>
-<span class="sd">        vlev : list or numpy.ndarray, optional</span>
+<span class="sd">        vlev : :class:`list` or :class:`numpy.ndarray`, optional</span>
 <span class="sd">            level axis for vnudg as a list or a numpy array (default None)</span>
-<span class="sd">        levtype : str, optional</span>
+<span class="sd">        levtype : :class:`str`, optional</span>
 <span class="sd">            type of vertical axis (pressure or altitude)</span>
 <span class="sd">        **kwargs</span>
 <span class="sd">            Additional keyword arguments forwarded to :meth:`add_variable`</span>
@@ -2192,7 +2205,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        data : int, float, list, or numpy.ndarray</span>
+<span class="sd">        data : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`</span>
 <span class="sd">            input data as a list or a numpy array.</span>
 <span class="sd">        **kwargs</span>
 <span class="sd">            Additional keyword arguments forwarded to :meth:`add_variable`</span>
@@ -2215,7 +2228,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        data : int, float, list, or numpy.ndarray</span>
+<span class="sd">        data : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`</span>
 <span class="sd">            input data as a list or a numpy array.</span>
 <span class="sd">        **kwargs</span>
 <span class="sd">            Additional keyword arguments forwarded to :meth:`add_variable`</span>
@@ -2239,7 +2252,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        data : int, float, list, or numpy.ndarray</span>
+<span class="sd">        data : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`</span>
 <span class="sd">            input data as a list or a numpy array.</span>
 <span class="sd">        **kwargs</span>
 <span class="sd">            Additional keyword arguments forwarded to :meth:`add_variable`</span>
@@ -2262,7 +2275,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        data : int, float, list, or numpy.ndarray</span>
+<span class="sd">        data : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`</span>
 <span class="sd">            input data as a list or a numpy array.</span>
 <span class="sd">        **kwargs</span>
 <span class="sd">            Additional keyword arguments forwarded to :meth:`add_variable`</span>
@@ -2285,7 +2298,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        data : int, float, list, or numpy.ndarray</span>
+<span class="sd">        data : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`</span>
 <span class="sd">            input data as a list or a numpy array.</span>
 <span class="sd">        **kwargs</span>
 <span class="sd">            Additional keyword arguments forwarded to :meth:`add_variable`</span>
@@ -2308,7 +2321,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        data : int, float, list, or numpy.ndarray</span>
+<span class="sd">        data : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`</span>
 <span class="sd">            input data as a list or a numpy array.</span>
 <span class="sd">        **kwargs</span>
 <span class="sd">            Additional keyword arguments forwarded to :meth:`add_variable`</span>
@@ -2331,7 +2344,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        data : int, float, list, or numpy.ndarray</span>
+<span class="sd">        data : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`</span>
 <span class="sd">            input data as a list or a numpy array.</span>
 <span class="sd">        **kwargs</span>
 <span class="sd">            Additional keyword arguments forwarded to :meth:`add_variable`</span>
@@ -2356,9 +2369,9 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        ro3 : list or numpy.ndarray</span>
+<span class="sd">        ro3 : :class:`list` or :class:`numpy.ndarray`</span>
 <span class="sd">            See :meth:`add_variable` for details.</span>
-<span class="sd">        o3 : list or numpy.ndarray</span>
+<span class="sd">        o3 : :class:`list` or :class:`numpy.ndarray`</span>
 <span class="sd">            See :meth:`add_variable` for details.</span>
 <span class="sd">        **kwargs</span>
 <span class="sd">            Additional keyword arguments forwarded to :meth:`add_variable`</span>
@@ -2413,7 +2426,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        data : int, float, list, or numpy.ndarray</span>
+<span class="sd">        data : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`</span>
 <span class="sd">            input data as a list or a numpy array.</span>
 <span class="sd">        **kwargs</span>
 <span class="sd">            Additional keyword arguments forwarded to :meth:`add_variable`</span>
@@ -2435,7 +2448,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        data : int, float, list, or numpy.ndarray</span>
+<span class="sd">        data : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`</span>
 <span class="sd">            input data as a list or a numpy array.</span>
 <span class="sd">        **kwargs</span>
 <span class="sd">            Additional keyword arguments forwarded to :meth:`add_variable`</span>
@@ -2455,7 +2468,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        data : int, float, list, or numpy.ndarray</span>
+<span class="sd">        data : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`</span>
 <span class="sd">            input data as a list or a numpy array.</span>
 <span class="sd">        **kwargs</span>
 <span class="sd">            Additional keyword arguments forwarded to :meth:`add_variable`</span>
@@ -2477,9 +2490,9 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        data : int, float, list, or numpy.ndarray</span>
+<span class="sd">        data : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`</span>
 <span class="sd">            input data as a list or a numpy array.</span>
-<span class="sd">        z0 : float</span>
+<span class="sd">        z0 : :class:`float`</span>
 <span class="sd">            See :meth:`add_variable` for details.</span>
 <span class="sd">        z0h : object</span>
 <span class="sd">            See :meth:`add_variable` for details.</span>
@@ -2520,9 +2533,9 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        data : int, float, list, or numpy.ndarray</span>
+<span class="sd">        data : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`</span>
 <span class="sd">            input data as a list or a numpy array.</span>
-<span class="sd">        z0 : float</span>
+<span class="sd">        z0 : :class:`float`</span>
 <span class="sd">            See :meth:`add_variable` for details.</span>
 <span class="sd">        z0h : object</span>
 <span class="sd">            See :meth:`add_variable` for details.</span>
@@ -2563,27 +2576,27 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        sens : int, float, list, or numpy.ndarray</span>
+<span class="sd">        sens : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`</span>
 <span class="sd">            input data for surface sensible heat flux as a numeric, a list or a</span>
 <span class="sd">            numpy array.</span>
-<span class="sd">        lat : int, float, list, or numpy.ndarray</span>
+<span class="sd">        lat : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`</span>
 <span class="sd">            input data for surface latent heat flux as a numeric, a list or a</span>
 <span class="sd">            numpy array.</span>
-<span class="sd">        time : list, numpy.ndarray, or Axis, optional</span>
+<span class="sd">        time : :class:`list`, :class:`numpy.ndarray`, or :class:`Axis`, optional</span>
 <span class="sd">            time axis for both sensible and latent heat fluxes</span>
-<span class="sd">        time_sens : list, numpy.ndarray, or Axis, optional</span>
+<span class="sd">        time_sens : :class:`list`, :class:`numpy.ndarray`, or :class:`Axis`, optional</span>
 <span class="sd">            time axis for sensibile heat flux</span>
-<span class="sd">        time_lat : list, numpy.ndarray, or Axis, optional</span>
+<span class="sd">        time_lat : :class:`list`, :class:`numpy.ndarray`, or :class:`Axis`, optional</span>
 <span class="sd">            time axis for latent heat flux</span>
-<span class="sd">        forc_wind : str, optional</span>
+<span class="sd">        forc_wind : :class:`str`, optional</span>
 <span class="sd">            type of surface wind forcing as a string: &#39;z0&#39; or &#39;ustar&#39; (default</span>
 <span class="sd">            &#39;z0&#39;)</span>
-<span class="sd">        z0 : float, optional</span>
+<span class="sd">        z0 : :class:`float`, optional</span>
 <span class="sd">            numeric value for surface roughness (default None)</span>
-<span class="sd">        ustar : int, float, list, or numpy.ndarray, optional</span>
+<span class="sd">        ustar : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`, optional</span>
 <span class="sd">            input data for surface friction velocity as a numeric, a list or a</span>
 <span class="sd">            numpy array (default None)</span>
-<span class="sd">        time_ustar : list, numpy.ndarray, or Axis, optional</span>
+<span class="sd">        time_ustar : :class:`list`, :class:`numpy.ndarray`, or :class:`Axis`, optional</span>
 <span class="sd">            time axis for ustar (default None)</span>
 <span class="sd">        time_z0 : object</span>
 <span class="sd">            See :meth:`add_variable` for details.</span>
@@ -2644,7 +2657,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        beta : float, optional</span>
+<span class="sd">        beta : :class:`float`, optional</span>
 <span class="sd">            beta value of the beta model (default: 1.)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -2700,7 +2713,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        fileout : str</span>
+<span class="sd">        fileout : :class:`str`</span>
 <span class="sd">            netCDF file name as a string</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -2755,7 +2768,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        filein : str</span>
+<span class="sd">        filein : :class:`str`</span>
 <span class="sd">            netCDF file name as a string</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -2808,7 +2821,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        rep_images : str, optional</span>
+<span class="sd">        rep_images : :class:`str`, optional</span>
 <span class="sd">            Output directory for the generated images. Created if it does not</span>
 <span class="sd">            already exist. Defaults to ``&#39;./images/&#39;``.</span>
 <span class="sd">        timeunits : {&#39;hours&#39;, &#39;days&#39;}, optional</span>
@@ -2835,14 +2848,14 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        cc : Case</span>
+<span class="sd">        cc : :class:`Case`</span>
 <span class="sd">            The other case to compare against.</span>
-<span class="sd">        rep_images : str, optional</span>
+<span class="sd">        rep_images : :class:`str`, optional</span>
 <span class="sd">            Output directory for the generated images. Created if it does not</span>
 <span class="sd">            already exist. Defaults to ``&#39;./images/&#39;``.</span>
-<span class="sd">        label1 : str, optional</span>
+<span class="sd">        label1 : :class:`str`, optional</span>
 <span class="sd">            Legend label for `self`&#39;s curves.</span>
-<span class="sd">        label2 : str, optional</span>
+<span class="sd">        label2 : :class:`str`, optional</span>
 <span class="sd">            Legend label for `cc`&#39;s curves.</span>
 <span class="sd">        timeunits : {&#39;hours&#39;, &#39;days&#39;}, optional</span>
 <span class="sd">            Units to convert the time axis to before plotting.</span>
@@ -2877,13 +2890,13 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        pressure : Variable, optional</span>
+<span class="sd">        pressure : :class:`Variable`, optional</span>
 <span class="sd">            Initial pressure profile, required if ``ta`` is used as the source</span>
 <span class="sd">            variable.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        numpy.ndarray</span>
+<span class="sd">        :class:`numpy.ndarray`</span>
 <span class="sd">            The initial potential temperature profile (first time step).</span>
 
 <span class="sd">        Raises</span>
@@ -2920,13 +2933,13 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        pressure : Variable, optional</span>
+<span class="sd">        pressure : :class:`Variable`, optional</span>
 <span class="sd">            Initial pressure profile, required if ``ta`` is used as the source</span>
 <span class="sd">            variable.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        numpy.ndarray</span>
+<span class="sd">        :class:`numpy.ndarray`</span>
 <span class="sd">            The initial liquid-water potential temperature profile (first time</span>
 <span class="sd">            step).</span>
 
@@ -2964,12 +2977,12 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        pressure : Variable</span>
+<span class="sd">        pressure : :class:`Variable`</span>
 <span class="sd">            Initial pressure profile (required).</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        numpy.ndarray</span>
+<span class="sd">        :class:`numpy.ndarray`</span>
 <span class="sd">            The initial temperature profile (first time step).</span>
 
 <span class="sd">        Raises</span>
@@ -3008,7 +3021,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        numpy.ndarray</span>
+<span class="sd">        :class:`numpy.ndarray`</span>
 <span class="sd">            The initial specific humidity profile (first time step).</span>
 
 <span class="sd">        Raises</span>
@@ -3057,7 +3070,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        numpy.ndarray</span>
+<span class="sd">        :class:`numpy.ndarray`</span>
 <span class="sd">            The initial total water content profile (first time step).</span>
 
 <span class="sd">        Raises</span>
@@ -3106,7 +3119,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        numpy.ndarray</span>
+<span class="sd">        :class:`numpy.ndarray`</span>
 <span class="sd">            The initial water vapor mixing ratio profile (first time step).</span>
 
 <span class="sd">        Raises</span>
@@ -3155,7 +3168,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        numpy.ndarray</span>
+<span class="sd">        :class:`numpy.ndarray`</span>
 <span class="sd">            The initial total water mixing ratio profile (first time step).</span>
 
 <span class="sd">        Raises</span>
@@ -3203,7 +3216,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        numpy.ndarray</span>
+<span class="sd">        :class:`numpy.ndarray`</span>
 <span class="sd">            The initial relative humidity profile (first time step).</span>
 
 <span class="sd">        Raises</span>
@@ -3257,7 +3270,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        numpy.ndarray</span>
+<span class="sd">        :class:`numpy.ndarray`</span>
 <span class="sd">            The temperature advection tendency.</span>
 
 <span class="sd">        Raises</span>
@@ -3293,7 +3306,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        numpy.ndarray</span>
+<span class="sd">        :class:`numpy.ndarray`</span>
 <span class="sd">            The potential temperature advection tendency.</span>
 
 <span class="sd">        Raises</span>
@@ -3330,7 +3343,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        numpy.ndarray</span>
+<span class="sd">        :class:`numpy.ndarray`</span>
 <span class="sd">            The liquid-water potential temperature advection tendency.</span>
 
 <span class="sd">        Raises</span>
@@ -3365,7 +3378,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        numpy.ndarray</span>
+<span class="sd">        :class:`numpy.ndarray`</span>
 <span class="sd">            The radiative temperature tendency.</span>
 
 <span class="sd">        Raises</span>
@@ -3401,7 +3414,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        numpy.ndarray</span>
+<span class="sd">        :class:`numpy.ndarray`</span>
 <span class="sd">            The radiative potential temperature tendency.</span>
 
 <span class="sd">        Raises</span>
@@ -3437,7 +3450,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        numpy.ndarray</span>
+<span class="sd">        :class:`numpy.ndarray`</span>
 <span class="sd">            The radiative liquid-water potential temperature tendency.</span>
 
 <span class="sd">        Raises</span>
@@ -3473,7 +3486,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        numpy.ndarray</span>
+<span class="sd">        :class:`numpy.ndarray`</span>
 <span class="sd">            The specific humidity advection tendency.</span>
 
 <span class="sd">        Raises</span>
@@ -3513,7 +3526,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        numpy.ndarray</span>
+<span class="sd">        :class:`numpy.ndarray`</span>
 <span class="sd">            The total water content advection tendency.</span>
 
 <span class="sd">        Raises</span>
@@ -3553,7 +3566,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        numpy.ndarray</span>
+<span class="sd">        :class:`numpy.ndarray`</span>
 <span class="sd">            The water vapor mixing ratio advection tendency.</span>
 
 <span class="sd">        Raises</span>
@@ -3593,7 +3606,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        numpy.ndarray</span>
+<span class="sd">        :class:`numpy.ndarray`</span>
 <span class="sd">            The total water mixing ratio advection tendency.</span>
 
 <span class="sd">        Raises</span>
@@ -3632,7 +3645,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        numpy.ndarray</span>
+<span class="sd">        :class:`numpy.ndarray`</span>
 <span class="sd">            The temperature nudging profile.</span>
 
 <span class="sd">        Raises</span>
@@ -3668,7 +3681,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        numpy.ndarray</span>
+<span class="sd">        :class:`numpy.ndarray`</span>
 <span class="sd">            The potential temperature nudging profile.</span>
 
 <span class="sd">        Raises</span>
@@ -3704,7 +3717,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        numpy.ndarray</span>
+<span class="sd">        :class:`numpy.ndarray`</span>
 <span class="sd">            The liquid-water potential temperature nudging profile.</span>
 
 <span class="sd">        Raises</span>
@@ -3739,7 +3752,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        numpy.ndarray</span>
+<span class="sd">        :class:`numpy.ndarray`</span>
 <span class="sd">            The specific humidity nudging profile.</span>
 
 <span class="sd">        Raises</span>
@@ -3776,7 +3789,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        numpy.ndarray</span>
+<span class="sd">        :class:`numpy.ndarray`</span>
 <span class="sd">            The total water content nudging profile.</span>
 
 <span class="sd">        Raises</span>
@@ -3813,7 +3826,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        numpy.ndarray</span>
+<span class="sd">        :class:`numpy.ndarray`</span>
 <span class="sd">            The water vapor mixing ratio nudging profile.</span>
 
 <span class="sd">        Raises</span>
@@ -3850,7 +3863,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        numpy.ndarray</span>
+<span class="sd">        :class:`numpy.ndarray`</span>
 <span class="sd">            The total water mixing ratio nudging profile.</span>
 
 <span class="sd">        Raises</span>
@@ -3904,19 +3917,19 @@
 <span class="sd">            performed.</span>
 <span class="sd">        levtype : {&#39;altitude&#39;, &#39;pressure&#39;}, optional</span>
 <span class="sd">            Type of the target level axis `lev`. Required when `lev` is given.</span>
-<span class="sd">        usetemp : bool, optional</span>
+<span class="sd">        usetemp : :class:`bool`, optional</span>
 <span class="sd">            Currently unused placeholder flag, kept for API compatibility.</span>
 <span class="sd">            Defaults to ``True``.</span>
-<span class="sd">        usetheta : bool, optional</span>
+<span class="sd">        usetheta : :class:`bool`, optional</span>
 <span class="sd">            Currently unused placeholder flag, kept for API compatibility.</span>
 <span class="sd">            Defaults to ``True``.</span>
-<span class="sd">        usethetal : bool, optional</span>
+<span class="sd">        usethetal : :class:`bool`, optional</span>
 <span class="sd">            Currently unused placeholder flag, kept for API compatibility.</span>
 <span class="sd">            Defaults to ``True``.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        Case</span>
+<span class="sd">        :class:`Case`</span>
 <span class="sd">            A new, interpolated, :class:`Case` instance.</span>
 
 <span class="sd">        Raises</span>
@@ -4713,16 +4726,16 @@
 <span class="sd">        levtype : {&#39;altitude&#39;, &#39;pressure&#39;}, optional</span>
 <span class="sd">            Type of the target level axis `lev`, forwarded to</span>
 <span class="sd">            :meth:`interpolate`.</span>
-<span class="sd">        usetemp : bool, optional</span>
+<span class="sd">        usetemp : :class:`bool`, optional</span>
 <span class="sd">            Forwarded to :meth:`interpolate`. Defaults to ``True``.</span>
-<span class="sd">        usetheta : bool, optional</span>
+<span class="sd">        usetheta : :class:`bool`, optional</span>
 <span class="sd">            Forwarded to :meth:`interpolate`. Defaults to ``True``.</span>
-<span class="sd">        usethetal : bool, optional</span>
+<span class="sd">        usethetal : :class:`bool`, optional</span>
 <span class="sd">            Forwarded to :meth:`interpolate`. Defaults to ``True``.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        Case</span>
+<span class="sd">        :class:`Case`</span>
 <span class="sd">            The new, fully completed, SCM-ready :class:`Case`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -4779,19 +4792,19 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        varid : str</span>
+<span class="sd">        varid : :class:`str`</span>
 <span class="sd">            Identifier of the variable to extend.</span>
-<span class="sd">        data : int, float, list, or numpy.ndarray, optional</span>
+<span class="sd">        data : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`, optional</span>
 <span class="sd">            Data used to extend the variable vertically. See the</span>
 <span class="sd">            description above for the accepted shapes.</span>
-<span class="sd">        height : int, float, list, or numpy.ndarray, optional</span>
+<span class="sd">        height : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`, optional</span>
 <span class="sd">            Altitude(s) above the reference geoid (m) associated with</span>
 <span class="sd">            `data`.</span>
-<span class="sd">        pressure : int, float, list, or numpy.ndarray, optional</span>
+<span class="sd">        pressure : :class:`int`, :class:`float`, :class:`list`, or :class:`numpy.ndarray`, optional</span>
 <span class="sd">            Pressure(s) (Pa) associated with `data`.</span>
-<span class="sd">        time : list or numpy.ndarray, optional</span>
+<span class="sd">        time : :class:`list` or :class:`numpy.ndarray`, optional</span>
 <span class="sd">            Time stamps associated with a 2D `data` array.</span>
-<span class="sd">        tunits : str, optional</span>
+<span class="sd">        tunits : :class:`str`, optional</span>
 <span class="sd">            Units of `time`, associated with a 2D `data` array.</span>
 
 <span class="sd">        Raises</span>
@@ -4947,9 +4960,9 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        u : list or numpy.ndarray</span>
+<span class="sd">        u : :class:`list` or :class:`numpy.ndarray`</span>
 <span class="sd">            See :meth:`add_variable` for details.</span>
-<span class="sd">        v : list or numpy.ndarray</span>
+<span class="sd">        v : :class:`list` or :class:`numpy.ndarray`</span>
 <span class="sd">            See :meth:`add_variable` for details.</span>
 <span class="sd">        **kwargs</span>
 <span class="sd">            Additional keyword arguments forwarded to :meth:`add_variable`</span>
@@ -5103,9 +5116,9 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        ug : list or numpy.ndarray</span>
+<span class="sd">        ug : :class:`list` or :class:`numpy.ndarray`</span>
 <span class="sd">            See :meth:`add_variable` for details.</span>
-<span class="sd">        vg : list or numpy.ndarray</span>
+<span class="sd">        vg : :class:`list` or :class:`numpy.ndarray`</span>
 <span class="sd">            See :meth:`add_variable` for details.</span>
 <span class="sd">        **kwargs</span>
 <span class="sd">            Additional keyword arguments forwarded to :meth:`add_variable`</span>
@@ -5123,9 +5136,9 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        w : list or numpy.ndarray</span>
+<span class="sd">        w : :class:`list` or :class:`numpy.ndarray`</span>
 <span class="sd">            See :meth:`add_variable` for details.</span>
-<span class="sd">        omega : list or numpy.ndarray</span>
+<span class="sd">        omega : :class:`list` or :class:`numpy.ndarray`</span>
 <span class="sd">            See :meth:`add_variable` for details.</span>
 <span class="sd">        **kwargs</span>
 <span class="sd">            Additional keyword arguments forwarded to :meth:`add_variable`</span>
@@ -5153,7 +5166,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        temp_adv : list or numpy.ndarray</span>
+<span class="sd">        temp_adv : :class:`list` or :class:`numpy.ndarray`</span>
 <span class="sd">            See :meth:`add_variable` for details.</span>
 <span class="sd">        **kwargs</span>
 <span class="sd">            Additional keyword arguments forwarded to :meth:`add_variable`</span>
@@ -5170,7 +5183,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        theta_adv : list or numpy.ndarray</span>
+<span class="sd">        theta_adv : :class:`list` or :class:`numpy.ndarray`</span>
 <span class="sd">            See :meth:`add_variable` for details.</span>
 <span class="sd">        **kwargs</span>
 <span class="sd">            Additional keyword arguments forwarded to :meth:`add_variable`</span>
@@ -5188,7 +5201,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        thetal_adv : list or numpy.ndarray</span>
+<span class="sd">        thetal_adv : :class:`list` or :class:`numpy.ndarray`</span>
 <span class="sd">            See :meth:`add_variable` for details.</span>
 <span class="sd">        **kwargs</span>
 <span class="sd">            Additional keyword arguments forwarded to :meth:`add_variable`</span>
@@ -5205,7 +5218,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        qv_adv : list or numpy.ndarray</span>
+<span class="sd">        qv_adv : :class:`list` or :class:`numpy.ndarray`</span>
 <span class="sd">            See :meth:`add_variable` for details.</span>
 <span class="sd">        **kwargs</span>
 <span class="sd">            Additional keyword arguments forwarded to :meth:`add_variable`</span>
@@ -5222,7 +5235,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        qt_adv : list or numpy.ndarray</span>
+<span class="sd">        qt_adv : :class:`list` or :class:`numpy.ndarray`</span>
 <span class="sd">            See :meth:`add_variable` for details.</span>
 <span class="sd">        **kwargs</span>
 <span class="sd">            Additional keyword arguments forwarded to :meth:`add_variable`</span>
@@ -5239,7 +5252,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        rv_adv : list or numpy.ndarray</span>
+<span class="sd">        rv_adv : :class:`list` or :class:`numpy.ndarray`</span>
 <span class="sd">            See :meth:`add_variable` for details.</span>
 <span class="sd">        **kwargs</span>
 <span class="sd">            Additional keyword arguments forwarded to :meth:`add_variable`</span>
@@ -5256,9 +5269,9 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        ua_adv : list or numpy.ndarray</span>
+<span class="sd">        ua_adv : :class:`list` or :class:`numpy.ndarray`</span>
 <span class="sd">            See :meth:`add_variable` for details.</span>
-<span class="sd">        va_adv : list or numpy.ndarray</span>
+<span class="sd">        va_adv : :class:`list` or :class:`numpy.ndarray`</span>
 <span class="sd">            See :meth:`add_variable` for details.</span>
 <span class="sd">        **kwargs</span>
 <span class="sd">            Additional keyword arguments forwarded to :meth:`add_variable`</span>
@@ -5276,7 +5289,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        rt_adv : list or numpy.ndarray</span>
+<span class="sd">        rt_adv : :class:`list` or :class:`numpy.ndarray`</span>
 <span class="sd">            See :meth:`add_variable` for details.</span>
 <span class="sd">        **kwargs</span>
 <span class="sd">            Additional keyword arguments forwarded to :meth:`add_variable`</span>

@@ -691,9 +691,18 @@ using <a class="reference internal" href="#dephycf.thermo.theta2t" title="dephyc
 \left(\frac{1}{R_k T_k}
 + \frac{1}{R_{k-1}T_{k-1}}\right)
   \times (z_k - z_{k-1})\]</div>
-<p>In case potential temperature <span class="math notranslate nohighlight">\(\theta\)</span> is provided, at level <span class="math notranslate nohighlight">\(k\)</span>, one uses:</p>
+<p>In case potential temperature <span class="math notranslate nohighlight">\(\theta\)</span> is provided, at level <span class="math notranslate nohighlight">\(k\)</span>, one
+combines the hydrostatic balance with Poisson’s formula
+(<span class="math notranslate nohighlight">\(T = \theta (p/p_0)^\kappa\)</span>) to get:</p>
 <div class="math notranslate nohighlight">
-\[To be completed\]</div>
+\[p_k^\kappa = p_s^\kappa - \kappa p_0^\kappa
+\int_{0}^{z_k} \frac{g}{R\theta} dz\]</div>
+<div class="math notranslate nohighlight">
+\[p_k^\kappa \approx p_s^\kappa - \kappa p_0^\kappa \times 0.5
+\sum_{j=1}^{k} \left(\frac{1}{R_{j-1}\theta_{j-1}}
++ \frac{1}{R_j\theta_j}\right) g\, (z_j - z_{j-1})\]</div>
+<div class="math notranslate nohighlight">
+\[p_k = \left(p_k^\kappa\right)^{1/\kappa}\]</div>
 <p>In case both temperature and potential temperature are provided, potential temperature is
 use as a priority.</p>
 <p>If specific humidity <span class="math notranslate nohighlight">\(q_v\)</span> is given, <span class="math notranslate nohighlight">\(R = R_d + q_v(R_v-R_d)\)</span>,

@@ -39,14 +39,6 @@ Usage Example
    # Write it out to a netCDF file
    scm_case.write('EXAMPLE_control_SCM_driver.nc')
 
-Notes
-"""""
-
-.. note::
-   The :meth:`interpolate` method contains placeholder
-   ``usetemp``/``usetheta``/``usethetal`` parameters that are
-   currently unused (see the source code).
-
 .. seealso::
    :mod:`Variable`, :mod:`Axis`, :mod:`thermo`, :mod:`constants`,
    :mod:`attributes`, :mod:`variables_attributes`
@@ -56,8 +48,6 @@ API Reference
 
 .. autoclass:: Case
    :no-members:
-   :no-undoc-members:
-   :show-inheritance:
 
 Construction and global attributes
 """"""""""""""""""""""""""""""""""
@@ -189,6 +179,12 @@ Interpolation and SCM conversion
 """"""""""""""""""""""""""""""""
 
 .. automethod:: Case.interpolate
+
+.. note::
+   The :meth:`interpolate` method contains placeholder
+   ``usetemp``/``usetheta``/``usethetal`` parameters that are
+   currently unused (see the source code).
+
 .. automethod:: Case.add_missing_init_variables
 .. automethod:: Case.add_missing_forcing_variables
 .. automethod:: Case.convert2SCM

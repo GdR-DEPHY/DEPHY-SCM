@@ -396,7 +396,7 @@
 
 <span class="k">def</span> <span class="nf">_init_temp</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">T0</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">lapse_rate</span><span class="o">=-</span><span class="mf">6.5e-3</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Initialize a temperature profile starting à T0 (300 K by default) at the surface</span>
+<span class="sd">    Initialize a temperature profile starting at T0 (300 K by default) at the surface</span>
 <span class="sd">    and using a given lapse rate (-6.5 K km-1 by default)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -404,7 +404,7 @@
 
 <span class="k">def</span> <span class="nf">_init_qv</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">qv0</span><span class="o">=</span><span class="mf">0.010</span><span class="p">,</span> <span class="n">Hq</span><span class="o">=</span><span class="mf">2000.0</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Initialize a specific humidity profile starting à qv0 (10 g kg-1 by default) at the surface</span>
+<span class="sd">    Initialize a specific humidity profile starting at qv0 (10 g kg-1 by default) at the surface</span>
 <span class="sd">    and exponentially decreasing with a length scale Hq (2 km by default)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -814,9 +814,16 @@
 <span class="sd">                                               + \\frac{1}{R_{k-1}T_{k-1}}\\right)</span>
 <span class="sd">                                                 \\times (z_k - z_{k-1})</span>
 <span class="sd">    </span>
-<span class="sd">    In case potential temperature :math:`\\theta` is provided, at level :math:`k`, one uses:</span>
+<span class="sd">    In case potential temperature :math:`\\theta` is provided, at level :math:`k`, one</span>
+<span class="sd">    combines the hydrostatic balance with Poisson&#39;s formula</span>
+<span class="sd">    (:math:`T = \\theta (p/p_0)^\\kappa`) to get:</span>
 
-<span class="sd">    .. math:: To be completed</span>
+<span class="sd">    .. math:: p_k^\\kappa = p_s^\\kappa - \\kappa p_0^\\kappa</span>
+<span class="sd">                             \\int_{0}^{z_k} \\frac{g}{R\\theta} dz</span>
+<span class="sd">    .. math:: p_k^\\kappa \\approx p_s^\\kappa - \\kappa p_0^\\kappa \\times 0.5</span>
+<span class="sd">                             \\sum_{j=1}^{k} \\left(\\frac{1}{R_{j-1}\\theta_{j-1}}</span>
+<span class="sd">                             + \\frac{1}{R_j\\theta_j}\\right) g\\, (z_j - z_{j-1})</span>
+<span class="sd">    .. math:: p_k = \\left(p_k^\\kappa\\right)^{1/\\kappa}</span>
 
 <span class="sd">    In case both temperature and potential temperature are provided, potential temperature is</span>
 <span class="sd">    use as a priority.</span>
